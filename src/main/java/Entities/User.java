@@ -7,21 +7,38 @@ import javax.persistence.Id;
 @Entity
 public class User
 {
+    /**
+     * Identification number
+     */
     @Id
     @GeneratedValue
     int id;
+    /**
+     * User's nickname for login
+     */
     String nick;
+    /**
+     * User name
+     */
     String name;
+    /**
+     * User surname
+     */
     String surname;
+    /**
+     * Hash SHA512 from user password
+     */
+    String password;
 
     public User(){
        super();
     }
 
-    public User(String nick, String name, String surname) {
+    public User(String nick, String name, String surname, String password) {
         this.nick = nick;
         this.name = name;
         this.surname = surname;
+        this.password = password;
     }
 
     public int getId() {
@@ -54,5 +71,13 @@ public class User
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

@@ -34,6 +34,75 @@ public class HibernateRequests
     }
 
     /**
+     * @param objectToLoad It's an object of class from package Entites to be loaded to the database.
+     * @return Return true when our request is successfully performed and false if an error occured.
+     *
+     * This method is responsible for process of adding object to our database.
+     */
+    public static boolean addUser(User objectToLoad)
+    {
+        Session session = HibernatePackage.EntityFactory.getFactory().openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            session.save(objectToLoad);
+            tx.commit();
+            session.close();
+            return true;
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * @param objectToLoad It's an object of class from package Entites to be loaded to the database.
+     * @return Return true when our request is successfully performed and false if an error occured.
+     *
+     * This method is responsible for process of adding object to our database.
+     */
+    public static boolean addDataForAuthorization(DataForAuthorization objectToLoad)
+    {
+        Session session = HibernatePackage.EntityFactory.getFactory().openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            session.save(objectToLoad);
+            tx.commit();
+            session.close();
+            return true;
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * @param objectToRemove It's an object of class from package Entites to be removed from the database.
+     * @return Return true when our request is successfully performed and false if an error occured.
+     *
+     * This method is responsible for process of removing object in our database.
+     */
+    public static boolean removeDataForAuthorization(DataForAuthorization objectToRemove)
+    {
+        Session session = HibernatePackage.EntityFactory.getFactory().openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            session.remove(objectToRemove);
+            tx.commit();
+            session.close();
+            return true;
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
      * @param query This is a string containing sql to be executed in the database.
      * @param clazz This is the Entity class we want to receive.
      * @return Returns the list of results.
