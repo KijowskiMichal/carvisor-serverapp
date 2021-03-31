@@ -26,7 +26,7 @@ public class User
      */
     String surname;
     /**
-     * Hash SHA512 from user password
+     * Hash SHA256 from user password
      */
     String password;
 
