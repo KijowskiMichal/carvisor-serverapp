@@ -4,10 +4,7 @@ import Entities.User;
 import HibernatePackage.HibernateRequests;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONObject;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,5 +45,40 @@ public class AuthorizationREST
                 return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
             }
         }
+    }
+
+    /**
+     * @param request Object of HttpServletRequest represents our request;
+     * @return Returns JSON {"Logged": true, "Nickname": <login>} if user is correctly logged or {"Logged": false} if not;
+     *
+     * WebMethods which returns login status;
+     */
+    @RequestMapping(value = "/status", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public String status(HttpServletRequest request)
+    {
+        JSONObject outJSON = new JSONObject();
+        if (request.getSession().getAttribute("user")==null)
+        {
+            outJSON.put("Logged", false);
+        }
+        else
+        {
+            outJSON.put("Logged", true);
+            outJSON.put("Nickname", ((User)request.getSession().getAttribute("user")).getNick());
+        }
+        return outJSON.toString();
+    }
+
+    /**
+     * @param request Object of HttpServletRequest represents our request;
+     * @return Returns 200 (OK) http status.
+     *
+     * WebMethods which is responsible for logout operation (session destroying).
+     */
+    @RequestMapping(value = "/logout", method = RequestMethod.GET)
+    public ResponseEntity logout(HttpServletRequest request)
+    {
+        request.getSession().invalidate();
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

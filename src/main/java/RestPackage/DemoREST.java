@@ -34,6 +34,8 @@ public class DemoREST
     {
         User user = new User("admin", "Jan", "Kowalski", DigestUtils.sha256Hex("absx"));
         HibernateRequests.addUser(user);
+        user = new User("zenek", "Zenon", "Marksista", DigestUtils.sha256Hex("xsba"));
+        HibernateRequests.addUser(user);
         return new ResponseEntity(HttpStatus.OK);
     }
 
