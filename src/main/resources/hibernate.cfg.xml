@@ -11,5 +11,6 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
         <!-- List of XML mapping files -->
         <mapping class="Entities.User" />
+        <mapping class="Entities.Car" />
     </session-factory>
 </hibernate-configuration>
