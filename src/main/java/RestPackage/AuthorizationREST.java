@@ -3,12 +3,14 @@ package RestPackage;
 import Entities.User;
 import HibernatePackage.HibernateRequests;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.swing.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,7 +29,13 @@ public class AuthorizationREST
     public ResponseEntity authorize(HttpServletRequest request, HttpEntity<String> httpEntity)
     {
         JSONObject inJSON = new JSONObject(httpEntity.getBody());
-        List<Object> users = HibernateRequests.getTableContent("SELECT a FROM User a WHERE a.nick = '"+inJSON.get("login")+"'", User.class);
+        List<Object> users;
+        try {
+            users = HibernateRequests.getTableContent("SELECT a FROM User a WHERE a.nick = '"+inJSON.get("login")+"'", User.class);
+        } catch (Exception e) {
+            //e.printStackTrace();
+            users = new ArrayList<Object>();
+        }
         if (users.size()==0)
         {
             return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
