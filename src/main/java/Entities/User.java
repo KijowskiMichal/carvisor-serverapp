@@ -3,6 +3,7 @@ package Entities;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity
 public class User
@@ -12,33 +13,44 @@ public class User
      */
     @Id
     @GeneratedValue
-    int id;
+    private int id;
     /**
      * User's nickname for login
      */
-    String nick;
+    private String nick;
     /**
      * User name
      */
-    String name;
+    private String name;
     /**
      * User surname
      */
-    String surname;
+    private String surname;
     /**
      * Hash SHA256 from user password
      */
-    String password;
+    private String password;
+    /**
+     * RBAC value
+     */
+    private UserPrivileges userPrivileges;
+    /**
+     * Current track
+     */
+    @OneToOne
+    private Track track;
+
 
     public User(){
        super();
     }
 
-    public User(String nick, String name, String surname, String password) {
+    public User(String nick, String name, String surname, String password, UserPrivileges userPrivileges) {
         this.nick = nick;
         this.name = name;
         this.surname = surname;
         this.password = password;
+        this.userPrivileges = userPrivileges;
     }
 
     public int getId() {
@@ -79,5 +91,21 @@ public class User
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public UserPrivileges getUserPrivileges() {
+        return userPrivileges;
+    }
+
+    public void setUserPrivileges(UserPrivileges userPrivileges) {
+        this.userPrivileges = userPrivileges;
+    }
+
+    public Track getTrack() {
+        return track;
+    }
+
+    public void setTrack(Track track) {
+        this.track = track;
     }
 }

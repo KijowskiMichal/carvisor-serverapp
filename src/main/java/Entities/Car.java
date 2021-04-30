@@ -35,8 +35,7 @@ public class Car {
      */
     LocalDate inCompanyDate;
 
-    public Car(int id, String licensePlate, String brand, String model, LocalDate productionDate, LocalDate inCompanyDate) {
-        this.id = id;
+    public Car(String licensePlate, String brand, String model, LocalDate productionDate, LocalDate inCompanyDate) {
         this.licensePlate = licensePlate;
         this.brand = brand;
         this.model = model;

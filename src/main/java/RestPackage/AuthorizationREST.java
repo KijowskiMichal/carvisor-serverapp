@@ -28,6 +28,7 @@ public class AuthorizationREST
     @RequestMapping(value = "/authorize", method = RequestMethod.POST)
     public ResponseEntity authorize(HttpServletRequest request, HttpEntity<String> httpEntity)
     {
+        Initializer.getLogger().info("AuthorizationREST.authorize starting work");
         JSONObject inJSON = new JSONObject(httpEntity.getBody());
         List<Object> users;
         try {
@@ -38,6 +39,7 @@ public class AuthorizationREST
         }
         if (users.size()==0)
         {
+            Initializer.getLogger().info("AuthorizationREST.authorize didn't authorize the user");  
             return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
         }
         else
@@ -46,10 +48,12 @@ public class AuthorizationREST
             if (user.getPassword().equals(DigestUtils.sha256Hex(String.valueOf(inJSON.get("password")))))
             {
                 request.getSession().setAttribute("user", user);
+                Initializer.getLogger().info("AuthorizationREST.authorize authorized user (user: "+user.getNick()+")");
                 return new ResponseEntity(HttpStatus.OK);
             }
             else
             {
+                Initializer.getLogger().info("AuthorizationREST.authorize didn't authorize the user");
                 return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
             }
         }
@@ -67,12 +71,13 @@ public class AuthorizationREST
         JSONObject outJSON = new JSONObject();
         if (request.getSession().getAttribute("user")==null)
         {
-            outJSON.put("Logged", false);
+            outJSON.put("logged", false);
         }
         else
         {
-            outJSON.put("Logged", true);
-            outJSON.put("Nickname", ((User)request.getSession().getAttribute("user")).getNick());
+            outJSON.put("logged", true);
+            outJSON.put("nickname", ((User)request.getSession().getAttribute("user")).getNick());
+            outJSON.put("rbac", ((User)request.getSession().getAttribute("user")).getUserPrivileges());
         }
         return outJSON.toString();
     }
@@ -86,6 +91,7 @@ public class AuthorizationREST
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
     public ResponseEntity logout(HttpServletRequest request)
     {
+        if (request.getSession().getAttribute("user")!=null) Initializer.getLogger().info("AuthorizationREST.logout logout user (user: "+((User)request.getSession().getAttribute("user")).getNick()+")");
         request.getSession().invalidate();
         return new ResponseEntity(HttpStatus.OK);
     }

@@ -1,8 +1,14 @@
 package RestPackage;
 
+import Entities.Car;
+import Entities.Track;
 import Entities.User;
+import Entities.UserPrivileges;
 import HibernatePackage.HibernateRequests;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -15,6 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -27,27 +35,35 @@ public class DemoREST
     /**
      * @return Returns the 201 status - OK.
      *
-     * WebMethod which adding example user data.
-     */
-    @RequestMapping(value = "/addUsers", method = RequestMethod.GET)
-    public ResponseEntity addUsers()
-    {
-        User user = new User("admin", "Jan", "Kowalski", DigestUtils.sha256Hex("absx"));
-        HibernateRequests.addUser(user);
-        user = new User("zenek", "Zenon", "Marksista", DigestUtils.sha256Hex("xsba"));
-        HibernateRequests.addUser(user);
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
-    /**
-     * @return Returns the 201 status - OK.
-     *
      * WebMethod which adding example data.
      */
     @RequestMapping(value = "/addAll", method = RequestMethod.GET)
     public ResponseEntity addAll()
     {
-        this.addUsers();
+        User user1 = new User("admin", "Jan", "Kowalski", DigestUtils.sha256Hex("absx"), UserPrivileges.ADMINISTRATOR);
+        HibernateRequests.addUser(user1);
+        User user2 = new User("zenek", "Zenon", "Marksista", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER);
+        HibernateRequests.addUser(user2);
+        Car car1 = new Car("DWL5636", "Ford", "Focus", LocalDate.of(1990,12,4), LocalDate.of(2000,1,18));
+        HibernateRequests.addCar(car1);
+        Car car2 = new Car("EPI6395", "Renault", "Laguna", LocalDate.of(1993,4,18), LocalDate.of(1994,1,14));
+        HibernateRequests.addCar(car2);
+        Track track1 = new Track(car1, user2, LocalDateTime.of(2021, 4,29, 12,18), LocalDateTime.of(2021, 4,29, 13,3));
+        HibernateRequests.addTrack(track1);
+        Track track2 = new Track(car1, user2, LocalDateTime.of(2021, 4,30, 4,37), null);
+        HibernateRequests.addTrack(track2);
+        Session session = HibernatePackage.EntityFactory.getFactory().openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            user1.setTrack(track2);
+            session.update(user1);
+            tx.commit();
+            session.close();
+        } catch (HibernateException e) {
+            if (tx!=null) tx.rollback();
+            e.printStackTrace();
+        }
         return new ResponseEntity(HttpStatus.OK);
     }
 }
