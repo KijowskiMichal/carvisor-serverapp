@@ -35,6 +35,8 @@ public class Car {
      */
     LocalDate inCompanyDate;
 
+    public Car() { super(); }
+
     public Car(String licensePlate, String brand, String model, LocalDate productionDate, LocalDate inCompanyDate) {
         this.licensePlate = licensePlate;
         this.brand = brand;

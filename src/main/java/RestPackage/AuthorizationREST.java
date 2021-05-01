@@ -66,7 +66,7 @@ public class AuthorizationREST
      * WebMethods which returns login status;
      */
     @RequestMapping(value = "/status", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public String status(HttpServletRequest request)
+    public ResponseEntity<String> status(HttpServletRequest request)
     {
         JSONObject outJSON = new JSONObject();
         if (request.getSession().getAttribute("user")==null)
@@ -79,7 +79,7 @@ public class AuthorizationREST
             outJSON.put("nickname", ((User)request.getSession().getAttribute("user")).getNick());
             outJSON.put("rbac", ((User)request.getSession().getAttribute("user")).getUserPrivileges());
         }
-        return outJSON.toString();
+        return ResponseEntity.status(HttpStatus.OK).body(outJSON.toString());
     }
 
     /**

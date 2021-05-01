@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 public class Track {
+
     /**
      * Identification number
      */
@@ -32,10 +33,53 @@ public class Track {
      */
     LocalDateTime finishTime;
 
+    public Track() { super(); }
+
     public Track(Car car, User user, LocalDateTime startTime, LocalDateTime finishTime) {
         this.car = car;
         this.user = user;
         this.startTime = startTime;
+        this.finishTime = finishTime;
+    }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Car getCar() {
+        return car;
+    }
+
+    public void setCar(Car car) {
+        this.car = car;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getFinishTime() {
+        return finishTime;
+    }
+
+    public void setFinishTime(LocalDateTime finishTime) {
         this.finishTime = finishTime;
     }
 }
