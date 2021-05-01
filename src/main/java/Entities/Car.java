@@ -3,6 +3,7 @@ package Entities;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import java.time.LocalDate;
 
 
@@ -34,6 +35,15 @@ public class Car {
      * Date of incorporation of vehicles into the fleet
      */
     LocalDate inCompanyDate;
+    /**
+     * Current track
+     */
+    @OneToOne
+    private Track track;
+    /**
+     * Image of car
+     */
+    private String image;
 
     public Car() { super(); }
 
@@ -43,5 +53,69 @@ public class Car {
         this.model = model;
         this.productionDate = productionDate;
         this.inCompanyDate = inCompanyDate;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getLicensePlate() {
+        return licensePlate;
+    }
+
+    public void setLicensePlate(String licensePlate) {
+        this.licensePlate = licensePlate;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public LocalDate getProductionDate() {
+        return productionDate;
+    }
+
+    public void setProductionDate(LocalDate productionDate) {
+        this.productionDate = productionDate;
+    }
+
+    public LocalDate getInCompanyDate() {
+        return inCompanyDate;
+    }
+
+    public void setInCompanyDate(LocalDate inCompanyDate) {
+        this.inCompanyDate = inCompanyDate;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public Track getTrack() {
+        return track;
+    }
+
+    public void setTrack(Track track) {
+        this.track = track;
     }
 }

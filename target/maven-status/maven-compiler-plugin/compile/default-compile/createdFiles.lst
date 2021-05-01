@@ -1,1 +1,11 @@
+RestPackage/Initializer.class
+Entities/Car.class
+RestPackage/DevicesREST.class
+Entities/User.class
+Entities/Track.class
+RestPackage/AuthorizationREST.class
+HibernatePackage/EntityFactory.class
+Entities/CarType.class
 RestPackage/DemoREST.class
+HibernatePackage/HibernateRequests.class
+Entities/UserPrivileges.class

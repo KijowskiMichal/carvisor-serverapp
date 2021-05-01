@@ -39,6 +39,10 @@ public class User
      */
     @OneToOne
     private Track track;
+    /**
+     * Image of user
+     */
+    private String image;
 
 
     public User(){
@@ -107,5 +111,13 @@ public class User
 
     public void setTrack(Track track) {
         this.track = track;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }
