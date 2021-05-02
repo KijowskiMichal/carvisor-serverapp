@@ -84,6 +84,7 @@ public class UsersREST {
             jsonObject.put("name", ((User) tmp).getName());
             jsonObject.put("surname", ((User) tmp).getSurname());
             jsonObject.put("image", ((User) tmp).getImage());
+            jsonObject.put("distance", 0);
             Track tmpTrack = ((User) tmp).getTrack();
             if (tmpTrack == null) {
                 jsonObject.put("status", "inactive");
