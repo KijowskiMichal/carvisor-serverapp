@@ -90,10 +90,12 @@ public class UsersREST {
                 jsonObject.put("status", "inactive");
                 jsonObject.put("startTime", "");
                 jsonObject.put("finishTime", "");
+                jsonObject.put("licensePlate", "");
             } else {
                 jsonObject.put("status", "active");
                 jsonObject.put("startTime", tmpTrack.getStartTime().toString());
                 jsonObject.put("finishTime", "");
+                jsonObject.put("licensePlate", tmpTrack.getCar().getLicensePlate());
             }
             jsonArray.put(jsonObject);
         }
