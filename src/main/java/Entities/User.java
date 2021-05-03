@@ -49,12 +49,13 @@ public class User
        super();
     }
 
-    public User(String nick, String name, String surname, String password, UserPrivileges userPrivileges) {
+    public User(String nick, String name, String surname, String password, UserPrivileges userPrivileges, String image) {
         this.nick = nick;
         this.name = name;
         this.surname = surname;
         this.password = password;
         this.userPrivileges = userPrivileges;
+        this.image = image;
     }
 
     public int getId() {

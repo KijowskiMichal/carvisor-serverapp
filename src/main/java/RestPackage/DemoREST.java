@@ -40,13 +40,13 @@ public class DemoREST
     @RequestMapping(value = "/addAll", method = RequestMethod.GET)
     public ResponseEntity addAll()
     {
-        User user1 = new User("admin", "Jan", "Kowalski", DigestUtils.sha256Hex("absx"), UserPrivileges.ADMINISTRATOR);
+        User user1 = new User("admin", "Jan", "Kowalski", DigestUtils.sha256Hex("absx"), UserPrivileges.ADMINISTRATOR, "https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png");
         HibernateRequests.addUser(user1);
-        User user2 = new User("zenek", "Zenon", "Marksista", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER);
+        User user2 = new User("zenek", "Zenon", "Marksista", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png");
         HibernateRequests.addUser(user2);
-        Car car1 = new Car("DWL5636", "Ford", "Focus", LocalDate.of(1990,12,4), LocalDate.of(2000,1,18));
+        Car car1 = new Car("DWL5636", "Ford", "Focus", LocalDate.of(1990,12,4), LocalDate.of(2000,1,18), "https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png", DigestUtils.sha256Hex("safdsdsf"));
         HibernateRequests.addCar(car1);
-        Car car2 = new Car("EPI6395", "Renault", "Laguna", LocalDate.of(1993,4,18), LocalDate.of(1994,1,14));
+        Car car2 = new Car("EPI6395", "Renault", "Laguna", LocalDate.of(1993,4,18), LocalDate.of(1994,1,14), "https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png", DigestUtils.sha256Hex("dfsdfds"));
         HibernateRequests.addCar(car2);
         Track track1 = new Track(car1, user2, LocalDateTime.of(2021, 4,29, 12,18), LocalDateTime.of(2021, 4,29, 13,3));
         HibernateRequests.addTrack(track1);

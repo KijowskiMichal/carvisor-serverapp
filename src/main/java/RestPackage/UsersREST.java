@@ -58,12 +58,12 @@ public class UsersREST {
         try {
             if (regex.equals("$")) regex = "";
             tx = session.beginTransaction();
-            String countQ = "Select count (u.id) from User u WHERE u.name  like '%" + regex + "%' OR u.surname  like '%" + regex + "%' ";
+            String countQ = "Select count (u.id) from User u WHERE u.name  like '%" + regex + "%' OR u.surname  like '%" + regex + "%'";
             Query countQuery = session.createQuery(countQ);
             Long countResults = (Long) countQuery.uniqueResult();
             lastPageNumber = (int) (Math.ceil(countResults / (double) pageSize));
 
-            Query selectQuery = session.createQuery("SELECT u FROM User u WHERE u.name  like '%" + regex + "%' OR u.surname  like '%" + regex + "%' ");
+            Query selectQuery = session.createQuery("SELECT u FROM User u WHERE u.name  like '%" + regex + "%' OR u.surname  like '%" + regex + "%'");
             selectQuery.setFirstResult((page - 1) * pageSize);
             selectQuery.setMaxResults(pageSize);
             users = selectQuery.list();
@@ -88,13 +88,13 @@ public class UsersREST {
             Track tmpTrack = ((User) tmp).getTrack();
             if (tmpTrack == null) {
                 jsonObject.put("status", "inactive");
-                jsonObject.put("startTime", "");
-                jsonObject.put("finishTime", "");
-                jsonObject.put("licensePlate", "");
+                jsonObject.put("startTime", "------");
+                jsonObject.put("finishTime", "------");
+                jsonObject.put("licensePlate", "------");
             } else {
                 jsonObject.put("status", "active");
-                jsonObject.put("startTime", tmpTrack.getStartTime().toString());
-                jsonObject.put("finishTime", "");
+                jsonObject.put("startTime", tmpTrack.getStartTime().getHour()+":"+tmpTrack.getStartTime().getMinute());
+                jsonObject.put("finishTime", "------");
                 jsonObject.put("licensePlate", tmpTrack.getCar().getLicensePlate());
             }
             jsonArray.put(jsonObject);

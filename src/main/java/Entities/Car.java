@@ -20,6 +20,10 @@ public class Car {
      */
     String licensePlate;
     /**
+     * Car password
+     */
+    String password;
+    /**
      * Car Brand
      */
     String brand;
@@ -47,12 +51,14 @@ public class Car {
 
     public Car() { super(); }
 
-    public Car(String licensePlate, String brand, String model, LocalDate productionDate, LocalDate inCompanyDate) {
+    public Car(String licensePlate, String brand, String model, LocalDate productionDate, LocalDate inCompanyDate, String image, String password) {
         this.licensePlate = licensePlate;
         this.brand = brand;
         this.model = model;
         this.productionDate = productionDate;
         this.inCompanyDate = inCompanyDate;
+        this.image = image;
+        this.password = password;
     }
 
     public int getId() {
@@ -117,5 +123,13 @@ public class Car {
 
     public void setTrack(Track track) {
         this.track = track;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
