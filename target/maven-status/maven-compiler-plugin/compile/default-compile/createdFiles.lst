@@ -6,6 +6,8 @@ Entities/Track.class
 RestPackage/AuthorizationREST.class
 HibernatePackage/EntityFactory.class
 Entities/CarType.class
+RestPackage/CarAuthorizationREST.class
 RestPackage/DemoREST.class
 HibernatePackage/HibernateRequests.class
 Entities/UserPrivileges.class
+RestPackage/CarConfigurationREST.class
