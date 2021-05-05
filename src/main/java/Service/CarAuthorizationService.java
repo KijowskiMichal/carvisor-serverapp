@@ -2,15 +2,13 @@ package Service;
 
 import Entities.Car;
 import HibernatePackage.HibernateRequests;
+import RestPackage.Initializer;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;

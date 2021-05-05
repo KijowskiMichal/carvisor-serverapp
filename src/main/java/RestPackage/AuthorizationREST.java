@@ -1,18 +1,11 @@
 package RestPackage;
 
-import Entities.User;
-import HibernatePackage.HibernateRequests;
 import Service.AuthorizationService;
-import Service.Initializer;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping("/authorization")
