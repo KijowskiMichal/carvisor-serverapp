@@ -2,9 +2,11 @@ package Service;
 
 import Entities.Car;
 import HibernatePackage.HibernateRequests;
-import RestPackage.Initializer;
+import OtherClasses.Initializer;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,16 @@ import java.util.List;
 @Service
 public class CarAuthorizationService {
 
+    HibernateRequests hibernateRequests;
+    Logger logger;
+
+    @Autowired
+    public CarAuthorizationService(HibernateRequests hibernateRequests,OtherClasses.Logger logger)
+    {
+        this.hibernateRequests = hibernateRequests;
+        this.logger = logger.getLOG();
+    }
+
     /**
      * @param request Object of HttpServletRequest represents our request;
      * @param httpEntity Object of HttpEntity represents content of our request;
@@ -26,18 +38,18 @@ public class CarAuthorizationService {
      */
     public ResponseEntity authorize(HttpServletRequest request, HttpEntity<String> httpEntity)
     {
-        Initializer.getLogger().info("CarAuthorizationREST.authorize starting work");
+        logger.info("CarAuthorizationREST.authorize starting work");
         JSONObject inJSON = new JSONObject(httpEntity.getBody());
         List<Object> cars;
         try {
-            cars = HibernateRequests.getTableContent("SELECT c FROM Car c WHERE c.licensePlate = '"+inJSON.get("licensePlate")+"'", Car.class);
+            cars = hibernateRequests.getTableContent("SELECT c FROM Car c WHERE c.licensePlate = '"+inJSON.get("licensePlate")+"'", Car.class);
         } catch (Exception e) {
             //e.printStackTrace();
             cars = new ArrayList<Object>();
         }
         if (cars.size()==0)
         {
-            Initializer.getLogger().info("CarAuthorizationREST.authorize didn't authorize the car");
+            logger.info("CarAuthorizationREST.authorize didn't authorize the car");
             return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
         }
         else
@@ -46,12 +58,12 @@ public class CarAuthorizationService {
             if (car.getPassword().equals(DigestUtils.sha256Hex(String.valueOf(inJSON.get("password")))))
             {
                 request.getSession().setAttribute("car", car);
-                Initializer.getLogger().info("CarAuthorizationREST.authorize authorized car (license plate: "+car.getLicensePlate()+")");
+                logger.info("CarAuthorizationREST.authorize authorized car (license plate: "+car.getLicensePlate()+")");
                 return new ResponseEntity(HttpStatus.OK);
             }
             else
             {
-                Initializer.getLogger().info("CarAuthorizationREST.authorize didn't authorize the car");
+                logger.info("CarAuthorizationREST.authorize didn't authorize the car");
                 return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
             }
         }
@@ -86,7 +98,7 @@ public class CarAuthorizationService {
      */
     public ResponseEntity logout(HttpServletRequest request)
     {
-        if (request.getSession().getAttribute("car")!=null) Initializer.getLogger().info("CarAuthorizationREST.logout logout car (license plate: "+((Car)request.getSession().getAttribute("car")).getLicensePlate()+")");
+        if (request.getSession().getAttribute("car")!=null) logger.info("CarAuthorizationREST.logout logout car (license plate: "+((Car)request.getSession().getAttribute("car")).getLicensePlate()+")");
         request.getSession().invalidate();
         return new ResponseEntity(HttpStatus.OK);
     }

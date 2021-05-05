@@ -1,6 +1,10 @@
 package Service;
 
+import HibernatePackage.EntityFactory;
+import HibernatePackage.HibernateRequests;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +17,16 @@ import java.util.Random;
 
 @Service
 public class CarConfigurationService {
+
+    HibernateRequests hibernateRequests;
+    Logger logger;
+
+    @Autowired
+    public CarConfigurationService(HibernateRequests hibernateRequests, OtherClasses.Logger logger)
+    {
+        this.hibernateRequests = hibernateRequests;
+        this.logger = logger.getLOG();
+    }
 
     @RequestMapping(value = "/get", method = RequestMethod.POST)
     public ResponseEntity get(HttpServletRequest request, HttpEntity<String> httpEntity)

@@ -3,9 +3,11 @@ package Service;
 
 import Entities.User;
 import HibernatePackage.HibernateRequests;
-import RestPackage.Initializer;
+import OtherClasses.Initializer;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,16 @@ import java.util.List;
 @Service
 public class AuthorizationService {
 
+    HibernateRequests hibernateRequests;
+    Logger logger;
+
+    @Autowired
+    public AuthorizationService(HibernateRequests hibernateRequests, OtherClasses.Logger logger)
+    {
+        this.hibernateRequests = hibernateRequests;
+        this.logger = logger.getLOG();
+    }
+
     /**
      * @param request Object of HttpServletRequest represents our request;
      * @param httpEntity Object of HttpEntity represents content of our request;
@@ -26,18 +38,18 @@ public class AuthorizationService {
      * WebMethods which is responsible for authenticate users. Client send JSON ({login: <login>, password: <password>}), this method check this credentials and starting a session if all is ok.
      */
     public ResponseEntity authorize(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        Initializer.getLogger().info("AuthorizationREST.authorize starting work");
+        logger.info("AuthorizationREST.authorize starting work");
         JSONObject inJSON = new JSONObject(httpEntity.getBody());
         List<Object> users;
         try {
-            users = HibernateRequests.getTableContent("SELECT a FROM User a WHERE a.nick = '"+inJSON.get("login")+"'", User.class);
+            users = hibernateRequests.getTableContent("SELECT a FROM User a WHERE a.nick = '"+inJSON.get("login")+"'", User.class);
         } catch (Exception e) {
             //e.printStackTrace();
             users = new ArrayList<Object>();
         }
         if (users.size()==0)
         {
-            Initializer.getLogger().info("AuthorizationREST.authorize didn't authorize the user");
+            logger.info("AuthorizationREST.authorize didn't authorize the user");
             return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
         }
         else
@@ -46,12 +58,12 @@ public class AuthorizationService {
             if (user.getPassword().equals(DigestUtils.sha256Hex(String.valueOf(inJSON.get("password")))))
             {
                 request.getSession().setAttribute("user", user);
-                Initializer.getLogger().info("AuthorizationREST.authorize authorized user (user: "+user.getNick()+")");
+                logger.info("AuthorizationREST.authorize authorized user (user: "+user.getNick()+")");
                 return new ResponseEntity(HttpStatus.OK);
             }
             else
             {
-                Initializer.getLogger().info("AuthorizationREST.authorize didn't authorize the user");
+                logger.info("AuthorizationREST.authorize didn't authorize the user");
                 return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
             }
         }
@@ -84,7 +96,7 @@ public class AuthorizationService {
      * WebMethods which is responsible for logout operation (session destroying).
      */
     public ResponseEntity logout(HttpServletRequest request) {
-        if (request.getSession().getAttribute("user")!=null) Initializer.getLogger().info("AuthorizationREST.logout logout user (user: "+((User)request.getSession().getAttribute("user")).getNick()+")");
+        if (request.getSession().getAttribute("user")!=null) logger.info("AuthorizationREST.logout logout user (user: "+((User)request.getSession().getAttribute("user")).getNick()+")");
         request.getSession().invalidate();
         return new ResponseEntity(HttpStatus.OK);
     }

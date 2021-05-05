@@ -5,12 +5,23 @@ import Entities.Track;
 import Entities.User;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class HibernateRequests
 {
+    SessionFactory sessionFactory;
+
+    @Autowired
+    public HibernateRequests(EntityFactory entityFactory)
+    {
+        this.sessionFactory = entityFactory.getFactory();
+    }
 
     /**
      * @param objectToLoad It's an object of class from package Entites to be loaded to the database.
@@ -18,9 +29,9 @@ public class HibernateRequests
      *
      * This method is responsible for process of adding object to our database.
      */
-    public static boolean addObject(Object objectToLoad)
+    public boolean addObject(Object objectToLoad)
     {
-        Session session = HibernatePackage.EntityFactory.getFactory().openSession();
+        Session session = getSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
@@ -42,9 +53,9 @@ public class HibernateRequests
      *
      * This method is responsible for process of adding object to our database.
      */
-    public static boolean addUser(User objectToLoad)
+    public boolean addUser(User objectToLoad)
     {
-        Session session = HibernatePackage.EntityFactory.getFactory().openSession();
+        Session session = getSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
@@ -66,9 +77,9 @@ public class HibernateRequests
      *
      * This method is responsible for process of adding object to our database.
      */
-    public static boolean addCar(Car objectToLoad)
+    public boolean addCar(Car objectToLoad)
     {
-        Session session = HibernatePackage.EntityFactory.getFactory().openSession();
+        Session session = getSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
@@ -90,9 +101,9 @@ public class HibernateRequests
      *
      * This method is responsible for process of adding object to our database.
      */
-    public static boolean addTrack(Track objectToLoad)
+    public boolean addTrack(Track objectToLoad)
     {
-        Session session = HibernatePackage.EntityFactory.getFactory().openSession();
+        Session session = getSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
@@ -115,9 +126,9 @@ public class HibernateRequests
      *
      * This method is responsible for process of getting the specific sql request.
      */
-    public static List<Object> getTableContent(String query, Class clazz)
+    public List<Object> getTableContent(String query, Class clazz)
     {
-        Session session = HibernatePackage.EntityFactory.getFactory().openSession();
+        Session session = getSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
@@ -131,5 +142,9 @@ public class HibernateRequests
             e.printStackTrace();
             return null;
         }
+    }
+
+    public Session getSession() {
+        return sessionFactory.openSession().getSession();
     }
 }

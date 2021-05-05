@@ -4,9 +4,9 @@
 /home/michal/carvisor-serverapp/src/main/java/RestPackage/UsersREST.java
 /home/michal/carvisor-serverapp/src/main/java/Entities/UserPrivileges.java
 /home/michal/carvisor-serverapp/src/main/java/Service/CarConfigurationService.java
+/home/michal/carvisor-serverapp/src/main/java/OtherClasses/Initializer.java
 /home/michal/carvisor-serverapp/src/main/java/Service/AuthorizationService.java
 /home/michal/carvisor-serverapp/src/main/java/RestPackage/DemoREST.java
-/home/michal/carvisor-serverapp/src/main/java/RestPackage/Initializer.java
 /home/michal/carvisor-serverapp/src/main/java/Service/CarAuthorizationService.java
 /home/michal/carvisor-serverapp/src/main/java/Entities/Car.java
 /home/michal/carvisor-serverapp/src/main/java/HibernatePackage/EntityFactory.java
@@ -15,5 +15,6 @@
 /home/michal/carvisor-serverapp/src/main/java/Entities/Track.java
 /home/michal/carvisor-serverapp/src/main/java/HibernatePackage/HibernateRequests.java
 /home/michal/carvisor-serverapp/src/main/java/Service/DevicesService.java
+/home/michal/carvisor-serverapp/src/main/java/OtherClasses/Logger.java
 /home/michal/carvisor-serverapp/src/main/java/RestPackage/CarConfigurationREST.java
 /home/michal/carvisor-serverapp/src/main/java/RestPackage/AuthorizationREST.java

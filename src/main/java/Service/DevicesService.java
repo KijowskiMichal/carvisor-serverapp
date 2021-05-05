@@ -4,13 +4,16 @@ import Entities.Car;
 import Entities.Track;
 import Entities.User;
 import Entities.UserPrivileges;
-import RestPackage.Initializer;
+import HibernatePackage.HibernateRequests;
+import OtherClasses.Initializer;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,16 @@ import java.util.List;
 
 @Service
 public class DevicesService {
+
+    HibernateRequests hibernateRequests;
+    Logger logger;
+
+    @Autowired
+    public DevicesService(HibernateRequests hibernateRequests, OtherClasses.Logger logger)
+    {
+        this.hibernateRequests = hibernateRequests;
+        this.logger = logger.getLOG();
+    }
 
     /**
      * @param request  Object of HttpServletRequest represents our request;
@@ -35,16 +48,16 @@ public class DevicesService {
     public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("regex") String regex) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
-            Initializer.getLogger().info("DevicesREST.list cannot list device's (session not found)");
+            logger.info("DevicesREST.list cannot list device's (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
-            Initializer.getLogger().info("DevicesREST.list cannot list device's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+            logger.info("DevicesREST.list cannot list device's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
         //listing
         List<Object> devices = new ArrayList<>();
         int lastPageNumber;
-        Session session = HibernatePackage.EntityFactory.getFactory().openSession();
+        Session session = hibernateRequests.getSession();
         Transaction tx = null;
         try {
             if (regex.equals("$")) regex = "";
@@ -87,8 +100,8 @@ public class DevicesService {
 
         jsonOut.put("page", page);
         jsonOut.put("pageMax", lastPageNumber);
-        jsonOut.put("listOfUsers", jsonArray);
-        Initializer.getLogger().info("DevicesREST.list returns list of devices (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+        jsonOut.put("listOfDevices", jsonArray);
+        logger.info("DevicesREST.list returns list of devices (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 }

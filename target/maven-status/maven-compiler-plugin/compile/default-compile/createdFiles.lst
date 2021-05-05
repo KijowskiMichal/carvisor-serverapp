@@ -1,10 +1,11 @@
 Service/UserService.class
-RestPackage/Initializer.class
 Entities/Car.class
 Service/CarConfigurationService.class
 RestPackage/DevicesREST.class
 Entities/Track.class
 Entities/User.class
+OtherClasses/Initializer.class
+OtherClasses/Logger.class
 Service/DevicesService.class
 HibernatePackage/EntityFactory.class
 RestPackage/AuthorizationREST.class

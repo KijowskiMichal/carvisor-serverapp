@@ -3,14 +3,17 @@ package Service;
 import Entities.Track;
 import Entities.User;
 import Entities.UserPrivileges;
-import RestPackage.Initializer;
+import HibernatePackage.HibernateRequests;
+import OtherClasses.Initializer;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,17 @@ import java.util.List;
 
 @Service
 public class UserService {
+
+    HibernateRequests hibernateRequests;
+    Logger logger;
+
+    @Autowired
+    public UserService(HibernateRequests hibernateRequests, OtherClasses.Logger logger)
+    {
+        this.hibernateRequests = hibernateRequests;
+        this.logger = logger.getLOG();
+    }
+
     /**
      * @param request  Object of HttpServletRequest represents our request;
      * @param page     Page of users list. Parameter associated with pageSize.
@@ -34,16 +48,16 @@ public class UserService {
     public ResponseEntity<String> list(HttpServletRequest request, int page, int pageSize, String regex) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
-            Initializer.getLogger().info("UserREST.list cannot list user's (session not found)");
+            logger.info("UserREST.list cannot list user's (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
-            Initializer.getLogger().info("UserREST.list cannot list user's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+            logger.info("UserREST.list cannot list user's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
         //listing
         List<Object> users = new ArrayList<>();
         int lastPageNumber;
-        Session session = HibernatePackage.EntityFactory.getFactory().openSession();
+        Session session = hibernateRequests.getSession();
         Transaction tx = null;
         try {
             if (regex.equals("$")) regex = "";
@@ -93,7 +107,7 @@ public class UserService {
         jsonOut.put("page", page);
         jsonOut.put("pageMax", lastPageNumber);
         jsonOut.put("listOfUsers", jsonArray);
-        Initializer.getLogger().info("UsersREST.list returns list of users (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+        logger.info("UsersREST.list returns list of users (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 
@@ -105,13 +119,13 @@ public class UserService {
     public ResponseEntity changePassword(HttpServletRequest request, HttpEntity<String> httpEntity) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
-            Initializer.getLogger().info("UserREST.changePassword cannot work (session not found)");
+            logger.info("UserREST.changePassword cannot work (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
         try {
             JSONObject inJSON = new JSONObject(httpEntity.getBody());
             if (inJSON.getString("password1").equals(inJSON.getString("password2"))) {
-                Session session = HibernatePackage.EntityFactory.getFactory().openSession();
+                Session session = hibernateRequests.getSession();
                 Transaction tx = null;
                 try {
                     tx = session.beginTransaction();
@@ -142,13 +156,13 @@ public class UserService {
     public ResponseEntity changeNick(HttpServletRequest request, HttpEntity<String> httpEntity) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
-            Initializer.getLogger().info("UserREST.changeNick cannot work (session not found)");
+            logger.info("UserREST.changeNick cannot work (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
         try {
             JSONObject inJSON = new JSONObject(httpEntity.getBody());
             if (nicknameValidator(inJSON.getString("nick"))) {
-                Session session = HibernatePackage.EntityFactory.getFactory().openSession();
+                Session session = hibernateRequests.getSession();
                 Transaction tx = null;
                 try {
                     tx = session.beginTransaction();
