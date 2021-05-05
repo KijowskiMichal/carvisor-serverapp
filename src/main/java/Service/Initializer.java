@@ -10,7 +10,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
  * Initializer of SpringMVC
  */
 @Configuration
-@ComponentScan("RestPackage")
+@ComponentScan("Service")
 public class Initializer extends AbstractAnnotationConfigDispatcherServletInitializer
 {
     private static final Logger LOG = LogManager.getLogger();

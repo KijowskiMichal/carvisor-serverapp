@@ -136,4 +136,51 @@ public class UserService {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
         }
     }
+
+    /**
+     * @param request  Object of HttpServletRequest represents our request;
+     * @param httpEntity Object of HttpEntity represents content of our request;
+     * @return HttpStatus.UNAUTHORIZED if session not found, HttpStatus.OK if all is ok, BAD_REQUEST if json haven't required data or password don't match
+     */
+    public ResponseEntity changeNick(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            Initializer.getLogger().info("UserREST.changeNick cannot work (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+        try {
+            JSONObject inJSON = new JSONObject(httpEntity.getBody());
+            if (nicknameValidator(inJSON.getString("nick"))) {
+                Session session = HibernatePackage.EntityFactory.getFactory().openSession();
+                Transaction tx = null;
+                try {
+                    tx = session.beginTransaction();
+                    User user = (User) request.getSession().getAttribute("user");
+                    user.setNick(inJSON.getString("nick"));
+                    request.getSession().setAttribute("user", user);
+                    session.update(user);
+                    tx.commit();
+                    session.close();
+                    return ResponseEntity.status(HttpStatus.OK).body("");
+                } catch (HibernateException e) {
+                    if (tx != null) tx.rollback();
+                    session.close();
+                    e.printStackTrace();
+                    return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("");
+                }
+            } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong nickname");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        }
+    }
+
+    //===
+    //Private methods
+
+    //Check is nickname is correct
+    private boolean nicknameValidator(String nick) {
+        if ((nick.length() > 39) || (nick.length() < 10))
+            return false;
+        return true;
+    }
 }
