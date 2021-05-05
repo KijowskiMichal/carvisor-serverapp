@@ -1,14 +1,13 @@
 package RestPackage;
 
 import Service.UserService;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -58,5 +57,20 @@ public class UsersREST {
     @RequestMapping(value = "/changeNick", method = RequestMethod.POST)
     public ResponseEntity changeNick(HttpServletRequest request, HttpEntity<String> httpEntity) {
         return userService.changeNick(request, httpEntity);
+    }
+
+    @RequestMapping(value = "/getUserData/{id}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity getUserData(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("image", "https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png");
+        jsonObject.put("name", "Jan Kowalski");
+        jsonObject.put("telephone", 999888777);
+        jsonObject.put("userPrivileges", 1);
+        return ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
+    }
+
+    @RequestMapping(value = "/changeUserData", method = RequestMethod.POST)
+    public ResponseEntity changeUserData(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        return ResponseEntity.status(HttpStatus.OK).body("");
     }
 }

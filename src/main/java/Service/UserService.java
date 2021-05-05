@@ -124,13 +124,13 @@ public class UserService {
         }
         try {
             JSONObject inJSON = new JSONObject(httpEntity.getBody());
-            if (inJSON.getString("password1").equals(inJSON.getString("password2"))) {
+            if (inJSON.getString("firstPassword").equals(inJSON.getString("secondPassword"))) {
                 Session session = hibernateRequests.getSession();
                 Transaction tx = null;
                 try {
                     tx = session.beginTransaction();
                     User user = (User) request.getSession().getAttribute("user");
-                    user.setPassword(DigestUtils.sha256Hex(inJSON.getString("password1")));
+                    user.setPassword(DigestUtils.sha256Hex(inJSON.getString("firstPassword")));
                     request.getSession().setAttribute("user", user);
                     session.update(user);
                     tx.commit();
