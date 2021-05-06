@@ -58,7 +58,7 @@ public class DevicesREST {
         return ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
     }
 
-    @RequestMapping(value = "/changeDeviceData", method = RequestMethod.POST)
+    @RequestMapping(value = "/changeDeviceData/{id}/", method = RequestMethod.POST)
     public ResponseEntity changeDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity) {
         return ResponseEntity.status(HttpStatus.OK).body("");
     }

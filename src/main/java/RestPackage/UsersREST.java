@@ -69,7 +69,7 @@ public class UsersREST {
         return ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
     }
 
-    @RequestMapping(value = "/changeUserData", method = RequestMethod.POST)
+    @RequestMapping(value = "/changeUserData/{id}/", method = RequestMethod.POST)
     public ResponseEntity changeUserData(HttpServletRequest request, HttpEntity<String> httpEntity) {
         return ResponseEntity.status(HttpStatus.OK).body("");
     }
