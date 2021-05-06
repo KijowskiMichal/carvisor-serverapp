@@ -28,7 +28,6 @@ public class CarConfigurationService {
         this.logger = logger.getLOG();
     }
 
-    @RequestMapping(value = "/get", method = RequestMethod.POST)
     public ResponseEntity get(HttpServletRequest request, HttpEntity<String> httpEntity)
     {
         if (request.getSession().getAttribute("car")==null)
