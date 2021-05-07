@@ -23,6 +23,7 @@ public class CarConfigurationREST
         this.carConfigurationService = carConfigurationService;
     }
 
+    //test method
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity get(HttpServletRequest request, HttpEntity<String> httpEntity)
     {
@@ -32,30 +33,19 @@ public class CarConfigurationREST
     @RequestMapping(value = "/getConfiguration/{id}/", method = RequestMethod.GET)
     public ResponseEntity getConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity)
     {
-        JSONObject jsonOut = new JSONObject();
-        //temporary - start
-        jsonOut.put("sendInterval", 15);
-        jsonOut.put("locationInterval", 15);
-        //temporary - end
-        return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
+        return carConfigurationService.getConfiguration(request, httpEntity);
     }
 
     @RequestMapping(value = "/changeConfiguration/{id}/", method = RequestMethod.POST)
     public ResponseEntity changeConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity)
     {
-        return ResponseEntity.status(HttpStatus.OK).body("");
+        return carConfigurationService.changeConfiguration(request,httpEntity);
     }
 
     @RequestMapping(value = "/getGlobalConfiguration/", method = RequestMethod.GET)
     public ResponseEntity getGlobalConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity)
     {
-        JSONObject jsonOut = new JSONObject();
-        //temporary - start
-        jsonOut.put("sendInterval", 15);
-        jsonOut.put("locationInterval", 15);
-        jsonOut.put("historyTimeout", 90);
-        //temporary - end
-        return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
+        return carConfigurationService.getGlobalConfiguration(request, httpEntity);
     }
 
     @RequestMapping(value = "/changeGlobalConfiguration/", method = RequestMethod.POST)

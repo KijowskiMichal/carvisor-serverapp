@@ -1,5 +1,7 @@
 package Service;
 
+import Entities.Car;
+import Entities.CarConfiguration;
 import HibernatePackage.EntityFactory;
 import HibernatePackage.HibernateRequests;
 import org.apache.logging.log4j.Logger;
@@ -28,21 +30,39 @@ public class CarConfigurationService {
         this.logger = logger.getLOG();
     }
 
+    //test method
     public ResponseEntity get(HttpServletRequest request, HttpEntity<String> httpEntity)
     {
-        if (request.getSession().getAttribute("car")==null)
-        {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-        }
-        else
-        {
-            JSONObject jsonOut = new JSONObject();
-            //temporary - start
-            Random generator = new Random();
-            jsonOut.put("sendInterval", generator.nextInt(90)+1);
-            jsonOut.put("locationInterval", generator.nextInt(31));
-            //temporary - end
-            return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
-        }
+        JSONObject jsonObject = new JSONObject(new CarConfiguration(120,40));
+        return ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
+    }
+
+    public ResponseEntity getConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity)
+    {
+        JSONObject jsonOut = new JSONObject();
+        //temporary - start
+        jsonOut.put("sendInterval", 15);
+        jsonOut.put("locationInterval", 15);
+        //temporary - end
+        return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
+    }
+
+    public ResponseEntity changeConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        JSONObject jsonOut = new JSONObject();
+        //temporary - start
+        jsonOut.put("sendInterval", 15);
+        jsonOut.put("locationInterval", 15);
+        //temporary - end
+        return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
+    }
+
+    public ResponseEntity getGlobalConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        JSONObject jsonOut = new JSONObject();
+        //temporary - start
+        jsonOut.put("sendInterval", 15);
+        jsonOut.put("locationInterval", 15);
+        jsonOut.put("historyTimeout", 90);
+        //temporary - end
+        return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 }
