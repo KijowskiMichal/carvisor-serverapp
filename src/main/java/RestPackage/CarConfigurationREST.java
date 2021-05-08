@@ -24,11 +24,17 @@ public class CarConfigurationREST
     public CarConfigurationREST(CarConfigurationService carConfigurationService) {
         this.carConfigurationService = carConfigurationService;
     }
-    //test method
+    //test methods
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity get(HttpServletRequest request, HttpEntity<String> httpEntity)
     {
         return carConfigurationService.get(request, httpEntity);
+    }
+
+    @RequestMapping(value = "/post", method = RequestMethod.POST)
+    public ResponseEntity post(HttpServletRequest request, HttpEntity<String> httpEntity)
+    {
+        return carConfigurationService.post(request, httpEntity);
     }
 
     @RequestMapping(value = "/getConfiguration/{id}/", method = RequestMethod.GET)

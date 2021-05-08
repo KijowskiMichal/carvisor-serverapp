@@ -26,6 +26,12 @@ public class CarConfiguration {
         this.getLocationInterval = getLocationInterval;
     }
 
+    public CarConfiguration(int id, int sendInterval, int getLocationInterval) {
+        this.id = id;
+        this.sendInterval = sendInterval;
+        this.getLocationInterval = getLocationInterval;
+    }
+
     public int getId() {
         return id;
     }

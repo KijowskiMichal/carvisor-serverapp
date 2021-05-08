@@ -2,6 +2,8 @@ package Service;
 
 import Entities.Car;
 import Entities.CarConfiguration;
+import Entities.Track;
+import Entities.User;
 import HibernatePackage.EntityFactory;
 import HibernatePackage.HibernateRequests;
 import org.apache.logging.log4j.Logger;
@@ -9,6 +11,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Random;
 
 @Service
@@ -45,12 +49,58 @@ public class CarConfigurationService {
         return ResponseEntity.status(HttpStatus.OK).body(jsonObject);
     }
 
+    public ResponseEntity post(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("CarConfigurationService.changeConfiguration cannot change configuration (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
+        Session session = null;
+        Transaction tx = null;
+        ResponseEntity responseEntity;
+
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+            String getQuery = "SELECT c FROM CarConfiguration c";
+            Query query = session.createQuery(getQuery);
+            List<Object> carConfigurations = query.list();
+            tx.commit();
+
+            JSONObject jsonOut = new JSONObject();
+            JSONArray jsonArray = new JSONArray();
+            for (Object cc : carConfigurations) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id", ((CarConfiguration) cc).getId());
+                jsonObject.put("GetLocationInterval", ((CarConfiguration) cc).getGetLocationInterval());
+                jsonObject.put("SendInterval", ((CarConfiguration) cc).getSendInterval());
+
+                jsonArray.put(jsonObject);
+            }
+
+            jsonOut.put("ListOfConfigs",jsonArray);
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(jsonOut.toString());
+        }
+        catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        }
+        finally {
+            if (session != null) session.close();
+        }
+
+
+        return responseEntity;
+    }
+
 
     public ResponseEntity getConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity, int configID)
     {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
-            logger.info("DevicesREST.list cannot list device's (session not found)");
+            logger.info("CarConfigurationService.changeConfiguration cannot change configuration (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
 
@@ -140,4 +190,6 @@ public class CarConfigurationService {
         //temporary - end
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut);
     }
+
+
 }
