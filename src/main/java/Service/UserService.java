@@ -118,7 +118,8 @@ public class UserService {
      */
     public ResponseEntity changePassword(HttpServletRequest request, HttpEntity<String> httpEntity) {
         // authorization
-        if (request.getSession().getAttribute("user") == null) {
+        if (request.getSession().getAttribute("user") == null)
+        {
             logger.info("UserREST.changePassword cannot work (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }

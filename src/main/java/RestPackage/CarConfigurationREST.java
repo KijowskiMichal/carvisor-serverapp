@@ -3,9 +3,11 @@ package RestPackage;
 import Service.CarConfigurationService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +24,6 @@ public class CarConfigurationREST
     public CarConfigurationREST(CarConfigurationService carConfigurationService) {
         this.carConfigurationService = carConfigurationService;
     }
-
     //test method
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     public ResponseEntity get(HttpServletRequest request, HttpEntity<String> httpEntity)
@@ -31,15 +32,17 @@ public class CarConfigurationREST
     }
 
     @RequestMapping(value = "/getConfiguration/{id}/", method = RequestMethod.GET)
-    public ResponseEntity getConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity)
+    public ResponseEntity getConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity,
+                                           @PathVariable("id") int id)
     {
-        return carConfigurationService.getConfiguration(request, httpEntity);
+        return carConfigurationService.getConfiguration(request, httpEntity, id);
     }
 
     @RequestMapping(value = "/changeConfiguration/{id}/", method = RequestMethod.POST)
-    public ResponseEntity changeConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity)
+    public ResponseEntity changeConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity,
+                                              @PathVariable("id") int id)
     {
-        return carConfigurationService.changeConfiguration(request,httpEntity);
+        return carConfigurationService.changeConfiguration(request, httpEntity, id);
     }
 
     @RequestMapping(value = "/getGlobalConfiguration/", method = RequestMethod.GET)

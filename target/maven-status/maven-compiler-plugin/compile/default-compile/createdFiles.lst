@@ -15,6 +15,7 @@ Service\UserService.class
 OtherClasses\Initializer.class
 RestPackage\CarAuthorizationREST.class
 RestPackage\AuthorizationREST.class
+Entities\CarConfiguration.class
 Entities\Track.class
 Service\AuthorizationService.class
 Service\DevicesService.class

@@ -13,5 +13,6 @@
         <mapping class="Entities.User" />
         <mapping class="Entities.Car" />
         <mapping class="Entities.Track" />
+        <mapping class="Entities.CarConfiguration"/>
     </session-factory>
 </hibernate-configuration>

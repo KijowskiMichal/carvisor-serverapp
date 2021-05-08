@@ -45,7 +45,7 @@ public class DevicesService {
      *
      * WebMethod which returns a list of users.
      */
-    public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("regex") String regex) {
+    public ResponseEntity<String> list(HttpServletRequest request, int page, int pageSize, String regex) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("DevicesREST.list cannot list device's (session not found)");
