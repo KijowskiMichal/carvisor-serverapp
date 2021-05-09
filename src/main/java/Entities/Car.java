@@ -48,6 +48,11 @@ public class Car {
      * Image of car
      */
     private String image;
+    /**
+     * Car Configuration
+     */
+    @OneToOne
+    private CarConfiguration carConfiguration;
 
     public Car() { super(); }
 
@@ -131,5 +136,13 @@ public class Car {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public CarConfiguration getCarConfiguration() {
+        return carConfiguration;
+    }
+
+    public void setCarConfiguration(CarConfiguration carConfiguration) {
+        this.carConfiguration = carConfiguration;
     }
 }

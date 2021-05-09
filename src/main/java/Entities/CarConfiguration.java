@@ -3,12 +3,20 @@ package Entities;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity
-public class CarConfiguration {
+public class CarConfiguration
+{
     /**
-     * Identification number
+     * Global SendInterval
      */
+    public static int globalSendInterval;
+    /**
+     * Global GetLocationInterval
+     */
+    public static int globalGetLocationInterval;
+
     @Id
     @GeneratedValue
     int id;
@@ -21,38 +29,60 @@ public class CarConfiguration {
      */
     int getLocationInterval;
 
-    public CarConfiguration(int sendInterval, int getLocationInterval) {
+    /**
+     * Car
+     */
+    @OneToOne
+    Car car;
+    public CarConfiguration()
+    {
+        sendInterval = globalSendInterval;
+        getLocationInterval = globalGetLocationInterval;
+    }
+
+    public CarConfiguration(int sendInterval, int getLocationInterval)
+    {
         this.sendInterval = sendInterval;
         this.getLocationInterval = getLocationInterval;
     }
 
-    public CarConfiguration(int id, int sendInterval, int getLocationInterval) {
-        this.id = id;
-        this.sendInterval = sendInterval;
-        this.getLocationInterval = getLocationInterval;
+    public static int getGlobalSendInterval()
+    {
+        return globalSendInterval;
     }
 
-    public int getId() {
-        return id;
+    public static void setGlobalSendInterval(int globalSendInterval)
+    {
+        CarConfiguration.globalSendInterval = globalSendInterval;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public static int getGlobalGetLocationInterval()
+    {
+        return globalGetLocationInterval;
     }
 
-    public int getSendInterval() {
+    public static void setGlobalGetLocationInterval(int globalGetLocationInterval)
+    {
+        CarConfiguration.globalGetLocationInterval = globalGetLocationInterval;
+    }
+
+    public int getSendInterval()
+    {
         return sendInterval;
     }
 
-    public void setSendInterval(int sendInterval) {
+    public void setSendInterval(int sendInterval)
+    {
         this.sendInterval = sendInterval;
     }
 
-    public int getGetLocationInterval() {
+    public int getGetLocationInterval()
+    {
         return getLocationInterval;
     }
 
-    public void setGetLocationInterval(int getLocationInterval) {
+    public void setGetLocationInterval(int getLocationInterval)
+    {
         this.getLocationInterval = getLocationInterval;
     }
 }

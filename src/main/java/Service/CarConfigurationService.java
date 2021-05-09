@@ -2,36 +2,31 @@ package Service;
 
 import Entities.Car;
 import Entities.CarConfiguration;
-import Entities.Track;
-import Entities.User;
-import HibernatePackage.EntityFactory;
 import HibernatePackage.HibernateRequests;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Random;
 
 @Service
-public class CarConfigurationService {
+public class CarConfigurationService
+{
 
     HibernateRequests hibernateRequests;
     Logger logger;
 
-    public CarConfigurationService() {
+    public CarConfigurationService()
+    {
 
     }
 
@@ -42,14 +37,17 @@ public class CarConfigurationService {
         this.logger = logger.getLOG();
     }
 
-    //test method
-    public ResponseEntity get(HttpServletRequest request, HttpEntity<String> httpEntity)
+    /**
+     * @param request Object of HttpServletRequest represents our request;
+     * @param httpEntity Object of httpEntity;
+     * @param carId id of car whose configuration we want to get;
+     * @return Returns 200 when everything is ok . 401 when session not found
+     * <p>
+     * WebMethods which get configuration of car with id
+     * {sendInterval: <sendInterval>, getLocationInterval: <getLocationInterval>}
+     */
+    public ResponseEntity getConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity, int carId)
     {
-        JSONObject jsonObject = new JSONObject(new CarConfiguration(120,40));
-        return ResponseEntity.status(HttpStatus.OK).body(jsonObject);
-    }
-
-    public ResponseEntity post(HttpServletRequest request, HttpEntity<String> httpEntity) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("CarConfigurationService.changeConfiguration cannot change configuration (session not found)");
@@ -63,74 +61,35 @@ public class CarConfigurationService {
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            String getQuery = "SELECT c FROM CarConfiguration c";
+            String getQuery = "SELECT c FROM Car c WHERE c.id = " + carId;
             Query query = session.createQuery(getQuery);
-            List<Object> carConfigurations = query.list();
+            Car car = (Car) query.getSingleResult();
+            CarConfiguration carConfiguration = car.getCarConfiguration();
             tx.commit();
 
             JSONObject jsonOut = new JSONObject();
-            JSONArray jsonArray = new JSONArray();
-            for (Object cc : carConfigurations) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("id", ((CarConfiguration) cc).getId());
-                jsonObject.put("GetLocationInterval", ((CarConfiguration) cc).getGetLocationInterval());
-                jsonObject.put("SendInterval", ((CarConfiguration) cc).getSendInterval());
-
-                jsonArray.put(jsonObject);
-            }
-
-            jsonOut.put("ListOfConfigs",jsonArray);
+            jsonOut.put("sendInterval", carConfiguration.getSendInterval());
+            jsonOut.put("getLocationInterval", carConfiguration.getGetLocationInterval());
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(jsonOut.toString());
-        }
-        catch (HibernateException e) {
+        } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-        }
-        finally {
+        } finally {
             if (session != null) session.close();
         }
-
-
         return responseEntity;
     }
 
-
-    public ResponseEntity getConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity, int configID)
+    /**
+     * @param request Object of HttpServletRequest represents our request;
+     * @return Returns 200 when everything is ok. 401 when session not found
+     * <p>
+     * WebMethods which change configuration by car ID
+     * If body is empty set config to default values
+     */
+    public ResponseEntity changeConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity, int configID)
     {
-        // authorization
-        if (request.getSession().getAttribute("user") == null) {
-            logger.info("CarConfigurationService.changeConfiguration cannot change configuration (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-        }
-
-        Session session = null;
-        Transaction tx = null;
-        ResponseEntity responseEntity;
-
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            String getQuery = "SELECT c FROM CarConfiguration c WHERE c.id like '%" + configID + "'%";
-            Query query = session.createQuery(getQuery);
-            CarConfiguration carConfiguration = (CarConfiguration) query.getSingleResult();
-            JSONObject jsonOut = new JSONObject(carConfiguration);
-            tx.commit();
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonOut);
-        }
-        catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-        }
-        finally {
-            if (session != null) session.close();
-        }
-
-        return responseEntity;
-    }
-
-    public ResponseEntity changeConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity, int configID) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("CarConfigurationService.changeConfiguration cannot change configuration (session not found)");
@@ -143,53 +102,82 @@ public class CarConfigurationService {
 
         try {
             JSONObject inJSON = new JSONObject(httpEntity.getBody());
-            int getLocationInterval = Integer.parseInt(inJSON.getString("GetLocationInterval"));
-            int sendInterval = Integer.parseInt(inJSON.getString("SendInterval"));
+            int getLocationInterval;
+            int sendInterval;
+            try {
+                getLocationInterval = Integer.parseInt(inJSON.getString("GetLocationInterval"));
+                sendInterval = Integer.parseInt(inJSON.getString("SendInterval"));
+            } catch (JSONException jsonException) {
+                getLocationInterval = CarConfiguration.getGlobalGetLocationInterval();
+                sendInterval = CarConfiguration.getGlobalSendInterval();
+            }
 
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
-            String getQuery = "SELECT c FROM CarConfiguration c WHERE c.id like '%" + configID + "'%";
+            String getQuery = "SELECT c FROM Car c WHERE c.id like " + configID;
             Query query = session.createQuery(getQuery);
-            CarConfiguration carConfiguration = (CarConfiguration) query.getSingleResult();
-
-            String update = "UPDATE CarConfiguration SET GetLocationInterval = '%" + getLocationInterval + "'% SendInterval = '%"
-                    + sendInterval + "'% WHERE CarConfiguration.id like '%" + configID + "'%";
-
-            carConfiguration.setGetLocationInterval(getLocationInterval);
-            carConfiguration.setSendInterval(sendInterval);
-
-            session.update(carConfiguration);
-            JSONObject jsonOut = new JSONObject(carConfiguration);
+            Car car = (Car) query.getSingleResult();
+            car.setCarConfiguration(new CarConfiguration(getLocationInterval, sendInterval));
+            session.update(car);
             tx.commit();
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonOut);
-        }
-        catch (HibernateException e) {
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+        } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-        }
-        finally {
+        } finally {
             if (session != null) session.close();
         }
 
         return responseEntity;
     }
 
-    public ResponseEntity getGlobalConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity) {
+    /**
+     * @param request Object of HttpServletRequest represents our request;
+     * @return Returns 200 when everything is ok. 401 when session not found
+     * <p>
+     * WebMethods which return global configuration settings
+     */
+    public ResponseEntity getGlobalConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity)
+    {
         if (request.getSession().getAttribute("user") == null) {
-            logger.info("DevicesREST.list cannot list device's (session not found)");
+            logger.info("CarConfigurationService.getGlobalConfiguration cannot get global configuration (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
 
-        JSONObject jsonOut = new JSONObject();
-        //temporary - start
-        jsonOut.put("sendInterval", 15);
-        jsonOut.put("locationInterval", 15);
-        jsonOut.put("historyTimeout", 90);
-        //temporary - end
-        return ResponseEntity.status(HttpStatus.OK).body(jsonOut);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("sendInterval", CarConfiguration.getGlobalSendInterval());
+        jsonObject.put("getLocationInterval", CarConfiguration.getGlobalGetLocationInterval());
+        return ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
     }
 
+    /**
+     * @param request Object of HttpServletRequest represents our request;
+     * @return Returns 200 when everything is ok. 401 when session not found, 400 when wrong body;
+     * <p>
+     * WebMethods which set global configuration
+     */
+    public ResponseEntity setGlobalConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity)
+    {
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("CarConfigurationService.setGlobalConfiguration cannot set global configuration (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
+        JSONObject inJSON = new JSONObject(httpEntity.getBody());
+        int getLocationInterval;
+        int sendInterval;
+        try {
+            getLocationInterval = Integer.parseInt(inJSON.getString("getLocationInterval"));
+            sendInterval = Integer.parseInt(inJSON.getString("sendInterval"));
+        } catch (JSONException jsonException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        }
+
+        CarConfiguration.setGlobalGetLocationInterval(getLocationInterval);
+        CarConfiguration.setGlobalSendInterval(sendInterval);
+        return ResponseEntity.status(HttpStatus.OK).body("");
+    }
 
 }
