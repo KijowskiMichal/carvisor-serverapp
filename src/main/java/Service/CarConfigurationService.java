@@ -74,6 +74,8 @@ public class CarConfigurationService
             if (tx != null) tx.rollback();
             e.printStackTrace();
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        } catch (NullPointerException nullPointerException){
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Car doesn't have configuration");
         } finally {
             if (session != null) session.close();
         }
