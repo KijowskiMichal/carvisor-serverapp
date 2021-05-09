@@ -68,7 +68,7 @@ public class CarConfigurationService
             JSONObject jsonOut = new JSONObject();
             jsonOut.put("sendInterval", carConfiguration.getSendInterval());
             jsonOut.put("getLocationInterval", carConfiguration.getGetLocationInterval());
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(jsonOut.toString());
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
