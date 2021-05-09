@@ -14,6 +14,7 @@ import org.hibernate.query.Query;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -103,5 +104,43 @@ public class DevicesService {
         jsonOut.put("listOfDevices", jsonArray);
         logger.info("DevicesREST.list returns list of devices (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
+    }
+
+    public ResponseEntity getDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, int id) {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("UserREST.getUserData cannot send data (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
+        Session session = null;
+        Transaction tx = null;
+        ResponseEntity responseEntity;
+
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+
+            String getQuery = "SELECT u FROM User u WHERE u.id like " + id;
+            Query query = session.createQuery(getQuery);
+            Car car = (Car) query.getSingleResult();
+            tx.commit();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("image", car.getImage());
+            jsonObject.put("licensePlate", car.getLicensePlate());
+            jsonObject.put("brand", car.getBrand());
+            jsonObject.put("model", car.getModel());
+            jsonObject.put("timeFrom", car.getTrack().getStartTime());
+            jsonObject.put("timeTo", car.getTrack().getFinishTime());
+            jsonObject.put("yearOfProduction", car.getProductionDate());
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        } finally {
+            if (session != null) session.close();
+        }
+        return responseEntity;
     }
 }
