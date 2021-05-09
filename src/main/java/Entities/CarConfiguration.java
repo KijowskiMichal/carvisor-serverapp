@@ -28,12 +28,12 @@ public class CarConfiguration
      * Location interval
      */
     int getLocationInterval;
-
     /**
      * Car
      */
     @OneToOne
     Car car;
+
     public CarConfiguration()
     {
         sendInterval = globalSendInterval;

@@ -65,12 +65,11 @@ public class CarConfigurationService
             Query query = session.createQuery(getQuery);
             Car car = (Car) query.getSingleResult();
             CarConfiguration carConfiguration = car.getCarConfiguration();
-            tx.commit();
-
             JSONObject jsonOut = new JSONObject();
             jsonOut.put("sendInterval", carConfiguration.getSendInterval());
             jsonOut.put("getLocationInterval", carConfiguration.getGetLocationInterval());
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(jsonOut.toString());
+            tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
