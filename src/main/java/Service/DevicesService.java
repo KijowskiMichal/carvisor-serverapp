@@ -130,8 +130,15 @@ public class DevicesService {
             jsonObject.put("licensePlate", car.getLicensePlate());
             jsonObject.put("brand", car.getBrand());
             jsonObject.put("model", car.getModel());
-            jsonObject.put("timeFrom", car.getTrack().getStartTime());
-            jsonObject.put("timeTo", car.getTrack().getFinishTime());
+
+            try {
+                jsonObject.put("timeFrom", car.getTrack().getStartTime());
+                jsonObject.put("timeTo", car.getTrack().getFinishTime());
+            }
+            catch (NullPointerException nullPointerException) {
+                jsonObject.put("timeFrom", "7:00");
+                jsonObject.put("timeTo", "17:00");
+            }
             jsonObject.put("yearOfProduction", car.getProductionDate());
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
         } catch (HibernateException e) {
