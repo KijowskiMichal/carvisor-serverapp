@@ -59,18 +59,13 @@ public class UsersREST {
         return userService.changeNick(request, httpEntity);
     }
 
-    @RequestMapping(value = "/getUserData/{id}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public ResponseEntity getUserData(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("image", "https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png");
-        jsonObject.put("name", "Jan Kowalski");
-        jsonObject.put("telephone", 999888777);
-        jsonObject.put("userPrivileges", 1);
-        return ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
-    }
-
     @RequestMapping(value = "/changeUserData/{id}/", method = RequestMethod.POST)
     public ResponseEntity changeUserData(HttpServletRequest request, HttpEntity<String> httpEntity) {
         return ResponseEntity.status(HttpStatus.OK).body("");
+    }
+
+    @RequestMapping(value = "/getUserData/{id}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity getUserData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID) {
+        return userService.getUserData(request, httpEntity, userID);
     }
 }

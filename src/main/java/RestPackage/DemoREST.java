@@ -44,25 +44,25 @@ public class DemoREST
     @RequestMapping(value = "/addAll", method = RequestMethod.GET)
     public ResponseEntity addAll()
     {
-        User user1 = new User("admin", "Jan", "Kowalski", DigestUtils.sha256Hex("absx"), UserPrivileges.ADMINISTRATOR, "https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png");
+        User user1 = new User("admin", "Jan", "Kowalski", DigestUtils.sha256Hex("absx"), UserPrivileges.ADMINISTRATOR, "https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png", 12443134);
         hibernateRequests.addUser(user1);
-        User user2 = new User("zenek", "Zenon", "Kolodziej", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://upload.wikimedia.org/wikipedia/en/thumb/7/72/Avatar_icon_green.svg/1024px-Avatar_icon_green.svg.png");
+        User user2 = new User("zenek", "Zenon", "Kolodziej", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://upload.wikimedia.org/wikipedia/en/thumb/7/72/Avatar_icon_green.svg/1024px-Avatar_icon_green.svg.png", 12378456);
         hibernateRequests.addUser(user2);
-        User user3 = new User("user3", "Maciej", "Jakubowski", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn.pixabay.com/photo/2020/06/30/10/23/icon-5355896_960_720.png");
+        User user3 = new User("user3", "Maciej", "Jakubowski", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn.pixabay.com/photo/2020/06/30/10/23/icon-5355896_960_720.png", 12354316);
         hibernateRequests.addUser(user3);
-        User user4 = new User("user4", "Janina", "Zakrzewska", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn.pixabay.com/photo/2016/04/15/18/05/computer-1331579_960_720.png");
+        User user4 = new User("user4", "Janina", "Zakrzewska", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn.pixabay.com/photo/2016/04/15/18/05/computer-1331579_960_720.png",23455342);
         hibernateRequests.addUser(user4);
-        User user5 = new User("user5", "Piotr", "Blaszczyk", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn4.iconfinder.com/data/icons/avatars-xmas-giveaway/128/batman_hero_avatar_comics-512.png");
+        User user5 = new User("user5", "Piotr", "Blaszczyk", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn4.iconfinder.com/data/icons/avatars-xmas-giveaway/128/batman_hero_avatar_comics-512.png", 132213);
         hibernateRequests.addUser(user5);
-        User user6 = new User("user6", "Marian", "Ostrowski", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn2.iconfinder.com/data/icons/scenarium-vol-4/128/016_avatar_woman_female_user_account_profile_girl-512.png");
+        User user6 = new User("user6", "Marian", "Ostrowski", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn2.iconfinder.com/data/icons/scenarium-vol-4/128/016_avatar_woman_female_user_account_profile_girl-512.png", 12341);
         hibernateRequests.addUser(user6);
-        User user7 = new User("user7", "Kamil", "Cieaslak", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn2.iconfinder.com/data/icons/scenarium-vol-4/128/040_cat_kitty_pussy_pussycat_sleep_animal_meow-512.png");
+        User user7 = new User("user7", "Kamil", "Cieaslak", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn2.iconfinder.com/data/icons/scenarium-vol-4/128/040_cat_kitty_pussy_pussycat_sleep_animal_meow-512.png",123451);
         hibernateRequests.addUser(user7);
-        User user8 = new User("user8", "Aleksander", "Zielizxski", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn3.iconfinder.com/data/icons/animal-emoji/50/Octopus-512.png");
+        User user8 = new User("user8", "Aleksander", "Zielizxski", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn3.iconfinder.com/data/icons/animal-emoji/50/Octopus-512.png", 21344312);
         hibernateRequests.addUser(user8);
-        User user9 = new User("user9", "Jakub", "Szymczak", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn2.iconfinder.com/data/icons/animals-nature-2/50/1F984-unicorn-256.png");
+        User user9 = new User("user9", "Jakub", "Szymczak", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn2.iconfinder.com/data/icons/animals-nature-2/50/1F984-unicorn-256.png",43656543);
         hibernateRequests.addUser(user9);
-        User user10 = new User("user10", "Agnieszka", "Wasilewska", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn4.iconfinder.com/data/icons/people-avatar-filled-outline/64/girl_ginger_curly__people_woman_teenager_avatar-256.png");
+        User user10 = new User("user10", "Agnieszka", "Wasilewska", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://cdn4.iconfinder.com/data/icons/people-avatar-filled-outline/64/girl_ginger_curly__people_woman_teenager_avatar-256.png",34255342);
         hibernateRequests.addUser(user10);
 
         Car car1 = new Car("DWL5636", "Ford", "Focus", LocalDate.of(1990,12,4), LocalDate.of(2000,1,18), "https://cdn3.iconfinder.com/data/icons/airport-scenes/64/transfer_confirmation-256.png", DigestUtils.sha256Hex("safdsdsf"));

@@ -43,19 +43,24 @@ public class User
      * Image of user
      */
     private String image;
+    /**
+     *  Phone number of user
+     */
+    int phoneNumber;
 
 
     public User(){
        super();
     }
 
-    public User(String nick, String name, String surname, String password, UserPrivileges userPrivileges, String image) {
+    public User(String nick, String name, String surname, String password, UserPrivileges userPrivileges, String image, int phoneNumber) {
         this.nick = nick;
         this.name = name;
         this.surname = surname;
         this.password = password;
         this.userPrivileges = userPrivileges;
         this.image = image;
+        this.phoneNumber = phoneNumber;
     }
 
     public int getId() {
@@ -120,5 +125,15 @@ public class User
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public int getPhoneNumber()
+    {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(int phoneNumber)
+    {
+        this.phoneNumber = phoneNumber;
     }
 }

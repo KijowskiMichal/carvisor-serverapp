@@ -186,6 +186,42 @@ public class UserService {
         }
     }
 
+    public ResponseEntity getUserData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID)
+    {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("UserREST.getUserData cannot send data (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
+        Session session = null;
+        Transaction tx = null;
+        ResponseEntity responseEntity;
+
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+
+            String getQuery = "SELECT u FROM User u WHERE u.id like " + userID;
+            Query query = session.createQuery(getQuery);
+            User user = (User) query.getSingleResult();
+            tx.commit();
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("image", user.getImage());
+            jsonObject.put("name", user.getName()+" "+user.getSurname());
+            jsonObject.put("telephone", user.getPhoneNumber());
+            jsonObject.put("userPrivileges", user.getUserPrivileges());
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        } finally {
+            if (session != null) session.close();
+        }
+
+        return responseEntity;
+    }
     //===
     //Private methods
 
