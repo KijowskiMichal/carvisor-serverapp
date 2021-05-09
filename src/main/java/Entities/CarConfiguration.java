@@ -11,11 +11,11 @@ public class CarConfiguration
     /**
      * Global SendInterval
      */
-    public static int globalSendInterval;
+    public static int globalSendInterval = 0;
     /**
      * Global GetLocationInterval
      */
-    public static int globalGetLocationInterval;
+    public static int globalGetLocationInterval = 0;
 
     @Id
     @GeneratedValue
