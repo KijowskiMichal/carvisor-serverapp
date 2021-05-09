@@ -109,7 +109,7 @@ public class DevicesService {
     public ResponseEntity getDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, int id) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
-            logger.info("UserREST.getUserData cannot send data (session not found)");
+            logger.info("DevicesRest.getDeviceData cannot send data (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
 
@@ -121,7 +121,7 @@ public class DevicesService {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
-            String getQuery = "SELECT u FROM User u WHERE u.id like " + id;
+            String getQuery = "SELECT c FROM Car c WHERE c.id like " + id;
             Query query = session.createQuery(getQuery);
             Car car = (Car) query.getSingleResult();
             tx.commit();

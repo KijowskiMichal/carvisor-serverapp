@@ -60,8 +60,8 @@ public class UsersREST {
     }
 
     @RequestMapping(value = "/changeUserData/{id}/", method = RequestMethod.POST)
-    public ResponseEntity changeUserData(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        return ResponseEntity.status(HttpStatus.OK).body("");
+    public ResponseEntity changeUserData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID) {
+        return userService.changeUserData(request,httpEntity,userID);
     }
 
     @RequestMapping(value = "/getUserData/{id}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)

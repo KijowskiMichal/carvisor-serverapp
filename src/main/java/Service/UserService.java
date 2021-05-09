@@ -12,6 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -212,6 +213,54 @@ public class UserService {
             jsonObject.put("telephone", user.getPhoneNumber());
             jsonObject.put("userPrivileges", user.getUserPrivileges());
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        } finally {
+            if (session != null) session.close();
+        }
+
+        return responseEntity;
+    }
+
+    public ResponseEntity changeUserData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID)
+    {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("UserREST.changeUserData cannot change user data (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
+        Session session = null;
+        Transaction tx = null;
+        ResponseEntity responseEntity;
+
+        try {
+            JSONObject inJSON = new JSONObject(httpEntity.getBody());
+            String name;
+            int telephone;
+            try {
+                name = inJSON.getString("name");
+                telephone = Integer.parseInt(inJSON.getString("telephone"));
+            } catch (JSONException jsonException) {
+                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+                return responseEntity;
+            }
+
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+
+            String getQuery = "SELECT u FROM User u WHERE u.id like " + userID;
+            Query query = session.createQuery(getQuery);
+            User user = (User) query.getSingleResult();
+            String[]names = name.split(" ");
+            user.setName(names[0]);
+            user.setSurname(names[1]);
+            user.setPhoneNumber(telephone);
+            session.update(user);
+            tx.commit();
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
