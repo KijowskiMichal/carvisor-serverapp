@@ -44,7 +44,7 @@ public class DemoREST
     @RequestMapping(value = "/addAll", method = RequestMethod.GET)
     public ResponseEntity addAll()
     {
-        User user1 = new User("admin", "Jan", "Kowalski", DigestUtils.sha256Hex("absx"), UserPrivileges.ADMINISTRATOR, "https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png", 12443134);
+        User user1 = new User("admin", "Jaźn", "Kowalski", DigestUtils.sha256Hex("absx"), UserPrivileges.ADMINISTRATOR, "https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png", 12443134);
         hibernateRequests.addUser(user1);
         User user2 = new User("zenek", "Zenon", "Kolodziej", DigestUtils.sha256Hex("xsba"),UserPrivileges.STANDARD_USER, "https://upload.wikimedia.org/wikipedia/en/thumb/7/72/Avatar_icon_green.svg/1024px-Avatar_icon_green.svg.png", 12378456);
         hibernateRequests.addUser(user2);
