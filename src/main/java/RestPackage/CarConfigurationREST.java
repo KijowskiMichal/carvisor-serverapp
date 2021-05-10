@@ -39,6 +39,13 @@ public class CarConfigurationREST
         return carConfigurationService.getConfiguration(request, httpEntity, carId);
     }
 
+
+    @RequestMapping(value = "/get/", method = RequestMethod.GET)
+    public ResponseEntity get(HttpServletRequest request, HttpEntity<String> httpEntity)
+    {
+        return carConfigurationService.get(request, httpEntity);
+    }
+
     /**
      * @param request Object of HttpServletRequest represents our request;
      * @param httpEntity Object of httpEntity;

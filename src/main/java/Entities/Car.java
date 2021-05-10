@@ -1,9 +1,6 @@
 package Entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 
@@ -31,6 +28,11 @@ public class Car {
      * Car model
      */
     String model;
+
+    String engine;
+    int tank;
+    String fuelType;
+    double fuelNorm;
     /**
      * Car production date
      */
@@ -47,12 +49,14 @@ public class Car {
     /**
      * Image of car
      */
+    @Lob
     private String image;
+
     /**
      * Car Configuration
      */
-    @OneToOne
-    private CarConfiguration carConfiguration;
+    Integer sendInterval;
+    Integer locationInterval;
 
     public Car() { super(); }
 
@@ -138,11 +142,51 @@ public class Car {
         this.password = password;
     }
 
-    public CarConfiguration getCarConfiguration() {
-        return carConfiguration;
+    public String getEngine() {
+        return engine;
     }
 
-    public void setCarConfiguration(CarConfiguration carConfiguration) {
-        this.carConfiguration = carConfiguration;
+    public void setEngine(String engine) {
+        this.engine = engine;
+    }
+
+    public int getTank() {
+        return tank;
+    }
+
+    public void setTank(int tank) {
+        this.tank = tank;
+    }
+
+    public String getFuelType() {
+        return fuelType;
+    }
+
+    public void setFuelType(String fuelType) {
+        this.fuelType = fuelType;
+    }
+
+    public double getFuelNorm() {
+        return fuelNorm;
+    }
+
+    public void setFuelNorm(double fuelNorm) {
+        this.fuelNorm = fuelNorm;
+    }
+
+    public Integer getSendInterval() {
+        return sendInterval;
+    }
+
+    public void setSendInterval(Integer sendInterval) {
+        this.sendInterval = sendInterval;
+    }
+
+    public Integer getLocationInterval() {
+        return locationInterval;
+    }
+
+    public void setLocationInterval(Integer locationInterval) {
+        this.locationInterval = locationInterval;
     }
 }

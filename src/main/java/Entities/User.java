@@ -1,9 +1,6 @@
 package Entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 public class User
@@ -42,6 +39,7 @@ public class User
     /**
      * Image of user
      */
+    @Lob
     private String image;
     /**
      *  Phone number of user

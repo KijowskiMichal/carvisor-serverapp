@@ -48,7 +48,12 @@ public class DevicesREST {
     }
 
     @RequestMapping(value = "/changeDeviceData/{id}/", method = RequestMethod.POST)
-    public ResponseEntity changeDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        return ResponseEntity.status(HttpStatus.OK).body("");
+    public ResponseEntity changeDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int id) {
+        return devicesService.changeDeviceData(request,httpEntity,id);
+    }
+
+    @RequestMapping(value = "/changeDeviceImage/{id}/", method = RequestMethod.POST)
+    public ResponseEntity changeDeviceImage(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int id) {
+        return devicesService.changeDeviceImage(request,httpEntity,id);
     }
 }

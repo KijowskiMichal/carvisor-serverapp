@@ -64,6 +64,11 @@ public class UsersREST {
         return userService.changeUserData(request,httpEntity,userID);
     }
 
+    @RequestMapping(value = "/changeUserImage/{id}/", method = RequestMethod.POST)
+    public ResponseEntity changeUserImage(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID) {
+        return userService.changeUserImage(request,httpEntity,userID);
+    }
+
     @RequestMapping(value = "/getUserData/{id}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity getUserData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID) {
         return userService.getUserData(request, httpEntity, userID);

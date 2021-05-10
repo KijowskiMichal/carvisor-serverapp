@@ -12,6 +12,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -130,14 +131,18 @@ public class DevicesService {
             jsonObject.put("licensePlate", car.getLicensePlate());
             jsonObject.put("brand", car.getBrand());
             jsonObject.put("model", car.getModel());
+            jsonObject.put("engine", car.getEngine());
+            jsonObject.put("fuel", car.getFuelType());
+            jsonObject.put("tank", car.getTank());
+            jsonObject.put("norm", car.getFuelNorm());
 
             try {
                 jsonObject.put("timeFrom", car.getTrack().getStartTime());
                 jsonObject.put("timeTo", car.getTrack().getFinishTime());
             }
             catch (NullPointerException nullPointerException) {
-                jsonObject.put("timeFrom", "7:00");
-                jsonObject.put("timeTo", "17:00");
+                jsonObject.put("timeFrom", "---");
+                jsonObject.put("timeTo", "---");
             }
             jsonObject.put("yearOfProduction", car.getProductionDate());
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
@@ -148,6 +153,111 @@ public class DevicesService {
         } finally {
             if (session != null) session.close();
         }
+        return responseEntity;
+    }
+
+
+
+    public ResponseEntity changeDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, int carID)
+    {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("DevicesRest.changeDeviceData cannot change device data (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
+        Session session = null;
+        Transaction tx = null;
+        ResponseEntity responseEntity;
+
+        try {
+            JSONObject inJSON = new JSONObject(httpEntity.getBody());
+            String licensePlate;
+            String brand;
+            String model;
+            String engine;
+            String fuelType;
+            int tank;
+            double norm;
+            try {
+                licensePlate = inJSON.getString("licensePlate");
+                brand = inJSON.getString("brand");
+                model = inJSON.getString("model");
+                engine = inJSON.getString("engine");
+                fuelType = inJSON.getString("fuel");
+                tank = Integer.parseInt(inJSON.getString("tank"));
+                norm = Double.parseDouble(inJSON.getString("norm"));
+            } catch (JSONException jsonException) {
+                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+                return responseEntity;
+            }
+
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+
+            String getQuery = "SELECT c FROM Car c WHERE c.id like " + carID;
+            Query query = session.createQuery(getQuery);
+            Car car = (Car) query.getSingleResult();
+            car.setLicensePlate(licensePlate);
+            car.setBrand(brand);
+            car.setModel(model);
+            car.setEngine(engine);
+            car.setFuelType(fuelType);
+            car.setTank(tank);
+            car.setFuelNorm(norm);
+            session.update(car);
+            tx.commit();
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        } finally {
+            if (session != null) session.close();
+        }
+
+        return responseEntity;
+    }
+    public ResponseEntity changeDeviceImage(HttpServletRequest request, HttpEntity<String> httpEntity, int carID)
+    {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("DevicesRest.changeDeviceImage cannot change device image (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
+        Session session = null;
+        Transaction tx = null;
+        ResponseEntity responseEntity;
+
+        try {
+            JSONObject inJSON = new JSONObject(httpEntity.getBody());
+            String image;
+            try {
+                image = inJSON.getString("image");
+            } catch (JSONException jsonException) {
+                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+                return responseEntity;
+            }
+
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+
+            String getQuery = "SELECT c FROM Car c WHERE c.id like " + carID;
+            Query query = session.createQuery(getQuery);
+            Car car = (Car) query.getSingleResult();
+            car.setImage(image);
+            session.update(car);
+            tx.commit();
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        } finally {
+            if (session != null) session.close();
+        }
+
         return responseEntity;
     }
 }

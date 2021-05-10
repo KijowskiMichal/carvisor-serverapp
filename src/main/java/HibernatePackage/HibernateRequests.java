@@ -1,9 +1,6 @@
 package HibernatePackage;
 
-import Entities.Car;
-import Entities.CarConfiguration;
-import Entities.Track;
-import Entities.User;
+import Entities.*;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -120,13 +117,7 @@ public class HibernateRequests
         }
     }
 
-    /**
-     * @param objectToLoad It's an object of class from package Entites to be loaded to the database.
-     * @return Return true when our request is successfully performed and false if an error occured.
-     *
-     * This method is responsible for process of adding object to our database.
-     */
-    public boolean addCarConfiguration(CarConfiguration objectToLoad)
+    public boolean addSetting(Settings objectToLoad)
     {
         Session session = getSession();
         Transaction tx = null;

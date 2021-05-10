@@ -5,14 +5,15 @@
         <property name = "hibernate.dialect">org.hibernate.dialect.MariaDBDialect</property>
         <property name = "hibernate.connection.driver_class">org.mariadb.jdbc.Driver</property>
         <!-- Assume test is the database name -->
-        <property name = "hibernate.connection.url">jdbc:mariadb://localhost/carvisor</property>
+        <property name = "hibernate.connection.url">jdbc:mariadb://localhost/carvisor?useUnicode=yes&amp;characterEncoding=UTF-8</property>
         <property name = "hibernate.connection.username">carvisoru</property>
         <property name = "hibernate.connection.password">EkEyW28W1jXquuC</property>
+        <property name="hibernate.connection.characterEncoding">utf8mb4</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <!-- List of XML mapping files -->
         <mapping class="Entities.User" />
         <mapping class="Entities.Car" />
         <mapping class="Entities.Track" />
-        <mapping class="Entities.CarConfiguration" />
+        <mapping class="Entities.Settings" />
     </session-factory>
 </hibernate-configuration>

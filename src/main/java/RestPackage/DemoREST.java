@@ -75,35 +75,6 @@ public class DemoREST
         Car car8 = new Car("EWE1751", "Volkswagen", "Passat", LocalDate.of(1993,4,18), LocalDate.of(1994,1,14), "https://cdn3.iconfinder.com/data/icons/transportation-road/112/33-transportation-road_vintage-car-8-256.png", DigestUtils.sha256Hex("dfsdfds"));
         Car car9 = new Car("NEB1632", "Hyundai", "I20", LocalDate.of(1993,4,18), LocalDate.of(1994,1,14), "https://cdn3.iconfinder.com/data/icons/man-daily-routine-people/221/routine-002-512.png", DigestUtils.sha256Hex("dfsdfds"));
 
-        CarConfiguration con1 = new CarConfiguration(200,100);
-        car1.setCarConfiguration(con1);
-        CarConfiguration con2 = new CarConfiguration(200,100);
-        car2.setCarConfiguration(con2);
-        CarConfiguration con3 = new CarConfiguration(200,100);
-        car3.setCarConfiguration(con3);
-        CarConfiguration con4 = new CarConfiguration(200,100);
-        car4.setCarConfiguration(con4);
-        CarConfiguration con5 = new CarConfiguration(200,100);
-        car5.setCarConfiguration(con5);
-        CarConfiguration con6 = new CarConfiguration(200,100);
-        car6.setCarConfiguration(con6);
-        CarConfiguration con7 = new CarConfiguration(200,100);
-        car7.setCarConfiguration(con7);
-        CarConfiguration con8 = new CarConfiguration(200,100);
-        car8.setCarConfiguration(con8);
-        CarConfiguration con9 = new CarConfiguration(200,100);
-        car9.setCarConfiguration(con9);
-
-        hibernateRequests.addCarConfiguration(con1);
-        hibernateRequests.addCarConfiguration(con2);
-        hibernateRequests.addCarConfiguration(con3);
-        hibernateRequests.addCarConfiguration(con4);
-        hibernateRequests.addCarConfiguration(con5);
-        hibernateRequests.addCarConfiguration(con6);
-        hibernateRequests.addCarConfiguration(con7);
-        hibernateRequests.addCarConfiguration(con8);
-        hibernateRequests.addCarConfiguration(con9);
-
         hibernateRequests.addCar(car1);
         hibernateRequests.addCar(car2);
         hibernateRequests.addCar(car3);
@@ -114,7 +85,13 @@ public class DemoREST
         hibernateRequests.addCar(car8);
         hibernateRequests.addCar(car9);
 
+        Settings set1 = new Settings("sendInterval",Integer.valueOf(15));
+        Settings set2 = new Settings("locationInterval", Integer.valueOf(15));
+        Settings set3 = new Settings("historyTimeout", Integer.valueOf(180));
 
+        hibernateRequests.addSetting(set1);
+        hibernateRequests.addSetting(set2);
+        hibernateRequests.addSetting(set3);
 
 
         Session session = hibernateRequests.getSession();

@@ -271,6 +271,49 @@ public class UserService {
 
         return responseEntity;
     }
+
+    public ResponseEntity changeUserImage(HttpServletRequest request, HttpEntity<String> httpEntity, int userID)
+    {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("UserREST.changeUserImage cannot change user image (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
+        Session session = null;
+        Transaction tx = null;
+        ResponseEntity responseEntity;
+
+        try {
+            JSONObject inJSON = new JSONObject(httpEntity.getBody());
+            String image;
+            try {
+                image = inJSON.getString("image");
+            } catch (JSONException jsonException) {
+                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+                return responseEntity;
+            }
+
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+
+            String getQuery = "SELECT u FROM User u WHERE u.id like " + userID;
+            Query query = session.createQuery(getQuery);
+            User user = (User) query.getSingleResult();
+            user.setImage(image);
+            session.update(user);
+            tx.commit();
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        } finally {
+            if (session != null) session.close();
+        }
+
+        return responseEntity;
+    }
     //===
     //Private methods
 
