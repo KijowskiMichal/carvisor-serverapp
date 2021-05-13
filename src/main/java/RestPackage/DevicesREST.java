@@ -28,15 +28,7 @@ public class DevicesREST {
         this.devicesService = devicesService;
     }
 
-    /**
-     * @param request  Object of HttpServletRequest represents our request;
-     * @param page     Page of users list. Parameter associated with pageSize.
-     * @param pageSize Number of record we want to get
-     * @param regex    Part of name or surname we want to display
-     * @return Returns the contents of the page that contains a list of devices in the JSON format.
-     *
-     * WebMethod which returns a list of users.
-     */
+
     @RequestMapping(value = "/list/{page}/{pagesize}/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("regex") String regex) {
         return devicesService.list(request,page,pageSize,regex);
@@ -55,5 +47,10 @@ public class DevicesREST {
     @RequestMapping(value = "/changeDeviceImage/{id}/", method = RequestMethod.POST)
     public ResponseEntity changeDeviceImage(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int id) {
         return devicesService.changeDeviceImage(request,httpEntity,id);
+    }
+
+    @RequestMapping(value = "/addDevice",method = RequestMethod.POST)
+    public ResponseEntity addDevice(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        return devicesService.addDevice(request,httpEntity);
     }
 }

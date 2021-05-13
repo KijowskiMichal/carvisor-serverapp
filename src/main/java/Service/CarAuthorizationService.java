@@ -30,11 +30,11 @@ public class CarAuthorizationService {
     }
 
     /**
-     * @param request Object of HttpServletRequest represents our request;
-     * @param httpEntity Object of HttpEntity represents content of our request;
-     * @return Returns 406 (NOT_ACCEPTABLE) when the car does not exist or the password is incorrect. Returns 200 (OK) on successful authentication.
-     *
-     * WebMethods which is responsible for authenticate cars. Client send JSON ({licensePlate: <licensePlate>, password: <password>}), this method check this credentials and starting a session if all is ok.
+     * WebMethods which check credentials and starting a session if all is ok.
+     * <p>
+     * @param request Object of HttpServletRequest represents our request.
+     * @param httpEntity Object of HttpEntity represents content of our request.
+     * @return HttpStatus 200.
      */
     public ResponseEntity authorize(HttpServletRequest request, HttpEntity<String> httpEntity)
     {
@@ -70,10 +70,10 @@ public class CarAuthorizationService {
     }
 
     /**
-     * @param request Object of HttpServletRequest represents our request;
-     * @return Returns JSON {"logged": true, "licensePlate": <licensePlate>} if car is correctly logged or {"logged": false} if not;
-     *
-     * WebMethods which returns login status;
+     * WebMethods which returns login status.
+     * <p>
+     * @param request Object of HttpServletRequest represents our request.
+     * @return HttpStatus 200, login status as JsonString.
      */
     public ResponseEntity<String> status(HttpServletRequest request)
     {
@@ -91,15 +91,16 @@ public class CarAuthorizationService {
     }
 
     /**
-     * @param request Object of HttpServletRequest represents our request;
-     * @return Returns 200 (OK) http status.
-     *git
      * WebMethods which is responsible for logout operation (session destroying).
+     * <p>
+     * @param request Object of HttpServletRequest represents our request.
+     * @return HttpStatus 200.
      */
     public ResponseEntity logout(HttpServletRequest request)
     {
-        if (request.getSession().getAttribute("car")!=null) logger.info("CarAuthorizationREST.logout logout car (license plate: "+((Car)request.getSession().getAttribute("car")).getLicensePlate()+")");
+        if (request.getSession().getAttribute("car")!=null)
+            logger.info("CarAuthorizationREST.logout logout car (license plate: "+((Car)request.getSession().getAttribute("car")).getLicensePlate()+")");
         request.getSession().invalidate();
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body("");
     }
 }

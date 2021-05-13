@@ -18,7 +18,7 @@ public class Settings {
     int id;
 
     String nameOfSetting;
-    Integer value;
+        Integer value;
 
     public Settings() {
         super();

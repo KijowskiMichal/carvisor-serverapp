@@ -12,7 +12,7 @@ public class Logger {
         LOG = LogManager.getLogger();
     }
 
-    public org.apache.logging.log4j.Logger getLOG() {
+    public org.apache.logging.log4j.Logger getLOG()  {
         return LOG;
     }
 }

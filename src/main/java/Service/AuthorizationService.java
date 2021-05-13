@@ -31,11 +31,14 @@ public class AuthorizationService {
     }
 
     /**
-     * @param request Object of HttpServletRequest represents our request;
-     * @param httpEntity Object of HttpEntity represents content of our request;
-     * @return Returns 406 (NOT_ACCEPTABLE) when the user does not exist or the password is incorrect. Returns 200 (OK) on successful authentication.
-     *
-     * WebMethods which is responsible for authenticate users. Client send JSON ({login: <login>, password: <password>}), this method check this credentials and starting a session if all is ok.
+     * WebMethods which is authorize user
+     * <p>
+     * @param request Object of HttpServletRequest represents our request.
+     * @param httpEntity Object of HttpEntity represents content of our request.
+     *                   Containing Json string
+     *                   {"login": <login>,
+     *                   "password": <password>}
+     * @return HttpStatus 200.
      */
     public ResponseEntity authorize(HttpServletRequest request, HttpEntity<String> httpEntity) {
         logger.info("AuthorizationREST.authorize starting work");
@@ -70,10 +73,10 @@ public class AuthorizationService {
     }
 
     /**
-     * @param request Object of HttpServletRequest represents our request;
-     * @return Returns JSON {"Logged": true, "Nickname": <login>} if user is correctly logged or {"Logged": false} if not;
-     *
      * WebMethods which returns login status;
+     * <p>
+     * @param request Object of HttpServletRequest represents our request;
+     * @return HttpStatus 200, JsonString {"Logged": <login status>, "Nickname": <login>} if user is correctly logged or {"Logged": false} if not;
      */
     public ResponseEntity<String> status(HttpServletRequest request)
     {
@@ -90,10 +93,10 @@ public class AuthorizationService {
     }
 
     /**
-     * @param request Object of HttpServletRequest represents our request;
-     * @return Returns 200 (OK) http status.
-     *
      * WebMethods which is responsible for logout operation (session destroying).
+     * <p>
+     * @param request Object of HttpServletRequest represents our request.
+     * @return HttpStatus 200.
      */
     public ResponseEntity logout(HttpServletRequest request) {
         if (request.getSession().getAttribute("user")!=null) logger.info("AuthorizationREST.logout logout user (user: "+((User)request.getSession().getAttribute("user")).getNick()+")");

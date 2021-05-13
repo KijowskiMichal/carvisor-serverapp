@@ -1,5 +1,8 @@
 package Entities;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 
@@ -28,10 +31,21 @@ public class Car {
      * Car model
      */
     String model;
-
+    /**
+     * Car engine
+     */
     String engine;
+    /**
+     * Car tank volume
+     */
     int tank;
+    /**
+     * Fuel type
+     */
     String fuelType;
+    /**
+     * ??
+     */
     double fuelNorm;
     /**
      * Car production date
@@ -51,7 +65,6 @@ public class Car {
      */
     @Lob
     private String image;
-
     /**
      * Car Configuration
      */
@@ -189,4 +202,5 @@ public class Car {
     public void setLocationInterval(Integer locationInterval) {
         this.locationInterval = locationInterval;
     }
+
 }

@@ -1,11 +1,8 @@
 package Service;
 
-import Entities.Car;
-import Entities.Track;
-import Entities.User;
-import Entities.UserPrivileges;
+import Entities.*;
 import HibernatePackage.HibernateRequests;
-import OtherClasses.Initializer;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -19,12 +16,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class representing device service
+ */
 @Service
 public class DevicesService {
 
@@ -39,13 +38,13 @@ public class DevicesService {
     }
 
     /**
+     * WebMethod which returns a list of users.
+     * <p>
      * @param request  Object of HttpServletRequest represents our request;
      * @param page     Page of users list. Parameter associated with pageSize.
      * @param pageSize Number of record we want to get
      * @param regex    Part of name or surname we want to display
      * @return Returns the contents of the page that contains a list of devices in the JSON format.
-     *
-     * WebMethod which returns a list of users.
      */
     public ResponseEntity<String> list(HttpServletRequest request, int page, int pageSize, String regex) {
         // authorization
@@ -107,7 +106,97 @@ public class DevicesService {
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 
-    public ResponseEntity getDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, int id) {
+    /**
+     * WebMethod which create device with given body and save it into database
+     * <p>
+     * @param request Object of HttpServletRequest represents our request
+     * @param httpEntity Object of httpEntity
+     * @return HttpStatus 201
+     */
+    public ResponseEntity addDevice(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("DevicesRest.addDevice cannot change device data (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
+        Session session = null;
+        Transaction tx = null;
+        ResponseEntity responseEntity;
+        try {
+            JSONObject inJSON = new JSONObject(httpEntity.getBody());
+            String licensePlate;
+            String brand;
+            String model;
+            String engine;
+            String fuelType;
+            int tank;
+            double norm;
+
+            try {
+                licensePlate = inJSON.getString("licensePlate");
+                brand = inJSON.getString("brand");
+                model = inJSON.getString("model");
+                engine = inJSON.getString("engine");
+                fuelType = inJSON.getString("fuel");
+                tank = Integer.parseInt(inJSON.getString("tank"));
+                norm = Double.parseDouble(inJSON.getString("norm"));
+            } catch (JSONException jsonException) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad body");
+            }
+
+            Car car = new Car();
+            car.setLicensePlate(licensePlate);
+            car.setBrand(brand);
+            car.setModel(model);
+            car.setEngine(engine);
+            car.setFuelType(fuelType);
+            car.setTank(tank);
+            car.setFuelNorm(norm);
+
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+
+            /*
+            //in case of setting default values
+            String getQuery1 = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'sendInterval'";
+            String getQuery2 = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
+            String getQuery3 = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'historyTimeout'";
+            Query query1 = session.createQuery(getQuery1);
+            Query query2 = session.createQuery(getQuery2);
+            Query query3 = session.createQuery(getQuery3);
+            Settings set1 = (Settings) query1.getSingleResult();
+            Settings set2 = (Settings) query2.getSingleResult();
+            Settings set3 = (Settings) query3.getSingleResult();
+            car.setSendInterval(set1.getValue());
+            car.setLocationInterval(set2.getValue());
+             */
+
+            session.save(car);
+            tx.commit();
+            logger.log(Level.INFO,"Device id: " + car.getId() + " licence plate: " + car.getLicensePlate() + " | successfully saved to database.");
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body("");
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();//TODO
+            logger.log(Level.ERROR,"Hibernate Exception: " + e.toString());
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        } finally {
+            if (session != null) session.close();
+        }
+        return responseEntity;
+    }
+
+    /**
+     * WebMethod which get device with given id
+     * <p>
+     * @param request Object of HttpServletRequest represents our request
+     * @param httpEntity Object of httpEntity
+     * @param id the id of the device
+     * @return HttpStatus 200, Json String representing device data
+     */
+    public ResponseEntity getDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, int id)
+    {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("DevicesRest.getDeviceData cannot send data (session not found)");
@@ -156,8 +245,14 @@ public class DevicesService {
         return responseEntity;
     }
 
-
-
+    /**
+     * WebMethod which change device data with given body
+     * <P>
+     * @param request Object of HttpServletRequest represents our request
+     * @param httpEntity Object of httpEntity
+     * @param carID id of the device that we want to change
+     * @return HttpStatus 200
+     */
     public ResponseEntity changeDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, int carID)
     {
         // authorization
@@ -218,6 +313,15 @@ public class DevicesService {
 
         return responseEntity;
     }
+
+    /**
+     * WebMethod which change device image
+     * <P>
+     * @param request Object of HttpServletRequest represents our request
+     * @param httpEntity Object of httpEntity
+     * @param carID id of the device that we want to change
+     * @return HttpStatus 200
+     */
     public ResponseEntity changeDeviceImage(HttpServletRequest request, HttpEntity<String> httpEntity, int carID)
     {
         // authorization

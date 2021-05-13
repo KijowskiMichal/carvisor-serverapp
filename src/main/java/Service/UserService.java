@@ -24,6 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class representing user service
+ */
 @Service
 public class UserService {
 
@@ -38,13 +41,13 @@ public class UserService {
     }
 
     /**
-     * @param request  Object of HttpServletRequest represents our request;
+     * WebMethod which returns a list of users
+     * <P>
+     * @param request  Object of HttpServletRequest represents our request.
      * @param page     Page of users list. Parameter associated with pageSize.
-     * @param pageSize Number of record we want to get
-     * @param regex    Part of name or surname we want to display
-     * @return Returns the contents of the page that contains a list of users in the JSON format.
-     *
-     * WebMethod which returns a list of users.
+     * @param pageSize Number of record we want to get.
+     * @param regex    Part of name or surname we want to display.
+     * @return HttpStatus 200 Returns the contents of the page that contains a list of users in the JSON format.
      */
     public ResponseEntity<String> list(HttpServletRequest request, int page, int pageSize, String regex) {
         // authorization
@@ -113,9 +116,11 @@ public class UserService {
     }
 
     /**
-     * @param request  Object of HttpServletRequest represents our request;
-     * @param httpEntity Object of HttpEntity represents content of our request;
-     * @return HttpStatus.UNAUTHORIZED if session not found, HttpStatus.OK if all is ok, BAD_REQUEST if json haven't required data or password don't match
+     * WebMethod that change password of logged user.
+     * <p>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param httpEntity Object of HttpEntity represents content of our request.
+     * @return HttpStatus 200.
      */
     public ResponseEntity changePassword(HttpServletRequest request, HttpEntity<String> httpEntity) {
         // authorization
@@ -151,9 +156,11 @@ public class UserService {
     }
 
     /**
-     * @param request  Object of HttpServletRequest represents our request;
-     * @param httpEntity Object of HttpEntity represents content of our request;
-     * @return HttpStatus.UNAUTHORIZED if session not found, HttpStatus.OK if all is ok, BAD_REQUEST if json haven't required data or password don't match
+     * WebMethod that change nick of logged user.
+     * <p>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param httpEntity Object of HttpEntity represents content of our request.
+     * @return HttpStatus 200.
      */
     public ResponseEntity changeNick(HttpServletRequest request, HttpEntity<String> httpEntity) {
         // authorization
@@ -187,6 +194,13 @@ public class UserService {
         }
     }
 
+    /**
+     * WebMethod that return user data with given Id.
+     * <p>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param httpEntity Object of HttpEntity represents content of our request.
+     * @return HttpStatus 200, user data as JsonString.
+     */
     public ResponseEntity getUserData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID)
     {
         // authorization
@@ -224,6 +238,13 @@ public class UserService {
         return responseEntity;
     }
 
+    /**
+     * WebMethod that change user data for user with given Id.
+     * <p>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param httpEntity Object of HttpEntity represents content of our request.
+     * @return HttpStatus 200.
+     */
     public ResponseEntity changeUserData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID)
     {
         // authorization
@@ -272,6 +293,13 @@ public class UserService {
         return responseEntity;
     }
 
+    /**
+     * WebMethod that change user image for user with given Id.
+     * <p>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param httpEntity Object of HttpEntity represents content of our request.
+     * @return HttpStatus 200.
+     */
     public ResponseEntity changeUserImage(HttpServletRequest request, HttpEntity<String> httpEntity, int userID)
     {
         // authorization
@@ -314,12 +342,13 @@ public class UserService {
 
         return responseEntity;
     }
+
     //===
     //Private methods
 
     //Check is nickname is correct
     private boolean nicknameValidator(String nick) {
-        if ((nick.length() > 39) || (nick.length() < 10))
+        if ((nick.length() > 39) || (nick.length() < 5))
             return false;
         return true;
     }
