@@ -17,7 +17,7 @@ public class Track {
     /**
      * car associated with this track
      */
-    @OneToOne
+    @OneToOne(mappedBy = "track")
     Car car;
     /**
      * Car associated with this track
