@@ -15,5 +15,6 @@
         <mapping class="Entities.Car" />
         <mapping class="Entities.Track" />
         <mapping class="Entities.Settings" />
+        <mapping class="Entities.TrackRate" />
     </session-factory>
 </hibernate-configuration>

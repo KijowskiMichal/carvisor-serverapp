@@ -90,7 +90,7 @@ public class DevicesService {
             jsonObject.put("model", ((Car) tmp).getModel());
             jsonObject.put("image", ((Car) tmp).getImage());
             jsonObject.put("distance", 100);
-            Track tmpTrack = ((Car) tmp).getTrack();
+            Track tmpTrack = null;
             if (tmpTrack == null) {
                 jsonObject.put("status", "inactive");
             } else {
@@ -226,8 +226,8 @@ public class DevicesService {
             jsonObject.put("norm", car.getFuelNorm());
 
             try {
-                jsonObject.put("timeFrom", car.getTrack().getStartTime());
-                jsonObject.put("timeTo", car.getTrack().getFinishTime());
+                jsonObject.put("timeFrom", "---");
+                jsonObject.put("timeTo", "---");
             }
             catch (NullPointerException nullPointerException) {
                 jsonObject.put("timeFrom", "---");
