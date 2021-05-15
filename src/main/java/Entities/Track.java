@@ -3,6 +3,7 @@ package Entities;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Entity
@@ -17,69 +18,49 @@ public class Track {
     /**
      * car associated with this track
      */
-    @OneToOne(mappedBy = "track")
+    @ManyToOne
     Car car;
     /**
-     * Car associated with this track
+     * user associated with this track
      */
-    @OneToOne(mappedBy = "track")
+    @ManyToOne
     User user;
     /**
-     * Track start time
+     * Relation with objects represents data from device
      */
-    LocalDateTime startTime;
+    @OneToMany
+    List<TrackRate> listofTrackRates;
     /**
-     * Track finish time
+     * number of parameter IoT send to server
      */
-    LocalDateTime finishTime;
+    int numberOfparameter;
+    /**
+     * switch between company or private track
+     */
+    boolean privateTrack;
+    /**
+     * Start track position - x and y coordinates separated with ;
+     */
+    String startPosiotion;
+    /**
+     * End track position - x and y coordinates separated with ;
+     */
+    String endPosiotion;
+
+    public Track(Car car, User user, int numberOfparameter, boolean privateTrack, long timeStamp, String startPosiotion) {
+        this.car = car;
+        this.user = user;
+        this.numberOfparameter = numberOfparameter;
+        this.privateTrack = privateTrack;
+        this.timeStamp = timeStamp;
+        this.startPosiotion = startPosiotion;
+    }
+
+    /**
+     * timeStamp of last update
+     */
+    long timeStamp;
+
 
     public Track() { super(); }
-
-    public Track(Car car, User user, LocalDateTime startTime, LocalDateTime finishTime) {
-        this.car = car;
-        this.user = user;
-        this.startTime = startTime;
-        this.finishTime = finishTime;
-    }
-
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Car getCar() {
-        return car;
-    }
-
-    public void setCar(Car car) {
-        this.car = car;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public LocalDateTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalDateTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalDateTime getFinishTime() {
-        return finishTime;
-    }
-
-    public void setFinishTime(LocalDateTime finishTime) {
-        this.finishTime = finishTime;
-    }
 }

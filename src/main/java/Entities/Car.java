@@ -56,11 +56,6 @@ public class Car {
      */
     LocalDate inCompanyDate;
     /**
-     * Current track
-     */
-    @OneToOne
-    private Track track;
-    /**
      * Image of car
      */
     @Lob
@@ -137,14 +132,6 @@ public class Car {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public Track getTrack() {
-        return track;
-    }
-
-    public void setTrack(Track track) {
-        this.track = track;
     }
 
     public String getPassword() {

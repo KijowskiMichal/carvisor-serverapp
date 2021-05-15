@@ -94,17 +94,17 @@ public class UserService {
             jsonObject.put("surname", ((User) tmp).getSurname());
             jsonObject.put("image", ((User) tmp).getImage());
             jsonObject.put("distance", 0);
-            Track tmpTrack = ((User) tmp).getTrack();
+            Track tmpTrack = null;
             if (tmpTrack == null) {
                 jsonObject.put("status", "inactive");
                 jsonObject.put("startTime", "------");
                 jsonObject.put("finishTime", "------");
                 jsonObject.put("licensePlate", "------");
             } else {
-                jsonObject.put("status", "active");
-                jsonObject.put("startTime", tmpTrack.getStartTime().getHour()+":"+tmpTrack.getStartTime().getMinute());
+                jsonObject.put("status", "inactive");
+                jsonObject.put("startTime", "------");
                 jsonObject.put("finishTime", "------");
-                jsonObject.put("licensePlate", tmpTrack.getCar().getLicensePlate());
+                jsonObject.put("licensePlate", "------");
             }
             jsonArray.put(jsonObject);
         }

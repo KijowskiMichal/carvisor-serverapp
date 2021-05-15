@@ -32,11 +32,6 @@ public class User
      */
     private UserPrivileges userPrivileges;
     /**
-     * Current track
-     */
-    @OneToOne
-    private Track track;
-    /**
      * Image of user
      */
     @Lob
@@ -107,14 +102,6 @@ public class User
 
     public void setUserPrivileges(UserPrivileges userPrivileges) {
         this.userPrivileges = userPrivileges;
-    }
-
-    public Track getTrack() {
-        return track;
-    }
-
-    public void setTrack(Track track) {
-        this.track = track;
     }
 
     public String getImage() {

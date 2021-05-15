@@ -50,7 +50,7 @@ public class TrackService {
         Session session = null;
         Transaction tx = null;
         ResponseEntity responseEntity;
-        try {
+        /*try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
             Track track = new Track();
@@ -77,6 +77,8 @@ public class TrackService {
         finally {
             if (session != null) session.close();
         }
+         */
+        responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
         return responseEntity;
     }
 }
