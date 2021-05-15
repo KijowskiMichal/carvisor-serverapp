@@ -3,6 +3,7 @@ package Service;
 import Entities.Car;
 import Entities.Settings;
 import HibernatePackage.HibernateRequests;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -194,6 +195,8 @@ public class CarConfigurationService
             session.update(car);
             tx.commit();
             responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+            logger.log(Level.INFO,"Configuration of Car (id:" + configID + ") changed to: " +
+                    "sendInterval=" + sendInterval + " locationInterval=" + getLocationInterval );
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
@@ -305,8 +308,10 @@ public class CarConfigurationService
             session.update(set1);
             session.update(set2);
             session.update(set3);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
             tx.commit();
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+            logger.log(Level.INFO,"Global car configuration changed " +
+                    "(sendInterval=" + sendInterval + ", locationInterval=" + getLocationInterval + ", historyTimeout=" + historyTimeout + ")");
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
@@ -318,5 +323,4 @@ public class CarConfigurationService
         }
         return responseEntity;
     }
-
 }

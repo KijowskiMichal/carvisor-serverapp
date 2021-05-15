@@ -6,6 +6,7 @@ import Entities.UserPrivileges;
 import HibernatePackage.HibernateRequests;
 import OtherClasses.Initializer;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -142,6 +143,7 @@ public class UserService {
                     session.update(user);
                     tx.commit();
                     session.close();
+                    logger.log(Level.INFO,"User (id=" + user.getId()  + ") changed password");
                     return ResponseEntity.status(HttpStatus.OK).body("");
                 } catch (HibernateException e) {
                     if (tx != null) tx.rollback();
@@ -282,6 +284,7 @@ public class UserService {
             session.update(user);
             tx.commit();
             responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+            logger.log(Level.INFO,"User (id=" + userID + ") changed data to (" + "name=" + names[0] + " surname=" + names[1] + " phoneNumber=" + telephone + ")");
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();

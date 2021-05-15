@@ -303,6 +303,10 @@ public class DevicesService {
             session.update(car);
             tx.commit();
             responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+            logger.log(Level.INFO,"Car data changed (car id=" + carID + ") data changed to " +
+                    "(licensePlate=" + licensePlate +
+                    " brand=" + brand + " model=" + model + " engine=" + engine +
+                    "fuelType=" + fuelType + "tank=" + tank + "norm=" + norm + ")");
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();

@@ -66,8 +66,8 @@ public class TrackService {
             session.update(car);
             session.save(track);
             tx.commit();
-            logger.log(Level.INFO,"Track: id " + track.getId() + " started.\n " +
-                    "With Car: id " + car.getId());
+            logger.log(Level.INFO,"Track (id=" + track.getId() + ") started.\n " +
+                    "With Car(id=" + car.getId() + ")");
             responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
         } catch (HibernateException e) {
             logger.log(Level.WARN, e);

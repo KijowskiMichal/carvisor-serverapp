@@ -5,6 +5,7 @@ import Entities.User;
 import HibernatePackage.HibernateRequests;
 import OtherClasses.Initializer;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,7 +100,8 @@ public class AuthorizationService {
      * @return HttpStatus 200.
      */
     public ResponseEntity logout(HttpServletRequest request) {
-        if (request.getSession().getAttribute("user")!=null) logger.info("AuthorizationREST.logout logout user (user: "+((User)request.getSession().getAttribute("user")).getNick()+")");
+        if (request.getSession().getAttribute("user")!=null)
+            logger.info("AuthorizationREST.logout logout user (user: "+((User)request.getSession().getAttribute("user")).getNick()+")");
         request.getSession().invalidate();
         return new ResponseEntity(HttpStatus.OK);
     }
