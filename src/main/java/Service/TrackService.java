@@ -117,7 +117,7 @@ public class TrackService {
             else
             {
                 Date date= new Date();
-                long time = date.getTime();
+                long time = date.getTime()/1000;
                 track.setTimeStamp(time);
                 session.update(track);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
@@ -134,7 +134,7 @@ public class TrackService {
     }
 
     /**
-     * WebMethods which update track without sending data.
+     * WebMethods which finished tracks.
      * <p>
      * @param request Object of HttpServletRequest represents our request.
      * @return Returns 200.
@@ -152,14 +152,15 @@ public class TrackService {
             Query query = session.createQuery(getQuery);
             List<Track> tracks = query.getResultList();
             Date date= new Date();
-            long time = date.getTime();
+            long time = date.getTime()/1000;
             for (Track track : tracks)
             {
-                if (track.getTimeStamp()<(time-15000))
+                if (track.getTimeStamp()<(time-15))
                 {
                     track.setActive(false);
-                    track.setEnd(time-7500);
+                    track.setEnd(time-8);
                     //TODO add end position
+                    session.update(track);
                 }
             }
             tx.commit();

@@ -1,5 +1,7 @@
 package Entities;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,11 +40,13 @@ public class Track {
     /**
      * switch between company or private track
      */
-    boolean privateTrack;
+    @Type(type="org.hibernate.type.NumericBooleanType")
+    Boolean privateTrack;
     /**
      * boolean represents state of track
      */
-    boolean active;
+    @Type(type="org.hibernate.type.NumericBooleanType")
+    Boolean active;
     /**
      * Start track position - x and y coordinates separated with ;
      */
@@ -63,16 +67,24 @@ public class Track {
      * timeStamp of end
      */
     long end;
+    /**
+     * meters since start
+     */
+    long distance;
 
-    public Track(Car car, User user, int numberOfparameter, boolean privateTrack, long timeStamp, String startPosiotion) {
+    public Track(Car car, User user, int numberOfparameter, Boolean privateTrack, long timeStamp, String startPosiotion) {
         this.car = car;
         this.user = user;
         this.numberOfparameter = numberOfparameter;
         this.privateTrack = privateTrack;
         this.timeStamp = timeStamp;
         this.startPosiotion = startPosiotion;
+        this.endPosiotion = "";
         Date date= new Date();
         this.start = date.getTime();
+        this.end = 0;
+        this.active = true;
+        this.distance = 0;
     }
 
 
@@ -118,19 +130,19 @@ public class Track {
         this.numberOfparameter = numberOfparameter;
     }
 
-    public boolean isPrivateTrack() {
+    public Boolean isPrivateTrack() {
         return privateTrack;
     }
 
-    public void setPrivateTrack(boolean privateTrack) {
+    public void setPrivateTrack(Boolean privateTrack) {
         this.privateTrack = privateTrack;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 
@@ -172,5 +184,21 @@ public class Track {
 
     public void setEnd(long end) {
         this.end = end;
+    }
+
+    public Boolean getPrivateTrack() {
+        return privateTrack;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public long getDistance() {
+        return distance;
+    }
+
+    public void setDistance(long distance) {
+        this.distance = distance;
     }
 }

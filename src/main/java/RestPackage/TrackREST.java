@@ -35,4 +35,9 @@ public class TrackREST {
         return trackService.updateTrack(request, httpEntity);
     }
 
+    @RequestMapping(value = "/endOfTrack/", method = RequestMethod.GET)
+    public ResponseEntity endOfTrack(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        return trackService.endOfTrack(request, httpEntity);
+    }
+
 }

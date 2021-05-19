@@ -18,7 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -89,12 +91,23 @@ public class DevicesService {
             jsonObject.put("brand", ((Car) tmp).getBrand());
             jsonObject.put("model", ((Car) tmp).getModel());
             jsonObject.put("image", ((Car) tmp).getImage());
-            jsonObject.put("distance", 100);
-            Track tmpTrack = null;
-            if (tmpTrack == null) {
-                jsonObject.put("status", "inactive");
-            } else {
-                jsonObject.put("status", "active");
+            try {
+                session = hibernateRequests.getSession();
+                tx = session.beginTransaction();
+                Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.active = true AND t.car.id = "+((Car) tmp).getId());
+                List<Track> tracks = selectQuery.list();
+                if (tracks.size()>0) {
+                    jsonObject.put("status", "Aktywny");
+                } else {
+                    jsonObject.put("status", "Nieaktywny");
+                }
+                tx.commit();
+                session.close();
+            } catch (HibernateException e) {
+                if (tx != null) tx.rollback();
+                session.close();
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
             }
             jsonArray.put(jsonObject);
         }

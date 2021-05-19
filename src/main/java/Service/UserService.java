@@ -1,5 +1,6 @@
 package Service;
 
+import Entities.Car;
 import Entities.Track;
 import Entities.User;
 import Entities.UserPrivileges;
@@ -22,7 +23,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -94,17 +99,40 @@ public class UserService {
             jsonObject.put("surname", ((User) tmp).getSurname());
             jsonObject.put("image", ((User) tmp).getImage());
             jsonObject.put("distance", 0);
-            Track tmpTrack = null;
-            if (tmpTrack == null) {
-                jsonObject.put("status", "inactive");
-                jsonObject.put("startTime", "------");
-                jsonObject.put("finishTime", "------");
-                jsonObject.put("licensePlate", "------");
-            } else {
-                jsonObject.put("status", "inactive");
-                jsonObject.put("startTime", "------");
-                jsonObject.put("finishTime", "------");
-                jsonObject.put("licensePlate", "------");
+            try {
+                session = hibernateRequests.getSession();
+                tx = session.beginTransaction();
+                Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.active = true AND t.user.id = "+((User) tmp).getId());
+                List<Track> tracks = selectQuery.list();
+                if (tracks.size()>0) {
+                    jsonObject.put("status", "Aktywny");
+                    SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+                    Date date = new Date(tracks.get(0).getStart()*1000);
+                    jsonObject.put("startTime", format.format(date));
+                    jsonObject.put("finishTime", "------");
+                    jsonObject.put("licensePlate", tracks.get(0).getCar().getLicensePlate());
+                } else {
+                    selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.active = false AND t.user.id = "+((User) tmp).getId()+" ORDER BY t.id DESC");
+                    selectQuery.setMaxResults(1);
+                    tracks = selectQuery.list();
+                    if (tracks.size()>0)
+                    {
+                        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+                        Date date = new Date(tracks.get(0).getEnd()*1000);
+                        jsonObject.put("finishTime", format.format(date));
+                    }
+                    else jsonObject.put("finishTime", "------");
+                    jsonObject.put("status", "Nieaktywny");
+                    jsonObject.put("startTime", "------");
+                    jsonObject.put("licensePlate", "------");
+                }
+                tx.commit();
+                session.close();
+            } catch (HibernateException e) {
+                if (tx != null) tx.rollback();
+                session.close();
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
             }
             jsonArray.put(jsonObject);
         }

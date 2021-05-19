@@ -98,7 +98,18 @@ public class DemoREST
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-            session.update(user1);
+            Track track1 = new Track(car1, user1, 4, false, 1621429296, "szymanowskiego");
+            track1.setStart(1621429296);
+            session.save(track1);
+            Track track2 = new Track(car3, user2, 4, true, 1621434816, "szymanowskiego");
+            track2.setStart(1621434816);
+            session.save(track2);
+            Track track3 = new Track(car4, user4, 4, false, 1621349136, "szymanowskiego");
+            track3.setStart(1621349136);
+            session.save(track3);
+            Track track4 = new Track(car2, user3, 4, true, 1621532736, "szymanowskiego");
+            track4.setStart(1621532736);
+            session.save(track4);
             tx.commit();
             session.close();
         } catch (HibernateException e) {
