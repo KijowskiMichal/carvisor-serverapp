@@ -3,6 +3,7 @@ package Entities;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class TrackRate
@@ -13,6 +14,11 @@ public class TrackRate
     @Id
     @GeneratedValue
     int id;
+    /**
+     *  Track associated with this rate
+     */
+    @ManyToOne
+    Track track;
     /**
      * Content of single request from device. Data model JSON.
      */
@@ -26,9 +32,10 @@ public class TrackRate
      */
     long timestamp;
 
-    public TrackRate(String content, long distance, long timestamp) {
+    public TrackRate(Track track, String content, long distance, long timestamp) {
         this.content = content;
         this.distance = distance;
         this.timestamp = timestamp;
+        this.track = track;
     }
 }

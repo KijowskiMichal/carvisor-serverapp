@@ -18,7 +18,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -94,6 +98,14 @@ public class DevicesService {
             try {
                 session = hibernateRequests.getSession();
                 tx = session.beginTransaction();
+                LocalDateTime now = LocalDateTime.now();
+                LocalDateTime before = now.with(LocalTime.MIN);
+                Timestamp timestampBefore = Timestamp.valueOf(before);
+                LocalDateTime after = now.with(LocalTime.MAX);
+                Timestamp timestampAfter = Timestamp.valueOf(after);
+                Query countQ = session.createQuery("Select sum (t.distance) from TrackRate t WHERE t.timestamp > "+String.valueOf(timestampBefore.getTime()/1000)+" AND  t.timestamp < "+String.valueOf(timestampAfter.getTime()/1000)+" AND t.track.car.id = "+((Car) tmp).getId());
+                Long lonk = (Long)countQ.getSingleResult();
+                jsonObject.put("distance", String.valueOf(lonk == null ? 0 : lonk));
                 Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.active = true AND t.car.id = "+((Car) tmp).getId());
                 List<Track> tracks = selectQuery.list();
                 if (tracks.size()>0) {
