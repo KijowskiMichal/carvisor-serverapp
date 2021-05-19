@@ -40,4 +40,9 @@ public class TrackREST {
         return trackService.endOfTrack(request, httpEntity);
     }
 
+    @RequestMapping(value = "/getTrackData/{id}/", method = RequestMethod.GET)
+    public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID) {
+        return trackService.getTrackData(request,httpEntity,userID);
+    }
+
 }

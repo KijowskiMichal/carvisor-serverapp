@@ -1,9 +1,6 @@
 package Service;
 
-import Entities.Car;
-import Entities.Settings;
-import Entities.Track;
-import Entities.User;
+import Entities.*;
 import HibernatePackage.HibernateRequests;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +8,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -19,7 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -172,6 +172,56 @@ public class TrackService {
         } finally {
             if (session != null) session.close();
         }
+        return responseEntity;
+    }
+
+    /**
+     * WebMethod that return tracks data with given Id.
+     * <p>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param httpEntity Object of HttpEntity represents content of our request.
+     * @return HttpStatus 200, user data as JsonString.
+     */
+    public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID)
+    {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("TrackService.getTrackData cannot send data (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
+        Session session = null;
+        Transaction tx = null;
+        ResponseEntity responseEntity;
+
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+            JSONArray jsonArray = new JSONArray();
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime before = now.with(LocalTime.MIN);
+            Timestamp timestampBefore = Timestamp.valueOf(before);
+            LocalDateTime after = now.with(LocalTime.MAX);
+            Timestamp timestampAfter = Timestamp.valueOf(after);
+            Query query = session.createQuery("Select t from TrackRate t WHERE t.timestamp > "+String.valueOf(timestampBefore.getTime()/1000)+" AND  t.timestamp < "+String.valueOf(timestampAfter.getTime()/1000)+" AND t.track.user.id = "+userID+" ORDER BY t.id ASC");
+            List<TrackRate> trackRates = query.getResultList();
+            for (TrackRate trackRate : trackRates)
+            {
+                JSONObject content = new JSONObject(trackRate.getContent());
+                for (int i=0; i<content.length(); i++)
+                {
+                    jsonArray.put(content.getJSONObject(String.valueOf(i)));
+                }
+            }
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonArray.toString());
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        } finally {
+            if (session != null) session.close();
+        }
+
         return responseEntity;
     }
 }
