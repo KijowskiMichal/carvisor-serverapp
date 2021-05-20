@@ -87,16 +87,7 @@ public class TrackService {
             track.setStart(timeStamp);
             track.setStartPosiotion(gpsLongitude + ";" + gpsLatitude);
             track.setEndPosiotion(gpsLongitude + ";" + gpsLatitude);
-
-            TrackRate trackRate = new TrackRate(
-                    track,
-                    "{\"RPM\": 0.0}, {\"Speed\": 0.0}, {\"Throttle Pos\": 0.0}",
-                    0,
-                    timeStamp);
             track.setListofTrackRates(new ArrayList<>());
-            session.save(trackRate);
-            track.addTrackRate(trackRate);
-
             session.save(track);
             tx.commit();
             logger.log(Level.INFO,"Track (id=" + track.getId() + ") started.\n " +
