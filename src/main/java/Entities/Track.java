@@ -201,4 +201,8 @@ public class Track {
     public void setDistance(long distance) {
         this.distance = distance;
     }
+
+    public void addTrackRate(TrackRate trackRate) {
+        listofTrackRates.add(trackRate);
+    }
 }

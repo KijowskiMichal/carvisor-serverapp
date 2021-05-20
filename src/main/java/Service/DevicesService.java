@@ -2,6 +2,7 @@ package Service;
 
 import Entities.*;
 import HibernatePackage.HibernateRequests;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -138,52 +139,33 @@ public class DevicesService {
         ResponseEntity responseEntity;
         try {
             JSONObject inJSON = new JSONObject(httpEntity.getBody());
-            String licensePlate;
-            String brand;
-            String model;
-            String engine;
-            String fuelType;
-            int tank;
-            double norm;
 
+            Car car = new Car();
             try {
-                licensePlate = inJSON.getString("licensePlate");
-                brand = inJSON.getString("brand");
-                model = inJSON.getString("model");
-                engine = inJSON.getString("engine");
-                fuelType = inJSON.getString("fuel");
-                tank = Integer.parseInt(inJSON.getString("tank"));
-                norm = Double.parseDouble(inJSON.getString("norm"));
+                car.setLicensePlate(inJSON.getString("licensePlate"));
+                car.setBrand(inJSON.getString("brand"));
+                car.setModel(inJSON.getString("model"));
+                car.setEngine(inJSON.getString("engine"));
+                car.setFuelType(inJSON.getString("fuel"));
+                car.setTank(Integer.parseInt(inJSON.getString("tank")));
+                car.setFuelNorm(Double.parseDouble(inJSON.getString("norm")));
+                car.setPassword(DigestUtils.sha256Hex(String.valueOf(inJSON.get("password"))));
             } catch (JSONException jsonException) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad body");
             }
 
-            Car car = new Car();
-            car.setLicensePlate(licensePlate);
-            car.setBrand(brand);
-            car.setModel(model);
-            car.setEngine(engine);
-            car.setFuelType(fuelType);
-            car.setTank(tank);
-            car.setFuelNorm(norm);
-
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
-            /*
-            //in case of setting default values
+
             String getQuery1 = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'sendInterval'";
             String getQuery2 = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
-            String getQuery3 = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'historyTimeout'";
             Query query1 = session.createQuery(getQuery1);
             Query query2 = session.createQuery(getQuery2);
-            Query query3 = session.createQuery(getQuery3);
             Settings set1 = (Settings) query1.getSingleResult();
             Settings set2 = (Settings) query2.getSingleResult();
-            Settings set3 = (Settings) query3.getSingleResult();
             car.setSendInterval(set1.getValue());
             car.setLocationInterval(set2.getValue());
-             */
 
             session.save(car);
             tx.commit();

@@ -1,9 +1,6 @@
 package Service;
 
-import Entities.Car;
-import Entities.Settings;
-import Entities.Track;
-import Entities.User;
+import Entities.*;
 import HibernatePackage.HibernateRequests;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
@@ -11,6 +8,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -19,10 +17,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class TrackService {
@@ -54,20 +54,38 @@ public class TrackService {
         Session session = null;
         Transaction tx = null;
         ResponseEntity responseEntity;
-        /*try {
+        JSONObject jsonObject;
+        long timeStamp;
+        try {
+            jsonObject = new JSONObject(httpEntity.getBody());
+            timeStamp = jsonObject.getLong("time");
+        } catch (JSONException jsonException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad body");
+        }
+
+        try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            Track track = new Track();
 
-            String getQuery = "SELECT c FROM Car c WHERE c.id = " + 18;
-            Query query = session.createQuery(getQuery);
             User user = (User) request.getSession().getAttribute("user");
-            Car car = (Car) query.getSingleResult();
-            track.setStartTime(LocalDateTime.now());
-            track.setCar(car);
+            Car car = (Car) request.getSession().getAttribute("car");
+
+            Track track = new Track();
             track.setUser(user);
-            car.setTrack(track);
-            session.update(car);
+            track.setCar(car);
+            track.setActive(true);
+            track.setPrivateTrack(false);
+            track.setTimeStamp(timeStamp);
+
+            TrackRate trackRate = new TrackRate(
+                    "{\"RPM\": 0.0}, {\"Speed\": 0.0}, {\"Throttle Pos\": 0.0}",
+                    0,
+                    timeStamp,
+                    track);
+            track.setListofTrackRates(new ArrayList<TrackRate>());
+            session.save(trackRate);
+            track.addTrackRate(trackRate);
+
             session.save(track);
             tx.commit();
             logger.log(Level.INFO,"Track (id=" + track.getId() + ") started.\n " +
@@ -81,7 +99,6 @@ public class TrackService {
         finally {
             if (session != null) session.close();
         }
-         */
         responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
         return responseEntity;
     }
@@ -112,13 +129,23 @@ public class TrackService {
             Track track = (Track) query.getSingleResult();
             if (track==null)
             {
-                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Track = null");
             }
             else
             {
-                Date date= new Date();
-                long time = date.getTime()/1000;
-                track.setTimeStamp(time);
+                JSONObject jsonObject = new JSONObject(httpEntity.getBody());
+                Set<String> set = jsonObject.keySet();
+                JSONObject timeJsonObject = (JSONObject) jsonObject.get("time");
+                Double timeStamp = (Double) timeJsonObject.get("time");
+                set.remove("time");
+
+                for (String x : set) {
+                    Object o = jsonObject.get(x);
+                    TrackRate trackRate = new TrackRate(o.toString(),1234,timeStamp.longValue(),track);
+                    session.save(trackRate);
+                    track.addTrackRate(trackRate);
+                }
+                track.setTimeStamp(timeStamp.longValue());
                 session.update(track);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
             }
@@ -126,7 +153,14 @@ public class TrackService {
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw, true);
+            e.printStackTrace(pw);
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Hibernate exception" + sw.getBuffer().toString());
+        } catch (JSONException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("JSONException exception");
         } finally {
             if (session != null) session.close();
         }

@@ -3,6 +3,7 @@ package Entities;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class TrackRate
@@ -26,9 +27,16 @@ public class TrackRate
      */
     long timestamp;
 
-    public TrackRate(String content, long distance, long timestamp) {
+    @ManyToOne
+    Track track;
+
+    public TrackRate() {
+    }
+
+    public TrackRate(String content, long distance, long timestamp, Track track) {
         this.content = content;
         this.distance = distance;
         this.timestamp = timestamp;
+        this.track = track;
     }
 }
