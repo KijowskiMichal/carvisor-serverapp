@@ -110,6 +110,9 @@ public class DemoREST
             Track track4 = new Track(car2, user3, 4, true, 1621532736, "szymanowskiego");
             track4.setStart(1621532736);
             session.save(track4);
+
+            TrackRate trackRate1 = new TrackRate(track1, "", 12, 231);
+            session.save(trackRate1);
             tx.commit();
             session.close();
         } catch (HibernateException e) {
