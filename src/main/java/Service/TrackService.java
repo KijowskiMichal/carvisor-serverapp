@@ -20,13 +20,10 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.ArrayList;
+import java.util.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
 
 @Service
 public class TrackService {
@@ -48,7 +45,6 @@ public class TrackService {
      * @param httpEntity Object of httpEntity.
      * @return HttpStatus 200.
      */
-    //TODO require check
     public ResponseEntity startTrack(HttpServletRequest request, HttpEntity<String> httpEntity) {
         if (request.getSession().getAttribute("user") == null) {
             logger.info("CarConfigurationService.getGlobalConfiguration cannot get global configuration (session not found)");
@@ -66,7 +62,7 @@ public class TrackService {
         float gpsLatitude;
 
         try {
-            jsonObject = new JSONObject(httpEntity.getBody());
+            jsonObject = new JSONObject(Objects.requireNonNull(httpEntity.getBody()));
             timeStamp = jsonObject.getLong("time");
             isPrivateTrack = jsonObject.getBoolean("private");
             gpsLongitude = jsonObject.getFloat("gps_longitude");
@@ -97,7 +93,7 @@ public class TrackService {
                     "{\"RPM\": 0.0}, {\"Speed\": 0.0}, {\"Throttle Pos\": 0.0}",
                     0,
                     timeStamp);
-            track.setListofTrackRates(new ArrayList<TrackRate>());
+            track.setListofTrackRates(new ArrayList<>());
             session.save(trackRate);
             track.addTrackRate(trackRate);
 
@@ -107,6 +103,7 @@ public class TrackService {
                     "With Car(id=" + car.getId() + ")");
             responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
         } catch (HibernateException e) {
+            e.printStackTrace();
             logger.log(Level.WARN, e);
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e);
             if (tx != null) tx.rollback();
@@ -114,7 +111,6 @@ public class TrackService {
         finally {
             if (session != null) session.close();
         }
-        responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
         return responseEntity;
     }
 
@@ -150,10 +146,6 @@ public class TrackService {
             {
                 JSONObject jsonObject = new JSONObject(httpEntity.getBody());
                 Set<String> set = jsonObject.keySet();
-                //JSONObject timeJsonObject = (JSONObject) jsonObject.get("time");
-                //Double timeStamp = (Double) timeJsonObject.get("time");
-                //track.setTimeStamp(timeStamp.longValue());
-                //set.remove("time");
                 TrackRate trackRate = null;
                 for (String x : set) {
                     JSONObject currObject = jsonObject.getJSONObject(x);
@@ -165,14 +157,15 @@ public class TrackService {
                     float x1 = Float.parseFloat(trackEndPosition[0]);
                     float y2 = currObject.getFloat("gps_latitude");
                     float x2 = currObject.getFloat("gps_longitude");
-                    float meters = distFrom(y1,x1,y2,x2);
+                    long meters = (long) distFrom(y1,x1,y2,x2);
 
                     track.setEndPosiotion(currObject.getFloat("gps_longitude") + ";" +currObject.getFloat("gps_latitude"));
-                    track.addMetersToDistance((long) meters);
-                    trackRate = new TrackRate(track,currObject.toString(),(long) meters,time);
+                    track.addMetersToDistance(meters);
+                    trackRate = new TrackRate(track,currObject.toString(),meters,time);
                     session.save(trackRate);
                     track.addTrackRate(trackRate);
                 }
+                assert trackRate != null;
                 JSONObject trackRateData = new JSONObject(trackRate.getContent());
                 track.setEndPosiotion(trackRateData.getFloat("gps_longitude") + ";" +trackRateData.getFloat("gps_latitude"));
 
