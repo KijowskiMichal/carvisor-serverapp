@@ -205,4 +205,8 @@ public class Track {
     public void addTrackRate(TrackRate trackRate) {
         listofTrackRates.add(trackRate);
     }
+
+    public void addMetersToDistance(long meters) {
+        distance += meters;
+    }
 }
