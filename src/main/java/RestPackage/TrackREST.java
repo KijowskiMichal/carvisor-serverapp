@@ -30,7 +30,12 @@ public class TrackREST {
         return trackService.startTrack(request, httpEntity);
     }
 
-    @RequestMapping(value = "/updateTrack/", method = RequestMethod.GET)
+    @RequestMapping(value = "/updateTrackData/", method = RequestMethod.POST)
+    public ResponseEntity updateTrackData(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        return trackService.updateTrackData(request, httpEntity);
+    }
+
+    @RequestMapping(value = "/updateTrack/", method = RequestMethod.POST)
     public ResponseEntity updateTrack(HttpServletRequest request, HttpEntity<String> httpEntity) {
         return trackService.updateTrack(request, httpEntity);
     }

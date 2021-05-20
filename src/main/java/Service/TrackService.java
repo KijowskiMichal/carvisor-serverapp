@@ -80,6 +80,7 @@ public class TrackService {
             track.setActive(true);
             track.setPrivateTrack(false);
             track.setTimeStamp(timeStamp);
+            track.setStart(timeStamp);
 
             TrackRate trackRate = new TrackRate(
                     track,
@@ -108,12 +109,12 @@ public class TrackService {
     }
 
     /**
-     * WebMethods which update track without sending data.
+     * WebMethods which update track with sending data.
      * <p>
      * @param request Object of HttpServletRequest represents our request.
      * @return Returns 200.
      */
-    public ResponseEntity updateTrack(HttpServletRequest request, HttpEntity<String> httpEntity)
+    public ResponseEntity updateTrackData(HttpServletRequest request, HttpEntity<String> httpEntity)
     {
         // authorization
         if (request.getSession().getAttribute("car") == null) {
@@ -145,7 +146,7 @@ public class TrackService {
 
                 for (String x : set) {
                     Object o = jsonObject.get(x);
-                    TrackRate trackRate = new TrackRate(track,o.toString(),1234,timeStamp.longValue());
+                    TrackRate trackRate = new TrackRate(track,o.toString(),0,timeStamp.longValue());
                     session.save(trackRate);
                     track.addTrackRate(trackRate);
                 }
@@ -165,6 +166,54 @@ public class TrackService {
             if (tx != null) tx.rollback();
             e.printStackTrace();
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("JSONException exception");
+        } finally {
+            if (session != null) session.close();
+        }
+        return responseEntity;
+    }
+
+
+    /**
+     * WebMethods which update track without sending data.
+     * <p>
+     * @param request Object of HttpServletRequest represents our request.
+     * @return Returns 200.
+     */
+    public ResponseEntity updateTrack(HttpServletRequest request, HttpEntity<String> httpEntity)
+    {
+        // authorization
+        if (request.getSession().getAttribute("car") == null) {
+            logger.info("TrackService.updateTrack cannot update track (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
+        Session session = null;
+        Transaction tx = null;
+        ResponseEntity responseEntity;
+
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+            String getQuery = "SELECT t FROM Track t WHERE t.active = true AND t.car.id = " + ((Car)request.getSession().getAttribute("car")).getId();
+            Query query = session.createQuery(getQuery);
+            Track track = (Track) query.getSingleResult();
+            if (track==null)
+            {
+                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            }
+            else
+            {
+                Date date= new Date();
+                long time = date.getTime();
+                track.setTimeStamp(time);
+                session.update(track);
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+            }
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
         } finally {
             if (session != null) session.close();
         }
