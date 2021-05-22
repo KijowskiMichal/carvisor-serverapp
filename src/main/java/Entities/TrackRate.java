@@ -1,9 +1,8 @@
 package Entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import org.json.JSONObject;
+
+import javax.persistence.*;
 
 @Entity
 public class TrackRate
@@ -20,9 +19,30 @@ public class TrackRate
     @ManyToOne
     Track track;
     /**
-     * Content of single request from device. Data model JSON.
+     * Car speed
      */
-    String content;
+    @Column(nullable = true)
+    Short speed;
+    /**
+     * throttle in %
+     */
+    @Column(nullable = true)
+    Byte throttle;
+    /**
+     * gps latitude
+     */
+    @Column(nullable = true)
+    Float gpsY;
+    /**
+     * gps longitude
+     */
+    @Column(nullable = true)
+    Float gpsX;
+    /**
+     * revolutions per minute
+     */
+    @Column(nullable = true)
+    Short rpm;
     /**
      * meters since start
      */
@@ -35,12 +55,15 @@ public class TrackRate
     public TrackRate() {
     }
 
-
-    public TrackRate(Track track, String content, long distance, long timestamp) {
-        this.content = content;
+    public TrackRate(Track track, Short speed, Byte throttle, Float gpsY, Float gpsX, Short rpm, long distance, long timestamp) {
+        this.track = track;
+        this.speed = speed;
+        this.throttle = throttle;
+        this.gpsX = gpsX;
+        this.gpsY = gpsY;
+        this.rpm = rpm;
         this.distance = distance;
         this.timestamp = timestamp;
-        this.track = track;
     }
 
     public int getId() {
@@ -59,12 +82,44 @@ public class TrackRate
         this.track = track;
     }
 
-    public String getContent() {
-        return content;
+    public Short getSpeed() {
+        return speed;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setSpeed(Short speed) {
+        this.speed = speed;
+    }
+
+    public Byte getThrottle() {
+        return throttle;
+    }
+
+    public void setThrottle(Byte throttle) {
+        this.throttle = throttle;
+    }
+
+    public Float getGpsX() {
+        return gpsX;
+    }
+
+    public void setGpsX(Float gpsX) {
+        this.gpsX = gpsX;
+    }
+
+    public Float getGpsY() {
+        return gpsY;
+    }
+
+    public void setGpsY(Float gpsY) {
+        this.gpsY = gpsY;
+    }
+
+    public Short getRpm() {
+        return rpm;
+    }
+
+    public void setRpm(Short rpm) {
+        this.rpm = rpm;
     }
 
     public long getDistance() {
@@ -81,5 +136,20 @@ public class TrackRate
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    /**
+     *
+     * @return data of track rate as Json String.
+     */
+    public String getContent() { //TODO dogadac sie o nomenklature
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("Speed",speed);
+        jsonObject.put("Throttle Pos",throttle);
+        jsonObject.put("gps_longitude",gpsX);
+        jsonObject.put("gps_latitude",gpsY);
+        jsonObject.put("RPM",rpm);
+        jsonObject.put("time",timestamp);
+        return jsonObject.toString();
     }
 }

@@ -92,33 +92,6 @@ public class DemoREST
         hibernateRequests.addSetting(set1);
         hibernateRequests.addSetting(set2);
         hibernateRequests.addSetting(set3);
-
-
-        Session session = hibernateRequests.getSession();
-        Transaction tx = null;
-        try {
-            tx = session.beginTransaction();
-            Track track1 = new Track(car1, user1, 4, false, 1621429296, "szymanowskiego");
-            track1.setStart(1621429296);
-            session.save(track1);
-            Track track2 = new Track(car3, user2, 4, true, 1621434816, "szymanowskiego");
-            track2.setStart(1621434816);
-            session.save(track2);
-            Track track3 = new Track(car4, user4, 4, false, 1621349136, "szymanowskiego");
-            track3.setStart(1621349136);
-            session.save(track3);
-            Track track4 = new Track(car2, user3, 4, true, 1621532736, "szymanowskiego");
-            track4.setStart(1621532736);
-            session.save(track4);
-
-            TrackRate trackRate1 = new TrackRate(track1, "", 12, 231);
-            session.save(trackRate1);
-            tx.commit();
-            session.close();
-        } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
-            e.printStackTrace();
-        }
         return new ResponseEntity(HttpStatus.OK);
     }
 }

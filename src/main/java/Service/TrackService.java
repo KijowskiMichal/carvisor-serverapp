@@ -47,7 +47,7 @@ public class TrackService {
      */
     public ResponseEntity startTrack(HttpServletRequest request, HttpEntity<String> httpEntity) {
         if (request.getSession().getAttribute("user") == null) {
-            logger.info("CarConfigurationService.getGlobalConfiguration cannot get global configuration (session not found)");
+            logger.info("TrackService.startTrack cannot get global configuration (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
 
@@ -105,6 +105,7 @@ public class TrackService {
         return responseEntity;
     }
 
+    //TODO On meeting, NULL
     /**
      * WebMethods which update track with sending data.
      * <p>
@@ -115,7 +116,7 @@ public class TrackService {
     {
         // authorization
         if (request.getSession().getAttribute("car") == null) {
-            logger.info("TrackService.updateTrack cannot update track (session not found)");
+            logger.info("TrackService.updateTrackData cannot update track (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
 
@@ -128,44 +129,47 @@ public class TrackService {
             tx = session.beginTransaction();
             String getQuery = "SELECT t FROM Track t WHERE t.active = true AND t.car.id = " + ((Car)request.getSession().getAttribute("car")).getId();
             Query query = session.createQuery(getQuery);
-            Track track = (Track) query.getSingleResult();
+            Track track = (Track) query.getSingleResult(); //Track
             if (track==null)
             {
                 responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Track = null");
             }
             else
             {
-                JSONObject jsonObject = new JSONObject(httpEntity.getBody());
-                Set<String> set = jsonObject.keySet();
-                TrackRate trackRate = null;
-                for (String x : set) {
-                    JSONObject currObject = jsonObject.getJSONObject(x);
-                    long time = Double.valueOf(currObject.getDouble("time")).longValue();
-                    currObject.remove("time");
+                JSONObject jsonPackage = new JSONObject(httpEntity.getBody());
+                Set<String> set = jsonPackage.keySet();
+                TrackRate trackRate = new TrackRate();
+                for (String key : set) {
+                    JSONObject jsonObject = jsonPackage.getJSONObject(key);
 
-                    String[] trackEndPosition = track.getEndPosiotion().split(";");
-                    float y1 = Float.parseFloat(trackEndPosition[1]);
-                    float x1 = Float.parseFloat(trackEndPosition[0]);
-                    float y2 = currObject.getFloat("gps_latitude");
-                    float x2 = currObject.getFloat("gps_longitude");
-                    long meters = (long) distFrom(y1,x1,y2,x2);
+                    Object buff = jsonObject.get("Speed");
+                    Short speed = Objects.equals(buff,null) ? null : ((Integer) buff).shortValue();
+                    buff = jsonObject.get("Throttle Pos");
+                    Byte throttle = Objects.equals(buff,null) ? null : ((Integer) buff).byteValue();
+                    buff = jsonObject.get("gps_latitude");
+                    Float gpsY = Objects.equals(buff,null) ? null : ((Double) buff).floatValue();
+                    buff = jsonObject.get("gps_longitude");
+                    Float gpsX = Objects.equals(buff,null) ? null : ((Double) buff).floatValue();
+                    buff = jsonObject.get("RPM");
+                    Short rpm = Objects.equals(buff,null) ? null : ((Integer) buff).shortValue();
 
-                    track.setEndPosiotion(currObject.getFloat("gps_longitude") + ";" +currObject.getFloat("gps_latitude"));
-                    track.addMetersToDistance(meters);
-                    trackRate = new TrackRate(track,currObject.toString(),meters,time);
+                    long timestamp = jsonObject.getLong("time");
+                    long distance = 0;
+                    //calculate distance
+                    if (gpsX != null && gpsY != null) {
+                        String[] trackEndPosition = track.getEndPosiotion().split(";");
+                        float y1 = Float.parseFloat(trackEndPosition[0]);
+                        float x1 = Float.parseFloat(trackEndPosition[1]);
+                        distance = (long) distFrom(y1,x1,gpsY,gpsX);
+                    }
+                    track.addMetersToDistance(distance);
+                    distance += track.getDistance();
+                    trackRate = new TrackRate(track,speed,throttle,gpsY,gpsX,rpm,distance,timestamp);
+                    track.setEndPosiotion(trackRate.getGpsY() + ";" + trackRate.getGpsX());
                     session.save(trackRate);
                     track.addTrackRate(trackRate);
                 }
-                assert trackRate != null;
-                JSONObject trackRateData = new JSONObject(trackRate.getContent());
-                track.setEndPosiotion(trackRateData.getFloat("gps_longitude") + ";" +trackRateData.getFloat("gps_latitude"));
-
-                try {
-                    track.setTimeStamp(trackRate.getTimestamp());
-                } catch (NullPointerException nullPointerException) {
-
-                }
-
+                track.setTimeStamp(trackRate.getTimestamp());
                 session.update(track);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
                 logger.log(Level.INFO,"Track: " + track.getId() + " updated");
@@ -173,7 +177,6 @@ public class TrackService {
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
-            e.printStackTrace();
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw, true);
             e.printStackTrace(pw);
@@ -285,7 +288,7 @@ public class TrackService {
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200, user data as JsonString.
      */
-    public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID)
+    public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID) //TODO
     {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
@@ -332,7 +335,7 @@ public class TrackService {
     //=========================
 
     // Calculate distance between two gps points, return distance in meters
-    public float distFrom(float y1, float x1, float y2, float x2) {
+    public float distFrom(double y1, double x1, double y2, double x2) {
         double earthRadius = 6371000; //meters
         double dLat = Math.toRadians(y2-y1);
         double dLng = Math.toRadians(x2-x1);

@@ -1,6 +1,7 @@
 package Entities;
 
 import org.hibernate.annotations.Type;
+import org.json.JSONObject;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -48,11 +49,11 @@ public class Track {
     @Type(type="org.hibernate.type.NumericBooleanType")
     Boolean active;
     /**
-     * Start track position - x and y coordinates separated with ;
+     * Start track position - y and x coordinates separated with ;
      */
     String startPosiotion;
     /**
-     * End track position - x and y coordinates separated with ;
+     * End track position - y and x coordinates separated with ;
      */
     String endPosiotion;
     /**
@@ -81,7 +82,7 @@ public class Track {
         this.startPosiotion = startPosiotion;
         this.endPosiotion = "";
         Date date= new Date();
-        this.start = date.getTime();
+        this.start = new Date().getTime();
         this.end = 0;
         this.active = true;
         this.distance = 0;
@@ -209,4 +210,5 @@ public class Track {
     public void addMetersToDistance(long meters) {
         distance += meters;
     }
+
 }
