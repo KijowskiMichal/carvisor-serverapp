@@ -163,8 +163,7 @@ public class TrackService {
                         distance = (long) distFrom(y1,x1,gpsY,gpsX);
                     }
                     track.addMetersToDistance(distance);
-                    distance += track.getDistance();
-                    trackRate = new TrackRate(track,speed,throttle,gpsY,gpsX,rpm,distance,timestamp);
+                    trackRate = new TrackRate(track,speed,throttle,gpsY,gpsX,rpm,track.getDistance(),timestamp);
                     track.setEndPosiotion(trackRate.getGpsY() + ";" + trackRate.getGpsX());
                     session.save(trackRate);
                     track.addTrackRate(trackRate);
@@ -344,6 +343,6 @@ public class TrackService {
                         Math.sin(dLng/2) * Math.sin(dLng/2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         float dist = (float) (earthRadius * c);
-        return dist;
+        return Math.abs(dist);
     }
 }
