@@ -264,7 +264,9 @@ public class TrackService {
                 {
                     track.setActive(false);
                     track.setEnd(time-8);
-                    //TODO add end position
+                    Query query2 = session.createQuery("Select t from TrackRate t WHERE t.track.id = "+track.getId()+" ORDER BY t.id DESC");
+                    TrackRate trackRate = (TrackRate) query2.getSingleResult();
+                    track.setEndPosiotion(trackRate.getGpsY()+";"+trackRate.getGpsX());
                     session.update(track);
                 }
             }
@@ -315,7 +317,7 @@ public class TrackService {
                 JSONObject content = new JSONObject(trackRate.getContent());
                 for (int i=0; i<content.length(); i++)
                 {
-                    jsonArray.put(content.getJSONObject(String.valueOf(i)));
+                    jsonArray.put(content);
                 }
             }
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonArray.toString());
