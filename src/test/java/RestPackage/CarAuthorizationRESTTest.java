@@ -1,7 +1,6 @@
 package RestPackage;
 
-import Entities.User;
-import Entities.UserPrivileges;
+import Entities.Car;
 import HibernatePackage.HibernateRequests;
 import OtherClasses.Initializer;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -18,22 +17,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.swing.*;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(AuthorizationREST.class)
+@WebMvcTest(CarAuthorizationREST.class)
 @ContextConfiguration(classes = {Initializer.class})
-class AuthorizationRESTTest {
+class CarAuthorizationRESTTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -58,46 +55,46 @@ class AuthorizationRESTTest {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
-            User user = new User("fsgfgdfsfhdgfh", null, null, DigestUtils.sha256Hex("dsgdsgdfsg"), UserPrivileges.ADMINISTRATOR, null, 0);
-            session.save(user);
+            Car car = new Car("fghfdhfdhf", null, null, null, null, null, DigestUtils.sha256Hex("dsgsdg"));
+            session.save(car);
 
             tx.commit();
 
             //check with correct credentials
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/authorization/authorize")
-                    .content("{\"login\": \"fsgfgdfsfhdgfh\",\"password\": \"dsgdsgdfsg\"}")
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/carAuthorization/authorize")
+                    .content("{\"licensePlate\": \"fghfdhfdhf\",\"password\": \"dsgsdg\"}")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus()==200);
-            Assert.assertTrue(((User)result.getRequest().getSession().getAttribute("user")).getNick().equals("fsgfgdfsfhdgfh"));
+            Assert.assertTrue(((Car)result.getRequest().getSession().getAttribute("car")).getLicensePlate().equals("fghfdhfdhf"));
 
             //check with wrong password
-            result = mockMvc.perform(MockMvcRequestBuilders.post("/authorization/authorize")
-                    .content("{\"login\": \"fsgfgdfsfhdgfh\",\"password\": \"dsgdsgujutrgdfsg\"}")
+            result = mockMvc.perform(MockMvcRequestBuilders.post("/carAuthorization/authorize")
+                    .content("{\"licensePlate\": \"fghfdhfdhf\",\"password\": \"dsgdsgujutrgdfsg\"}")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus()==406);
-            Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
+            Assert.assertNull(result.getRequest().getSession().getAttribute("car"));
 
             tx = session.beginTransaction();
 
-            session.delete(user);
+            session.delete(car);
 
             tx.commit();
 
-            //user does not exist
-            result = mockMvc.perform(MockMvcRequestBuilders.post("/authorization/authorize")
-                    .content("{\"login\": \"fsgfgdfsfhdgfh\",\"password\": \"dsgdsgujutrgdfsg\"}")
+            //car does not exist
+            result = mockMvc.perform(MockMvcRequestBuilders.post("/carAuthorization/authorize")
+                    .content("{\"licensePlate\": \"dsgdsgbfd\",\"password\": \"dsgdsgujutrgdfsg\"}")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus()==406);
-            Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
+            Assert.assertNull(result.getRequest().getSession().getAttribute("car"));
 
             session.close();
         } catch (HibernateException e) {
@@ -114,39 +111,36 @@ class AuthorizationRESTTest {
     void status()
     {
         try {
-            //check with first user logged
+            //check with first device logged
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new User("fsgfgdfsfhdgfh", null, null, null, UserPrivileges.ADMINISTRATOR, null, 0)));
+            sessionattr.put("car", (Object)(new Car("fghfdhfdhf", null, null, null, null, null, null)));
 
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status")
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status")
                     .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus()==200);
             JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            Assert.assertTrue(jsonObject.getString("nickname").equals("fsgfgdfsfhdgfh"));
-            Assert.assertFalse(jsonObject.getString("nickname").equals("fsgfgdfdgfgfsfhdgfh"));
-            Assert.assertTrue(jsonObject.getString("rbac").equals("ADMINISTRATOR"));
+            Assert.assertTrue(jsonObject.getString("licensePlate").equals("fghfdhfdhf"));
+            Assert.assertFalse(jsonObject.getString("licensePlate").equals("fsgfgdfdgfgfsfhdgfh"));
             Assert.assertTrue(jsonObject.getBoolean("logged"));
 
-            //check with second user logged
+            //check with second device logged
             sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new User("dfsdfdv", null, null, null, UserPrivileges.MODERATOR, null, 0)));
+            sessionattr.put("car", (Object)(new Car("ttrutrtt", null, null, null, null, null, null)));
 
-            result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status")
+            result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status")
                     .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus()==200);
             jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            Assert.assertTrue(jsonObject.getString("nickname").equals("dfsdfdv"));
-            Assert.assertFalse(jsonObject.getString("nickname").equals("dgdgdf"));
-            Assert.assertFalse(jsonObject.getString("rbac").equals("ADMINISTRATOR"));
-            Assert.assertTrue(jsonObject.getString("rbac").equals("MODERATOR"));
+            Assert.assertTrue(jsonObject.getString("licensePlate").equals("ttrutrtt"));
+            Assert.assertFalse(jsonObject.getString("licensePlate").equals("dgyrutrtrdgdf"));
             Assert.assertTrue(jsonObject.getBoolean("logged"));
 
-            //check with not-logged user
-            result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status"))
+            //check with not-logged device
+            result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status"))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus()==200);
@@ -164,44 +158,44 @@ class AuthorizationRESTTest {
     {
         try
         {
-            //check with first user logged
+            //check with first device logged
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new User("fsgfgdfsfhdgfh", null, null, null, UserPrivileges.ADMINISTRATOR, null, 0)));
+            sessionattr.put("car", (Object)(new Car("fghfdhfdhf", null, null, null, null, null, null)));
 
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status")
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status")
                     .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus()==200);
-            Assert.assertNotNull(result.getRequest().getSession().getAttribute("user"));
+            Assert.assertNotNull(result.getRequest().getSession().getAttribute("car"));
 
-            result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/logout")
+            result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/logout")
                     .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus()==200);
             Assert.assertTrue(result.getResponse().getContentAsString().equals(""));
-            Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
+            Assert.assertNull(result.getRequest().getSession().getAttribute("car"));
 
-            //check with second user logged
+            //check with second device logged
             sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new User("fsgfggfggfdgdfsfhdgfh", null, null, null, UserPrivileges.MODERATOR, null, 0)));
+            sessionattr.put("user", (Object)(new Car("fgdfdf", null, null, null, null, null, null)));
 
-            result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/logout")
+            result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/logout")
                     .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus()==200);
             Assert.assertTrue(result.getResponse().getContentAsString().equals(""));
-            Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
+            Assert.assertNull(result.getRequest().getSession().getAttribute("car"));
 
-            //check with not-logged user
-            result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/logout"))
+            //check with not-logged device
+            result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/logout"))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus()==200);
             Assert.assertTrue(result.getResponse().getContentAsString().equals(""));
-            Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
+            Assert.assertNull(result.getRequest().getSession().getAttribute("car"));
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
