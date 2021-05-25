@@ -155,6 +155,53 @@ public class UserService {
     }
 
     /**
+     * WebMethod which returns a list of users
+     * <P>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param regex    Part of name or surname we want to display.
+     * @return HttpStatus 200 Returns the contents of the page that contains a list of users in the JSON format.
+     */
+    public ResponseEntity<String> listUserNames(HttpServletRequest request, String regex) {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("UserREST.listUserNames cannot list user's (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
+            logger.info("UserREST.listUserNames cannot list user's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+        //listing
+        List<Object> users = new ArrayList<>();
+        int lastPageNumber;
+        Session session = hibernateRequests.getSession();
+        Transaction tx = null;
+        try {
+            if (regex.equals("$")) regex = "";
+            tx = session.beginTransaction();
+
+            Query selectQuery = session.createQuery("SELECT u FROM User u WHERE u.name  like '%" + regex + "%' OR u.surname  like '%" + regex + "%'");
+            users = selectQuery.list();
+            tx.commit();
+            session.close();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            session.close();
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        }
+        JSONArray jsonArray = new JSONArray();
+        for (Object tmp : users) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", ((User) tmp).getId());
+            jsonObject.put("name", ((User) tmp).getName()+" "+((User) tmp).getSurname());
+            jsonObject.put("image", ((User) tmp).getImage());
+            jsonArray.put(jsonObject);
+        }
+        logger.info("UsersREST.listUserNames returns list of users (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+        return ResponseEntity.status(HttpStatus.OK).body(jsonArray.toString());
+    }
+
+    /**
      * WebMethod that change password of logged user.
      * <p>
      * @param request  Object of HttpServletRequest represents our request.

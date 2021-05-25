@@ -30,6 +30,11 @@ public class UsersREST {
         return userService.list(request,page,pageSize,regex);
     }
 
+    @RequestMapping(value = "/listUserNames/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity<String> listUserNames(HttpServletRequest request, @PathVariable("regex") String regex) {
+        return userService.listUserNames(request,regex);
+    }
+
     @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
     public ResponseEntity changePassword(HttpServletRequest request, HttpEntity<String> httpEntity) {
         return userService.changePassword(request, httpEntity);
