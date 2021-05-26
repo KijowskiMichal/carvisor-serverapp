@@ -143,15 +143,15 @@ public class TrackService {
                     JSONObject jsonObject = jsonPackage.getJSONObject(key);
 
                     Object buff = jsonObject.get("Speed");
-                    Short speed = Objects.equals(buff,null) ? null : ((Integer) buff).shortValue();
+                    Short speed = Objects.equals(buff,null) ? null : ((Double) buff).shortValue();
                     buff = jsonObject.get("Throttle Pos");
-                    Byte throttle = Objects.equals(buff,null) ? null : ((Integer) buff).byteValue();
+                    Byte throttle = Objects.equals(buff,null) ? null : ((Double) buff).byteValue();
                     buff = jsonObject.get("gps_latitude");
                     Float gpsY = Objects.equals(buff,null) ? null : ((Double) buff).floatValue();
                     buff = jsonObject.get("gps_longitude");
                     Float gpsX = Objects.equals(buff,null) ? null : ((Double) buff).floatValue();
                     buff = jsonObject.get("RPM");
-                    Short rpm = Objects.equals(buff,null) ? null : ((Integer) buff).shortValue();
+                    Short rpm = Objects.equals(buff,null) ? null : ((Double) buff).shortValue();
 
                     long timestamp = jsonObject.getLong("time");
                     long distance = 0;
