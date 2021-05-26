@@ -48,7 +48,6 @@ public class AuthorizationService {
         try {
             users = hibernateRequests.getTableContent("SELECT a FROM User a WHERE a.nick = '"+inJSON.get("login")+"'", User.class);
         } catch (Exception e) {
-            //e.printStackTrace();
             users = new ArrayList<Object>();
         }
         if (users.size()==0)
@@ -67,7 +66,7 @@ public class AuthorizationService {
             }
             else
             {
-                logger.info("AuthorizationREST.authorize didn't authorize the user");
+                logger.info("AuthorizationREST.authorize didn't authorize the user with nickname: " + inJSON.get("login"));
                 return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
             }
         }
@@ -103,6 +102,6 @@ public class AuthorizationService {
         if (request.getSession().getAttribute("user")!=null)
             logger.info("AuthorizationREST.logout logout user (user: "+((User)request.getSession().getAttribute("user")).getNick()+")");
         request.getSession().invalidate();
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).body("user logout");
     }
 }

@@ -56,14 +56,14 @@ public class TrackService {
         ResponseEntity responseEntity;
 
         JSONObject jsonObject;
-        long timeStamp;
+        long startTime;
         boolean isPrivateTrack;
         float gpsLongitude;
         float gpsLatitude;
 
         try {
             jsonObject = new JSONObject(Objects.requireNonNull(httpEntity.getBody()));
-            timeStamp = jsonObject.getLong("time");
+            startTime = jsonObject.getLong("time");
             isPrivateTrack = jsonObject.getBoolean("private");
             gpsLongitude = jsonObject.getFloat("gps_longitude");
             gpsLatitude = jsonObject.getFloat("gps_latitude");
@@ -83,10 +83,10 @@ public class TrackService {
             track.setCar(car);
             track.setActive(true);
             track.setPrivateTrack(isPrivateTrack);
-            track.setTimeStamp(timeStamp);
-            track.setStart(timeStamp);
-            track.setStartPosiotion(gpsLongitude + ";" + gpsLatitude);
-            track.setEndPosiotion(gpsLongitude + ";" + gpsLatitude);
+            track.setTimeStamp(startTime);
+            track.setStart(startTime);
+            track.setStartPosiotion(gpsLatitude + ";" + gpsLongitude);
+            track.setEndPosiotion(gpsLatitude + ";" + gpsLongitude);
             track.setListofTrackRates(new ArrayList<>());
             session.save(track);
             tx.commit();
@@ -338,11 +338,8 @@ public class TrackService {
         double earthRadius = 6371000; //meters
         double dLat = Math.toRadians(y2-y1);
         double dLng = Math.toRadians(x2-x1);
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(Math.toRadians(y1)) * Math.cos(Math.toRadians(y2)) *
-                        Math.sin(dLng/2) * Math.sin(dLng/2);
+        double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(Math.toRadians(y1)) * Math.cos(Math.toRadians(y2)) * Math.sin(dLng/2) * Math.sin(dLng/2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        float dist = (float) (earthRadius * c);
-        return Math.abs(dist);
+        return (float) (earthRadius * c);
     }
 }
