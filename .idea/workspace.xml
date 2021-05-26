@@ -22,8 +22,9 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="50a3dd01-24a6-4ad2-9d0e-833cd4d7008b" name="Default Changelist" comment="">
+    <list default="true" id="50a3dd01-24a6-4ad2-9d0e-833cd4d7008b" name="Default Changelist" comment="endOfTrack fixed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/RestPackage/TrackREST.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/RestPackage/TrackREST.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Service/TrackService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Service/TrackService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -61,6 +62,13 @@
       <filtered-out-file-type name="TAG" />
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="$APPLICATION_HOME_DIR$/plugins/maven/lib/maven3" />
+      </MavenGeneralSettings>
+    </option>
   </component>
   <component name="ProjectId" id="1qOu9FJKMgZm57VtrgortDkPQTf" />
   <component name="ProjectViewState">
@@ -143,6 +151,14 @@
       <option name="presentableId" value="Default" />
       <updated>1616962803216</updated>
     </task>
+    <task id="LOCAL-00001" summary="endOfTrack fixed">
+      <created>1622041754779</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1622041754779</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -169,23 +185,35 @@
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="endOfTrack fixed" />
+    <option name="LAST_COMMIT_MESSAGE" value="endOfTrack fixed" />
+  </component>
   <component name="WindowStateProjectService">
-    <state width="925" height="288" key="GridCell.Tab.0.bottom" timestamp="1622041107383">
-      <screen x="23" y="0" width="1897" height="1080" />
+    <state width="1874" height="287" key="GridCell.Tab.0.bottom" timestamp="1622050688259">
+      <screen x="1920" y="0" width="1920" height="1080" />
     </state>
+    <state width="1874" height="287" key="GridCell.Tab.0.bottom/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622050688259" />
     <state width="925" height="288" key="GridCell.Tab.0.bottom/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
-    <state width="925" height="288" key="GridCell.Tab.0.center" timestamp="1622041107383">
-      <screen x="23" y="0" width="1897" height="1080" />
+    <state width="1874" height="287" key="GridCell.Tab.0.center" timestamp="1622050688259">
+      <screen x="1920" y="0" width="1920" height="1080" />
     </state>
+    <state width="1874" height="287" key="GridCell.Tab.0.center/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622050688259" />
     <state width="925" height="288" key="GridCell.Tab.0.center/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
-    <state width="925" height="288" key="GridCell.Tab.0.left" timestamp="1622041107383">
-      <screen x="23" y="0" width="1897" height="1080" />
+    <state width="1874" height="287" key="GridCell.Tab.0.left" timestamp="1622050688258">
+      <screen x="1920" y="0" width="1920" height="1080" />
     </state>
+    <state width="1874" height="287" key="GridCell.Tab.0.left/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622050688258" />
     <state width="925" height="288" key="GridCell.Tab.0.left/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
-    <state width="925" height="288" key="GridCell.Tab.0.right" timestamp="1622041107383">
-      <screen x="23" y="0" width="1897" height="1080" />
+    <state width="1874" height="287" key="GridCell.Tab.0.right" timestamp="1622050688259">
+      <screen x="1920" y="0" width="1920" height="1080" />
     </state>
+    <state width="1874" height="287" key="GridCell.Tab.0.right/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622050688259" />
     <state width="925" height="288" key="GridCell.Tab.0.right/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
+    <state x="2475" y="277" width="804" height="528" key="Vcs.Push.Dialog.v2" timestamp="1622041758825">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2475" y="277" width="804" height="528" key="Vcs.Push.Dialog.v2/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622041758825" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -194,14 +222,6 @@
           <url>file://$PROJECT_DIR$/src/main/java/OtherClasses/Logger.java</url>
           <line>15</line>
           <option name="timeStamp" value="4" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/src/main/java/Service/TrackService.java</url>
-          <line>47</line>
-          <properties class="Service.TrackService" method="startTrack">
-            <option name="EMULATED" value="true" />
-          </properties>
-          <option name="timeStamp" value="5" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
