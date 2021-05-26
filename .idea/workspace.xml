@@ -3,16 +3,43 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="50a3dd01-24a6-4ad2-9d0e-833cd4d7008b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Service/EcoPointsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Service/EcoPointsService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Service/TrackService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Service/TrackService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <projects_view />
+      </state>
+    </system>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -87,9 +114,7 @@
         </option>
         <option name="vmOptions" value="" />
       </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
+      <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
       <method v="2" />
     </configuration>
     <configuration name="CarConfigurationServiceTest.get" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
@@ -143,6 +168,24 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state width="925" height="288" key="GridCell.Tab.0.bottom" timestamp="1622041107383">
+      <screen x="23" y="0" width="1897" height="1080" />
+    </state>
+    <state width="925" height="288" key="GridCell.Tab.0.bottom/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
+    <state width="925" height="288" key="GridCell.Tab.0.center" timestamp="1622041107383">
+      <screen x="23" y="0" width="1897" height="1080" />
+    </state>
+    <state width="925" height="288" key="GridCell.Tab.0.center/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
+    <state width="925" height="288" key="GridCell.Tab.0.left" timestamp="1622041107383">
+      <screen x="23" y="0" width="1897" height="1080" />
+    </state>
+    <state width="925" height="288" key="GridCell.Tab.0.left/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
+    <state width="925" height="288" key="GridCell.Tab.0.right" timestamp="1622041107383">
+      <screen x="23" y="0" width="1897" height="1080" />
+    </state>
+    <state width="925" height="288" key="GridCell.Tab.0.right/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

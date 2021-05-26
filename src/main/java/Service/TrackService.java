@@ -260,13 +260,17 @@ public class TrackService {
             long time = date.getTime()/1000;
             for (Track track : tracks)
             {
-                if (track.getTimeStamp()<(time-15))
-                {
+                if (track.getTimeStamp()<(time-15)) {
                     track.setActive(false);
-                    track.setEnd(time-8);
-                    Query query2 = session.createQuery("Select t from TrackRate t WHERE t.track.id = "+track.getId()+" ORDER BY t.id DESC");
-                    TrackRate trackRate = (TrackRate) query2.getSingleResult();
-                    track.setEndPosiotion(trackRate.getGpsY()+";"+trackRate.getGpsX());
+                    track.setEnd(time - 8);
+                    Query query2 = session.createQuery("Select t from TrackRate t WHERE t.track.id = " + track.getId() + " ORDER BY t.id DESC");
+                    try
+                    {
+                        TrackRate trackRate = (TrackRate) query2.getSingleResult();
+                        track.setEndPosiotion(trackRate.getGpsY()+";"+trackRate.getGpsX());
+                    } catch (Exception e) {
+                        track.setEndPosiotion(track.getStartPosiotion());
+                    }
                     session.update(track);
                 }
             }
