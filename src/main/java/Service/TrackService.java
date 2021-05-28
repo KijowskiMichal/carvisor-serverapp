@@ -48,11 +48,6 @@ public class TrackService {
      * @return HttpStatus 200.
      */
     public ResponseEntity startTrack(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        if (request.getSession().getAttribute("user") == null) {
-            logger.info("TrackService.startTrack cannot get global configuration (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-        }
-
         Session session = null;
         Transaction tx = null;
         ResponseEntity responseEntity;
@@ -62,6 +57,7 @@ public class TrackService {
         boolean isPrivateTrack;
         float gpsLongitude;
         float gpsLatitude;
+        String userNfcTag;
 
         try {
             jsonObject = new JSONObject(Objects.requireNonNull(httpEntity.getBody()));
@@ -69,6 +65,7 @@ public class TrackService {
             isPrivateTrack = jsonObject.getBoolean("private");
             gpsLongitude = jsonObject.getFloat("gps_longitude");
             gpsLatitude = jsonObject.getFloat("gps_latitude");
+            userNfcTag = jsonObject.getString("nfc_tag");
         } catch (JSONException jsonException) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad body");
         }
@@ -76,10 +73,13 @@ public class TrackService {
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-
-            User user = (User) request.getSession().getAttribute("user");
             Car car = (Car) request.getSession().getAttribute("car");
-
+            //check if car has started track
+            Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.car.id=" + car.getId() + " and t.active=1");
+            if (selectQuery.uniqueResult() != null) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Car with id=" + car.getId() + " have started track");
+            }
+            User user = (User) session.createQuery("SELECT u FROM User u WHERE u.nfcTag='" + userNfcTag + "'").getSingleResult();
             Track track = new Track();
             track.setUser(user);
             track.setCar(car);
@@ -107,7 +107,6 @@ public class TrackService {
         return responseEntity;
     }
 
-    //TODO On meeting, NULL
     /**
      * WebMethods which update track with sending data.
      * <p>
@@ -116,12 +115,6 @@ public class TrackService {
      */
     public ResponseEntity updateTrackData(HttpServletRequest request, HttpEntity<String> httpEntity)
     {
-        // authorization
-        if (request.getSession().getAttribute("car") == null) {
-            logger.info("TrackService.updateTrackData cannot update track (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-        }
-
         Session session = null;
         Transaction tx = null;
         ResponseEntity responseEntity;
@@ -131,7 +124,7 @@ public class TrackService {
             tx = session.beginTransaction();
             String getQuery = "SELECT t FROM Track t WHERE t.active = true AND t.car.id = " + ((Car)request.getSession().getAttribute("car")).getId();
             Query query = session.createQuery(getQuery);
-            Track track = (Track) query.getSingleResult(); //Track
+            Track track = (Track) query.getSingleResult();
             if (track==null)
             {
                 responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Track = null");
@@ -139,23 +132,40 @@ public class TrackService {
             else
             {
                 JSONObject jsonPackage = new JSONObject(httpEntity.getBody());
-                Set<String> set = jsonPackage.keySet();
+                long[] longs = jsonPackage.keySet().stream().mapToLong(Long::parseLong).sorted().toArray();
                 TrackRate trackRate = new TrackRate();
-                for (String key : set) {
-                    JSONObject jsonObject = jsonPackage.getJSONObject(key);
+                for (long keyTimestamp : longs) {
+                    JSONObject jsonObject = jsonPackage.getJSONObject(String.valueOf(keyTimestamp));
 
-                    Object buff = jsonObject.get("Speed");
-                    Short speed = Objects.equals(buff,null) ? null : ((Double) buff).shortValue();
-                    buff = jsonObject.get("Throttle Pos");
-                    Byte throttle = Objects.equals(buff,null) ? null : ((Double) buff).byteValue();
-                    buff = jsonObject.get("gps_latitude");
-                    Float gpsY = Objects.equals(buff,null) ? null : ((Double) buff).floatValue();
-                    buff = jsonObject.get("gps_longitude");
-                    Float gpsX = Objects.equals(buff,null) ? null : ((Double) buff).floatValue();
-                    buff = jsonObject.get("RPM");
-                    Short rpm = Objects.equals(buff,null) ? null : ((Double) buff).shortValue();
+                    Short rpm = null;
+                    Short speed = null;
+                    Byte throttle = null;
+                    Float gpsY = null;
+                    Float gpsX = null;
 
-                    long timestamp = jsonObject.getLong("time");
+                    JSONObject obd = jsonObject.getJSONObject("obd");
+                    JSONObject gps = jsonObject.getJSONObject("gps_pos");
+
+                    Set<String> obdKeySet = obd.keySet();
+                    for (String s : obdKeySet) {
+                        if (ObdCommandTable.RPM.getDecimalPid().equals(s)) {
+                            rpm = ((Double) obd.get(s)).shortValue();
+                        } else if (ObdCommandTable.SPEED.getDecimalPid().equals(s)) {
+                            speed = ((Double) obd.get(s)).shortValue();
+                        } else if (ObdCommandTable.THROTTLE_POS.getDecimalPid().equals(s)) {
+                            throttle = ((Double) obd.get(s)).byteValue();
+                        }
+                    }
+
+                    Set<String> gpsKeySet = gps.keySet();
+                    for (String s : gpsKeySet) {
+                        if ("latitude".equals(s)) {
+                            gpsY = ((Double) gps.get(s)).floatValue();
+                        } else if ("longitude".equals(s)) {
+                            gpsX = ((Double) gps.get(s)).floatValue();
+                        }
+                    }
+
                     long distance = 0;
                     //calculate distance
                     if (gpsX != null && gpsY != null) {
@@ -165,7 +175,7 @@ public class TrackService {
                         distance = (long) distFrom(y1,x1,gpsY,gpsX);
                     }
                     track.addMetersToDistance(distance);
-                    trackRate = new TrackRate(track,speed,throttle,gpsY,gpsX,rpm,track.getDistance(),timestamp);
+                    trackRate = new TrackRate(track,speed,throttle,gpsY,gpsX,rpm,track.getDistance(), keyTimestamp);
                     track.setEndPosiotion(trackRate.getGpsY() + ";" + trackRate.getGpsX());
                     session.save(trackRate);
                     track.addTrackRate(trackRate);
@@ -184,8 +194,10 @@ public class TrackService {
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Hibernate exception" + sw.getBuffer().toString());
         } catch (JSONException e) {
             if (tx != null) tx.rollback();
-            e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("JSONException exception");
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("JSONException exception\n" + sw.toString());
         } finally {
             if (session != null) session.close();
         }

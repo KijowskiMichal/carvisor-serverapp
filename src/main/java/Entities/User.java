@@ -40,13 +40,16 @@ public class User
      *  Phone number of user
      */
     int phoneNumber;
-
+    /**
+     * NFC tag
+     */
+    String nfcTag;
 
     public User(){
        super();
     }
 
-    public User(String nick, String name, String surname, String password, UserPrivileges userPrivileges, String image, int phoneNumber) {
+    public User(String nick, String name, String surname, String password, UserPrivileges userPrivileges, String image, int phoneNumber, String nfcTag) {
         this.nick = nick;
         this.name = name;
         this.surname = surname;
@@ -54,6 +57,7 @@ public class User
         this.userPrivileges = userPrivileges;
         this.image = image;
         this.phoneNumber = phoneNumber;
+        this.nfcTag = nfcTag;
     }
 
     public int getId() {
@@ -120,5 +124,13 @@ public class User
     public void setPhoneNumber(int phoneNumber)
     {
         this.phoneNumber = phoneNumber;
+    }
+
+    public String getNfcTag() {
+        return nfcTag;
+    }
+
+    public void setNfcTag(String nfcTag) {
+        this.nfcTag = nfcTag;
     }
 }

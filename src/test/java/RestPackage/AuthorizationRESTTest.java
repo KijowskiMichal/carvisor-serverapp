@@ -58,7 +58,7 @@ class AuthorizationRESTTest {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
-            User user = new User("fsgfgdfsfhdgfh", null, null, DigestUtils.sha256Hex("dsgdsgdfsg"), UserPrivileges.ADMINISTRATOR, null, 0);
+            User user = new User("fsgfgdfsfhdgfh", null, null, DigestUtils.sha256Hex("dsgdsgdfsg"), UserPrivileges.ADMINISTRATOR, null, 0, "AGAAA");
             session.save(user);
 
             tx.commit();
@@ -116,7 +116,7 @@ class AuthorizationRESTTest {
         try {
             //check with first user logged
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new User("fsgfgdfsfhdgfh", null, null, null, UserPrivileges.ADMINISTRATOR, null, 0)));
+            sessionattr.put("user", (Object)(new User("fsgfgdfsfhdgfh", null, null, null, UserPrivileges.ADMINISTRATOR, null, 0,"ZXCVA")));
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status")
                     .sessionAttrs(sessionattr))
@@ -131,7 +131,7 @@ class AuthorizationRESTTest {
 
             //check with second user logged
             sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new User("dfsdfdv", null, null, null, UserPrivileges.MODERATOR, null, 0)));
+            sessionattr.put("user", (Object)(new User("dfsdfdv", null, null, null, UserPrivileges.MODERATOR, null, 0, "ASDZXCV")));
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status")
                     .sessionAttrs(sessionattr))
@@ -166,7 +166,7 @@ class AuthorizationRESTTest {
         {
             //check with first user logged
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new User("fsgfgdfsfhdgfh", null, null, null, UserPrivileges.ADMINISTRATOR, null, 0)));
+            sessionattr.put("user", (Object)(new User("fsgfgdfsfhdgfh", null, null, null, UserPrivileges.ADMINISTRATOR, null, 0, "ZXCZCX")));
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status")
                     .sessionAttrs(sessionattr))
@@ -185,7 +185,7 @@ class AuthorizationRESTTest {
 
             //check with second user logged
             sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new User("fsgfggfggfdgdfsfhdgfh", null, null, null, UserPrivileges.MODERATOR, null, 0)));
+            sessionattr.put("user", (Object)(new User("fsgfggfggfdgdfsfhdgfh", null, null, null, UserPrivileges.MODERATOR, null, 0, "CVZXCVXZCV")));
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/logout")
                     .sessionAttrs(sessionattr))
