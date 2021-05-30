@@ -140,8 +140,8 @@ public class TrackService {
                     Short rpm = null;
                     Short speed = null;
                     Byte throttle = null;
-                    Float gpsY = null;
-                    Float gpsX = null;
+                    Float latitude = null;
+                    Float longitude = null;
 
                     JSONObject obd = jsonObject.getJSONObject("obd");
                     JSONObject gps = jsonObject.getJSONObject("gps_pos");
@@ -160,23 +160,23 @@ public class TrackService {
                     Set<String> gpsKeySet = gps.keySet();
                     for (String s : gpsKeySet) {
                         if ("latitude".equals(s)) {
-                            gpsY = ((Double) gps.get(s)).floatValue();
+                            latitude = ((Double) gps.get(s)).floatValue();
                         } else if ("longitude".equals(s)) {
-                            gpsX = ((Double) gps.get(s)).floatValue();
+                            longitude = ((Double) gps.get(s)).floatValue();
                         }
                     }
 
                     long distance = 0;
                     //calculate distance
-                    if (gpsX != null && gpsY != null) {
+                    if (longitude != null && latitude != null) {
                         String[] trackEndPosition = track.getEndPosiotion().split(";");
                         float y1 = Float.parseFloat(trackEndPosition[0]);
                         float x1 = Float.parseFloat(trackEndPosition[1]);
-                        distance = (long) distFrom(y1,x1,gpsY,gpsX);
+                        distance = (long) distFrom(y1,x1,latitude,longitude);
                     }
                     track.addMetersToDistance(distance);
-                    trackRate = new TrackRate(track,speed,throttle,gpsY,gpsX,rpm,track.getDistance(), keyTimestamp);
-                    track.setEndPosiotion(trackRate.getGpsY() + ";" + trackRate.getGpsX());
+                    trackRate = new TrackRate(track,speed,throttle,latitude,longitude,rpm,track.getDistance(), keyTimestamp);
+                    track.setEndPosiotion(trackRate.getLatitude() + ";" + trackRate.getLongitude());
                     session.save(trackRate);
                     track.addTrackRate(trackRate);
                 }
@@ -281,7 +281,7 @@ public class TrackService {
                     try
                     {
                         TrackRate trackRate = (TrackRate) query2.getSingleResult();
-                        track.setEndPosiotion(trackRate.getGpsY()+";"+trackRate.getGpsX());
+                        track.setEndPosiotion(trackRate.getLatitude()+";"+trackRate.getLongitude());
                     } catch (Exception e) {
                         track.setEndPosiotion(track.getStartPosiotion());
                     }
@@ -290,6 +290,46 @@ public class TrackService {
             }
             tx.commit();
             responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        } finally {
+            if (session != null) session.close();
+        }
+        return responseEntity;
+    }
+
+    public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, int trackId) {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("TrackService.getTrackData cannot send data (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+        Session session = null;
+        Transaction tx = null;
+        ResponseEntity responseEntity;
+
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+            String getQuery = "SELECT t FROM Track t WHERE t.id = " + trackId;
+            Query query = session.createQuery(getQuery);
+            Track track = (Track) query.getSingleResult();
+            if (track==null) {
+                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            }
+            else {
+                List<TrackRate> trackRateList = track.getListofTrackRates();
+                JSONArray trackRateJson = new JSONArray();
+                for (TrackRate tr : trackRateList) {
+                    JSONObject jsonObject = new JSONObject(tr);
+                    trackRateJson.put(jsonObject);
+                }
+
+                responseEntity = ResponseEntity.status(HttpStatus.OK).body(trackRateList);
+            }
+            tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
@@ -345,8 +385,8 @@ public class TrackService {
                     for (TrackRate trackRate2 : trackRates2)
                     {
                         JSONObject tmp2 = new JSONObject();
-                        tmp2.put("gpsY", trackRate2.getGpsY());
-                        tmp2.put("gpsX", trackRate2.getGpsX());
+                        tmp2.put("gpsY", trackRate2.getLatitude());
+                        tmp2.put("gpsX", trackRate2.getLongitude());
                         tmp2.put("rpm", trackRate2.getRpm());
                         tmp2.put("speed", trackRate2.getSpeed());
                         tmp2.put("throttle", trackRate2.getThrottle());
@@ -356,8 +396,8 @@ public class TrackService {
                     first = false;
                 }
                 JSONObject tmp = new JSONObject();
-                tmp.put("gpsY", trackRate.getGpsY());
-                tmp.put("gpsX", trackRate.getGpsX());
+                tmp.put("gpsY", trackRate.getLatitude());
+                tmp.put("gpsX", trackRate.getLongitude());
                 tmp.put("rpm", trackRate.getRpm());
                 tmp.put("speed", trackRate.getSpeed());
                 tmp.put("throttle", trackRate.getThrottle());
@@ -372,8 +412,8 @@ public class TrackService {
             for (TrackRate trackRate3 : trackRates3)
             {
                 JSONObject tmp3 = new JSONObject();
-                tmp3.put("gpsY", trackRate3.getGpsY());
-                tmp3.put("gpsX", trackRate3.getGpsX());
+                tmp3.put("gpsY", trackRate3.getLatitude());
+                tmp3.put("gpsX", trackRate3.getLongitude());
                 tmp3.put("rpm", trackRate3.getRpm());
                 tmp3.put("speed", trackRate3.getSpeed());
                 tmp3.put("throttle", trackRate3.getThrottle());
@@ -386,16 +426,16 @@ public class TrackService {
                 Track track = (Track) query4.getSingleResult();
                 int lastID = track.getListofTrackRates().size()-1;
                 JSONObject start = new JSONObject();
-                start.put("gpsY", track.getListofTrackRates().get(0).getGpsY());
-                start.put("gpsX", track.getListofTrackRates().get(0).getGpsX());
+                start.put("gpsY", track.getListofTrackRates().get(0).getLatitude());
+                start.put("gpsX", track.getListofTrackRates().get(0).getLongitude());
                 start.put("rpm", track.getListofTrackRates().get(0).getRpm());
                 start.put("speed", track.getListofTrackRates().get(0).getSpeed());
                 start.put("throttle", track.getListofTrackRates().get(0).getThrottle());
                 start.put("time", track.getListofTrackRates().get(0).getTimestamp());
                 startPoints.put(start);
                 JSONObject end = new JSONObject();
-                start.put("gpsY", track.getListofTrackRates().get(lastID).getGpsY());
-                start.put("gpsX", track.getListofTrackRates().get(lastID).getGpsX());
+                start.put("gpsY", track.getListofTrackRates().get(lastID).getLatitude());
+                start.put("gpsX", track.getListofTrackRates().get(lastID).getLongitude());
                 start.put("rpm", track.getListofTrackRates().get(lastID).getRpm());
                 start.put("speed", track.getListofTrackRates().get(lastID).getSpeed());
                 start.put("throttle", track.getListofTrackRates().get(lastID).getThrottle());
@@ -430,4 +470,6 @@ public class TrackService {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return (float) (earthRadius * c);
     }
+
+
 }

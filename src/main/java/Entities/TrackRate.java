@@ -32,12 +32,12 @@ public class TrackRate
      * gps latitude
      */
     @Column(nullable = true)
-    Float gpsY;
+    Float latitude;
     /**
      * gps longitude
      */
     @Column(nullable = true)
-    Float gpsX;
+    Float longitude;
     /**
      * revolutions per minute
      */
@@ -55,12 +55,12 @@ public class TrackRate
     public TrackRate() {
     }
 
-    public TrackRate(Track track, Short speed, Byte throttle, Float gpsY, Float gpsX, Short rpm, long distance, long timestamp) {
+    public TrackRate(Track track, Short speed, Byte throttle, Float latitude, Float longitude, Short rpm, long distance, long timestamp) {
         this.track = track;
         this.speed = speed;
         this.throttle = throttle;
-        this.gpsX = gpsX;
-        this.gpsY = gpsY;
+        this.longitude = longitude;
+        this.latitude = latitude;
         this.rpm = rpm;
         this.distance = distance;
         this.timestamp = timestamp;
@@ -98,20 +98,20 @@ public class TrackRate
         this.throttle = throttle;
     }
 
-    public Float getGpsX() {
-        return gpsX;
+    public Float getLongitude() {
+        return longitude;
     }
 
-    public void setGpsX(Float gpsX) {
-        this.gpsX = gpsX;
+    public void setLongitude(Float longitude) {
+        this.longitude = longitude;
     }
 
-    public Float getGpsY() {
-        return gpsY;
+    public Float getLatitude() {
+        return latitude;
     }
 
-    public void setGpsY(Float gpsY) {
-        this.gpsY = gpsY;
+    public void setLatitude(Float latitude) {
+        this.latitude = latitude;
     }
 
     public Short getRpm() {
@@ -146,8 +146,8 @@ public class TrackRate
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("Speed",speed);
         jsonObject.put("Throttle Pos",throttle);
-        jsonObject.put("gps_longitude",gpsX);
-        jsonObject.put("gps_latitude",gpsY);
+        jsonObject.put("gps_longitude", longitude);
+        jsonObject.put("gps_latitude", latitude);
         jsonObject.put("RPM",rpm);
         jsonObject.put("time",timestamp);
         return jsonObject.toString();
