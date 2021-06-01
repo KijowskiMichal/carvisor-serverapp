@@ -532,13 +532,65 @@ public class TrackService {
     //=========================
 
     // Calculate distance between two gps points, return distance in meters
-    public float distFrom(double y1, double x1, double y2, double x2) {
+    private float distFrom(double y1, double x1, double y2, double x2) {
         double earthRadius = 6371000; //meters
         double dLat = Math.toRadians(y2-y1);
         double dLng = Math.toRadians(x2-x1);
         double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(Math.toRadians(y1)) * Math.cos(Math.toRadians(y2)) * Math.sin(dLng/2) * Math.sin(dLng/2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return (float) (earthRadius * c);
+    }
+
+    //add ecopoints to user from track
+    private void addTrackToEcoPointScore(User user, Track track) { //TODO place this at the trackEnd method
+        Session session = null;
+        Transaction tx = null;
+
+        user.addDistanceTravelled(track.getDistance());
+        double percentOfNewDistance = (double) track.getDistance() /  (double) user.getDistanceTravelled();
+
+        user.setEcoPointsAvg((float)
+                (percentOfNewDistance * track.getEcoPoints() +
+                        (1-percentOfNewDistance) * user.getEcoPointsAvg()));
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+            session.update(user);
+            tx.commit();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) tx.rollback();
+        }
+        finally {
+            if (session != null) session.close();
+        }
+    }
+
+
+    private void calculateTrackEcoPoints(Track track) {//TODO place this at the trackEnd method
+        Session session = null;
+        Transaction tx = null;
+
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+
+            String getQuery = "SELECT t FROM TrackRate t WHERE t.track.id = " + track.getId();
+            Query query = session.createQuery(getQuery);
+            List<TrackRate> rateList = query.getResultList();
+
+            //TODO CalculateEcoPoints
+            Random random = new Random();
+            track.setEcoPoints(random.nextInt(10));
+            session.update(track);
+            tx.commit();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) tx.rollback();
+        }
+        finally {
+            if (session != null) session.close();
+        }
     }
 
 }

@@ -72,6 +72,10 @@ public class Track {
      * meters since start
      */
     long distance;
+    /**
+     * eco points for track;
+     */
+    float ecoPoints;
 
     public Track(Car car, User user, int numberOfparameter, Boolean privateTrack, long timeStamp, String startPosiotion) {
         this.car = car;
@@ -203,6 +207,14 @@ public class Track {
         this.distance = distance;
     }
 
+    public float getEcoPoints() {
+        return ecoPoints;
+    }
+
+    public void setEcoPoints(float ecoPoints) {
+        this.ecoPoints = ecoPoints;
+    }
+
     public void addTrackRate(TrackRate trackRate) {
         listofTrackRates.add(trackRate);
     }
@@ -210,5 +222,4 @@ public class Track {
     public void addMetersToDistance(long meters) {
         distance += meters;
     }
-
 }

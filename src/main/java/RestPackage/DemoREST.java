@@ -23,6 +23,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 
 /**
  * REST controller responsible for demo data management.
@@ -116,6 +117,34 @@ public class DemoREST
 
         transaction.commit();
         session.close();
+        return ResponseEntity.status(HttpStatus.OK).body("");
+    }
+
+    @RequestMapping(value = "/recalculateEcoForAllTracks", method = RequestMethod.GET)
+    public ResponseEntity recalculateEcoForAllTrack() {
+        Session session = null;
+        Transaction tx = null;
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+            String getAllQuery = "select t FROM Track t";
+            Query query = session.createQuery(getAllQuery);
+            List<Track> userList = query.getResultList();
+
+            Random random = new Random();
+            for (Track t : userList) {
+                t.setEcoPoints(random.nextInt(10));
+                session.update(t);
+            }
+
+            tx.commit();
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) tx.rollback();
+        }
+        finally {
+            if (session != null) session.close();
+        }
         return ResponseEntity.status(HttpStatus.OK).body("");
     }
 }

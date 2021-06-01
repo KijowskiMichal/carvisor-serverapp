@@ -158,4 +158,8 @@ public class User
     public void setDistanceTravelled(long distanceTravelled) {
         this.distanceTravelled = distanceTravelled;
     }
+
+    public void addDistanceTravelled(long distanceTravelled) {
+        this.distanceTravelled += distanceTravelled;
+    }
 }
