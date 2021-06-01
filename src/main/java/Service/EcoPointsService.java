@@ -4,6 +4,7 @@ import Entities.User;
 import Entities.UserPrivileges;
 import HibernatePackage.HibernateRequests;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
@@ -45,12 +46,18 @@ public class EcoPointsService {
         Transaction tx = null;
         ResponseEntity responseEntity;
 
-        Query query = session.createQuery("Select u from User u WHERE u.id=" + userId);
-        User user = (User) query.getSingleResult();
-
-
-
-
-        return new ResponseEntity(HttpStatus.OK);
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+            Query query = session.createQuery("Select u from User u WHERE u.id=" + userId);
+            User user = (User) query.getSingleResult();
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(user.getEcoPointsAvg());
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
+        } finally {
+            if (session != null) session.close();
+        }
+        return responseEntity;
     }
 }

@@ -18,8 +18,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -300,7 +308,7 @@ public class TrackService {
         return responseEntity;
     }
 
-    public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, int trackId) {
+    public ResponseEntity getTrackDataById(HttpServletRequest request, HttpEntity<String> httpEntity, int trackId) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("TrackService.getTrackData cannot send data (session not found)");
@@ -313,22 +321,21 @@ public class TrackService {
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            String getQuery = "SELECT t FROM Track t WHERE t.id = " + trackId;
+            String getQuery = "SELECT t FROM TrackRate t WHERE t.track.id = " + trackId;
             Query query = session.createQuery(getQuery);
-            Track track = (Track) query.getSingleResult();
-            if (track==null) {
-                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            List<TrackRate> rateList = query.getResultList();
+            JSONArray trackRateJson = new JSONArray();
+            for (TrackRate tr : rateList) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("gpsY", tr.getLatitude());
+                jsonObject.put("gpsX", tr.getLongitude());
+                jsonObject.put("rpm", tr.getRpm());
+                jsonObject.put("speed", tr.getSpeed());
+                jsonObject.put("throttle", tr.getThrottle());
+                jsonObject.put("time", tr.getTimestamp());
+                trackRateJson.put(jsonObject);
             }
-            else {
-                List<TrackRate> trackRateList = track.getListofTrackRates();
-                JSONArray trackRateJson = new JSONArray();
-                for (TrackRate tr : trackRateList) {
-                    JSONObject jsonObject = new JSONObject(tr);
-                    trackRateJson.put(jsonObject);
-                }
-
-                responseEntity = ResponseEntity.status(HttpStatus.OK).body(trackRateList);
-            }
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(trackRateJson.toString());
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
@@ -336,6 +343,69 @@ public class TrackService {
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
         } finally {
             if (session != null) session.close();
+        }
+        return responseEntity;
+    }
+
+    /**
+     * WebMethod that return tracks data list as array within a certain period of time .
+     * <p>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param httpEntity Object of HttpEntity represents content of our request.
+     * @return HttpStatus 200, user data as JsonString.
+     */
+    public ResponseEntity getTrackDataList(HttpServletRequest request, HttpEntity<String> httpEntity, String from, String to) //TODO
+    {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("TrackService.getSimplifiedTrackData cannot send data (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+        Session session = null;
+        Transaction tx = null;
+        ResponseEntity responseEntity;
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("ddMMyyyy");
+            Date dateFrom = simpleDateFormat.parse(from);
+            Date dateTo = simpleDateFormat.parse(to);
+            long dateFromTimeStamp = new Timestamp(dateFrom.getTime()).getTime();
+            long dateToTimeStamp = new Timestamp(dateTo.getTime()).getTime();
+
+            Query query = session.createQuery("SELECT t from Track t WHERE " +
+                    "t.timeStamp >= " + dateFromTimeStamp/1000
+                    + " AND " +
+                    "t.timeStamp <= " + dateToTimeStamp/1000);
+
+            List<Track> trackList = query.getResultList();
+            JSONArray jsonArray = new JSONArray();
+            for (Track t : trackList) {
+                JSONObject jo = new JSONObject();
+                jo.put("trackId",t.getId());
+                jo.put("distance",t.getDistance());
+                jo.put("carId",t.getCar().getId());
+                jo.put("startedTime",t.getStart());
+                jo.put("endedTime",t.getEnd());
+                jo.put("startLocation",t.getStartPosiotion()); //TODO API Reverse Geocoding
+                jo.put("endLocation",t.getEndPosiotion()); //TODO API Reverse Geocoding
+                jo.put("privateStatus",t.getPrivateTrack());
+                jo.put("activeStatus",t.getActive());
+                jsonArray.put(jo);
+            }
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonArray.toString());
+        } catch (HibernateException e) {
+            e.printStackTrace();
+            if (tx != null) tx.rollback();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        } catch (ParseException p) {
+            p.printStackTrace();
+            if (tx != null) tx.rollback();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("wrong date format");
+        } finally {
+            if (session != null) session.close();
+
         }
         return responseEntity;
     }
@@ -470,6 +540,5 @@ public class TrackService {
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return (float) (earthRadius * c);
     }
-
 
 }

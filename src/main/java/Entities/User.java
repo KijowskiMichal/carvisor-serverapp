@@ -44,6 +44,15 @@ public class User
      * NFC tag
      */
     String nfcTag;
+    /**
+     * Eco Point
+     */
+    float ecoPointsAvg;
+    /**
+     * Distance Travelled;
+     */
+    long distanceTravelled;
+
 
     public User(){
        super();
@@ -132,5 +141,21 @@ public class User
 
     public void setNfcTag(String nfcTag) {
         this.nfcTag = nfcTag;
+    }
+
+    public float getEcoPointsAvg() {
+        return ecoPointsAvg;
+    }
+
+    public void setEcoPointsAvg(float ecoPointsAvg) {
+        this.ecoPointsAvg = ecoPointsAvg;
+    }
+
+    public long getDistanceTravelled() {
+        return distanceTravelled;
+    }
+
+    public void setDistanceTravelled(long distanceTravelled) {
+        this.distanceTravelled = distanceTravelled;
     }
 }
