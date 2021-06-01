@@ -102,6 +102,6 @@ public class AuthorizationService {
         if (request.getSession().getAttribute("user")!=null)
             logger.info("AuthorizationREST.logout logout user (user: "+((User)request.getSession().getAttribute("user")).getNick()+")");
         request.getSession().invalidate();
-        return ResponseEntity.status(HttpStatus.OK).body("user logout");
+        return ResponseEntity.status(HttpStatus.OK).body("");
     }
 }

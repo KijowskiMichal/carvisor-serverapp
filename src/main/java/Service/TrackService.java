@@ -18,14 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -148,8 +142,8 @@ public class TrackService {
                     Short rpm = null;
                     Short speed = null;
                     Byte throttle = null;
-                    Float latitude = null;
-                    Float longitude = null;
+                    Double latitude = null;
+                    Double longitude = null;
 
                     JSONObject obd = jsonObject.getJSONObject("obd");
                     JSONObject gps = jsonObject.getJSONObject("gps_pos");
@@ -168,9 +162,9 @@ public class TrackService {
                     Set<String> gpsKeySet = gps.keySet();
                     for (String s : gpsKeySet) {
                         if ("latitude".equals(s)) {
-                            latitude = ((Double) gps.get(s)).floatValue();
+                            latitude = ((Double) gps.get(s)).doubleValue();
                         } else if ("longitude".equals(s)) {
-                            longitude = ((Double) gps.get(s)).floatValue();
+                            longitude = ((Double) gps.get(s)).doubleValue();
                         }
                     }
 
@@ -455,8 +449,8 @@ public class TrackService {
                     for (TrackRate trackRate2 : trackRates2)
                     {
                         JSONObject tmp2 = new JSONObject();
-                        tmp2.put("gpsY", trackRate2.getLatitude());
-                        tmp2.put("gpsX", trackRate2.getLongitude());
+                        tmp2.put("gpsX", trackRate2.getLatitude());
+                        tmp2.put("gpsY", trackRate2.getLongitude());
                         tmp2.put("rpm", trackRate2.getRpm());
                         tmp2.put("speed", trackRate2.getSpeed());
                         tmp2.put("throttle", trackRate2.getThrottle());
@@ -466,8 +460,8 @@ public class TrackService {
                     first = false;
                 }
                 JSONObject tmp = new JSONObject();
-                tmp.put("gpsY", trackRate.getLatitude());
-                tmp.put("gpsX", trackRate.getLongitude());
+                tmp.put("gpsX", trackRate.getLatitude());
+                tmp.put("gpsY", trackRate.getLongitude());
                 tmp.put("rpm", trackRate.getRpm());
                 tmp.put("speed", trackRate.getSpeed());
                 tmp.put("throttle", trackRate.getThrottle());
@@ -482,8 +476,8 @@ public class TrackService {
             for (TrackRate trackRate3 : trackRates3)
             {
                 JSONObject tmp3 = new JSONObject();
-                tmp3.put("gpsY", trackRate3.getLatitude());
-                tmp3.put("gpsX", trackRate3.getLongitude());
+                tmp3.put("gpsX", trackRate3.getLatitude());
+                tmp3.put("gpsY", trackRate3.getLongitude());
                 tmp3.put("rpm", trackRate3.getRpm());
                 tmp3.put("speed", trackRate3.getSpeed());
                 tmp3.put("throttle", trackRate3.getThrottle());
@@ -496,21 +490,21 @@ public class TrackService {
                 Track track = (Track) query4.getSingleResult();
                 int lastID = track.getListofTrackRates().size()-1;
                 JSONObject start = new JSONObject();
-                start.put("gpsY", track.getListofTrackRates().get(0).getLatitude());
-                start.put("gpsX", track.getListofTrackRates().get(0).getLongitude());
+                start.put("gpsX", track.getListofTrackRates().get(0).getLatitude());
+                start.put("gpsY", track.getListofTrackRates().get(0).getLongitude());
                 start.put("rpm", track.getListofTrackRates().get(0).getRpm());
                 start.put("speed", track.getListofTrackRates().get(0).getSpeed());
                 start.put("throttle", track.getListofTrackRates().get(0).getThrottle());
                 start.put("time", track.getListofTrackRates().get(0).getTimestamp());
                 startPoints.put(start);
                 JSONObject end = new JSONObject();
-                start.put("gpsY", track.getListofTrackRates().get(lastID).getLatitude());
-                start.put("gpsX", track.getListofTrackRates().get(lastID).getLongitude());
-                start.put("rpm", track.getListofTrackRates().get(lastID).getRpm());
-                start.put("speed", track.getListofTrackRates().get(lastID).getSpeed());
-                start.put("throttle", track.getListofTrackRates().get(lastID).getThrottle());
-                start.put("time", track.getListofTrackRates().get(lastID).getTimestamp());
-                endPoints.put(start);
+                end.put("gpsX", track.getListofTrackRates().get(lastID).getLatitude());
+                end.put("gpsY", track.getListofTrackRates().get(lastID).getLongitude());
+                end.put("rpm", track.getListofTrackRates().get(lastID).getRpm());
+                end.put("speed", track.getListofTrackRates().get(lastID).getSpeed());
+                end.put("throttle", track.getListofTrackRates().get(lastID).getThrottle());
+                end.put("time", track.getListofTrackRates().get(lastID).getTimestamp());
+                endPoints.put(end);
             }
             JSONObject output = new JSONObject();
             output.put("points", points);
