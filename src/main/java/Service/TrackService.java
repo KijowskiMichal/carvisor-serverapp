@@ -308,7 +308,14 @@ public class TrackService {
         return responseEntity;
     }
 
-    public ResponseEntity getTrackDataById(HttpServletRequest request, HttpEntity<String> httpEntity, int trackId) {
+    /**
+     * WebMethod that return track data list as array containing track rate.
+     * <p>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param httpEntity Object of HttpEntity represents content of our request.
+     * @return HttpStatus 200, track data as JsonArrayString (Array of TrackRate).
+     */
+    public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, int trackId) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("TrackService.getTrackData cannot send data (session not found)");
@@ -354,7 +361,7 @@ public class TrackService {
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200, user data as JsonString.
      */
-    public ResponseEntity getTrackDataList(HttpServletRequest request, HttpEntity<String> httpEntity, String from, String to) //TODO
+    public ResponseEntity getUserTrackDataList(HttpServletRequest request, HttpEntity<String> httpEntity,int userId, String from, String to) //TODO
     {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
@@ -377,7 +384,9 @@ public class TrackService {
             Query query = session.createQuery("SELECT t from Track t WHERE " +
                     "t.timeStamp >= " + dateFromTimeStamp/1000
                     + " AND " +
-                    "t.timeStamp <= " + dateToTimeStamp/1000);
+                    "t.timeStamp <= " + dateToTimeStamp/1000
+                    + " AND " +
+                    "t.user.id = " + userId);
 
             List<Track> trackList = query.getResultList();
             JSONArray jsonArray = new JSONArray();
@@ -542,7 +551,8 @@ public class TrackService {
     }
 
     //add ecopoints to user from track
-    private void addTrackToEcoPointScore(User user, Track track) { //TODO place this at the trackEnd method
+    //TODO place this at the trackEnd method
+    private void addTrackToEcoPointScore(User user, Track track) {
         Session session = null;
         Transaction tx = null;
 
@@ -566,8 +576,8 @@ public class TrackService {
         }
     }
 
-
-    private void calculateTrackEcoPoints(Track track) {//TODO place this at the trackEnd method
+    //TODO place this at the trackEnd method
+    private void calculateTrackEcoPoints(Track track) {
         Session session = null;
         Transaction tx = null;
 
@@ -592,5 +602,4 @@ public class TrackService {
             if (session != null) session.close();
         }
     }
-
 }
