@@ -522,6 +522,74 @@ public class TrackService {
         return responseEntity;
     }
 
+    /**
+     * WebMethod which returns a list of tracks
+     * <P>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param page     Page of tracks list. Parameter associated with pageSize.
+     * @param pageSize Number of record we want to get.
+     * @param timeFrom    Time from we want to list tracks.
+     * @param timeTo    Time up to we want to list tracks.
+     * @return HttpStatus 200 Returns the contents of the page that contains a list of tracks in the JSON format.
+     */
+    public ResponseEntity<String> list(HttpServletRequest request, int user, int page, int pageSize, String timeFrom, String timeTo) {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("TrackRest.list cannot list track's (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
+            logger.info("TrackRest.list cannot list track's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDateTime before = LocalDateTime.from(LocalDate.parse(timeFrom, formatter).atStartOfDay());
+        Timestamp timestampBefore = Timestamp.valueOf(before);
+        LocalDateTime after = LocalDateTime.from(LocalDate.parse(timeTo, formatter).atStartOfDay().plusDays(1));
+        Timestamp timestampAfter = Timestamp.valueOf(after);
+        //listing
+        List<Object> tracks = new ArrayList<>();
+        int lastPageNumber;
+        Session session = hibernateRequests.getSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            String countQ = "Select count (t.id) from Track t WHERE t.user = "+user+" AND t.start > "+(timestampBefore.getTime()/1000)+" AND t.start < "+(timestampAfter.getTime()/1000)+" ";
+            Query countQuery = session.createQuery(countQ);
+            Long countResults = (Long) countQuery.uniqueResult();
+            lastPageNumber = (int) (Math.ceil(countResults / (double) pageSize));
+
+            Query selectQuery = session.createQuery("SELECT t from Track t WHERE t.user = "+user+" AND t.start > "+(timestampBefore.getTime()/1000)+" AND t.start < "+(timestampAfter.getTime()/1000)+" ");
+            selectQuery.setFirstResult((page - 1) * pageSize);
+            selectQuery.setMaxResults(pageSize);
+            tracks = selectQuery.list();
+            tx.commit();
+            session.close();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            session.close();
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        }
+        JSONObject jsonOut = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        for (Object tmp : tracks) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", ((Track) tmp).getId());
+            jsonObject.put("from", ((Track) tmp).getStartPosiotion());
+            jsonObject.put("to", ((Track) tmp).getEndPosiotion());
+            jsonObject.put("start", ((Track) tmp).getStart());
+            jsonObject.put("end", ((Track) tmp).getEnd());
+            jsonObject.put("distance", ((Track) tmp).getDistance());
+            jsonArray.put(jsonObject);
+        }
+
+        jsonOut.put("page", page);
+        jsonOut.put("pageMax", lastPageNumber);
+        jsonOut.put("listOfTracks", jsonArray);
+        logger.info("TrackRest.list returns list of tracks (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+        return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
+    }
+
     //Private methods
     //=========================
 
@@ -585,113 +653,6 @@ public class TrackService {
         finally {
             if (session != null) session.close();
         }
-    }
-
-    /**
-     * WebMethod which returns a list of tracks
-     * <P>
-     * @param request  Object of HttpServletRequest represents our request.
-     * @param page     Page of tracks list. Parameter associated with pageSize.
-     * @param pageSize Number of record we want to get.
-     * @param regex    Part of address we want to display.
-     * @param timeFrom    Time from we want to list tracks.
-     * @param timeTo    Time up to we want to list tracks.
-     * @return HttpStatus 200 Returns the contents of the page that contains a list of tracks in the JSON format.
-     */
-    public ResponseEntity<String> list(HttpServletRequest request, int page, int pageSize, String regex, String timeFrom, String timeTo) {
-        // authorization
-        if (request.getSession().getAttribute("user") == null) {
-            logger.info("UserREST.list cannot list user's (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-        } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
-            logger.info("UserREST.list cannot list user's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-        }
-        //listing
-        List<Object> users = new ArrayList<>();
-        int lastPageNumber;
-        Session session = hibernateRequests.getSession();
-        Transaction tx = null;
-        try {
-            if (regex.equals("$")) regex = "";
-            tx = session.beginTransaction();
-            String countQ = "Select count (u.id) from User u WHERE u.name  like '%" + regex + "%' OR u.surname  like '%" + regex + "%'";
-            Query countQuery = session.createQuery(countQ);
-            Long countResults = (Long) countQuery.uniqueResult();
-            lastPageNumber = (int) (Math.ceil(countResults / (double) pageSize));
-
-            Query selectQuery = session.createQuery("SELECT u FROM User u WHERE u.name  like '%" + regex + "%' OR u.surname  like '%" + regex + "%'");
-            selectQuery.setFirstResult((page - 1) * pageSize);
-            selectQuery.setMaxResults(pageSize);
-            users = selectQuery.list();
-            tx.commit();
-            session.close();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            session.close();
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-        }
-        JSONObject jsonOut = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-        for (Object tmp : users) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id", ((User) tmp).getId());
-            jsonObject.put("nick", ((User) tmp).getNick());
-            jsonObject.put("name", ((User) tmp).getName());
-            jsonObject.put("surname", ((User) tmp).getSurname());
-            jsonObject.put("image", ((User) tmp).getImage());
-            try {
-                session = hibernateRequests.getSession();
-                tx = session.beginTransaction();
-                Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.active = true AND t.user.id = "+((User) tmp).getId());
-                List<Track> tracks = selectQuery.list();
-                if (tracks.size()>0) {
-                    jsonObject.put("status", "Aktywny");
-                    SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-                    Date date = new Date(tracks.get(0).getStart()*1000);
-                    jsonObject.put("startTime", format.format(date));
-                    jsonObject.put("finishTime", "------");
-                    jsonObject.put("licensePlate", tracks.get(0).getCar().getLicensePlate());
-                } else {
-                    selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.active = false AND t.user.id = "+((User) tmp).getId()+" ORDER BY t.id DESC");
-                    selectQuery.setMaxResults(1);
-                    tracks = selectQuery.list();
-                    if (tracks.size()>0)
-                    {
-                        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-                        Date date = new Date(tracks.get(0).getEnd()*1000);
-                        jsonObject.put("finishTime", format.format(date));
-                    }
-                    else jsonObject.put("finishTime", "------");
-                    jsonObject.put("status", "Nieaktywny");
-                    jsonObject.put("startTime", "------");
-                    jsonObject.put("licensePlate", "------");
-                }
-                LocalDateTime now = LocalDateTime.now();
-                LocalDateTime before = now.with(LocalTime.MIN);
-                Timestamp timestampBefore = Timestamp.valueOf(before);
-                LocalDateTime after = now.with(LocalTime.MAX);
-                Timestamp timestampAfter = Timestamp.valueOf(after);
-                Query countQ = session.createQuery("Select sum (t.distance) from TrackRate t WHERE t.timestamp > "+String.valueOf(timestampBefore.getTime()/1000)+" AND  t.timestamp < "+String.valueOf(timestampAfter.getTime()/1000)+" AND t.track.user.id = "+((User) tmp).getId());
-                Long lonk = (Long)countQ.getSingleResult();
-                jsonObject.put("distance", String.valueOf(lonk == null ? 0 : lonk));
-                tx.commit();
-                session.close();
-            } catch (HibernateException e) {
-                if (tx != null) tx.rollback();
-                session.close();
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-            }
-            jsonArray.put(jsonObject);
-        }
-
-        jsonOut.put("page", page);
-        jsonOut.put("pageMax", lastPageNumber);
-        jsonOut.put("listOfUsers", jsonArray);
-        logger.info("UsersREST.list returns list of users (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
-        return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 
 }

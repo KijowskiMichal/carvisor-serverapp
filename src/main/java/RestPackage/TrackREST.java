@@ -60,9 +60,9 @@ public class TrackREST {
         return trackService.getTrackDataList(request,httpEntity,dateFrom,dateTo);
     }
 
-    @RequestMapping(value = "/list/{id}/{page}/{pagesize}/{regex}/{dateFrom}/{dateTo}/", method = RequestMethod.GET)
+    @RequestMapping(value = "/list/{id}/{page}/{pagesize}/{dateFrom}/{dateTo}/", method = RequestMethod.GET)
     public ResponseEntity list(HttpServletRequest request, HttpEntity<String> httpEntity,
-                                           @PathVariable("id") int trackId, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("regex") String regex, @PathVariable("dateFrom") String dateFrom, @PathVariable("dateTo") String dateTo) {
-        return trackService.list(request,httpEntity,page,pageSize,regex,dateFrom,dateTo);
+                                           @PathVariable("id") int userID, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("dateFrom") String dateFrom, @PathVariable("dateTo") String dateTo) {
+        return trackService.list(request,userID, page,pageSize,dateFrom,dateTo);
     }
 }
