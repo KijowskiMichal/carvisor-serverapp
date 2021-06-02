@@ -620,7 +620,7 @@ public class TrackService {
         User user;
         try {
             tx = session.beginTransaction();
-            Query selectUser = session.createQuery("SELECT u FROM User WHERE id = "+userID);
+            Query selectUser = session.createQuery("SELECT u FROM User u WHERE id = "+userID);
             user = (User) selectUser.getSingleResult();
 
             String countQ = "Select count (t.id) from Track t WHERE t.user = "+userID+" AND t.start > "+(timestampBefore.getTime()/1000)+" AND t.start < "+(timestampAfter.getTime()/1000)+" ";
