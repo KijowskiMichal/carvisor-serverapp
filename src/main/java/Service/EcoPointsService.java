@@ -16,20 +16,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
-
 import javax.servlet.http.HttpServletRequest;
-<<<<<<< HEAD
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-=======
-import java.util.Objects;
->>>>>>> EcoPoints
 
 @Service
 public class EcoPointsService {
@@ -44,7 +33,6 @@ public class EcoPointsService {
         this.logger = logger.getLOG();
     }
 
-<<<<<<< HEAD
     public ResponseEntity getUserEcoPoints(HttpServletRequest request, HttpEntity<String> httpEntity, int userId) {
         if (request.getSession().getAttribute("user") == null) {
             logger.info("EcoPointsService.getUserEcoPoints cannot get user id=" + userId + " Eco Points (session not found)");
@@ -140,6 +128,4 @@ public class EcoPointsService {
         logger.info("UsersREST.list returns list of users (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
-=======
->>>>>>> EcoPoints
 }
