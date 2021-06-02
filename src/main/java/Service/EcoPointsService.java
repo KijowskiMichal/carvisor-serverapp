@@ -1,5 +1,6 @@
 package Service;
 
+import Entities.Track;
 import Entities.User;
 import Entities.UserPrivileges;
 import HibernatePackage.HibernateRequests;
@@ -8,6 +9,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -16,6 +19,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class EcoPointsService {
@@ -59,5 +69,70 @@ public class EcoPointsService {
             if (session != null) session.close();
         }
         return responseEntity;
+    }
+
+    /**
+     * WebMethod which returns a list of users with ecopoints data.
+     * <P>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param page     Page of users list. Parameter associated with pageSize.
+     * @param pageSize Number of record we want to get.
+     * @param regex    Part of name or surname we want to display.
+     * @return HttpStatus 200 Returns the contents of the page that contains a list of users in the JSON format.
+     */
+    public ResponseEntity<String> list(HttpServletRequest request, int page, int pageSize, String regex) {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("UserREST.list cannot list user's (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
+            logger.info("UserREST.list cannot list user's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+        //listing
+        List<Object> users = new ArrayList<>();
+        int lastPageNumber;
+        Session session = hibernateRequests.getSession();
+        Transaction tx = null;
+        try {
+            if (regex.equals("$")) regex = "";
+            tx = session.beginTransaction();
+            String countQ = "Select count (u.id) from User u WHERE u.name  like '%" + regex + "%' OR u.surname  like '%" + regex + "%'";
+            Query countQuery = session.createQuery(countQ);
+            Long countResults = (Long) countQuery.uniqueResult();
+            lastPageNumber = (int) (Math.ceil(countResults / (double) pageSize));
+
+            Query selectQuery = session.createQuery("SELECT u FROM User u WHERE u.name  like '%" + regex + "%' OR u.surname  like '%" + regex + "%'");
+            selectQuery.setFirstResult((page - 1) * pageSize);
+            selectQuery.setMaxResults(pageSize);
+            users = selectQuery.list();
+            tx.commit();
+            session.close();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            session.close();
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        }
+        JSONObject jsonOut = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        for (Object tmp : users) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", ((User) tmp).getId());
+            jsonObject.put("name", ((User) tmp).getName());
+            jsonObject.put("surname", ((User) tmp).getSurname());
+            jsonObject.put("rate", ((User) tmp).getEcoPointsAvg());
+            jsonObject.put("tracks", ((User) tmp).getTracksNumber());
+            jsonObject.put("combustion", ((User) tmp).getCombustionAVG());
+            jsonObject.put("revolutions", ((User) tmp).getRevolutionsAVG());
+            jsonObject.put("speed", ((User) tmp).getSpeedAVG());
+            jsonArray.put(jsonObject);
+        }
+
+        jsonOut.put("page", page);
+        jsonOut.put("pageMax", lastPageNumber);
+        jsonOut.put("listOfUsers", jsonArray);
+        logger.info("UsersREST.list returns list of users (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+        return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 }

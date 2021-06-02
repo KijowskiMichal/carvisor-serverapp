@@ -22,10 +22,12 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="50a3dd01-24a6-4ad2-9d0e-833cd4d7008b" name="Default Changelist" comment="CarConfigurationRESTTest added">
+    <list default="true" id="50a3dd01-24a6-4ad2-9d0e-833cd4d7008b" name="Default Changelist" comment="hot fix - TrackRate">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Entities/TrackRate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Entities/TrackRate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Service/AuthorizationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Service/AuthorizationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Entities/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Entities/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/RestPackage/EcoPointsREST.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/RestPackage/EcoPointsREST.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/RestPackage/TrackREST.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/RestPackage/TrackREST.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Service/EcoPointsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Service/EcoPointsService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Service/TrackService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Service/TrackService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -215,7 +217,14 @@
       <option name="project" value="LOCAL" />
       <updated>1622041754779</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="hot fix - TrackRate">
+      <created>1622585974082</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1622585974082</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -244,37 +253,42 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="endOfTrack fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="endOfTrack fixed" />
+    <MESSAGE value="hot fix - TrackRate" />
+    <option name="LAST_COMMIT_MESSAGE" value="hot fix - TrackRate" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="2688" y="228" width="378" height="626" key="#com.intellij.ide.util.MemberChooser" timestamp="1622639822689">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2688" y="228" width="378" height="626" key="#com.intellij.ide.util.MemberChooser/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622639822689" />
     <state x="2613" y="290" width="528" height="502" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog" timestamp="1622581285539">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2613" y="290" width="528" height="502" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622581285539" />
-    <state width="1874" height="220" key="GridCell.Tab.0.bottom" timestamp="1622584268964">
+    <state width="1874" height="219" key="GridCell.Tab.0.bottom" timestamp="1622641299434">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1874" height="220" key="GridCell.Tab.0.bottom/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622584268964" />
+    <state width="1874" height="219" key="GridCell.Tab.0.bottom/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622641299434" />
     <state width="925" height="288" key="GridCell.Tab.0.bottom/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
-    <state width="1874" height="220" key="GridCell.Tab.0.center" timestamp="1622584268964">
+    <state width="1874" height="219" key="GridCell.Tab.0.center" timestamp="1622641299433">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1874" height="220" key="GridCell.Tab.0.center/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622584268964" />
+    <state width="1874" height="219" key="GridCell.Tab.0.center/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622641299433" />
     <state width="925" height="288" key="GridCell.Tab.0.center/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
-    <state width="1874" height="220" key="GridCell.Tab.0.left" timestamp="1622584268964">
+    <state width="1874" height="219" key="GridCell.Tab.0.left" timestamp="1622641299433">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1874" height="220" key="GridCell.Tab.0.left/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622584268964" />
+    <state width="1874" height="219" key="GridCell.Tab.0.left/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622641299433" />
     <state width="925" height="288" key="GridCell.Tab.0.left/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
-    <state width="1874" height="220" key="GridCell.Tab.0.right" timestamp="1622584268964">
+    <state width="1874" height="219" key="GridCell.Tab.0.right" timestamp="1622641299433">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1874" height="220" key="GridCell.Tab.0.right/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622584268964" />
+    <state width="1874" height="219" key="GridCell.Tab.0.right/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622641299433" />
     <state width="925" height="288" key="GridCell.Tab.0.right/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
-    <state x="2475" y="277" width="804" height="528" key="Vcs.Push.Dialog.v2" timestamp="1622041758825">
+    <state x="2475" y="277" width="804" height="528" key="Vcs.Push.Dialog.v2" timestamp="1622586013169">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state x="2475" y="277" width="804" height="528" key="Vcs.Push.Dialog.v2/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622041758825" />
+    <state x="2475" y="277" width="804" height="528" key="Vcs.Push.Dialog.v2/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622586013169" />
     <state x="2654" y="309" width="446" height="464" key="com.intellij.testIntegration.createTest.CreateTestDialog" timestamp="1622493616361">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
