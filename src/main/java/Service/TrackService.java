@@ -4,6 +4,7 @@ import Entities.*;
 import HibernatePackage.HibernateRequests;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.util.IOUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -18,8 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -645,8 +651,8 @@ public class TrackService {
         for (Object tmp : tracks) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id", ((Track) tmp).getId());
-            jsonObject.put("from", ((Track) tmp).getStartPosiotion());
-            jsonObject.put("to", ((Track) tmp).getEndPosiotion());
+            jsonObject.put("from", reverseGeocoding(((Track) tmp).getStartPosiotion()));
+            jsonObject.put("to", reverseGeocoding(((Track) tmp).getEndPosiotion()));
             jsonObject.put("start", ((Track) tmp).getStart());
             jsonObject.put("end", ((Track) tmp).getEnd());
             jsonObject.put("distance", ((Track) tmp).getDistance());
@@ -661,4 +667,39 @@ public class TrackService {
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 
+    public String reverseGeocoding(String coords) {
+        String[]coordinates = coords.split(";");
+        String lon = coordinates[0];
+        String lat = coordinates[1];
+        ResponseEntity responseEntity = null;
+        try {
+            URL url = new URL("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lon + "&lon=" + lat + "&zoom=18&addressdetails=1&");
+            String json = "";
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.connect();
+            Scanner sc = new Scanner(url.openStream());
+            while (sc.hasNext()) {
+                json += sc.nextLine();
+            }
+            sc.close();
+            JSONObject jsonObject = new JSONObject(json);
+            JSONObject address = jsonObject.getJSONObject("address");
+            try
+            {
+                return address.getString("road")+(address.has("house_number") ? " "+address.getString("house_number") : "")+", "+address.getString("city");
+            } catch (JSONException e)
+            {
+                try
+                {
+                    return address.getString("village")+(address.has("house_number") ? " "+address.getString("house_number") : "")+", "+address.getString("municipality");
+                } catch (JSONException jsonException)
+                {
+                    return address.getString("city_block")+(address.has("house_number") ? " "+address.getString("house_number") : "")+", "+address.getString("city");
+                }
+            }
+        } catch (IOException e) {
+            return lon+";"+lat;
+        }
+    }
 }
