@@ -120,7 +120,7 @@ public class DemoREST
         return ResponseEntity.status(HttpStatus.OK).body("");
     }
 
-    @RequestMapping(value = "/recalculateEcoForAllTracks", method = RequestMethod.GET)
+    @RequestMapping(value = "/recalculateEcoForAllTracks", method = RequestMethod.POST)
     public ResponseEntity recalculateEcoForAllTrack() {
         Session session = null;
         Transaction tx = null;
@@ -136,15 +136,16 @@ public class DemoREST
                 t.setEcoPoints(random.nextInt(10));
                 session.update(t);
             }
-
             tx.commit();
         } catch (HibernateException e) {
             e.printStackTrace();
             if (tx != null) tx.rollback();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
         }
         finally {
             if (session != null) session.close();
         }
         return ResponseEntity.status(HttpStatus.OK).body("");
     }
+
 }

@@ -44,9 +44,9 @@ public class TrackREST {
         return trackService.endOfTrack(request, httpEntity);
     }
 
-    @RequestMapping(value = "/getTrackDataById/{id}", method = RequestMethod.GET)
-    public ResponseEntity getTrackDataById(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int trackId) {
-        return trackService.getTrackDataById(request,httpEntity,trackId);
+    @RequestMapping(value = "/getTrackData/{id}", method = RequestMethod.GET)
+    public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int trackId) {
+        return trackService.getTrackData(request,httpEntity,trackId);
     }
 
     @RequestMapping(value = "/getTrackData/{id}/{date}/", method = RequestMethod.GET)
@@ -54,10 +54,11 @@ public class TrackREST {
         return trackService.getTrackData(request,httpEntity,userID,date);
     }
 
-    @RequestMapping(value = "/getTrackDataList/{id}/{dateFrom}/{dateTo}", method = RequestMethod.GET)
+    @RequestMapping(value = "/getUserTrackDataList/{id}/{dateFrom}/{dateTo}", method = RequestMethod.GET)
     public ResponseEntity getTrackDataList(HttpServletRequest request, HttpEntity<String> httpEntity,
-                                           @PathVariable("id") int trackId, @PathVariable("dateFrom") String dateFrom, @PathVariable("dateTo") String dateTo) {
-        return trackService.getTrackDataList(request,httpEntity,dateFrom,dateTo);
+                                           @PathVariable("id") int userId, @PathVariable("dateFrom") String dateFrom,
+                                           @PathVariable("dateTo") String dateTo) {
+        return trackService.getUserTrackDataList(request,httpEntity,userId, dateFrom,dateTo);
     }
 
     @RequestMapping(value = "/list/{id}/{page}/{pagesize}/{dateFrom}/{dateTo}/", method = RequestMethod.GET)
