@@ -76,8 +76,13 @@ public class Track {
      * eco points for track;
      */
     float ecoPoints;
+    /**
+     * amount of samples
+     */
+    int samples;
 
     public Track(Car car, User user, int numberOfparameter, Boolean privateTrack, long timeStamp, String startPosiotion) {
+        samples = 0;
         this.car = car;
         this.user = user;
         this.numberOfparameter = numberOfparameter;
@@ -85,7 +90,7 @@ public class Track {
         this.timeStamp = timeStamp;
         this.startPosiotion = startPosiotion;
         this.endPosiotion = "";
-        Date date= new Date();
+        Date date = new Date();
         this.start = new Date().getTime();
         this.end = 0;
         this.active = true;
@@ -217,6 +222,7 @@ public class Track {
 
     public void addTrackRate(TrackRate trackRate) {
         listofTrackRates.add(trackRate);
+        samples++;
     }
 
     public void addMetersToDistance(long meters) {
