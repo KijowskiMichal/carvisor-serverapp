@@ -1,11 +1,8 @@
 package Entities;
 
 import org.hibernate.annotations.Type;
-import org.json.JSONObject;
 
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 

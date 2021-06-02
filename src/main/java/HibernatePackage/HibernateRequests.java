@@ -1,6 +1,9 @@
 package HibernatePackage;
 
-import Entities.*;
+import Entities.Car;
+import Entities.Settings;
+import Entities.Track;
+import Entities.User;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

@@ -142,7 +142,7 @@ public class TrackRate
      *
      * @return data of track rate as Json String.
      */
-    public String getContent() { //TODO dogadac sie o nomenklature
+    public String getContent() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("Speed",speed);
         jsonObject.put("Throttle Pos",throttle);
