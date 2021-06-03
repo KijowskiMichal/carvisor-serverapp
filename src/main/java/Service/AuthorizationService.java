@@ -3,9 +3,7 @@ package Service;
 
 import Entities.User;
 import HibernatePackage.HibernateRequests;
-import OtherClasses.Initializer;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;

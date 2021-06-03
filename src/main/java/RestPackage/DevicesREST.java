@@ -1,10 +1,8 @@
 package RestPackage;
 
 import Service.DevicesService;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Random;
 
 /**
  * REST controller responsible for user management.
@@ -28,9 +25,8 @@ public class DevicesREST {
         this.devicesService = devicesService;
     }
 
-
-    @RequestMapping(value = "/list/{page}/{pagesize}/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("regex") String regex) {
+    @RequestMapping(value = "/list/{page}/{pageSize}/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pageSize") int pageSize, @PathVariable("regex") String regex) {
         return devicesService.list(request,page,pageSize,regex);
     }
 

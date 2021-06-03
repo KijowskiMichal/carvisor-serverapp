@@ -1,5 +1,8 @@
 package Service;
 
+import HibernatePackage.HibernateRequests;
+import org.apache.logging.log4j.Logger;
+
 import Entities.Track;
 import Entities.User;
 import Entities.UserPrivileges;
@@ -16,9 +19,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @Service
 public class EcoPointsService {

@@ -7,21 +7,14 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 
@@ -39,9 +32,9 @@ public class DemoREST
     }
 
     /**
-     * @return Returns the 201 status - OK.
-     *
      * WebMethod which adding example data.
+     * <p>
+     * @return Returns the 201 status - OK.
      */
     @RequestMapping(value = "/addAll", method = RequestMethod.GET)
     public ResponseEntity addAll()

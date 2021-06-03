@@ -2,7 +2,6 @@ package Service;
 
 import Entities.Car;
 import HibernatePackage.HibernateRequests;
-import OtherClasses.Initializer;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;

@@ -22,8 +22,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="50a3dd01-24a6-4ad2-9d0e-833cd4d7008b" name="Default Changelist" comment="track test added">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="50a3dd01-24a6-4ad2-9d0e-833cd4d7008b" name="Default Changelist" comment="fix">
       <change beforePath="$PROJECT_DIR$/src/main/java/Service/TrackService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Service/TrackService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -92,9 +91,8 @@
       <recent name="RestPackage" />
       <recent name="Service" />
     </key>
-    <key name="CreateClassDialog.RecentsKey">
-      <recent name="Service" />
-      <recent name="RestPackage" />
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Skoni\IdeaProjects\carvisor-serverapp\src\main\java\Entities" />
     </key>
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />
@@ -102,12 +100,13 @@
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
     </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\Skoni\IdeaProjects\carvisor-serverapp\src\main\java\Entities" />
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="Service" />
+      <recent name="RestPackage" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.TrackRESTTest.list">
-    <configuration name="TrackRESTTest.endOfTrack" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="JUnit.CarConfigurationRESTTest.changeConfiguration">
+    <configuration name="CarConfigurationRESTTest.changeConfiguration" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="restserver" />
       <extension name="coverage">
         <pattern>
@@ -116,14 +115,14 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="RestPackage" />
-      <option name="MAIN_CLASS_NAME" value="RestPackage.TrackRESTTest" />
-      <option name="METHOD_NAME" value="endOfTrack" />
+      <option name="MAIN_CLASS_NAME" value="RestPackage.CarConfigurationRESTTest" />
+      <option name="METHOD_NAME" value="changeConfiguration" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TrackRESTTest.list" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="CarConfigurationRESTTest.changeGlobalConfiguration" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="restserver" />
       <extension name="coverage">
         <pattern>
@@ -132,14 +131,14 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="RestPackage" />
-      <option name="MAIN_CLASS_NAME" value="RestPackage.TrackRESTTest" />
-      <option name="METHOD_NAME" value="list" />
+      <option name="MAIN_CLASS_NAME" value="RestPackage.CarConfigurationRESTTest" />
+      <option name="METHOD_NAME" value="changeGlobalConfiguration" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TrackRESTTest.startTrack" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="CarConfigurationRESTTest.get" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="restserver" />
       <extension name="coverage">
         <pattern>
@@ -148,14 +147,14 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="RestPackage" />
-      <option name="MAIN_CLASS_NAME" value="RestPackage.TrackRESTTest" />
-      <option name="METHOD_NAME" value="startTrack" />
+      <option name="MAIN_CLASS_NAME" value="RestPackage.CarConfigurationRESTTest" />
+      <option name="METHOD_NAME" value="get" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TrackRESTTest.updateTrack" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="CarConfigurationRESTTest.getConfiguration" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="restserver" />
       <extension name="coverage">
         <pattern>
@@ -164,14 +163,14 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="RestPackage" />
-      <option name="MAIN_CLASS_NAME" value="RestPackage.TrackRESTTest" />
-      <option name="METHOD_NAME" value="updateTrack" />
+      <option name="MAIN_CLASS_NAME" value="RestPackage.CarConfigurationRESTTest" />
+      <option name="METHOD_NAME" value="getConfiguration" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TrackRESTTest.updateTrackData" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="CarConfigurationRESTTest.getGlobalConfiguration" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="restserver" />
       <extension name="coverage">
         <pattern>
@@ -180,8 +179,8 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="RestPackage" />
-      <option name="MAIN_CLASS_NAME" value="RestPackage.TrackRESTTest" />
-      <option name="METHOD_NAME" value="updateTrackData" />
+      <option name="MAIN_CLASS_NAME" value="RestPackage.CarConfigurationRESTTest" />
+      <option name="METHOD_NAME" value="getGlobalConfiguration" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -189,11 +188,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.TrackRESTTest.list" />
-        <item itemvalue="JUnit.TrackRESTTest.endOfTrack" />
-        <item itemvalue="JUnit.TrackRESTTest.updateTrack" />
-        <item itemvalue="JUnit.TrackRESTTest.updateTrackData" />
-        <item itemvalue="JUnit.TrackRESTTest.startTrack" />
+        <item itemvalue="JUnit.CarConfigurationRESTTest.changeConfiguration" />
+        <item itemvalue="JUnit.CarConfigurationRESTTest.changeGlobalConfiguration" />
+        <item itemvalue="JUnit.CarConfigurationRESTTest.getGlobalConfiguration" />
+        <item itemvalue="JUnit.CarConfigurationRESTTest.getConfiguration" />
+        <item itemvalue="JUnit.CarConfigurationRESTTest.get" />
       </list>
     </recent_temporary>
   </component>
@@ -241,21 +240,7 @@
       <option name="project" value="LOCAL" />
       <updated>1622645373237</updated>
     </task>
-    <task id="LOCAL-00006" summary="fix for fix">
-      <created>1622645588477</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1622645588477</updated>
-    </task>
-    <task id="LOCAL-00007" summary="track test added">
-      <created>1622652769819</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1622652769819</updated>
-    </task>
-    <option name="localTasksCounter" value="8" />
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -288,9 +273,7 @@
     <MESSAGE value="list of ecopoints added" />
     <MESSAGE value="list of tracks for certain user added" />
     <MESSAGE value="fix" />
-    <MESSAGE value="fix for fix" />
-    <MESSAGE value="track test added" />
-    <option name="LAST_COMMIT_MESSAGE" value="track test added" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix" />
   </component>
   <component name="WindowStateProjectService">
     <state x="2688" y="228" width="378" height="626" key="#com.intellij.ide.util.MemberChooser" timestamp="1622639822689">
@@ -301,25 +284,25 @@
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2613" y="290" width="528" height="502" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622581285539" />
-    <state width="1874" height="207" key="GridCell.Tab.0.bottom" timestamp="1622662998448">
+    <state width="1874" height="218" key="GridCell.Tab.0.bottom" timestamp="1622645352443">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1874" height="207" key="GridCell.Tab.0.bottom/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622662998448" />
+    <state width="1874" height="218" key="GridCell.Tab.0.bottom/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622645352443" />
     <state width="925" height="288" key="GridCell.Tab.0.bottom/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
-    <state width="1874" height="207" key="GridCell.Tab.0.center" timestamp="1622662998448">
+    <state width="1874" height="218" key="GridCell.Tab.0.center" timestamp="1622645352443">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1874" height="207" key="GridCell.Tab.0.center/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622662998448" />
+    <state width="1874" height="218" key="GridCell.Tab.0.center/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622645352443" />
     <state width="925" height="288" key="GridCell.Tab.0.center/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
-    <state width="1874" height="207" key="GridCell.Tab.0.left" timestamp="1622662998447">
+    <state width="1874" height="218" key="GridCell.Tab.0.left" timestamp="1622645352443">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1874" height="207" key="GridCell.Tab.0.left/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622662998447" />
+    <state width="1874" height="218" key="GridCell.Tab.0.left/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622645352443" />
     <state width="925" height="288" key="GridCell.Tab.0.left/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
-    <state width="1874" height="207" key="GridCell.Tab.0.right" timestamp="1622662998448">
+    <state width="1874" height="218" key="GridCell.Tab.0.right" timestamp="1622645352443">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state width="1874" height="207" key="GridCell.Tab.0.right/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622662998448" />
+    <state width="1874" height="218" key="GridCell.Tab.0.right/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622645352443" />
     <state width="925" height="288" key="GridCell.Tab.0.right/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
     <state x="2113" y="94" width="1521" height="894" key="MergeDialog" timestamp="1622644492078">
       <screen x="1920" y="0" width="1920" height="1080" />
@@ -329,18 +312,14 @@
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2517" y="303" width="719" height="475" key="MultipleFileMergeDialog/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622644493895" />
-    <state x="2475" y="277" width="804" height="528" key="Vcs.Push.Dialog.v2" timestamp="1622652821037">
+    <state x="2475" y="277" width="804" height="528" key="Vcs.Push.Dialog.v2" timestamp="1622645376103">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state x="2475" y="277" width="804" height="528" key="Vcs.Push.Dialog.v2/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622652821037" />
-    <state x="2654" y="309" width="446" height="464" key="com.intellij.testIntegration.createTest.CreateTestDialog" timestamp="1622646218546">
+    <state x="2475" y="277" width="804" height="528" key="Vcs.Push.Dialog.v2/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622645376103" />
+    <state x="2654" y="309" width="446" height="464" key="com.intellij.testIntegration.createTest.CreateTestDialog" timestamp="1622493616361">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state x="2654" y="309" width="446" height="464" key="com.intellij.testIntegration.createTest.CreateTestDialog/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622646218546" />
-    <state x="2543" y="239" width="672" height="678" key="search.everywhere.popup" timestamp="1622655238682">
-      <screen x="1920" y="0" width="1920" height="1080" />
-    </state>
-    <state x="2543" y="239" width="672" height="678" key="search.everywhere.popup/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622655238682" />
+    <state x="2654" y="309" width="446" height="464" key="com.intellij.testIntegration.createTest.CreateTestDialog/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622493616361" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
