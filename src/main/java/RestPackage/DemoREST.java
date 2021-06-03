@@ -124,8 +124,6 @@ public class DemoREST
             Query query = session.createQuery(getAllQuery);
             List<Track> userList = query.getResultList();
 
-
-
             Random random = new Random();
             for (Track t : userList) {
                 t.setEcoPoints(random.nextInt(10));
@@ -142,4 +140,5 @@ public class DemoREST
         }
         return ResponseEntity.status(HttpStatus.OK).body("");
     }
+
 }

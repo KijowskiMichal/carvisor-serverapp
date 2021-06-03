@@ -32,12 +32,12 @@ public class TrackRate
      * gps latitude
      */
     @Column(nullable = true)
-    Float latitude;
+    Double latitude;
     /**
      * gps longitude
      */
     @Column(nullable = true)
-    Float longitude;
+    Double longitude;
     /**
      * revolutions per minute
      */
@@ -55,7 +55,7 @@ public class TrackRate
     public TrackRate() {
     }
 
-    public TrackRate(Track track, Short speed, Byte throttle, Float latitude, Float longitude, Short rpm, long distance, long timestamp) {
+    public TrackRate(Track track, Short speed, Byte throttle, Double latitude, Double longitude, Short rpm, long distance, long timestamp) {
         this.track = track;
         this.speed = speed;
         this.throttle = throttle;
@@ -98,19 +98,19 @@ public class TrackRate
         this.throttle = throttle;
     }
 
-    public Float getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(Float longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
-    public Float getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(Float latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 

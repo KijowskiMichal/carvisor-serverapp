@@ -22,9 +22,14 @@
     <select />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="ad7b7ec9-9c09-4a90-995c-ed98d3814857" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Entities/TrackRate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Entities/TrackRate.java" afterDir="false" />
+=======
+    <list default="true" id="50a3dd01-24a6-4ad2-9d0e-833cd4d7008b" name="Default Changelist" comment="fix">
+      <change beforePath="$PROJECT_DIR$/src/main/java/Service/TrackService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Service/TrackService.java" afterDir="false" />
+>>>>>>> master
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,9 +49,9 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JUnit5 Test Class" />
-        <option value="Class" />
         <option value="Enum" />
+        <option value="Class" />
+        <option value="JUnit5 Test Class" />
       </list>
     </option>
   </component>
@@ -62,6 +67,7 @@
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
   </component>
+<<<<<<< HEAD
   <component name="GitToolBoxStore">
     <option name="recentBranches">
       <RecentBranches>
@@ -85,6 +91,13 @@
           </list>
         </option>
       </RecentBranches>
+=======
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="$APPLICATION_HOME_DIR$/plugins/maven/lib/maven3" />
+      </MavenGeneralSettings>
+>>>>>>> master
     </option>
   </component>
   <component name="ProjectId" id="1qOu9FJKMgZm57VtrgortDkPQTf" />
@@ -99,19 +112,16 @@
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit5" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit5" value="" />
     <property name="create.test.in.the.same.root" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../testProject" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Global Libraries" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.4115479" />
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
-    <key name="CreateClassDialog.RecentsKey">
-      <recent name="Service" />
+    <key name="CreateTestDialog.RecentsKey">
       <recent name="RestPackage" />
-    </key>
-    <key name="CreateTestDialog.Recents.Supers">
-      <recent name="" />
+      <recent name="Service" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Skoni\IdeaProjects\carvisor-serverapp\src\main\java\Entities" />
@@ -119,36 +129,90 @@
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="" />
     </key>
-    <key name="CreateTestDialog.RecentsKey">
-      <recent name="RestPackage" />
+    <key name="CreateTestDialog.Recents.Supers">
+      <recent name="" />
+    </key>
+    <key name="CreateClassDialog.RecentsKey">
       <recent name="Service" />
+      <recent name="RestPackage" />
     </key>
   </component>
-  <component name="RunManager" selected="JUnit.CarConfigurationServiceTest.get">
-    <configuration name="C:/Users/Skoni/IdeaProjects/carvisor-serverapp" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list />
-        </option>
-        <option name="vmOptions" value="" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
+  <component name="RunManager" selected="JUnit.CarConfigurationRESTTest.changeConfiguration">
+    <configuration name="CarConfigurationRESTTest.changeConfiguration" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="restserver" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="RestPackage.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="RestPackage" />
+      <option name="MAIN_CLASS_NAME" value="RestPackage.CarConfigurationRESTTest" />
+      <option name="METHOD_NAME" value="changeConfiguration" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
     </configuration>
-    <configuration name="CarConfigurationServiceTest.get" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="carvisor-serverapp" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="MAIN_CLASS_NAME" value="CarConfigurationServiceTest" />
+    <configuration name="CarConfigurationRESTTest.changeGlobalConfiguration" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="restserver" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="RestPackage.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="RestPackage" />
+      <option name="MAIN_CLASS_NAME" value="RestPackage.CarConfigurationRESTTest" />
+      <option name="METHOD_NAME" value="changeGlobalConfiguration" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CarConfigurationRESTTest.get" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="restserver" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="RestPackage.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="RestPackage" />
+      <option name="MAIN_CLASS_NAME" value="RestPackage.CarConfigurationRESTTest" />
       <option name="METHOD_NAME" value="get" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CarConfigurationRESTTest.getConfiguration" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="restserver" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="RestPackage.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="RestPackage" />
+      <option name="MAIN_CLASS_NAME" value="RestPackage.CarConfigurationRESTTest" />
+      <option name="METHOD_NAME" value="getConfiguration" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="CarConfigurationRESTTest.getGlobalConfiguration" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="restserver" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="RestPackage.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="RestPackage" />
+      <option name="MAIN_CLASS_NAME" value="RestPackage.CarConfigurationRESTTest" />
+      <option name="METHOD_NAME" value="getGlobalConfiguration" />
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -156,8 +220,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.CarConfigurationServiceTest.get" />
-        <item itemvalue="Gradle.C:/Users/Skoni/IdeaProjects/carvisor-serverapp" />
+        <item itemvalue="JUnit.CarConfigurationRESTTest.changeConfiguration" />
+        <item itemvalue="JUnit.CarConfigurationRESTTest.changeGlobalConfiguration" />
+        <item itemvalue="JUnit.CarConfigurationRESTTest.getGlobalConfiguration" />
+        <item itemvalue="JUnit.CarConfigurationRESTTest.getConfiguration" />
+        <item itemvalue="JUnit.CarConfigurationRESTTest.get" />
       </list>
     </recent_temporary>
   </component>
@@ -177,7 +244,35 @@
       <option name="project" value="LOCAL" />
       <updated>1622041754779</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="hot fix - TrackRate">
+      <created>1622585974082</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1622585974082</updated>
+    </task>
+    <task id="LOCAL-00003" summary="list of ecopoints added">
+      <created>1622642178750</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1622642178750</updated>
+    </task>
+    <task id="LOCAL-00004" summary="list of tracks for certain user added">
+      <created>1622644390102</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1622644390102</updated>
+    </task>
+    <task id="LOCAL-00005" summary="fix">
+      <created>1622645373237</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1622645373237</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -206,7 +301,57 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="endOfTrack fixed" />
-    <option name="LAST_COMMIT_MESSAGE" value="endOfTrack fixed" />
+    <MESSAGE value="hot fix - TrackRate" />
+    <MESSAGE value="list of ecopoints added" />
+    <MESSAGE value="list of tracks for certain user added" />
+    <MESSAGE value="fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="2688" y="228" width="378" height="626" key="#com.intellij.ide.util.MemberChooser" timestamp="1622639822689">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2688" y="228" width="378" height="626" key="#com.intellij.ide.util.MemberChooser/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622639822689" />
+    <state x="2613" y="290" width="528" height="502" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog" timestamp="1622581285539">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2613" y="290" width="528" height="502" key="#com.intellij.refactoring.typeMigration.ui.FailedConversionsDialog/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622581285539" />
+    <state width="1874" height="218" key="GridCell.Tab.0.bottom" timestamp="1622645352443">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1874" height="218" key="GridCell.Tab.0.bottom/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622645352443" />
+    <state width="925" height="288" key="GridCell.Tab.0.bottom/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
+    <state width="1874" height="218" key="GridCell.Tab.0.center" timestamp="1622645352443">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1874" height="218" key="GridCell.Tab.0.center/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622645352443" />
+    <state width="925" height="288" key="GridCell.Tab.0.center/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
+    <state width="1874" height="218" key="GridCell.Tab.0.left" timestamp="1622645352443">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1874" height="218" key="GridCell.Tab.0.left/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622645352443" />
+    <state width="925" height="288" key="GridCell.Tab.0.left/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
+    <state width="1874" height="218" key="GridCell.Tab.0.right" timestamp="1622645352443">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state width="1874" height="218" key="GridCell.Tab.0.right/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622645352443" />
+    <state width="925" height="288" key="GridCell.Tab.0.right/23.0.1897.1080/1920.0.1920.1080@23.0.1897.1080" timestamp="1622041107383" />
+    <state x="2113" y="94" width="1521" height="894" key="MergeDialog" timestamp="1622644492078">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2113" y="94" width="1521" height="894" key="MergeDialog/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622644492078" />
+    <state x="2517" y="303" width="719" height="475" key="MultipleFileMergeDialog" timestamp="1622644493895">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2517" y="303" width="719" height="475" key="MultipleFileMergeDialog/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622644493895" />
+    <state x="2475" y="277" width="804" height="528" key="Vcs.Push.Dialog.v2" timestamp="1622645376103">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2475" y="277" width="804" height="528" key="Vcs.Push.Dialog.v2/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622645376103" />
+    <state x="2654" y="309" width="446" height="464" key="com.intellij.testIntegration.createTest.CreateTestDialog" timestamp="1622493616361">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2654" y="309" width="446" height="464" key="com.intellij.testIntegration.createTest.CreateTestDialog/23.0.1897.1080/1920.0.1920.1080@1920.0.1920.1080" timestamp="1622493616361" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

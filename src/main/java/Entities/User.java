@@ -52,6 +52,22 @@ public class User
      */
     float ecoPointsAvg;
     /**
+     * Average combustion
+     */
+    float combustionAVG;
+    /**
+     * Average  speed
+     */
+    int speedAVG;
+    /**
+     * number of tracks
+     */
+    int tracksNumber;
+    /**
+     * Average  revolutions
+     */
+    int revolutionsAVG;
+    /**
      * Distance Travelled;
      */
     long distanceTravelled;
@@ -70,6 +86,38 @@ public class User
         this.image = image;
         this.phoneNumber = phoneNumber;
         this.nfcTag = nfcTag;
+    }
+
+    public int getTracksNumber() {
+        return tracksNumber;
+    }
+
+    public void setTracksNumber(int tracksNumber) {
+        this.tracksNumber = tracksNumber;
+    }
+
+    public float getCombustionAVG() {
+        return combustionAVG;
+    }
+
+    public void setCombustionAVG(float combustionAVG) {
+        this.combustionAVG = combustionAVG;
+    }
+
+    public int getSpeedAVG() {
+        return speedAVG;
+    }
+
+    public void setSpeedAVG(int speedAVG) {
+        this.speedAVG = speedAVG;
+    }
+
+    public int getRevolutionsAVG() {
+        return revolutionsAVG;
+    }
+
+    public void setRevolutionsAVG(int revolutionsAVG) {
+        this.revolutionsAVG = revolutionsAVG;
     }
 
     public int getId() {
