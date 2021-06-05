@@ -661,8 +661,8 @@ public class TrackService {
         for (Object tmp : tracks) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id", ((Track) tmp).getId());
-            jsonObject.put("from", reverseGeocoding(((Track) tmp).getStartPosiotion()));
-            jsonObject.put("to", reverseGeocoding(((Track) tmp).getEndPosiotion()));
+            jsonObject.put("from", ((Track) tmp).getStartPosiotion());
+            jsonObject.put("to", ((Track) tmp).getEndPosiotion());
             jsonObject.put("start", ((Track) tmp).getStart());
             jsonObject.put("end", ((Track) tmp).getEnd());
             jsonObject.put("distance", ((Track) tmp).getDistance());
