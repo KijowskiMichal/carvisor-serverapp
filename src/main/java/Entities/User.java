@@ -71,6 +71,10 @@ public class User
      * Distance Travelled;
      */
     long distanceTravelled;
+    /**
+     * Number of samples
+     */
+    int samples;
 
 
     public User(){
@@ -86,6 +90,15 @@ public class User
         this.image = image;
         this.phoneNumber = phoneNumber;
         this.nfcTag = nfcTag;
+        this.samples = 0;
+    }
+
+    public int getSamples() {
+        return samples;
+    }
+
+    public void setSamples(int samples) {
+        this.samples = samples;
     }
 
     public int getTracksNumber() {

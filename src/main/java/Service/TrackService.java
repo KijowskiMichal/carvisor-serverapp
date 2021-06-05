@@ -185,6 +185,9 @@ public class TrackService {
                     track.addMetersToDistance(distance);
                     trackRate = new TrackRate(track,speed,throttle,latitude,longitude,rpm,track.getDistance(), keyTimestamp);
                     track.setEndPosiotion(trackRate.getLatitude() + ";" + trackRate.getLongitude());
+                    track.setRevolutions(track.getRevolutions()+rpm);
+                    track.setSpeed(track.getSpeed()+speed);
+                    track.setThrottle(track.getThrottle()+throttle);
                     session.save(trackRate);
                     track.addTrackRate(trackRate);
                 }
@@ -283,6 +286,13 @@ public class TrackService {
             for (Track track : tracks)
             {
                 if (track.getTimeStamp()<(time-15)) {
+                    float ecoPoints = (-1*track.getRevolutions()/track.getSamples())+7000;
+                    track.setEcoPoints((float) Math.min(ecoPoints, 5.0));
+                    track.getUser().setEcoPointsAvg(((track.getUser().getEcoPointsAvg()*track.getUser().getSamples())+(track.getEcoPoints()*track.getSamples()))/(track.getUser().getSamples()+track.getSamples()));
+                    track.getUser().setTracksNumber(track.getUser().getTracksNumber()+1);
+                    track.getUser().setDistanceTravelled(track.getUser().getDistanceTravelled()+track.getDistance());
+                    track.getUser().setRevolutionsAVG((int) (((track.getUser().getRevolutionsAVG()*track.getUser().getSamples())+(track.getRevolutions()*track.getSamples()))/(track.getUser().getSamples()+track.getSamples())));
+                    track.getUser().setSamples(track.getUser().getSamples()+track.getSamples());
                     track.setActive(false);
                     track.setEnd(time - 8);
                     Query query2 = session.createQuery("Select t from TrackRate t WHERE t.track.id = " + track.getId() + " ORDER BY t.id DESC");

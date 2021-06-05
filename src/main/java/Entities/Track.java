@@ -77,9 +77,24 @@ public class Track {
      * amount of samples
      */
     int samples;
+    /**
+     * combustion
+     */
+    double combustion;
+    /**
+     * speed of vehicle
+     */
+    int speed;
+    /**
+     * revolutions per minute
+     */
+    long revolutions;
+    /**
+     * throttle
+     */
+    long throttle;
 
     public Track(Car car, User user, int numberOfparameter, Boolean privateTrack, long timeStamp, String startPosiotion) {
-        samples = 0;
         this.car = car;
         this.user = user;
         this.numberOfparameter = numberOfparameter;
@@ -92,10 +107,55 @@ public class Track {
         this.end = 0;
         this.active = true;
         this.distance = 0;
+        this.samples = 0;
+        this.ecoPoints = 0;
+        this.combustion = 0;
+        this.speed = 0;
+        this.revolutions = 0;
     }
 
 
     public Track() { super(); }
+
+    public long getThrottle() {
+        return throttle;
+    }
+
+    public void setThrottle(long throttle) {
+        this.throttle = throttle;
+    }
+
+    public double getCombustion() {
+        return combustion;
+    }
+
+    public void setCombustion(double combustion) {
+        this.combustion = combustion;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+    }
+
+    public long getRevolutions() {
+        return revolutions;
+    }
+
+    public void setRevolutions(long revolutions) {
+        this.revolutions = revolutions;
+    }
+
+    public int getSamples() {
+        return samples;
+    }
+
+    public void setSamples(int samples) {
+        this.samples = samples;
+    }
 
     public int getId() {
         return id;
