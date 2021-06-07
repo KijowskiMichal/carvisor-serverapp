@@ -54,4 +54,9 @@ public class TrackREST {
                                            @PathVariable("id") int userID, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("dateFrom") String dateFrom, @PathVariable("dateTo") String dateTo) {
         return trackService.list(request,userID, page,pageSize,dateFrom,dateTo);
     }
+
+    @RequestMapping(value = "/reverseGeocoding/{lon}/{lat}/", method = RequestMethod.GET)
+    public ResponseEntity reverseGeocoding(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("lon") String lon, @PathVariable("lat") String lat) {
+        return trackService.reverseGeocoding(lon,lat);
+    }
 }

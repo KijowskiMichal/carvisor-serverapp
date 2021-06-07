@@ -677,13 +677,11 @@ public class TrackService {
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 
-    public String reverseGeocoding(String coords) {
-        String[]coordinates = coords.split(";");
-        String lon = coordinates[0];
-        String lat = coordinates[1];
+    public ResponseEntity reverseGeocoding(String lon, String lat) {
         ResponseEntity responseEntity = null;
+        JSONObject jsonOut = new JSONObject();
         try {
-            URL url = new URL("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lon + "&lon=" + lat + "&zoom=18&addressdetails=1&");
+            URL url = new URL("http://open.mapquestapi.com/geocoding/v1/reverse?key=X6gyYLjl2XsAApWachPDkLRHfUA3ZPGI&location=" + lon + "," + lat + "&includeRoadMetadata=true&includeNearestIntersection=true");
             String json = "";
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -694,22 +692,10 @@ public class TrackService {
             }
             sc.close();
             JSONObject jsonObject = new JSONObject(json);
-            JSONObject address = jsonObject.getJSONObject("address");
-            try
-            {
-                return address.getString("road")+(address.has("house_number") ? " "+address.getString("house_number") : "")+", "+address.getString("city");
-            } catch (JSONException e)
-            {
-                try
-                {
-                    return address.getString("village")+(address.has("house_number") ? " "+address.getString("house_number") : "")+", "+address.getString("municipality");
-                } catch (JSONException jsonException)
-                {
-                    return address.getString("city_block")+(address.has("house_number") ? " "+address.getString("house_number") : "")+", "+address.getString("city");
-                }
-            }
+            jsonOut.put("address", ((JSONObject)((JSONObject)jsonObject.getJSONArray("results").get(0)).getJSONArray("locations").get(0)).getString("street")+", "+((JSONObject)((JSONObject)jsonObject.getJSONArray("results").get(0)).getJSONArray("locations").get(0)).getString("adminArea5"));
         } catch (IOException e) {
-            return lon+";"+lat;
+            jsonOut.put("address", lon+";"+lat);
         }
+        return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 }
