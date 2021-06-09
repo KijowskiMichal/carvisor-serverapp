@@ -285,4 +285,41 @@ public class Track {
     public void addMetersToDistance(long meters) {
         distance += meters;
     }
+
+
+    public void calculateEcoPoints() {
+        int eco = 10;
+        this.revolutions = listofTrackRates.stream().mapToInt(TrackRate::getRpm).sum() / listofTrackRates.size();
+        this.speed = listofTrackRates.stream().mapToInt(TrackRate::getSpeed).sum() / listofTrackRates.size();
+        this.throttle = listofTrackRates.stream().mapToInt(TrackRate::getThrottle).sum() / listofTrackRates.size();
+
+        if (speed > 140) {
+            eco -= 4;
+        }
+        else if (speed > 120) {
+            eco -= 2;
+        }
+        else if (speed > 100) {
+            eco -= 1;
+        }
+        if (revolutions > 3000) {
+            eco -= 4;
+        }
+        else if (revolutions > 2500) {
+            eco -= 2;
+        }
+        else if (revolutions > 2300) {
+            eco -= 1;
+        }
+        if (throttle > 80) {
+            eco -= 4;
+        }
+        else if (throttle > 70) {
+            eco -= 2;
+        }
+        else if (throttle > 60) {
+            eco -= 1;
+        }
+        this.ecoPoints = Math.max(eco, 0);
+    }
 }

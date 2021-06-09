@@ -226,4 +226,6 @@ public class User
     public void addDistanceTravelled(long distanceTravelled) {
         this.distanceTravelled += distanceTravelled;
     }
+
+
 }
