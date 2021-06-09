@@ -227,5 +227,10 @@ public class User
         this.distanceTravelled += distanceTravelled;
     }
 
+    public void addTrackToEcoPointScore(Track track) {
+        float o = (float) tracksNumber / (tracksNumber+1);
+        float n = 1 - o;
 
+        this.ecoPointsAvg = o * this.ecoPointsAvg + n * track.getEcoPoints();
+    }
 }
