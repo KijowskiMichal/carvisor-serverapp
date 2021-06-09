@@ -183,6 +183,7 @@ public class TrackService {
                         distance = (long) distFrom(y1,x1,latitude,longitude);
                     }
                     track.addMetersToDistance(distance);
+                    track.setEndPosiotion(latitude + ";" + longitude);
                     trackRate = new TrackRate(track,speed,throttle,latitude,longitude,rpm,track.getDistance(), keyTimestamp);
                     session.save(trackRate);
                     track.addTrackRate(trackRate);
