@@ -283,12 +283,9 @@ public class TrackService {
             for (Track track : tracks)
             {
                 if (track.getTimeStamp()<(time-15)) {
-                    float ecoPoints = (-1*track.getRevolutions()/track.getSamples())+7000;
-                    track.setEcoPoints((float) Math.min(ecoPoints, 5.0));
-                    track.getUser().setEcoPointsAvg(((track.getUser().getEcoPointsAvg()*track.getUser().getSamples())+(track.getEcoPoints()*track.getSamples()))/(track.getUser().getSamples()+track.getSamples()));
+                    track.getUser().addTrackToEcoPointScore(track);
                     track.getUser().setTracksNumber(track.getUser().getTracksNumber()+1);
                     track.getUser().setDistanceTravelled(track.getUser().getDistanceTravelled()+track.getDistance());
-                    track.getUser().setRevolutionsAVG((int) (((track.getUser().getRevolutionsAVG()*track.getUser().getSamples())+(track.getRevolutions()*track.getSamples()))/(track.getUser().getSamples()+track.getSamples())));
                     track.getUser().setSamples(track.getUser().getSamples()+track.getSamples());
                     track.setActive(false);
                     track.setEnd(time - 8);

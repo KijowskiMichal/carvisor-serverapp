@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import java.util.Objects;
 
 @Entity
 public class User
@@ -75,6 +76,10 @@ public class User
      * Number of samples
      */
     int samples;
+    /**
+     * throttle
+     */
+    int throttle;
 
 
     public User(){
@@ -91,6 +96,11 @@ public class User
         this.phoneNumber = phoneNumber;
         this.nfcTag = nfcTag;
         this.samples = 0;
+        this.throttle = 0;
+        this.revolutionsAVG = 0;
+        this.speedAVG = 0;
+        this.ecoPointsAvg = 0;
+        this.distanceTravelled = 0;
     }
 
     public int getSamples() {
@@ -232,5 +242,9 @@ public class User
         float n = 1 - o;
 
         this.ecoPointsAvg = o * this.ecoPointsAvg + n * track.getEcoPoints();
+        this.revolutionsAVG = (int) (o * this.revolutionsAVG + n * track.getRevolutions());
+        this.speedAVG = (int) (o * this.speedAVG + n * track.getSpeed());
+        this.throttle = (int) (o * this.throttle + n * track.getThrottle());
+        this.distanceTravelled += track.distance;
     }
 }
