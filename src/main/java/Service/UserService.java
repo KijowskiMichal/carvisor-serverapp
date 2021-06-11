@@ -452,7 +452,7 @@ public class UserService {
             JSONObject jsonObject = new JSONObject(httpEntity.getBody());
             User user = new User();
             user.setName(jsonObject.getString("name"));
-            user.setName(jsonObject.getString("surname"));
+            user.setSurname(jsonObject.getString("surname"));
             user.setNick(jsonObject.getString("nick"));
             user.setPassword(DigestUtils.sha256Hex(jsonObject.getString("password")));
             user.setPhoneNumber(jsonObject.getInt("phoneNumber"));

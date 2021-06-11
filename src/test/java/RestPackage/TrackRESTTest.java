@@ -283,7 +283,7 @@ class TrackRESTTest {
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/track/list/4/1/6/2021-06-02/2021-06-02/"))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus()==200);
+            Assert. assertTrue(result.getResponse().getStatus()==200);
             //finishing
             tx.commit();
             session.close();

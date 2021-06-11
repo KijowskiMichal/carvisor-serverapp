@@ -77,6 +77,10 @@ public class User
      */
     int samples;
     /**
+     * Number of samples
+     */
+    int samplesNumber;
+    /**
      * throttle
      */
     int throttle;
@@ -106,6 +110,7 @@ public class User
         this.speedAVG = 0;
         this.ecoPointsAvg = 0;
         this.distanceTravelled = 0;
+        this.samplesNumber = 0;
     }
 
     public int getSamples() {
