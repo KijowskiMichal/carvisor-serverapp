@@ -60,4 +60,9 @@ public class UsersREST {
     public ResponseEntity getUserData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID) {
         return userService.getUserData(request, httpEntity, userID);
     }
+
+    @RequestMapping(value = "/addUser", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    public ResponseEntity addUser(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        return userService.addUser(request, httpEntity);
+    }
 }

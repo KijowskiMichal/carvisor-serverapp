@@ -427,6 +427,57 @@ public class UserService {
         return responseEntity;
     }
 
+    /**
+     * WebMethod that create user with given json.
+     * <p>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param httpEntity Object of HttpEntity represents content of our request.
+     * @return HttpStatus 200.
+     */
+    public ResponseEntity addUser(HttpServletRequest request, HttpEntity<String> httpEntity)
+    {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("UserREST.addUser cannot add user (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
+        Session session = null;
+        Transaction tx = null;
+        ResponseEntity responseEntity;
+
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+            JSONObject jsonObject = new JSONObject(httpEntity.getBody());
+            User user = new User();
+            user.setName(jsonObject.getString("name"));
+            user.setName(jsonObject.getString("surname"));
+            user.setNick(jsonObject.getString("nick"));
+            user.setPassword(DigestUtils.sha256Hex(jsonObject.getString("password")));
+            user.setPhoneNumber(jsonObject.getInt("phoneNumber"));
+            //TODO SET PHOTO
+            String image;
+            try {
+                image = jsonObject.getString("image");
+            } catch (JSONException jsonException) {
+                image = null;
+            }
+            user.setImage(image);
+            session.save(user);
+            tx.commit();
+            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body("");
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        } finally {
+            if (session != null) session.close();
+        }
+        return responseEntity;
+    }
+
+
     //===
     //Private methods
 

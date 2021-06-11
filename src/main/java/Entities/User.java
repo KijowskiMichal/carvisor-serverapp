@@ -83,7 +83,8 @@ public class User
 
 
     public User(){
-       super();
+        super();
+        init();
     }
 
     public User(String nick, String name, String surname, String password, UserPrivileges userPrivileges, String image, int phoneNumber, String nfcTag) {
@@ -95,6 +96,10 @@ public class User
         this.image = image;
         this.phoneNumber = phoneNumber;
         this.nfcTag = nfcTag;
+        init();
+    }
+
+    private void init() {
         this.samples = 0;
         this.throttle = 0;
         this.revolutionsAVG = 0;
@@ -246,5 +251,15 @@ public class User
         this.speedAVG = (int) (o * this.speedAVG + n * track.getSpeed());
         this.throttle = (int) (o * this.throttle + n * track.getThrottle());
         this.distanceTravelled += track.distance;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "nick='" + nick + '\'' +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", phoneNumber=" + phoneNumber +
+                '}';
     }
 }
