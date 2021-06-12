@@ -84,6 +84,14 @@ public class User
      * throttle
      */
     int throttle;
+    /**
+     * Safety samples
+     */
+    int safetySamples;
+    /**
+     * Safety negative samples
+     */
+    int safetyNegativeSamples;
 
 
     public User(){
@@ -111,6 +119,40 @@ public class User
         this.ecoPointsAvg = 0;
         this.distanceTravelled = 0;
         this.samplesNumber = 0;
+        this.safetyNegativeSamples = 0;
+        this.safetySamples = 0;
+    }
+
+    public int getSamplesNumber() {
+        return samplesNumber;
+    }
+
+    public void setSamplesNumber(int samplesNumber) {
+        this.samplesNumber = samplesNumber;
+    }
+
+    public int getThrottle() {
+        return throttle;
+    }
+
+    public void setThrottle(int throttle) {
+        this.throttle = throttle;
+    }
+
+    public int getSafetySamples() {
+        return safetySamples;
+    }
+
+    public void setSafetySamples(int safetySamples) {
+        this.safetySamples = safetySamples;
+    }
+
+    public int getSafetyNegativeSamples() {
+        return safetyNegativeSamples;
+    }
+
+    public void setSafetyNegativeSamples(int safetyNegativeSamples) {
+        this.safetyNegativeSamples = safetyNegativeSamples;
     }
 
     public int getSamples() {
