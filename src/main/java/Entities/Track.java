@@ -93,6 +93,14 @@ public class Track {
      * throttle
      */
     long throttle;
+    /**
+     * Safety samples
+     */
+    int safetySamples;
+    /**
+     * Safety negative samples
+     */
+    int safetyNegativeSamples;
 
     public Track(Car car, User user, int numberOfparameter, Boolean privateTrack, long timeStamp, String startPosiotion) {
         this.car = car;
@@ -116,6 +124,22 @@ public class Track {
 
 
     public Track() { super(); }
+
+    public int getSafetySamples() {
+        return safetySamples;
+    }
+
+    public void setSafetySamples(int safetySamples) {
+        this.safetySamples = safetySamples;
+    }
+
+    public int getSafetyNegativeSamples() {
+        return safetyNegativeSamples;
+    }
+
+    public void setSafetyNegativeSamples(int safetyNegativeSamples) {
+        this.safetyNegativeSamples = safetyNegativeSamples;
+    }
 
     public long getThrottle() {
         return throttle;

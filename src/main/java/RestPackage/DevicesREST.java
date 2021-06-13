@@ -49,4 +49,9 @@ public class DevicesREST {
     public ResponseEntity addDevice(HttpServletRequest request, HttpEntity<String> httpEntity) {
         return devicesService.addDevice(request,httpEntity);
     }
+
+    @RequestMapping(value = "/listDevicesNames/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity<String> listDevicesNames(HttpServletRequest request, @PathVariable("regex") String regex) {
+        return devicesService.listDevicesNames(request,regex);
+    }
 }

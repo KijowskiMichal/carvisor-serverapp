@@ -24,6 +24,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.Timestamp;
@@ -181,6 +182,31 @@ public class TrackService {
                         float y1 = Float.parseFloat(trackEndPosition[0]);
                         float x1 = Float.parseFloat(trackEndPosition[1]);
                         distance = (long) distFrom(y1,x1,latitude,longitude);
+                        //start safety points calculated
+                        URL url = new URL("https://route.ls.hereapi.com/routing/7.2/calculateroute.json?jsonAttributes=1&waypoint0="+latitude+","+longitude+"&waypoint1="+latitude+","+longitude+"&routeattributes=sh%2Clg&legattributes=li&linkattributes=nl%2Cfc&mode=fastest%3Bcar%3Btraffic%3Aenabled&apiKey=EV06iVKQPJMrzRh1CIplbrUc00D-WxwoMDJM2wmZf5M");
+                        String json = "";
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                        conn.setRequestMethod("GET");
+                        conn.connect();
+                        Scanner sc = new Scanner(url.openStream());
+                        while (sc.hasNext()) {
+                            json += sc.nextLine();
+                        }
+                        sc.close();
+                        JSONObject safetyAPI = new JSONObject(json);
+                        float speedLimit;
+                        try
+                        {
+                            speedLimit = safetyAPI.getJSONObject("response").getJSONArray("route").getJSONObject(0).getJSONArray("leg").getJSONObject(0).getJSONArray("link").getJSONObject(0).getFloat("speedLimit");
+                            if (speed>speedLimit)
+                            {
+                                track.setSafetyNegativeSamples(track.getSafetyNegativeSamples()+1);
+                            }
+                            track.setSafetySamples(track.getSafetySamples()+1);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        //end safety points calculated
                     }
                     track.addMetersToDistance(distance);
                     track.setEndPosiotion(latitude + ";" + longitude);
@@ -207,6 +233,15 @@ public class TrackService {
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("JSONException exception\n" + sw.toString());
+        } catch (ProtocolException e) {
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ProtocolException exception\n");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("MalformedURLException exception\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("IOException exception\n");
         } finally {
             if (session != null) session.close();
         }
@@ -288,6 +323,8 @@ public class TrackService {
                     track.getUser().setTracksNumber(track.getUser().getTracksNumber()+1);
                     track.getUser().setDistanceTravelled(track.getUser().getDistanceTravelled()+track.getDistance());
                     track.getUser().setSamples(track.getUser().getSamples()+track.getSamples());
+                    track.getUser().setSafetyNegativeSamples(track.getUser().getSafetyNegativeSamples()+track.getSafetyNegativeSamples());
+                    track.getUser().setSafetySamples(track.getUser().getSafetySamples()+track.getSafetySamples());
                     track.setActive(false);
                     track.setEnd(time - 8);
                     Query query2 = session.createQuery("Select t from TrackRate t WHERE t.track.id = " + track.getId() + " ORDER BY t.id DESC");

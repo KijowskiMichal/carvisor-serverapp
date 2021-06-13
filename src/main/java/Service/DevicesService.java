@@ -130,6 +130,53 @@ public class DevicesService {
     }
 
     /**
+     * WebMethod which returns a list of devices
+     * <P>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param regex    Part of name or surname we want to display.
+     * @return HttpStatus 200 Returns the contents of the page that contains a list of devices in the JSON format.
+     */
+    public ResponseEntity<String> listDevicesNames(HttpServletRequest request, String regex) {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("DevicesREST.listDevicesNames cannot list user's (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
+            logger.info("DevicesREST.listDevicesNames cannot list devices's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+        //listing
+        List<Object> cars = new ArrayList<>();
+        int lastPageNumber;
+        Session session = hibernateRequests.getSession();
+        Transaction tx = null;
+        try {
+            if (regex.equals("$")) regex = "";
+            tx = session.beginTransaction();
+
+            Query selectQuery = session.createQuery("SELECT c FROM Car c WHERE c.model  like '%" + regex + "%' OR c.brand  like '%" + regex + "%' OR c.licensePlate  like '%" + regex + "%'");
+            cars = selectQuery.list();
+            tx.commit();
+            session.close();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            session.close();
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        }
+        JSONArray jsonArray = new JSONArray();
+        for (Object tmp : cars) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", ((Car) tmp).getId());
+            jsonObject.put("name", ((Car) tmp).getBrand()+" "+((Car) tmp).getModel()+" ("+((Car) tmp).getLicensePlate()+")");
+            jsonObject.put("image", ((Car) tmp).getImage());
+            jsonArray.put(jsonObject);
+        }
+        logger.info("DevicesREST.listDevicesNames returns list of devices (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+        return ResponseEntity.status(HttpStatus.OK).body(jsonArray.toString());
+    }
+
+    /**
      * WebMethod which create device with given body and save it into database
      * <p>
      * @param request Object of HttpServletRequest represents our request

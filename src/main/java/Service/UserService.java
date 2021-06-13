@@ -115,7 +115,7 @@ public class UserService {
                     tracks = selectQuery.list();
                     if (tracks.size()>0)
                     {
-                        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+                        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yy HH:mm");
                         Date date = new Date(tracks.get(0).getEnd()*1000);
                         jsonObject.put("finishTime", format.format(date));
                     }
@@ -129,6 +129,7 @@ public class UserService {
                 Timestamp timestampBefore = Timestamp.valueOf(before);
                 LocalDateTime after = now.with(LocalTime.MAX);
                 Timestamp timestampAfter = Timestamp.valueOf(after);
+                logger.info("timestamp'y "+timestampBefore.getTime()+" "+timestampAfter.getTime());
                 Query countQ = session.createQuery("Select sum (t.distance) from TrackRate t WHERE t.timestamp > "+String.valueOf(timestampBefore.getTime()/1000)+" AND  t.timestamp < "+String.valueOf(timestampAfter.getTime()/1000)+" AND t.track.user.id = "+((User) tmp).getId());
                 Long lonk = (Long)countQ.getSingleResult();
                 jsonObject.put("distance", String.valueOf(lonk == null ? 0 : lonk));
