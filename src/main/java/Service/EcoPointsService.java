@@ -119,7 +119,7 @@ public class EcoPointsService {
             jsonObject.put("id", ((User) tmp).getId());
             jsonObject.put("name", ((User) tmp).getName());
             jsonObject.put("surname", ((User) tmp).getSurname());
-            jsonObject.put("rate", ((User) tmp).getEcoPointsAvg());
+            jsonObject.put("rate", ((User) tmp).getEcoPointsAvg()/2.0);
             jsonObject.put("tracks", ((User) tmp).getTracksNumber());
             jsonObject.put("combustion", ((User) tmp).getCombustionAVG());
             jsonObject.put("revolutions", ((User) tmp).getRevolutionsAVG());
