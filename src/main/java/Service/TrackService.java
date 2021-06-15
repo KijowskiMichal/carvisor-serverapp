@@ -193,14 +193,16 @@ public class TrackService {
                         sc.close();
                         JSONObject safetyAPI = new JSONObject(json);
                         float speedLimit;
+                        int added = 1;
                         try
                         {
                             speedLimit = safetyAPI.getJSONObject("response").getJSONArray("route").getJSONObject(0).getJSONArray("leg").getJSONObject(0).getJSONArray("link").getJSONObject(0).getFloat("speedLimit");
                             if (speed>speedLimit)
                             {
-                                track.setSafetyNegativeSamples(track.getSafetyNegativeSamples()+1);
+                                added = (int) (Math.floor(speed-speedLimit)*0.2);
+                                track.setSafetyNegativeSamples(track.getSafetyNegativeSamples()+added);
                             }
-                            track.setSafetySamples(track.getSafetySamples()+1);
+                            track.setSafetySamples(track.getSafetySamples()+added);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
