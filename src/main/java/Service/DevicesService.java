@@ -42,7 +42,7 @@ public class DevicesService {
     }
 
     /**
-     * WebMethod which returns a list of users.
+     * WebMethod which returns a list of devices.
      * <p>
      * @param request  Object of HttpServletRequest represents our request;
      * @param page     Page of users list. Parameter associated with pageSize.

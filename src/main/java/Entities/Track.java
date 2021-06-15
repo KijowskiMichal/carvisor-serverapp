@@ -320,6 +320,6 @@ public class Track {
         else if (throttle > 60) {
             eco -= 1;
         }
-        this.ecoPoints = Math.max(eco, 0);
+        this.ecoPoints = (float) (Math.max(eco, 0) / 2.0);
     }
 }

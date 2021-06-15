@@ -38,6 +38,14 @@ public class EcoPointsService {
         this.logger = logger.getLOG();
     }
 
+    /**
+     * WebMethods which return ecopoints of chosen user
+     * <p>
+     * @param request Object of HttpServletRequest represents our request.
+     * @param httpEntity Object of HttpEntity represents content of our request.
+     * @param userId id of chosen user
+     * @return HttpStatus 200.
+     */
     public ResponseEntity getUserEcoPoints(HttpServletRequest request, HttpEntity<String> httpEntity, int userId) {
         if (request.getSession().getAttribute("user") == null) {
             logger.info("EcoPointsService.getUserEcoPoints cannot get user id=" + userId + " Eco Points (session not found)");

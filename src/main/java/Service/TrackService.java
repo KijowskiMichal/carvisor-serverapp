@@ -184,7 +184,7 @@ public class TrackService {
                     }
                     track.addMetersToDistance(distance);
                     track.setEndPosiotion(latitude + ";" + longitude);
-                    trackRate = new TrackRate(track,speed,throttle,latitude,longitude,rpm,track.getDistance(), keyTimestamp);
+                    trackRate = new TrackRate(track,speed,throttle,latitude,longitude,rpm,distance, keyTimestamp);
                     session.save(trackRate);
                     track.addTrackRate(trackRate);
                     track.calculateEcoPoints();
@@ -212,7 +212,6 @@ public class TrackService {
         }
         return responseEntity;
     }
-
 
     /**
      * WebMethods which update track without sending data.
