@@ -20,10 +20,13 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Class representing device service
@@ -96,10 +99,10 @@ public class DevicesService {
             try {
                 session = hibernateRequests.getSession();
                 tx = session.beginTransaction();
-                LocalDateTime now = LocalDateTime.now();
-                LocalDateTime before = now.with(LocalTime.MIN);
+                Date now = new Date();
+                LocalDateTime before = LocalDateTime.ofInstant(Instant.ofEpochMilli(now.getTime()), TimeZone.getDefault().toZoneId()).with(LocalTime.MIN);
                 Timestamp timestampBefore = Timestamp.valueOf(before);
-                LocalDateTime after = now.with(LocalTime.MAX);
+                LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochMilli(now.getTime()), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
                 Timestamp timestampAfter = Timestamp.valueOf(after);
                 Query countQ = session.createQuery("Select sum (t.distance) from TrackRate t WHERE t.timestamp > "+String.valueOf(timestampBefore.getTime()/1000)+" AND  t.timestamp < "+String.valueOf(timestampAfter.getTime()/1000)+" AND t.track.car.id = "+((Car) tmp).getId());
                 Long lonk = (Long)countQ.getSingleResult();
@@ -127,6 +130,53 @@ public class DevicesService {
         jsonOut.put("listOfDevices", jsonArray);
         logger.info("DevicesREST.list returns list of devices (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
+    }
+
+    /**
+     * WebMethod which returns a list of devices
+     * <P>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param regex    Part of name or surname we want to display.
+     * @return HttpStatus 200 Returns the contents of the page that contains a list of devices in the JSON format.
+     */
+    public ResponseEntity<String> listDevicesNames(HttpServletRequest request, String regex) {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("DevicesREST.listDevicesNames cannot list user's (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
+            logger.info("DevicesREST.listDevicesNames cannot list devices's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+        //listing
+        List<Object> cars = new ArrayList<>();
+        int lastPageNumber;
+        Session session = hibernateRequests.getSession();
+        Transaction tx = null;
+        try {
+            if (regex.equals("$")) regex = "";
+            tx = session.beginTransaction();
+
+            Query selectQuery = session.createQuery("SELECT c FROM Car c WHERE c.model  like '%" + regex + "%' OR c.brand  like '%" + regex + "%' OR c.licensePlate  like '%" + regex + "%'");
+            cars = selectQuery.list();
+            tx.commit();
+            session.close();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            session.close();
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        }
+        JSONArray jsonArray = new JSONArray();
+        for (Object tmp : cars) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("id", ((Car) tmp).getId());
+            jsonObject.put("name", ((Car) tmp).getBrand()+" "+((Car) tmp).getModel()+" ("+((Car) tmp).getLicensePlate()+")");
+            jsonObject.put("image", ((Car) tmp).getImage());
+            jsonArray.put(jsonObject);
+        }
+        logger.info("DevicesREST.listDevicesNames returns list of devices (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+        return ResponseEntity.status(HttpStatus.OK).body(jsonArray.toString());
     }
 
     /**

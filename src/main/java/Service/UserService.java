@@ -23,11 +23,13 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Class representing user service
@@ -115,7 +117,7 @@ public class UserService {
                     tracks = selectQuery.list();
                     if (tracks.size()>0)
                     {
-                        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+                        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yy HH:mm");
                         Date date = new Date(tracks.get(0).getEnd()*1000);
                         jsonObject.put("finishTime", format.format(date));
                     }
@@ -124,10 +126,10 @@ public class UserService {
                     jsonObject.put("startTime", "------");
                     jsonObject.put("licensePlate", "------");
                 }
-                LocalDateTime now = LocalDateTime.now();
-                LocalDateTime before = now.with(LocalTime.MIN);
+                Date now = new Date();
+                LocalDateTime before = LocalDateTime.ofInstant(Instant.ofEpochMilli(now.getTime()), TimeZone.getDefault().toZoneId()).with(LocalTime.MIN);
                 Timestamp timestampBefore = Timestamp.valueOf(before);
-                LocalDateTime after = now.with(LocalTime.MAX);
+                LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochMilli(now.getTime()), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
                 Timestamp timestampAfter = Timestamp.valueOf(after);
                 Query countQ = session.createQuery("Select sum (t.distance) from TrackRate t WHERE t.timestamp > "+String.valueOf(timestampBefore.getTime()/1000)+" AND  t.timestamp < "+String.valueOf(timestampAfter.getTime()/1000)+" AND t.track.user.id = "+((User) tmp).getId());
                 Long lonk = (Long)countQ.getSingleResult();

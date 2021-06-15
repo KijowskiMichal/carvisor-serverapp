@@ -1,9 +1,5 @@
 package Service;
 
-import HibernatePackage.HibernateRequests;
-import org.apache.logging.log4j.Logger;
-
-import Entities.Track;
 import Entities.User;
 import Entities.UserPrivileges;
 import HibernatePackage.HibernateRequests;
@@ -26,59 +22,21 @@ import java.util.List;
 
 
 @Service
-public class EcoPointsService {
+public class SafetyPointsService {
 
     HibernateRequests hibernateRequests;
     Logger logger;
 
     @Autowired
-    public EcoPointsService(HibernateRequests hibernateRequests, OtherClasses.Logger logger)
+    public SafetyPointsService(HibernateRequests hibernateRequests, OtherClasses.Logger logger)
     {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
     }
 
-    /**
-     * WebMethods which return ecopoints of chosen user
-     * <p>
-     * @param request Object of HttpServletRequest represents our request.
-     * @param httpEntity Object of HttpEntity represents content of our request.
-     * @param userId id of chosen user
-     * @return HttpStatus 200.
-     */
-    public ResponseEntity getUserEcoPoints(HttpServletRequest request, HttpEntity<String> httpEntity, int userId) {
-        if (request.getSession().getAttribute("user") == null) {
-            logger.info("EcoPointsService.getUserEcoPoints cannot get user id=" + userId + " Eco Points (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-        }
-        else {
-            User user = (User) request.getSession().getAttribute("user");
-            if (user.getUserPrivileges() != UserPrivileges.ADMINISTRATOR && user.getUserPrivileges() != UserPrivileges.MODERATOR) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("dont have access");
-            }
-        }
-
-        Session session = null;
-        Transaction tx = null;
-        ResponseEntity responseEntity;
-
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            Query query = session.createQuery("Select u from User u WHERE u.id=" + userId);
-            User user = (User) query.getSingleResult();
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(user.getEcoPointsAvg());
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("");
-        } finally {
-            if (session != null) session.close();
-        }
-        return responseEntity;
-    }
 
     /**
-     * WebMethod which returns a list of users with ecopoints data.
+     * WebMethod which returns a list of users with safety points data.
      * <P>
      * @param request  Object of HttpServletRequest represents our request.
      * @param page     Page of users list. Parameter associated with pageSize.
@@ -89,10 +47,10 @@ public class EcoPointsService {
     public ResponseEntity<String> list(HttpServletRequest request, int page, int pageSize, String regex) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
-            logger.info("UserREST.list cannot list user's (session not found)");
+            logger.info("SafetyPointsService.list cannot list user's (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
-            logger.info("UserREST.list cannot list user's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+            logger.info("SafetyPointsService.list cannot list user's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
         //listing
@@ -127,18 +85,21 @@ public class EcoPointsService {
             jsonObject.put("id", ((User) tmp).getId());
             jsonObject.put("name", ((User) tmp).getName());
             jsonObject.put("surname", ((User) tmp).getSurname());
-            jsonObject.put("rate", ((User) tmp).getEcoPointsAvg()/2.0);
+            if (((User) tmp).getSafetySamples()==0)
+            {
+                jsonObject.put("rate", 0);
+            }
+            else {
+                jsonObject.put("rate", 5 - ((float)((User) tmp).getSafetyNegativeSamples() / ((User) tmp).getSafetySamples()) * 5);
+            }
             jsonObject.put("tracks", ((User) tmp).getTracksNumber());
-            jsonObject.put("combustion", ((User) tmp).getCombustionAVG());
-            jsonObject.put("revolutions", ((User) tmp).getRevolutionsAVG());
-            jsonObject.put("speed", ((User) tmp).getSpeedAVG());
             jsonArray.put(jsonObject);
         }
 
         jsonOut.put("page", page);
         jsonOut.put("pageMax", lastPageNumber);
         jsonOut.put("listOfUsers", jsonArray);
-        logger.info("UsersREST.list returns list of users (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+        logger.info("SafetyPointsService.list returns list of users (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 }
