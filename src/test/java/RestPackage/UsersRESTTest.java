@@ -1,5 +1,6 @@
 package RestPackage;
 
+import Entities.Car;
 import Entities.User;
 import Entities.UserPrivileges;
 import HibernatePackage.HibernateRequests;
@@ -66,13 +67,15 @@ class UsersRESTTest {
         }
     }
 
-    void removeUsers(List<User> users) {
+    void removeUsers() {
         Session session = null;
         Transaction tx = null;
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            for (User u : users) {
+            Query query = session.createQuery("SELECT u FROM User u");
+            List<User> userList = query.getResultList();
+            for (User u:userList) {
                 session.delete(u);
             }
             tx.commit();
@@ -122,11 +125,14 @@ class UsersRESTTest {
         } finally {
             if (session != null) session.close();
         }
-        removeUsers(users);
+        removeUsers();
     }
 
     @Test
     void listUserNames() throws Exception {
+        List<User> users = new ArrayList<>();
+        addUsers(users);
+
         User user = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
         HashMap<String, Object> sessionattr = new HashMap<String, Object>();
         sessionattr.put("user",user);
@@ -138,6 +144,7 @@ class UsersRESTTest {
         List<Object> list = jsonArray.toList();
         assertEquals(200, result.getResponse().getStatus());
         assertEquals(1, list.size());
+        removeUsers();
     }
 
     @Test
@@ -194,22 +201,75 @@ class UsersRESTTest {
 
     @Test
     void changeUserData() {
+        List<User> users = new ArrayList<>();
+        addUsers(users);
+
+        //auth
+        User user = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
+        HashMap<String, Object> sessionattr = new HashMap<String, Object>();
+        sessionattr.put("user",user);
+
+        Session session = null;
+        Transaction transaction = null;
+        try {
+            session = hibernateRequests.getSession();
+            transaction = session.beginTransaction();
+
+            Query query = session.createQuery("SELECT u FROM User u");
+            List<User> userList = query.getResultList();
+            User oldUser = userList.get(1);
+            long userId = oldUser.getId();
+
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/users/changeUserData/" + userId + "/")
+                    .sessionAttrs(sessionattr)
+                    .content("{\n" +
+                            "  \"name\": \"string string\",\n" +
+                            "  \"image\": \"string\",\n" +
+                            "  \"telephone\": \"1234566\",\n" +
+                            "  \"userPrivileges\": \"string\"\n" +
+                            "}")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andReturn();
+            transaction.commit();
+            session.close();
+
+            session = hibernateRequests.getSession();
+            transaction = session.beginTransaction();
+            Query newQuery = session.createQuery("SELECT u FROM User u WHERE u.id=" + userId);
+            User changedUser = (User) newQuery.getSingleResult();
+            assertNotEquals(oldUser,changedUser);
+            assertEquals(200, result.getResponse().getStatus());
+
+            transaction.commit();
+            session.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        } finally {
+            removeUsers();
+        }
     }
 
     @Test
     void getUserData() {
+        List<User> users = new ArrayList<>();
+        addUsers(users);
         Session session = null;
         Transaction tx = null;
         User user = null;
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
+            Query query = session.createQuery("SELECT u FROM User u");
+            List<User> userList = query.getResultList();
+            long userId = userList.get(1).getId();
 
             user = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
             sessionattr.put("user",user);
 
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/getUserData/16/")
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/getUserData/"+userId+"/")
                     .sessionAttrs(sessionattr))
                     .andReturn();
             JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
@@ -229,6 +289,51 @@ class UsersRESTTest {
             e.printStackTrace();
         } finally {
             if (session != null) session.close();
+        }
+        removeUsers();
+    }
+
+    @Test
+    void addUser() {
+        Session session = null;
+        Transaction tx = null;
+        User user = null;
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+
+            user = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
+            HashMap<String, Object> sessionattr = new HashMap<String, Object>();
+            sessionattr.put("user",user);
+
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/users/addUser")
+                    .sessionAttrs(sessionattr)
+                    .content(" {\n" +
+                            "  \"name\":\"abc\",\n" +
+                            "  \"surname\":\"cba\",\n" +
+                            "  \"nick\":\"cba\",\n" +
+                            "  \"password\":\"cba\",\n" +
+                            "  \"phoneNumber\":123456,\n" +
+                            "  \"image\":\"aaabbb\"\n" +
+                            "}"))
+                    .andReturn();
+            assertEquals(201,result.getResponse().getStatus());
+            Query query1 = session.createQuery("SELECT u FROM User u");
+            List<User> users = query1.getResultList();
+            assertEquals(1,users.size());
+            tx.commit();
+            session.close();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            if (user != null) session.delete(user);
+            e.printStackTrace();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            if (user != null) session.delete(user);
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+            removeUsers();
         }
     }
 }

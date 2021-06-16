@@ -458,7 +458,6 @@ public class UserService {
             user.setNick(jsonObject.getString("nick"));
             user.setPassword(DigestUtils.sha256Hex(jsonObject.getString("password")));
             user.setPhoneNumber(jsonObject.getInt("phoneNumber"));
-            //TODO SET PHOTO
             String image;
             try {
                 image = jsonObject.getString("image");
