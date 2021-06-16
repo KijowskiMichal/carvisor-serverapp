@@ -72,7 +72,9 @@ class DevicesRESTTest {
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            for (Car c:devices) {
+            Query query = session.createQuery("SELECT c FROM Car c");
+            List<Car> carList = query.getResultList();
+            for (Car c:carList) {
                 session.delete(c);
             }
             tx.commit();
@@ -80,7 +82,7 @@ class DevicesRESTTest {
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-        }finally {
+        } finally {
             if (session != null) session.close();
         }
     }

@@ -167,7 +167,6 @@ class UsersRESTTest {
             //check without changing password
             Query query = session.createQuery("SELECT u FROM User u WHERE u.nick='" + "abcdefg'");
             User newUser = (User) query.getSingleResult();
-            System.out.println(newUser.getPassword());
             assertEquals(
                     DigestUtils.sha256Hex(user.getPassword()),
                     DigestUtils.sha256Hex(newUser.getPassword()));
@@ -176,7 +175,7 @@ class UsersRESTTest {
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/users/changePassword")
                     .sessionAttrs(sessionattr)
                     .content("{\n" +
-                            "  \"firstPassword\":\"abc\",\n" +
+                            "  \"firstPassword\":\"cba\",\n" +
                             "  \"secondPassword\":\"cba\"\n" +
                             "}"))
                     .andReturn();
@@ -186,7 +185,7 @@ class UsersRESTTest {
             System.out.println(newNewUser.getPassword());
             session.delete(newUser);
             tx.commit();
-            assertNotEquals(newUser.getPassword(),newNewUser.getPassword());
+            assertNotEquals(oldPassword,newNewUser.getPassword());
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
