@@ -43,15 +43,7 @@ class UsersRESTTest {
     @Autowired
     private HibernateRequests hibernateRequests;
 
-    @Test
-    void populateDatabase() {
-        User admin;
-        HashMap<String, Object> sessionattr;
-        List<User> users;
-        admin = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
-        sessionattr = new HashMap<String, Object>();
-        sessionattr.put("user",admin);
-        users = new ArrayList<>();
+    void addUsers(List<User> users) {
         users.add(new User("Timi", "Tom", "Zablocki", "123", UserPrivileges.ADMINISTRATOR, null, 123456789,"AB"));
         users.add(new User("Ola", "Ola", "Tomczyk", "123", UserPrivileges.ADMINISTRATOR, null, 123456789,"AB"));
         users.add(new User("Krzys", "Krzysztof", "Zablocki", "123", UserPrivileges.ADMINISTRATOR, null, 123456789,"AB"));
@@ -74,8 +66,30 @@ class UsersRESTTest {
         }
     }
 
+    void removeUsers(List<User> users) {
+        Session session = null;
+        Transaction tx = null;
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+            for (User u : users) {
+                session.delete(u);
+            }
+            tx.commit();
+            session.close();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
+    }
+
     @Test
     void list() {
+        List<User> users = new ArrayList<>();
+        addUsers(users);
+
         Session session = null;
         Transaction tx = null;
         User user = null;
@@ -92,9 +106,9 @@ class UsersRESTTest {
                     .andReturn();
             JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
             JSONArray jsonArray = new JSONArray(jsonObject.get("listOfUsers").toString());
-            List<Object> list = jsonArray.toList();
+            List<Object> objectList = jsonArray.toList();
             assertEquals(200, result.getResponse().getStatus());
-            assertEquals(3, list.size());
+            assertEquals(3, objectList.size());
             tx.commit();
             session.close();
         } catch (HibernateException e) {
@@ -108,6 +122,7 @@ class UsersRESTTest {
         } finally {
             if (session != null) session.close();
         }
+        removeUsers(users);
     }
 
     @Test
@@ -179,10 +194,6 @@ class UsersRESTTest {
 
     @Test
     void changeUserData() {
-    }
-
-    @Test
-    void changeUserImage() {
     }
 
     @Test

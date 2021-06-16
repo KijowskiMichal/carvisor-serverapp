@@ -704,7 +704,7 @@ public class TrackService {
     }
 
     //add ecopoints to user from track
-    private void addTrackToEcoPointScore(User user, Track track) { //TODO place this at the trackEnd method
+    private void addTrackToEcoPointScore(User user, Track track) {
         Session session = null;
         Transaction tx = null;
 
@@ -729,7 +729,7 @@ public class TrackService {
     }
 
 
-    private void calculateTrackEcoPoints(Track track) {//TODO place this at the trackEnd method
+    private void calculateTrackEcoPoints(Track track) {
         Session session = null;
         Transaction tx = null;
 

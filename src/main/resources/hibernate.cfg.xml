@@ -6,9 +6,11 @@
         <property name = "hibernate.connection.driver_class">org.mariadb.jdbc.Driver</property>
         <!-- Assume test is the database name -->
         <!-- <property name = "hibernate.connection.url">jdbc:mariadb://michal.vps.kronmar.net/carvisor?useUnicode=yes&amp;characterEncoding=UTF-8</property> -->
-        <property name = "hibernate.connection.url">jdbc:mariadb://localhost/carvisor?useUnicode=yes&amp;characterEncoding=UTF-8</property>
-        <property name = "hibernate.connection.username">carvisoru</property>
-        <property name = "hibernate.connection.password">EkEyW28W1jXquuC</property>
+        <property name = "hibernate.connection.url">jdbc:mariadb://localhost/carvisortest?useUnicode=yes&amp;characterEncoding=UTF-8</property>
+        <!--<property name = "hibernate.connection.username">carvisoru</property>
+        <property name = "hibernate.connection.password">EkEyW28W1jXquuC</property>-->
+        <property name = "hibernate.connection.username">root</property>
+        <property name = "hibernate.connection.password"></property>
         <property name="hibernate.connection.characterEncoding">utf8mb4</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
         <!-- List of XML mapping files -->
