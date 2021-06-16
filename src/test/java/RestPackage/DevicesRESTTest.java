@@ -1,6 +1,7 @@
 package RestPackage;
 
 import Entities.Car;
+import Entities.Settings;
 import Entities.User;
 import Entities.UserPrivileges;
 import HibernatePackage.HibernateRequests;
@@ -172,6 +173,7 @@ class DevicesRESTTest {
             List<Car> cars = query.getResultList();
             Car car = cars.get(1);
             long carId = car.getId();
+            String licensePlate = car.getLicensePlate();
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/devices/changeDeviceData/" + carId + "/")
                     .sessionAttrs(sessionattr)
@@ -180,9 +182,9 @@ class DevicesRESTTest {
                             "  \"brand\": \"string\",\n" +
                             "  \"model\": \"string\",\n" +
                             "  \"engine\": \"string\",\n" +
-                            "  \"fuelType\": \"string\",\n" +
-                            "  \"tank\": \"string\",\n" +
-                            "  \"norm\": \"string\"\n" +
+                            "  \"fuel\": \"string\",\n" +
+                            "  \"tank\": \"123\",\n" +
+                            "  \"norm\": \"123\"\n" +
                             "}")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
@@ -196,11 +198,8 @@ class DevicesRESTTest {
             Query newQuery = session.createQuery("SELECT c FROM Car c WHERE c.id=" + carId);
             Car newCar = (Car) newQuery.getSingleResult();
 
-            assertNotEquals(newCar.getLicensePlate(),car.getLicensePlate());
-            assertNotEquals(newCar.getModel(),car.getModel());
-            assertNotEquals(newCar.getBrand(),car.getBrand());
+            assertNotEquals(licensePlate,newCar.getLicensePlate());
             assertEquals(200, result.getResponse().getStatus());
-
             transaction.commit();
             session.close();
         } catch (Exception e) {
@@ -211,9 +210,58 @@ class DevicesRESTTest {
         }
     }
 
-
     @Test
     void addDevice() {
+        Session session = null;
+        Transaction tx = null;
+        User user = null;
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
 
+
+            user = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
+            HashMap<String, Object> sessionattr = new HashMap<String, Object>();
+            sessionattr.put("user",user);
+
+            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/devices/addDevice")
+                    .sessionAttrs(sessionattr)
+                    .content("{\n" +
+                            "  \"licensePlate\": \"string\",\n" +
+                            "  \"brand\": \"string\",\n" +
+                            "  \"model\": \"string\",\n" +
+                            "  \"engine\": \"string\",\n" +
+                            "  \"fuel\": \"string\",\n" +
+                            "  \"tank\": \"123\",\n" +
+                            "  \"norm\": \"123\",\n" +
+                            "  \"password\": \"password\"\n" +
+                            "}"))
+                    .andReturn();
+            tx.commit();
+            session.close();
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+
+            assertEquals(201,result.getResponse().getStatus());
+            Query query1 = session.createQuery("SELECT c FROM Car c");
+            List<Car> cars = query1.getResultList();
+            assertEquals(1,cars.size());
+
+            for (Car car:cars) {
+                session.delete(car);
+            }
+            tx.commit();
+            session.close();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            if (user != null) session.delete(user);
+            e.printStackTrace();
+        } catch (Exception e) {
+            if (tx != null) tx.rollback();
+            if (user != null) session.delete(user);
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
     }
 }
