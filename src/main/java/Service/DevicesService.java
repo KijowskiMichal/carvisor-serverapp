@@ -225,7 +225,6 @@ public class DevicesService {
             Settings set2 = (Settings) query2.getSingleResult();
             car.setSendInterval(set1.getValue());
             car.setLocationInterval(set2.getValue());
-
             session.save(car);
             tx.commit();
             logger.log(Level.INFO,"Device id: " + car.getId() + " licence plate: " + car.getLicensePlate() + " | successfully saved to database.");
