@@ -1,5 +1,6 @@
 package Dao;
 
+import Entities.Car;
 import Entities.User;
 import HibernatePackage.HibernateRequests;
 import org.apache.logging.log4j.Logger;
@@ -7,31 +8,29 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-@Repository
-public class UserDaoJdbc extends HibernateDaoJdbc<User> implements DaoJdbc<User> {
+public class CarDaoJdbc extends HibernateDaoJdbc<Car> implements DaoJdbc<Car> {
 
     HibernateRequests hibernateRequests;
     Logger logger;
 
-    public UserDaoJdbc(HibernateRequests hibernateRequests, OtherClasses.Logger logger) {
+    public CarDaoJdbc(HibernateRequests hibernateRequests, OtherClasses.Logger logger) {
         super(hibernateRequests, logger);
     }
 
     @Override
-    public Optional<User> get(long id){
+    public Optional<Car> get(long id){
         Session session = null;
         Transaction tx = null;
-        User user = null;
+        Car car = null;
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            Query query = session.createQuery("SELECT u FROM User u WHERE u.id=" + id);
-            user = (User) query.getSingleResult();
+            Query query = session.createQuery("SELECT c FROM Car c WHERE c.id=" + id);
+            car = (Car) query.getSingleResult();
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
@@ -39,19 +38,19 @@ public class UserDaoJdbc extends HibernateDaoJdbc<User> implements DaoJdbc<User>
         } finally {
             if (session != null) session.close();
         }
-        return Optional.of(user);
+        return Optional.of(car);
     }
 
     @Override
-    public List<User> getAll() {
+    public List<Car> getAll() {
         Session session = null;
         Transaction tx = null;
-        List<User> users = null;
+        List<Car> cars = null;
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            Query query = session.createQuery("SELECT u FROM User u");
-            users = query.getResultList();
+            Query query = session.createQuery("SELECT c FROM Car c");
+            cars = query.getResultList();
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
@@ -59,6 +58,6 @@ public class UserDaoJdbc extends HibernateDaoJdbc<User> implements DaoJdbc<User>
         } finally {
             if (session != null) session.close();
         }
-        return users;
+        return cars;
     }
 }
