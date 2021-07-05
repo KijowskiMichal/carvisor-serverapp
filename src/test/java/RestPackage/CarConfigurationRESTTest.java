@@ -1,7 +1,7 @@
 package RestPackage;
 
 import Entities.Car;
-import Entities.Settings;
+import Entities.Setting;
 import Entities.User;
 import Entities.UserPrivileges;
 import HibernatePackage.HibernateRequests;
@@ -25,8 +25,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.HashMap;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(CarConfigurationREST.class)
@@ -139,10 +137,10 @@ class CarConfigurationRESTTest {
 
             String getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'sendInterval'";
             Query queryInner = session.createQuery(getQueryInner);
-            Settings sendInterval = (Settings) queryInner.getSingleResult();
+            Setting sendInterval = (Setting) queryInner.getSingleResult();
             getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
             queryInner = session.createQuery(getQueryInner);
-            Settings locationInterval = (Settings) queryInner.getSingleResult();
+            Setting locationInterval = (Setting) queryInner.getSingleResult();
 
             //without logging
 
@@ -288,13 +286,13 @@ class CarConfigurationRESTTest {
 
             String getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'sendInterval'";
             Query queryInner = session.createQuery(getQueryInner);
-            Settings sendInterval = (Settings) queryInner.getSingleResult();
+            Setting sendInterval = (Setting) queryInner.getSingleResult();
             getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
             queryInner = session.createQuery(getQueryInner);
-            Settings locationInterval = (Settings) queryInner.getSingleResult();
+            Setting locationInterval = (Setting) queryInner.getSingleResult();
             getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'historyTimeout'";
             queryInner = session.createQuery(getQueryInner);
-            Settings historyTimeout = (Settings) queryInner.getSingleResult();
+            Setting historyTimeout = (Setting) queryInner.getSingleResult();
 
             //without logging
 
@@ -353,13 +351,13 @@ class CarConfigurationRESTTest {
 
             String getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'sendInterval'";
             Query queryInner = session.createQuery(getQueryInner);
-            Settings oldSendInterval = (Settings) queryInner.getSingleResult();
+            Setting oldSendInterval = (Setting) queryInner.getSingleResult();
             getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
             queryInner = session.createQuery(getQueryInner);
-            Settings oldLocationInterval = (Settings) queryInner.getSingleResult();
+            Setting oldLocationInterval = (Setting) queryInner.getSingleResult();
             getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'historyTimeout'";
             queryInner = session.createQuery(getQueryInner);
-            Settings oldHistoryTimeout = (Settings) queryInner.getSingleResult();
+            Setting oldHistoryTimeout = (Setting) queryInner.getSingleResult();
 
             //without logging
 
@@ -388,13 +386,13 @@ class CarConfigurationRESTTest {
 
             getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'sendInterval'";
             queryInner = session.createQuery(getQueryInner);
-            Settings sendInterval = (Settings) queryInner.getSingleResult();
+            Setting sendInterval = (Setting) queryInner.getSingleResult();
             getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
             queryInner = session.createQuery(getQueryInner);
-            Settings locationInterval = (Settings) queryInner.getSingleResult();
+            Setting locationInterval = (Setting) queryInner.getSingleResult();
             getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'historyTimeout'";
             queryInner = session.createQuery(getQueryInner);
-            Settings historyTimeout = (Settings) queryInner.getSingleResult();
+            Setting historyTimeout = (Setting) queryInner.getSingleResult();
 
             Assert.assertTrue(sendInterval.getValue() ==34342);
             Assert.assertTrue(locationInterval.getValue() ==324);

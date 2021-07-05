@@ -1,6 +1,7 @@
 package Dao;
 
 import Entities.Car;
+import Entities.Setting;
 import HibernatePackage.HibernateRequests;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -11,25 +12,25 @@ import org.hibernate.query.Query;
 import java.util.List;
 import java.util.Optional;
 
-public class CarDaoJdbc extends HibernateDaoJdbc<Car> implements DaoJdbc<Car> {
+public class SettingDaoJdbc extends HibernateDaoJdbc<Setting> implements DaoJdbc<Setting> {
 
     HibernateRequests hibernateRequests;
     Logger logger;
 
-    public CarDaoJdbc(HibernateRequests hibernateRequests, OtherClasses.Logger logger) {
+    public SettingDaoJdbc(HibernateRequests hibernateRequests, OtherClasses.Logger logger) {
         super(hibernateRequests, logger);
     }
 
     @Override
-    public Optional<Car> get(long id){
+    public Optional<Setting> get(long id){
         Session session = null;
         Transaction tx = null;
-        Car car = null;
+        Setting setting = null;
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            Query query = session.createQuery("SELECT c FROM Car c WHERE c.id=" + id);
-            car = (Car) query.getSingleResult();
+            Query query = session.createQuery("SELECT s FROM Setting s WHERE s.id=" + id);
+            setting = (Setting) query.getSingleResult();
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
@@ -37,19 +38,19 @@ public class CarDaoJdbc extends HibernateDaoJdbc<Car> implements DaoJdbc<Car> {
         } finally {
             if (session != null) session.close();
         }
-        return Optional.of(car);
+        return Optional.of(setting);
     }
 
     @Override
-    public List<Car> getAll() {
+    public List<Setting> getAll() {
         Session session = null;
         Transaction tx = null;
-        List<Car> cars = null;
+        List<Setting> settings = null;
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            Query query = session.createQuery("SELECT c FROM Car c");
-            cars = query.getResultList();
+            Query query = session.createQuery("SELECT s FROM Setting s");
+            settings = query.getResultList();
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
@@ -57,6 +58,6 @@ public class CarDaoJdbc extends HibernateDaoJdbc<Car> implements DaoJdbc<Car> {
         } finally {
             if (session != null) session.close();
         }
-        return cars;
+        return settings;
     }
 }

@@ -221,8 +221,8 @@ public class DevicesService {
             String getQuery2 = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
             Query query1 = session.createQuery(getQuery1);
             Query query2 = session.createQuery(getQuery2);
-            Settings set1 = (Settings) query1.getSingleResult();
-            Settings set2 = (Settings) query2.getSingleResult();
+            Setting set1 = (Setting) query1.getSingleResult();
+            Setting set2 = (Setting) query2.getSingleResult();
             car.setSendInterval(set1.getValue());
             car.setLocationInterval(set2.getValue());
             session.save(car);

@@ -3,6 +3,10 @@ package Dao;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * interface for basic operation on database
+ * @param <T>
+ */
 public interface DaoJdbc<T> {
 
     /**

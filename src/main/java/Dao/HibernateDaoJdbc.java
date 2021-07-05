@@ -10,6 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Basic generic implementation of HibernateDaoJdbc
+ * @param <T>
+ */
 public class HibernateDaoJdbc<T> implements DaoJdbc<T> {
     HibernateRequests hibernateRequests;
     Logger logger;

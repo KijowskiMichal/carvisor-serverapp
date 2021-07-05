@@ -1,7 +1,7 @@
 package Service;
 
 import Entities.Car;
-import Entities.Settings;
+import Entities.Setting;
 import HibernatePackage.HibernateRequests;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
@@ -67,7 +67,7 @@ public class CarConfigurationService
             {
                 String getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'sendInterval'";
                 Query queryInner = session.createQuery(getQueryInner);
-                Settings setting = (Settings) queryInner.getSingleResult();
+                Setting setting = (Setting) queryInner.getSingleResult();
                 jsonOut.put("sendInterval", (Integer)setting.getValue());
             }
             else jsonOut.put("sendInterval", car.getSendInterval());
@@ -75,7 +75,7 @@ public class CarConfigurationService
             {
                 String getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
                 Query queryInner = session.createQuery(getQueryInner);
-                Settings setting = (Settings) queryInner.getSingleResult();
+                Setting setting = (Setting) queryInner.getSingleResult();
                 jsonOut.put("locationInterval", (Integer)setting.getValue());
             }
             else jsonOut.put("locationInterval", car.getLocationInterval());
@@ -235,9 +235,9 @@ public class CarConfigurationService
             Query query1 = session.createQuery(getQuery1);
             Query query2 = session.createQuery(getQuery2);
             Query query3 = session.createQuery(getQuery3);
-            Settings set1 = (Settings) query1.getSingleResult();
-            Settings set2 = (Settings) query2.getSingleResult();
-            Settings set3 = (Settings) query3.getSingleResult();
+            Setting set1 = (Setting) query1.getSingleResult();
+            Setting set2 = (Setting) query2.getSingleResult();
+            Setting set3 = (Setting) query3.getSingleResult();
             tx.commit();
 
             jsonOut.put("sendInterval", (Integer) set1.getValue());
@@ -299,9 +299,9 @@ public class CarConfigurationService
             Query query1 = session.createQuery(getQuery1);
             Query query2 = session.createQuery(getQuery2);
             Query query3 = session.createQuery(getQuery3);
-            Settings set1 = (Settings) query1.getSingleResult();
-            Settings set2 = (Settings) query2.getSingleResult();
-            Settings set3 = (Settings) query3.getSingleResult();
+            Setting set1 = (Setting) query1.getSingleResult();
+            Setting set2 = (Setting) query2.getSingleResult();
+            Setting set3 = (Setting) query3.getSingleResult();
             set1.setValue(sendInterval);
             set2.setValue(getLocationInterval);
             set3.setValue(historyTimeout);

@@ -1,7 +1,7 @@
 package HibernatePackage;
 
 import Entities.Car;
-import Entities.Settings;
+import Entities.Setting;
 import Entities.Track;
 import Entities.User;
 import org.hibernate.HibernateException;
@@ -120,7 +120,7 @@ public class HibernateRequests
         }
     }
 
-    public boolean addSetting(Settings objectToLoad)
+    public boolean addSetting(Setting objectToLoad)
     {
         Session session = getSession();
         Transaction tx = null;

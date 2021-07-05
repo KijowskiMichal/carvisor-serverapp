@@ -6,7 +6,7 @@ import javax.persistence.Id;
 
 
 @Entity
-public class Settings {
+public class Setting {
 
     /**
      * Identification number
@@ -18,11 +18,11 @@ public class Settings {
     String nameOfSetting;
     Integer value;
 
-    public Settings() {
+    public Setting() {
         super();
     }
 
-    public Settings(String nameOfSetting, Integer value) {
+    public Setting(String nameOfSetting, Integer value) {
         this.nameOfSetting = nameOfSetting;
         this.value = value;
     }

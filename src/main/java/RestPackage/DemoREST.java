@@ -80,9 +80,9 @@ public class DemoREST
         hibernateRequests.addCar(car8);
         hibernateRequests.addCar(car9);
 
-        Settings set1 = new Settings("sendInterval",Integer.valueOf(15));
-        Settings set2 = new Settings("locationInterval", Integer.valueOf(15));
-        Settings set3 = new Settings("historyTimeout", Integer.valueOf(180));
+        Setting set1 = new Setting("sendInterval",Integer.valueOf(15));
+        Setting set2 = new Setting("locationInterval", Integer.valueOf(15));
+        Setting set3 = new Setting("historyTimeout", Integer.valueOf(180));
 
         hibernateRequests.addSetting(set1);
         hibernateRequests.addSetting(set2);
