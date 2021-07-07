@@ -1,5 +1,7 @@
 package Entities;
 
+import org.json.JSONObject;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -308,5 +310,14 @@ public class User
                 ", surname='" + surname + '\'' +
                 ", phoneNumber=" + phoneNumber +
                 '}';
+    }
+
+    public String asJson() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("image", image);
+        jsonObject.put("name", name + " " + surname);
+        jsonObject.put("telephone", phoneNumber);
+        jsonObject.put("userPrivileges", userPrivileges);
+        return jsonObject.toString();
     }
 }

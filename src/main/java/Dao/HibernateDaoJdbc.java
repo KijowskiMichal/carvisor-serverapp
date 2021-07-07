@@ -30,7 +30,7 @@ public class HibernateDaoJdbc<T> implements DaoJdbc<T> {
     public Optional<T> save(T t) {
         Session session = null;
         Transaction tx = null;
-        Optional<T> savedObject = null;
+        Optional<T> savedObject = Optional.empty();
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();

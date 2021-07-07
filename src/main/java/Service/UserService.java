@@ -1,5 +1,6 @@
 package Service;
 
+import Dao.UserDaoJdbc;
 import Entities.Track;
 import Entities.User;
 import Entities.UserPrivileges;
@@ -26,10 +27,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * Class representing user service
@@ -39,12 +37,14 @@ public class UserService {
 
     HibernateRequests hibernateRequests;
     Logger logger;
+    UserDaoJdbc userDaoJdbc;
 
     @Autowired
-    public UserService(HibernateRequests hibernateRequests, OtherClasses.Logger logger)
+    public UserService(HibernateRequests hibernateRequests, OtherClasses.Logger logger, UserDaoJdbc userDaoJdbc)
     {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
+        this.userDaoJdbc = userDaoJdbc;
     }
 
     /**
@@ -241,51 +241,13 @@ public class UserService {
     }
 
     /**
-     * WebMethod that change nick of logged user.
-     * <p>
-     * @param request  Object of HttpServletRequest represents our request.
-     * @param httpEntity Object of HttpEntity represents content of our request.
-     * @return HttpStatus 200.
-     */
-    public ResponseEntity changeNick(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        // authorization
-        if (request.getSession().getAttribute("user") == null) {
-            logger.info("UserREST.changeNick cannot work (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-        }
-        try {
-            JSONObject inJSON = new JSONObject(httpEntity.getBody());
-            if (nicknameValidator(inJSON.getString("nick"))) {
-                Session session = hibernateRequests.getSession();
-                Transaction tx = null;
-                try {
-                    tx = session.beginTransaction();
-                    User user = (User) request.getSession().getAttribute("user");
-                    user.setNick(inJSON.getString("nick"));
-                    request.getSession().setAttribute("user", user);
-                    session.update(user);
-                    tx.commit();
-                    session.close();
-                    return ResponseEntity.status(HttpStatus.OK).body("");
-                } catch (HibernateException e) {
-                    if (tx != null) tx.rollback();
-                    session.close();
-                    e.printStackTrace();
-                    return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("");
-                }
-            } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong nickname");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-        }
-    }
-
-    /**
      * WebMethod that return user data with given Id.
      * <p>
      * @param request  Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200, user data as JsonString.
      */
+    @Deprecated
     public ResponseEntity getUserData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID)
     {
         // authorization
@@ -324,12 +286,35 @@ public class UserService {
     }
 
     /**
+     * WebMethod that return user data with given Id.
+     * <p>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @return HttpStatus 200, user data as JsonString.
+     */ //TODO TEST
+    public ResponseEntity getUserData(HttpServletRequest request, int userID)
+    {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("UserREST.getUserData cannot send data (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
+        User user = userDaoJdbc.get(userID).orElse(null);
+        //checking if user exists
+        if (Objects.equals(user,null))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+
+        return ResponseEntity.status(HttpStatus.OK).body(user.asJson());
+    }
+
+    /**
      * WebMethod that change user data for user with given Id.
      * <p>
      * @param request  Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200.
      */
+    @Deprecated
     public ResponseEntity changeUserData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID)
     {
         // authorization
@@ -377,6 +362,46 @@ public class UserService {
         }
 
         return responseEntity;
+    }
+
+    /**
+     * WebMethod that change user data for user with given Id.
+     * <p>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param httpEntity Object of HttpEntity represents content of our request.
+     * @return HttpStatus 200.
+     */ //TODO TEST
+    public ResponseEntity update(HttpServletRequest request, HttpEntity<String> httpEntity, int userID)
+    {
+        //authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("UserREST.changeUserData cannot change user data (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
+        User user = userDaoJdbc.get(userID).orElse(null);
+        //checking if user exists
+        if (Objects.equals(user,null))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+
+        //modifying user
+        JSONObject inJSON = new JSONObject(httpEntity.getBody());
+        String[] name;
+        int telephone;
+        try {
+            telephone = Integer.parseInt(inJSON.getString("telephone"));
+            name = inJSON.getString("name").split(" "); //name standard: "name surname"
+        } catch (JSONException jsonException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        }
+        user.setName(name[0]);
+        user.setSurname(name[1]);
+        user.setPhoneNumber(telephone);
+
+
+        if (userDaoJdbc.update(user).isEmpty())
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        return ResponseEntity.status(HttpStatus.OK).body("");
     }
 
     /**
@@ -436,6 +461,7 @@ public class UserService {
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200.
      */
+    @Deprecated
     public ResponseEntity addUser(HttpServletRequest request, HttpEntity<String> httpEntity)
     {
         // authorization
@@ -478,10 +504,49 @@ public class UserService {
         return responseEntity;
     }
 
+    /**
+     * WebMethod that create user with given json.
+     * <p>
+     * @param request  Object of HttpServletRequest represents our request.
+     * @param httpEntity Object of HttpEntity represents content of our request.
+     * @return HttpStatus 200.
+     */ //TODO TEST
+    public ResponseEntity add(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        // authorization
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("UserREST.addUser cannot add user (session not found)");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+        }
+
+        //creating User from json
+        JSONObject jsonObject = new JSONObject(httpEntity.getBody());
+        User user = new User();
+        user.setName(jsonObject.getString("name"));
+        user.setSurname(jsonObject.getString("surname"));
+        user.setNick(jsonObject.getString("nick"));
+        user.setPassword(DigestUtils.sha256Hex(jsonObject.getString("password")));
+        user.setPhoneNumber(jsonObject.getInt("phoneNumber"));
+        String image;
+        try {
+            image = jsonObject.getString("image");
+        } catch (JSONException jsonException) {
+            image = null;
+        }
+        user.setImage(image);
+
+        if (userDaoJdbc.save(user).isPresent()) {
+            return ResponseEntity.status(HttpStatus.CREATED).body("");
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        }
+    }
+
 
     //===
     //Private methods
 
+    //TODO MICHALE, CZY CHCEMY JAKĄKOLWIEK VALIDACJE NICKÓW?
     //Check is nickname is correct
     private boolean nicknameValidator(String nick) {
         if ((nick.length() > 39) || (nick.length() < 5))
