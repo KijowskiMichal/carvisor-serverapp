@@ -1,10 +1,12 @@
 package RestPackage;
 
+import Dao.UserDaoJdbc;
 import Entities.Car;
 import Entities.User;
 import Entities.UserPrivileges;
 import HibernatePackage.HibernateRequests;
 import OtherClasses.Initializer;
+import OtherClasses.Logger;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -27,6 +29,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @RunWith(SpringRunner.class)
 @WebMvcTest(TrackREST.class)
 @ContextConfiguration(classes = {Initializer.class})
+@Transactional
 class UsersRESTTest {
 
     @Autowired
@@ -43,6 +47,7 @@ class UsersRESTTest {
 
     @Autowired
     private HibernateRequests hibernateRequests;
+    private Logger logger = new Logger();
 
     void addUsers(List<User> users) {
         users.add(new User("Timi", "Tom", "Zablocki", "123", UserPrivileges.ADMINISTRATOR, null, 123456789,"AB"));
@@ -63,27 +68,6 @@ class UsersRESTTest {
             if (tx != null) tx.rollback();
             e.printStackTrace();
         }finally {
-            if (session != null) session.close();
-        }
-    }
-
-    void removeUsers() {
-        Session session = null;
-        Transaction tx = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            Query query = session.createQuery("SELECT u FROM User u");
-            List<User> userList = query.getResultList();
-            for (User u:userList) {
-                session.delete(u);
-            }
-            tx.commit();
-            session.close();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        } finally {
             if (session != null) session.close();
         }
     }
@@ -125,7 +109,6 @@ class UsersRESTTest {
         } finally {
             if (session != null) session.close();
         }
-        removeUsers();
     }
 
     @Test
@@ -144,7 +127,6 @@ class UsersRESTTest {
         List<Object> list = jsonArray.toList();
         assertEquals(200, result.getResponse().getStatus());
         assertEquals(1, list.size());
-        removeUsers();
     }
 
     @Test
@@ -245,8 +227,6 @@ class UsersRESTTest {
         } catch (Exception e) {
             e.printStackTrace();
             fail();
-        } finally {
-            removeUsers();
         }
     }
 
@@ -289,7 +269,6 @@ class UsersRESTTest {
         } finally {
             if (session != null) session.close();
         }
-        removeUsers();
     }
 
     @Test
@@ -304,7 +283,6 @@ class UsersRESTTest {
             user = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
             sessionattr.put("user",user);
-
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/users/addUser")
                     .sessionAttrs(sessionattr)
                     .content(" {\n" +
@@ -332,7 +310,6 @@ class UsersRESTTest {
             e.printStackTrace();
         } finally {
             if (session != null) session.close();
-            removeUsers();
         }
     }
 }

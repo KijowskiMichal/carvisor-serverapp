@@ -1,5 +1,6 @@
 package Dao;
 
+import Entities.Track;
 import Entities.User;
 import HibernatePackage.HibernateRequests;
 import org.apache.logging.log4j.Logger;
@@ -7,22 +8,40 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class UserDaoJdbc extends HibernateDaoJdbc<User> implements DaoJdbc<User> {
+public class UserDaoJdbc extends HibernateDaoJdbc<User>{
 
-    HibernateRequests hibernateRequests;
-    Logger logger;
-
+    @Autowired
     public UserDaoJdbc(HibernateRequests hibernateRequests, OtherClasses.Logger logger) {
         super(hibernateRequests, logger);
     }
 
+
     @Override
+    public Optional<User> delete(long id) {
+        Transaction tx = null;
+        Optional<User> user = Optional.empty();
+        try (Session session = hibernateRequests.getSession()) {
+            tx = session.beginTransaction();
+            user = get(id);
+            if (user.isEmpty())
+                throw new HibernateException("");
+            session.delete(user.get());
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+        }
+        return user;
+    }
+
     public Optional<User> get(long id){
         Session session = null;
         Transaction tx = null;
@@ -42,7 +61,6 @@ public class UserDaoJdbc extends HibernateDaoJdbc<User> implements DaoJdbc<User>
         return Optional.of(user);
     }
 
-    @Override
     public List<User> getAll() {
         Session session = null;
         Transaction tx = null;

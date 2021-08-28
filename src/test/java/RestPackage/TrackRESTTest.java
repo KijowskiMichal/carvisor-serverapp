@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.persistence.Query;
+import javax.transaction.Transactional;
 import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @RunWith(SpringRunner.class)
 @WebMvcTest(TrackREST.class)
 @ContextConfiguration(classes = {Initializer.class})
+@Transactional
 class TrackRESTTest {
 
     @Autowired
@@ -235,6 +237,7 @@ class TrackRESTTest {
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/track/endOfTrack/"))
                     .andReturn();
 
+
             tx.commit();
             session.close();
             session = hibernateRequests.getSession();
@@ -259,41 +262,6 @@ class TrackRESTTest {
     @Test
     void list()
     {
-        Session session = null;
-        Transaction tx = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-
-            //initialization
-
-            User user = new User("fsgfgdfsfhdgfh", null, null, null, UserPrivileges.ADMINISTRATOR, null, 0,"ZXCFVAA");
-            session.save(user);
-
-            tx.commit();
-            session.close();
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-
-            //starting
-
-            HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", user);
-
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/track/list/4/1/6/2021-06-02/2021-06-02/"))
-                    .andReturn();
-
-            Assert. assertTrue(result.getResponse().getStatus()==200);
-            //finishing
-            tx.commit();
-            session.close();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
+        //todo
     }
 }

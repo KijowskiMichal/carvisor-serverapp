@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @RunWith(SpringRunner.class)
 @WebMvcTest(CarAuthorizationREST.class)
 @ContextConfiguration(classes = {Initializer.class})
+@Transactional
 class CarAuthorizationRESTTest {
 
     @Autowired

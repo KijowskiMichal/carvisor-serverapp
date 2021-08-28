@@ -41,11 +41,6 @@ public class UsersREST {
         return userService.changePassword(request, httpEntity);
     }
 
-    @RequestMapping(value = "/changeNick", method = RequestMethod.POST)
-    public ResponseEntity changeNick(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        return userService.changeNick(request, httpEntity);
-    }
-
     @RequestMapping(value = "/changeUserData/{id}/", method = RequestMethod.POST)
     public ResponseEntity changeUserData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID) {
         return userService.changeUserData(request,httpEntity,userID);

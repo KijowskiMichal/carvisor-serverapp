@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @RunWith(SpringRunner.class)
 @WebMvcTest(TrackREST.class)
 @ContextConfiguration(classes = {Initializer.class})
+@Transactional
 class DevicesRESTTest {
 
     @Autowired
@@ -65,27 +67,6 @@ class DevicesRESTTest {
         }
     }
 
-    void removeData(List<Car> devices) {
-        Session session = null;
-        Transaction tx = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            Query query = session.createQuery("SELECT c FROM Car c");
-            List<Car> carList = query.getResultList();
-            for (Car c:carList) {
-                session.delete(c);
-            }
-            tx.commit();
-            session.close();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
-    }
-
     @Test
     void list()  {
         List<Car> devices = new ArrayList<>();
@@ -106,13 +87,8 @@ class DevicesRESTTest {
             assertEquals(200, result.getResponse().getStatus());
             assertEquals(3, list.size());
         } catch (Exception e) {
-            removeData(devices);
             fail();
-        } finally {
-            removeData(devices);
         }
-
-
     }
 
     @Test
@@ -146,8 +122,6 @@ class DevicesRESTTest {
         } catch (Exception e) {
             e.printStackTrace();
             fail();
-        } finally {
-            removeData(devices);
         }
     }
 
@@ -203,8 +177,6 @@ class DevicesRESTTest {
         } catch (Exception e) {
             e.printStackTrace();
             fail();
-        } finally {
-            removeData(devices);
         }
     }
 

@@ -11,6 +11,7 @@ import org.hibernate.Transaction;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import javax.swing.*;
+import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
@@ -33,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @RunWith(SpringRunner.class)
 @WebMvcTest(AuthorizationREST.class)
 @ContextConfiguration(classes = {Initializer.class})
+@Transactional
 class AuthorizationRESTTest {
 
     @Autowired
@@ -140,7 +143,7 @@ class AuthorizationRESTTest {
             Assert.assertTrue(result.getResponse().getStatus()==200);
             jsonObject = new JSONObject(result.getResponse().getContentAsString());
             Assert.assertTrue(jsonObject.getString("nickname").equals("dfsdfdv"));
-            Assert.assertFalse(jsonObject.getString("nickname").equals("dgdgdf"));
+            assertFalse(jsonObject.getString("nickname").equals("dgdgdf"));
             Assert.assertFalse(jsonObject.getString("rbac").equals("ADMINISTRATOR"));
             Assert.assertTrue(jsonObject.getString("rbac").equals("MODERATOR"));
             Assert.assertTrue(jsonObject.getBoolean("logged"));

@@ -14,6 +14,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 @ComponentScan("RestPackage")
 @ComponentScan("HibernatePackage")
 @ComponentScan("OtherClasses")
+@ComponentScan("Dao")
 public class Initializer extends AbstractAnnotationConfigDispatcherServletInitializer
 {
 

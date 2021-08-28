@@ -24,11 +24,13 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.transaction.Transactional;
 import java.util.HashMap;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(CarConfigurationREST.class)
 @ContextConfiguration(classes = {Initializer.class})
+@Transactional
 class CarConfigurationRESTTest {
 
     @Autowired
