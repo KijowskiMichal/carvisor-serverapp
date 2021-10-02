@@ -29,8 +29,6 @@ public abstract class HibernateDaoJdbc<T>{
         this.logger = logger.getLOG();
     }
 
-
-
     public Optional<T> save(T t) {
         Session session = null;
         Transaction tx = null;

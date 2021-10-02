@@ -34,7 +34,7 @@ public class CarDaoJdbc extends HibernateDaoJdbc<Car>{
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
             Query query = session.createQuery("SELECT c FROM Car c WHERE c.id=" + id);
-            car = (Car) query.getSingleResult();
+            car = (Car) query.getResultList().stream().findFirst().orElse(null);
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
@@ -42,7 +42,7 @@ public class CarDaoJdbc extends HibernateDaoJdbc<Car>{
         } finally {
             if (session != null) session.close();
         }
-        return Optional.of(car);
+        return Optional.ofNullable(car);
     }
 
     @Override

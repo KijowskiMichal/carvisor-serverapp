@@ -26,24 +26,6 @@ public class SettingDaoJdbc extends HibernateDaoJdbc<Setting> {
     }
 
     @Override
-    public Optional<Setting> delete(long id) {
-        Transaction tx = null;
-        Optional<Setting> setting = Optional.empty();
-        try (Session session = hibernateRequests.getSession()) {
-            tx = session.beginTransaction();
-            setting = get(id);
-            if (setting.isEmpty())
-                throw new HibernateException("");
-            session.delete(setting.get());
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        }
-        return setting;
-    }
-
-    @Override
     public Optional<Setting> get(long id){
         Session session = null;
         Transaction tx = null;
@@ -52,7 +34,7 @@ public class SettingDaoJdbc extends HibernateDaoJdbc<Setting> {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
             Query query = session.createQuery("SELECT s FROM Setting s WHERE s.id=" + id);
-            setting = (Setting) query.getSingleResult();
+            setting = (Setting) query.getResultList().stream().findFirst().orElse(null);
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
@@ -60,7 +42,7 @@ public class SettingDaoJdbc extends HibernateDaoJdbc<Setting> {
         } finally {
             if (session != null) session.close();
         }
-        return Optional.of(setting);
+        return Optional.ofNullable(setting);
     }
 
     @Override
@@ -81,5 +63,23 @@ public class SettingDaoJdbc extends HibernateDaoJdbc<Setting> {
             if (session != null) session.close();
         }
         return settings;
+    }
+
+    @Override
+    public Optional<Setting> delete(long id) {
+        Transaction tx = null;
+        Optional<Setting> setting = Optional.empty();
+        try (Session session = hibernateRequests.getSession()) {
+            tx = session.beginTransaction();
+            setting = get(id);
+            if (setting.isEmpty())
+                throw new HibernateException("");
+            session.delete(setting.get());
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+        }
+        return setting;
     }
 }

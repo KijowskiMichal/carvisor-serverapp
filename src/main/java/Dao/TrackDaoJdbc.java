@@ -36,7 +36,7 @@ public class TrackDaoJdbc extends HibernateDaoJdbc<Track>{
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
             Query query = session.createQuery("SELECT t FROM Track t WHERE t.id=" + id);
-            track = (Track) query.getSingleResult();
+            track = (Track) query.getResultList().stream().findFirst().orElse(null);
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
@@ -44,7 +44,7 @@ public class TrackDaoJdbc extends HibernateDaoJdbc<Track>{
         } finally {
             if (session != null) session.close();
         }
-        return Optional.of(track);
+        return Optional.ofNullable(track);
     }
 
     @Override

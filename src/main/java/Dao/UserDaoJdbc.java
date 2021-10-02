@@ -1,5 +1,6 @@
 package Dao;
 
+import Entities.Car;
 import Entities.Track;
 import Entities.User;
 import HibernatePackage.HibernateRequests;
@@ -50,7 +51,7 @@ public class UserDaoJdbc extends HibernateDaoJdbc<User>{
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
             Query query = session.createQuery("SELECT u FROM User u WHERE u.id=" + id);
-            user = (User) query.getSingleResult();
+            user = (User) query.getResultList().stream().findFirst().orElse(null);
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
@@ -58,7 +59,7 @@ public class UserDaoJdbc extends HibernateDaoJdbc<User>{
         } finally {
             if (session != null) session.close();
         }
-        return Optional.of(user);
+        return Optional.ofNullable(user);
     }
 
     public List<User> getAll() {
