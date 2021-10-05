@@ -1,9 +1,5 @@
 package Service;
 
-import HibernatePackage.HibernateRequests;
-import org.apache.logging.log4j.Logger;
-
-import Entities.Track;
 import Entities.User;
 import Entities.UserPrivileges;
 import HibernatePackage.HibernateRequests;
@@ -32,8 +28,7 @@ public class EcoPointsService {
     Logger logger;
 
     @Autowired
-    public EcoPointsService(HibernateRequests hibernateRequests, OtherClasses.Logger logger)
-    {
+    public EcoPointsService(HibernateRequests hibernateRequests, OtherClasses.Logger logger) {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
     }
@@ -41,17 +36,17 @@ public class EcoPointsService {
     /**
      * WebMethods which return ecopoints of chosen user
      * <p>
-     * @param request Object of HttpServletRequest represents our request.
+     *
+     * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
-     * @param userId id of chosen user
+     * @param userId     id of chosen user
      * @return HttpStatus 200.
      */
     public ResponseEntity getUserEcoPoints(HttpServletRequest request, HttpEntity<String> httpEntity, int userId) {
         if (request.getSession().getAttribute("user") == null) {
             logger.info("EcoPointsService.getUserEcoPoints cannot get user id=" + userId + " Eco Points (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-        }
-        else {
+        } else {
             User user = (User) request.getSession().getAttribute("user");
             if (user.getUserPrivileges() != UserPrivileges.ADMINISTRATOR && user.getUserPrivileges() != UserPrivileges.MODERATOR) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("dont have access");
@@ -79,7 +74,8 @@ public class EcoPointsService {
 
     /**
      * WebMethod which returns a list of users with ecopoints data.
-     * <P>
+     * <p>
+     *
      * @param request  Object of HttpServletRequest represents our request.
      * @param page     Page of users list. Parameter associated with pageSize.
      * @param pageSize Number of record we want to get.
@@ -127,7 +123,7 @@ public class EcoPointsService {
             jsonObject.put("id", ((User) tmp).getId());
             jsonObject.put("name", ((User) tmp).getName());
             jsonObject.put("surname", ((User) tmp).getSurname());
-            jsonObject.put("rate", ((User) tmp).getEcoPointsAvg()/2.0);
+            jsonObject.put("rate", ((User) tmp).getEcoPointsAvg() / 2.0);
             jsonObject.put("tracks", ((User) tmp).getTracksNumber());
             jsonObject.put("combustion", ((User) tmp).getCombustionAVG());
             jsonObject.put("revolutions", ((User) tmp).getRevolutionsAVG());

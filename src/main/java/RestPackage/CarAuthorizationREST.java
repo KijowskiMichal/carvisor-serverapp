@@ -13,8 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/carAuthorization")
-public class CarAuthorizationREST
-{
+public class CarAuthorizationREST {
     private final CarAuthorizationService carAuthorizationService;
 
     @Autowired
@@ -23,20 +22,17 @@ public class CarAuthorizationREST
     }
 
     @RequestMapping(value = "/authorize", method = RequestMethod.POST)
-    public ResponseEntity authorize(HttpServletRequest request, HttpEntity<String> httpEntity)
-    {
-        return carAuthorizationService.authorize(request,httpEntity);
+    public ResponseEntity authorize(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        return carAuthorizationService.authorize(request, httpEntity);
     }
 
     @RequestMapping(value = "/status", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public ResponseEntity<String> status(HttpServletRequest request)
-    {
+    public ResponseEntity<String> status(HttpServletRequest request) {
         return carAuthorizationService.status(request);
     }
 
     @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ResponseEntity logout(HttpServletRequest request)
-    {
+    public ResponseEntity logout(HttpServletRequest request) {
         return carAuthorizationService.logout(request);
     }
 }

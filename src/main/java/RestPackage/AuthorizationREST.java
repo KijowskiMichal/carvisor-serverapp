@@ -23,7 +23,7 @@ public class AuthorizationREST {
 
     @RequestMapping(value = "/authorize", method = RequestMethod.POST)
     public ResponseEntity authorize(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        return authorizationService.authorize(request,httpEntity);
+        return authorizationService.authorize(request, httpEntity);
     }
 
     @RequestMapping(value = "/status", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)

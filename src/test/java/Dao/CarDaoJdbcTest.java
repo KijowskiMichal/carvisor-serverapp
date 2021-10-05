@@ -4,6 +4,7 @@ import Entities.Car;
 import HibernatePackage.HibernateRequests;
 import OtherClasses.Initializer;
 import OtherClasses.Logger;
+import utilities.builders.CarBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -37,7 +38,12 @@ public class CarDaoJdbcTest {
     @Test
     void get() {
         CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
-        Car car1 = new Car("ABCD", "Skoda", "Fabia", null, null, null, DigestUtils.sha256Hex("ABCD"));
+        Car car1 = new CarBuilder()
+                .setLicensePlate("ABCD")
+                .setBrand("Skoda")
+                .setModel("Fabia")
+                .setPassword(DigestUtils.sha256Hex("ABCD"))
+                .createCar();
         carDaoJdbc.save(car1);
 
         Optional<Car> wrappedCar2 = carDaoJdbc.get(car1.getId());
@@ -54,9 +60,9 @@ public class CarDaoJdbcTest {
         CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
         List<Car> all = carDaoJdbc.getAll();
         List<Car> cars = Arrays.asList(
-                new Car("ABCD", "Skoda", "Fabia", null, null, null, DigestUtils.sha256Hex("ABCD")),
-                new Car("ABCD", "Skoda", "Fabia", null, null, null, DigestUtils.sha256Hex("ABCD")),
-                new Car("ABCD", "Skoda", "Fabia", null, null, null, DigestUtils.sha256Hex("ABCD"))
+                new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("ABCD")).createCar(),
+                new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("ABCD")).createCar(),
+                new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("ABCD")).createCar()
         );
         int expectedCarsAmount = all.size() + cars.size();
         cars.forEach(carDaoJdbc::save);
@@ -68,7 +74,7 @@ public class CarDaoJdbcTest {
     @Test
     void delete() {
         CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
-        Car car1 = new Car("ABCD", "Skoda", "Fabia", null, null, null, DigestUtils.sha256Hex("ABCD"));
+        Car car1 = new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("ABCD")).createCar();
         carDaoJdbc.save(car1);
 
         Optional<Car> wrappedCar2 = carDaoJdbc.get(car1.getId());

@@ -1,6 +1,5 @@
 package RestPackage;
 
-import Service.EcoPointsService;
 import Service.SafetyPointsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -26,6 +25,6 @@ public class SafetyPointsREST {
 
     @RequestMapping(value = "/list/{page}/{pagesize}/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("regex") String regex) {
-        return safetyPointsService.list(request,page,pageSize,regex);
+        return safetyPointsService.list(request, page, pageSize, regex);
     }
 }

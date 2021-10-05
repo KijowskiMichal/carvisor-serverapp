@@ -28,12 +28,12 @@ public class UsersREST {
 
     @RequestMapping(value = "/list/{page}/{pagesize}/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("regex") String regex) {
-        return userService.list(request,page,pageSize,regex);
+        return userService.list(request, page, pageSize, regex);
     }
 
     @RequestMapping(value = "/listUserNames/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> listUserNames(HttpServletRequest request, @PathVariable("regex") String regex) {
-        return userService.listUserNames(request,regex);
+        return userService.listUserNames(request, regex);
     }
 
     @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
@@ -43,12 +43,12 @@ public class UsersREST {
 
     @RequestMapping(value = "/changeUserData/{id}/", method = RequestMethod.POST)
     public ResponseEntity changeUserData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID) {
-        return userService.changeUserData(request,httpEntity,userID);
+        return userService.changeUserData(request, httpEntity, userID);
     }
 
     @RequestMapping(value = "/changeUserImage/{id}/", method = RequestMethod.POST)
     public ResponseEntity changeUserImage(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID) {
-        return userService.changeUserImage(request,httpEntity,userID);
+        return userService.changeUserImage(request, httpEntity, userID);
     }
 
     @RequestMapping(value = "/getUserData/{id}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)

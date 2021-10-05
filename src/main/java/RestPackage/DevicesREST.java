@@ -27,31 +27,31 @@ public class DevicesREST {
 
     @RequestMapping(value = "/list/{page}/{pageSize}/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pageSize") int pageSize, @PathVariable("regex") String regex) {
-        return devicesService.list(request,page,pageSize,regex);
+        return devicesService.list(request, page, pageSize, regex);
     }
 
     @RequestMapping(value = "/getDeviceData/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity getDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int id) {
-        return devicesService.getDeviceData(request,httpEntity,id);
+        return devicesService.getDeviceData(request, httpEntity, id);
     }
 
     @RequestMapping(value = "/changeDeviceData/{id}/", method = RequestMethod.POST)
     public ResponseEntity changeDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int id) {
-        return devicesService.changeDeviceData(request,httpEntity,id);
+        return devicesService.changeDeviceData(request, httpEntity, id);
     }
 
     @RequestMapping(value = "/changeDeviceImage/{id}/", method = RequestMethod.POST)
     public ResponseEntity changeDeviceImage(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int id) {
-        return devicesService.changeDeviceImage(request,httpEntity,id);
+        return devicesService.changeDeviceImage(request, httpEntity, id);
     }
 
-    @RequestMapping(value = "/addDevice",method = RequestMethod.POST)
+    @RequestMapping(value = "/addDevice", method = RequestMethod.POST)
     public ResponseEntity addDevice(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        return devicesService.addDevice(request,httpEntity);
+        return devicesService.addDevice(request, httpEntity);
     }
 
     @RequestMapping(value = "/listDevicesNames/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> listDevicesNames(HttpServletRequest request, @PathVariable("regex") String regex) {
-        return devicesService.listDevicesNames(request,regex);
+        return devicesService.listDevicesNames(request, regex);
     }
 }

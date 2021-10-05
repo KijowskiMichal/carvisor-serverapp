@@ -23,8 +23,7 @@ public class AuthorizationService {
     Logger logger;
 
     @Autowired
-    public AuthorizationService(HibernateRequests hibernateRequests, OtherClasses.Logger logger)
-    {
+    public AuthorizationService(HibernateRequests hibernateRequests, OtherClasses.Logger logger) {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
     }
@@ -32,7 +31,8 @@ public class AuthorizationService {
     /**
      * WebMethods which is authorize user
      * <p>
-     * @param request Object of HttpServletRequest represents our request.
+     *
+     * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      *                   Containing Json string
      *                   {"login": <login>,
@@ -44,26 +44,20 @@ public class AuthorizationService {
         JSONObject inJSON = new JSONObject(httpEntity.getBody());
         List<Object> users;
         try {
-            users = hibernateRequests.getTableContent("SELECT a FROM User a WHERE a.nick = '"+inJSON.get("login")+"'", User.class);
+            users = hibernateRequests.getTableContent("SELECT a FROM User a WHERE a.nick = '" + inJSON.get("login") + "'", User.class);
         } catch (Exception e) {
             users = new ArrayList<Object>();
         }
-        if (users.size()==0)
-        {
+        if (users.size() == 0) {
             logger.info("AuthorizationREST.authorize didn't authorize the user");
             return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
-        }
-        else
-        {
+        } else {
             User user = (User) users.get(0);
-            if (user.getPassword().equals(DigestUtils.sha256Hex(String.valueOf(inJSON.get("password")))))
-            {
+            if (user.getPassword().equals(DigestUtils.sha256Hex(String.valueOf(inJSON.get("password"))))) {
                 request.getSession().setAttribute("user", user);
-                logger.info("AuthorizationREST.authorize authorized user (user: "+user.getNick()+")");
+                logger.info("AuthorizationREST.authorize authorized user (user: " + user.getNick() + ")");
                 return new ResponseEntity(HttpStatus.OK);
-            }
-            else
-            {
+            } else {
                 logger.info("AuthorizationREST.authorize didn't authorize the user with nickname: " + inJSON.get("login"));
                 return new ResponseEntity(HttpStatus.NOT_ACCEPTABLE);
             }
@@ -73,19 +67,18 @@ public class AuthorizationService {
     /**
      * WebMethods which returns login status;
      * <p>
+     *
      * @param request Object of HttpServletRequest represents our request;
      * @return HttpStatus 200, JsonString {"Logged": <login status>, "Nickname": <login>} if user is correctly logged or {"Logged": false} if not;
      */
-    public ResponseEntity<String> status(HttpServletRequest request)
-    {
+    public ResponseEntity<String> status(HttpServletRequest request) {
         JSONObject outJSON = new JSONObject();
-        if (request.getSession().getAttribute("user")==null) {
+        if (request.getSession().getAttribute("user") == null) {
             outJSON.put("logged", false);
-        }
-        else {
+        } else {
             outJSON.put("logged", true);
-            outJSON.put("nickname", ((User)request.getSession().getAttribute("user")).getNick());
-            outJSON.put("rbac", ((User)request.getSession().getAttribute("user")).getUserPrivileges());
+            outJSON.put("nickname", ((User) request.getSession().getAttribute("user")).getNick());
+            outJSON.put("rbac", ((User) request.getSession().getAttribute("user")).getUserPrivileges());
         }
         return ResponseEntity.status(HttpStatus.OK).body(outJSON.toString());
     }
@@ -93,12 +86,13 @@ public class AuthorizationService {
     /**
      * WebMethods which is responsible for logout operation (session destroying).
      * <p>
+     *
      * @param request Object of HttpServletRequest represents our request.
      * @return HttpStatus 200.
      */
     public ResponseEntity logout(HttpServletRequest request) {
-        if (request.getSession().getAttribute("user")!=null)
-            logger.info("AuthorizationREST.logout logout user (user: "+((User)request.getSession().getAttribute("user")).getNick()+")");
+        if (request.getSession().getAttribute("user") != null)
+            logger.info("AuthorizationREST.logout logout user (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
         request.getSession().invalidate();
         return ResponseEntity.status(HttpStatus.OK).body("");
     }

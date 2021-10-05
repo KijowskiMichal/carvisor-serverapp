@@ -40,8 +40,7 @@ public class UserService {
     UserDaoJdbc userDaoJdbc;
 
     @Autowired
-    public UserService(HibernateRequests hibernateRequests, OtherClasses.Logger logger, UserDaoJdbc userDaoJdbc)
-    {
+    public UserService(HibernateRequests hibernateRequests, OtherClasses.Logger logger, UserDaoJdbc userDaoJdbc) {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
         this.userDaoJdbc = userDaoJdbc;
@@ -49,7 +48,8 @@ public class UserService {
 
     /**
      * WebMethod which returns a list of users
-     * <P>
+     * <p>
+     *
      * @param request  Object of HttpServletRequest represents our request.
      * @param page     Page of users list. Parameter associated with pageSize.
      * @param pageSize Number of record we want to get.
@@ -102,26 +102,24 @@ public class UserService {
             try {
                 session = hibernateRequests.getSession();
                 tx = session.beginTransaction();
-                Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.active = true AND t.user.id = "+((User) tmp).getId());
+                Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.active = true AND t.user.id = " + ((User) tmp).getId());
                 List<Track> tracks = selectQuery.list();
-                if (tracks.size()>0) {
+                if (tracks.size() > 0) {
                     jsonObject.put("status", "Aktywny");
                     SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-                    Date date = new Date(tracks.get(0).getStart()*1000);
+                    Date date = new Date(tracks.get(0).getStart() * 1000);
                     jsonObject.put("startTime", format.format(date));
                     jsonObject.put("finishTime", "------");
                     jsonObject.put("licensePlate", tracks.get(0).getCar().getLicensePlate());
                 } else {
-                    selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.active = false AND t.user.id = "+((User) tmp).getId()+" ORDER BY t.id DESC");
+                    selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.active = false AND t.user.id = " + ((User) tmp).getId() + " ORDER BY t.id DESC");
                     selectQuery.setMaxResults(1);
                     tracks = selectQuery.list();
-                    if (tracks.size()>0)
-                    {
+                    if (tracks.size() > 0) {
                         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yy HH:mm");
-                        Date date = new Date(tracks.get(0).getEnd()*1000);
+                        Date date = new Date(tracks.get(0).getEnd() * 1000);
                         jsonObject.put("finishTime", format.format(date));
-                    }
-                    else jsonObject.put("finishTime", "------");
+                    } else jsonObject.put("finishTime", "------");
                     jsonObject.put("status", "Nieaktywny");
                     jsonObject.put("startTime", "------");
                     jsonObject.put("licensePlate", "------");
@@ -131,8 +129,8 @@ public class UserService {
                 Timestamp timestampBefore = Timestamp.valueOf(before);
                 LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochMilli(now.getTime()), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
                 Timestamp timestampAfter = Timestamp.valueOf(after);
-                Query countQ = session.createQuery("Select sum (t.distance) from TrackRate t WHERE t.timestamp > "+String.valueOf(timestampBefore.getTime()/1000)+" AND  t.timestamp < "+String.valueOf(timestampAfter.getTime()/1000)+" AND t.track.user.id = "+((User) tmp).getId());
-                Long lonk = (Long)countQ.getSingleResult();
+                Query countQ = session.createQuery("Select sum (t.distance) from TrackRate t WHERE t.timestamp > " + timestampBefore.getTime() / 1000 + " AND  t.timestamp < " + timestampAfter.getTime() / 1000 + " AND t.track.user.id = " + ((User) tmp).getId());
+                Long lonk = (Long) countQ.getSingleResult();
                 jsonObject.put("distance", String.valueOf(lonk == null ? 0 : lonk));
                 tx.commit();
                 session.close();
@@ -154,9 +152,10 @@ public class UserService {
 
     /**
      * WebMethod which returns a list of users
-     * <P>
-     * @param request  Object of HttpServletRequest represents our request.
-     * @param regex    Part of name or surname we want to display.
+     * <p>
+     *
+     * @param request Object of HttpServletRequest represents our request.
+     * @param regex   Part of name or surname we want to display.
      * @return HttpStatus 200 Returns the contents of the page that contains a list of users in the JSON format.
      */
     public ResponseEntity<String> listUserNames(HttpServletRequest request, String regex) {
@@ -191,7 +190,7 @@ public class UserService {
         for (Object tmp : users) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id", ((User) tmp).getId());
-            jsonObject.put("name", ((User) tmp).getName()+" "+((User) tmp).getSurname());
+            jsonObject.put("name", ((User) tmp).getName() + " " + ((User) tmp).getSurname());
             jsonObject.put("image", ((User) tmp).getImage());
             jsonArray.put(jsonObject);
         }
@@ -202,14 +201,14 @@ public class UserService {
     /**
      * WebMethod that change password of logged user.
      * <p>
-     * @param request  Object of HttpServletRequest represents our request.
+     *
+     * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200.
      */
     public ResponseEntity changePassword(HttpServletRequest request, HttpEntity<String> httpEntity) {
         // authorization
-        if (request.getSession().getAttribute("user") == null)
-        {
+        if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.changePassword cannot work (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
@@ -226,7 +225,7 @@ public class UserService {
                     session.update(user);
                     tx.commit();
                     session.close();
-                    logger.log(Level.INFO,"User (id=" + user.getId()  + ") changed password");
+                    logger.log(Level.INFO, "User (id=" + user.getId() + ") changed password");
                     return ResponseEntity.status(HttpStatus.OK).body("");
                 } catch (HibernateException e) {
                     if (tx != null) tx.rollback();
@@ -243,13 +242,13 @@ public class UserService {
     /**
      * WebMethod that return user data with given Id.
      * <p>
-     * @param request  Object of HttpServletRequest represents our request.
+     *
+     * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200, user data as JsonString.
      */
     @Deprecated
-    public ResponseEntity getUserData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID)
-    {
+    public ResponseEntity getUserData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.getUserData cannot send data (session not found)");
@@ -270,7 +269,7 @@ public class UserService {
             tx.commit();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("image", user.getImage());
-            jsonObject.put("name", user.getName()+" "+user.getSurname());
+            jsonObject.put("name", user.getName() + " " + user.getSurname());
             jsonObject.put("telephone", user.getPhoneNumber());
             jsonObject.put("userPrivileges", user.getUserPrivileges());
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
@@ -288,11 +287,11 @@ public class UserService {
     /**
      * WebMethod that return user data with given Id.
      * <p>
-     * @param request  Object of HttpServletRequest represents our request.
+     *
+     * @param request Object of HttpServletRequest represents our request.
      * @return HttpStatus 200, user data as JsonString.
      */ //TODO TEST
-    public ResponseEntity getUserData(HttpServletRequest request, int userID)
-    {
+    public ResponseEntity getUserData(HttpServletRequest request, int userID) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.getUserData cannot send data (session not found)");
@@ -301,7 +300,7 @@ public class UserService {
 
         User user = userDaoJdbc.get(userID).orElse(null);
         //checking if user exists
-        if (Objects.equals(user,null))
+        if (Objects.equals(user, null))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
 
         return ResponseEntity.status(HttpStatus.OK).body(user.asJson());
@@ -310,13 +309,13 @@ public class UserService {
     /**
      * WebMethod that change user data for user with given Id.
      * <p>
-     * @param request  Object of HttpServletRequest represents our request.
+     *
+     * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200.
      */
     @Deprecated
-    public ResponseEntity changeUserData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID)
-    {
+    public ResponseEntity changeUserData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.changeUserData cannot change user data (session not found)");
@@ -345,14 +344,14 @@ public class UserService {
             String getQuery = "SELECT u FROM User u WHERE u.id like " + userID;
             Query query = session.createQuery(getQuery);
             User user = (User) query.getSingleResult();
-            String[]names = name.split(" ");
+            String[] names = name.split(" ");
             user.setName(names[0]);
             user.setSurname(names[1]);
             user.setPhoneNumber(telephone);
             session.update(user);
             tx.commit();
             responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
-            logger.log(Level.INFO,"User (id=" + userID + ") changed data to (" + "name=" + names[0] + " surname=" + names[1] + " phoneNumber=" + telephone + ")");
+            logger.log(Level.INFO, "User (id=" + userID + ") changed data to (" + "name=" + names[0] + " surname=" + names[1] + " phoneNumber=" + telephone + ")");
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
@@ -367,12 +366,12 @@ public class UserService {
     /**
      * WebMethod that change user data for user with given Id.
      * <p>
-     * @param request  Object of HttpServletRequest represents our request.
+     *
+     * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200.
      */ //TODO TEST
-    public ResponseEntity update(HttpServletRequest request, HttpEntity<String> httpEntity, int userID)
-    {
+    public ResponseEntity update(HttpServletRequest request, HttpEntity<String> httpEntity, int userID) {
         //authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.changeUserData cannot change user data (session not found)");
@@ -381,7 +380,7 @@ public class UserService {
 
         User user = userDaoJdbc.get(userID).orElse(null);
         //checking if user exists
-        if (Objects.equals(user,null))
+        if (Objects.equals(user, null))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
 
         //modifying user
@@ -407,12 +406,12 @@ public class UserService {
     /**
      * WebMethod that change user image for user with given Id.
      * <p>
-     * @param request  Object of HttpServletRequest represents our request.
+     *
+     * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200.
      */
-    public ResponseEntity changeUserImage(HttpServletRequest request, HttpEntity<String> httpEntity, int userID)
-    {
+    public ResponseEntity changeUserImage(HttpServletRequest request, HttpEntity<String> httpEntity, int userID) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.changeUserImage cannot change user image (session not found)");
@@ -457,13 +456,13 @@ public class UserService {
     /**
      * WebMethod that create user with given json.
      * <p>
-     * @param request  Object of HttpServletRequest represents our request.
+     *
+     * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200.
      */
     @Deprecated
-    public ResponseEntity addUser(HttpServletRequest request, HttpEntity<String> httpEntity)
-    {
+    public ResponseEntity addUser(HttpServletRequest request, HttpEntity<String> httpEntity) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.addUser cannot add user (session not found)");
@@ -507,10 +506,11 @@ public class UserService {
     /**
      * WebMethod that create user with given json.
      * <p>
-     * @param request  Object of HttpServletRequest represents our request.
+     *
+     * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200.
-     */ //TODO TEST
+     */
     public ResponseEntity add(HttpServletRequest request, HttpEntity<String> httpEntity) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
@@ -536,21 +536,8 @@ public class UserService {
 
         if (userDaoJdbc.save(user).isPresent()) {
             return ResponseEntity.status(HttpStatus.CREATED).body("");
-        }
-        else {
+        } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
         }
-    }
-
-
-    //===
-    //Private methods
-
-    //TODO MICHALE, CZY CHCEMY JAKĄKOLWIEK VALIDACJE NICKÓW?
-    //Check is nickname is correct
-    private boolean nicknameValidator(String nick) {
-        if ((nick.length() > 39) || (nick.length() < 5))
-            return false;
-        return true;
     }
 }

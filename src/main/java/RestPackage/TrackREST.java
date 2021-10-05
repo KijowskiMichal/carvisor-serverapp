@@ -46,22 +46,22 @@ public class TrackREST {
 
     @RequestMapping(value = "/getTrackData/{id}/{date}/", method = RequestMethod.GET)
     public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID, @PathVariable("date") String date) {
-        return trackService.getTrackData(request,httpEntity,userID,date);
+        return trackService.getTrackData(request, httpEntity, userID, date);
     }
 
     @RequestMapping(value = "/getTrackDataForDevice/{id}/{date}/", method = RequestMethod.GET)
     public ResponseEntity getTrackDataForDevice(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID, @PathVariable("date") String date) {
-        return trackService.getTrackDataForDevice(request,httpEntity,userID,date);
+        return trackService.getTrackDataForDevice(request, httpEntity, userID, date);
     }
 
     @RequestMapping(value = "/list/{id}/{page}/{pagesize}/{dateFrom}/{dateTo}/", method = RequestMethod.GET)
     public ResponseEntity list(HttpServletRequest request, HttpEntity<String> httpEntity,
-                                           @PathVariable("id") int userID, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("dateFrom") String dateFrom, @PathVariable("dateTo") String dateTo) {
-        return trackService.list(request,userID, page,pageSize,dateFrom,dateTo);
+                               @PathVariable("id") int userID, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("dateFrom") String dateFrom, @PathVariable("dateTo") String dateTo) {
+        return trackService.list(request, userID, page, pageSize, dateFrom, dateTo);
     }
 
     @RequestMapping(value = "/reverseGeocoding/{lon}/{lat}/", method = RequestMethod.GET)
     public ResponseEntity reverseGeocoding(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("lon") String lon, @PathVariable("lat") String lat) {
-        return trackService.reverseGeocoding(lon,lat);
+        return trackService.reverseGeocoding(lon, lat);
     }
 }

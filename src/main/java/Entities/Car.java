@@ -9,64 +9,28 @@ import java.time.LocalDate;
 
 @Entity
 public class Car {
-    /**
-     * Identification number
-     */
+
     @Id
     @GeneratedValue
-    int id;
-    /**
-     * Actual license plate
-     */
-    String licensePlate;
-    /**
-     * Car password
-     */
-    String password;
-    /**
-     * Car Brand
-     */
-    String brand;
-    /**
-     * Car model
-     */
-    String model;
-    /**
-     * Car engine
-     */
-    String engine;
-    /**
-     * Car tank volume
-     */
-    int tank;
-    /**
-     * Fuel type
-     */
-    String fuelType;
-    /**
-     * ??
-     */
-    double fuelNorm;
-    /**
-     * Car production date
-     */
-    LocalDate productionDate;
-    /**
-     * Date of incorporation of vehicles into the fleet
-     */
-    LocalDate inCompanyDate;
-    /**
-     * Image of car
-     */
+    private int id;
+    private String licensePlate;
+    private String password;
+    private String brand;
+    private String model;
+    private String engine;
+    private Integer tank;
+    private String fuelType;
+    private Double fuelNorm;
+    private LocalDate productionDate;
+    private LocalDate inCompanyDate;
     @Lob
     private String image;
-    /**
-     * Car Configuration
-     */
-    Integer sendInterval;
-    Integer locationInterval;
+    private Integer sendInterval;
+    private Integer locationInterval;
 
-    public Car() { super(); }
+    public Car() {
+        super();
+    }
 
     public Car(String licensePlate, String brand, String model, LocalDate productionDate, LocalDate inCompanyDate, String image, String password) {
         this.licensePlate = licensePlate;
@@ -76,6 +40,24 @@ public class Car {
         this.inCompanyDate = inCompanyDate;
         this.image = image;
         this.password = password;
+    }
+
+    public Car(String licensePlate, String password, String brand, String model, String engine,
+               Integer tank, String fuelType, Double fuelNorm, LocalDate productionDate, LocalDate inCompanyDate,
+               String image, Integer sendInterval, Integer locationInterval) {
+        this.licensePlate = licensePlate;
+        this.password = password;
+        this.brand = brand;
+        this.model = model;
+        this.engine = engine;
+        this.tank = tank;
+        this.fuelType = fuelType;
+        this.fuelNorm = fuelNorm;
+        this.productionDate = productionDate;
+        this.inCompanyDate = inCompanyDate;
+        this.image = image;
+        this.sendInterval = sendInterval;
+        this.locationInterval = locationInterval;
     }
 
     public int getId() {

@@ -15,8 +15,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 @ComponentScan("HibernatePackage")
 @ComponentScan("OtherClasses")
 @ComponentScan("Dao")
-public class Initializer extends AbstractAnnotationConfigDispatcherServletInitializer
-{
+public class Initializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
     protected Class<?>[] getRootConfigClasses() {

@@ -8,9 +8,6 @@ import javax.persistence.Id;
 @Entity
 public class Setting {
 
-    /**
-     * Identification number
-     */
     @Id
     @GeneratedValue
     int id;

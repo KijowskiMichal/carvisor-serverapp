@@ -1,9 +1,7 @@
 package Dao;
 
-import Entities.Car;
 import Entities.Setting;
 import HibernatePackage.HibernateRequests;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -26,7 +24,7 @@ public class SettingDaoJdbc extends HibernateDaoJdbc<Setting> {
     }
 
     @Override
-    public Optional<Setting> get(long id){
+    public Optional<Setting> get(long id) {
         Session session = null;
         Transaction tx = null;
         Setting setting = null;

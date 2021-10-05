@@ -25,6 +25,6 @@ public class EcoPointsREST {
 
     @RequestMapping(value = "/list/{page}/{pagesize}/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("regex") String regex) {
-        return ecoPointsService.list(request,page,pageSize,regex);
+        return ecoPointsService.list(request, page, pageSize, regex);
     }
 }

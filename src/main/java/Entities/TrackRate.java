@@ -5,8 +5,7 @@ import org.json.JSONObject;
 import javax.persistence.*;
 
 @Entity
-public class TrackRate
-{
+public class TrackRate {
     /**
      * Identification number
      */
@@ -14,7 +13,7 @@ public class TrackRate
     @GeneratedValue
     int id;
     /**
-     *  Track associated with this rate
+     * Track associated with this rate
      */
     @ManyToOne
     Track track;
@@ -139,17 +138,16 @@ public class TrackRate
     }
 
     /**
-     *
      * @return data of track rate as Json String.
      */
     public String getContent() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("Speed",speed);
-        jsonObject.put("Throttle Pos",throttle);
+        jsonObject.put("Speed", speed);
+        jsonObject.put("Throttle Pos", throttle);
         jsonObject.put("gps_longitude", longitude);
         jsonObject.put("gps_latitude", latitude);
-        jsonObject.put("RPM",rpm);
-        jsonObject.put("time",timestamp);
+        jsonObject.put("RPM", rpm);
+        jsonObject.put("time", timestamp);
         return jsonObject.toString();
     }
 }

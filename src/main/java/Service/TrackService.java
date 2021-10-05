@@ -4,7 +4,6 @@ import Entities.*;
 import HibernatePackage.HibernateRequests;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.util.IOUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -17,6 +16,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import utilities.builders.TrackBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -26,11 +26,13 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -41,8 +43,7 @@ public class TrackService {
     Logger logger;
 
     @Autowired
-    public TrackService(HibernateRequests hibernateRequests, OtherClasses.Logger logger)
-    {
+    public TrackService(HibernateRequests hibernateRequests, OtherClasses.Logger logger) {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
     }
@@ -50,7 +51,8 @@ public class TrackService {
     /**
      * WebMethods which start track.
      * <p>
-     * @param request Object of HttpServletRequest represents our request.
+     *
+     * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of httpEntity.
      * @return HttpStatus 200.
      */
@@ -87,7 +89,7 @@ public class TrackService {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Car with id=" + car.getId() + " have started track");
             }
             User user = (User) session.createQuery("SELECT u FROM User u WHERE u.nfcTag='" + userNfcTag + "'").getSingleResult();
-            Track track = new Track();
+            Track track = new TrackBuilder().build();
             track.setUser(user);
             track.setCar(car);
             track.setActive(true);
@@ -96,10 +98,10 @@ public class TrackService {
             track.setStart(startTime);
             track.setStartPosiotion(gpsLatitude + ";" + gpsLongitude);
             track.setEndPosiotion(gpsLatitude + ";" + gpsLongitude);
-            track.setListofTrackRates(new ArrayList<>());
+            track.setListOfTrackRates(new ArrayList<>());
             session.save(track);
             tx.commit();
-            logger.log(Level.INFO,"Track (id=" + track.getId() + ") started.\n " +
+            logger.log(Level.INFO, "Track (id=" + track.getId() + ") started.\n " +
                     "With Car(id=" + car.getId() + ")");
             responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
         } catch (HibernateException e) {
@@ -107,8 +109,7 @@ public class TrackService {
             logger.log(Level.WARN, e);
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e);
             if (tx != null) tx.rollback();
-        }
-        finally {
+        } finally {
             if (session != null) session.close();
         }
         return responseEntity;
@@ -117,11 +118,11 @@ public class TrackService {
     /**
      * WebMethods which update track with sending data.
      * <p>
+     *
      * @param request Object of HttpServletRequest represents our request.
      * @return Returns 200.
      */
-    public ResponseEntity updateTrackData(HttpServletRequest request, HttpEntity<String> httpEntity)
-    {
+    public ResponseEntity updateTrackData(HttpServletRequest request, HttpEntity<String> httpEntity) {
         Session session = null;
         Transaction tx = null;
         ResponseEntity responseEntity;
@@ -129,15 +130,12 @@ public class TrackService {
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            String getQuery = "SELECT t FROM Track t WHERE t.active = true AND t.car.id = " + ((Car)request.getSession().getAttribute("car")).getId();
+            String getQuery = "SELECT t FROM Track t WHERE t.active = true AND t.car.id = " + ((Car) request.getSession().getAttribute("car")).getId();
             Query query = session.createQuery(getQuery);
             Track track = (Track) query.getSingleResult();
-            if (track==null)
-            {
+            if (track == null) {
                 responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Track = null");
-            }
-            else
-            {
+            } else {
                 JSONObject jsonPackage = new JSONObject(httpEntity.getBody());
                 long[] longs = jsonPackage.keySet().stream().mapToLong(Long::parseLong).sorted().toArray();
                 TrackRate trackRate = new TrackRate();
@@ -179,9 +177,9 @@ public class TrackService {
                         String[] trackEndPosition = track.getEndPosiotion().split(";");
                         float y1 = Float.parseFloat(trackEndPosition[0]);
                         float x1 = Float.parseFloat(trackEndPosition[1]);
-                        distance = (long) distFrom(y1,x1,latitude,longitude);
+                        distance = (long) distFrom(y1, x1, latitude, longitude);
                         //start safety points calculated
-                        URL url = new URL("https://route.ls.hereapi.com/routing/7.2/calculateroute.json?jsonAttributes=1&waypoint0="+latitude+","+longitude+"&waypoint1="+latitude+","+longitude+"&routeattributes=sh%2Clg&legattributes=li&linkattributes=nl%2Cfc&mode=fastest%3Bcar%3Btraffic%3Aenabled&apiKey=EV06iVKQPJMrzRh1CIplbrUc00D-WxwoMDJM2wmZf5M");
+                        URL url = new URL("https://route.ls.hereapi.com/routing/7.2/calculateroute.json?jsonAttributes=1&waypoint0=" + latitude + "," + longitude + "&waypoint1=" + latitude + "," + longitude + "&routeattributes=sh%2Clg&legattributes=li&linkattributes=nl%2Cfc&mode=fastest%3Bcar%3Btraffic%3Aenabled&apiKey=EV06iVKQPJMrzRh1CIplbrUc00D-WxwoMDJM2wmZf5M");
                         String json = "";
                         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                         conn.setRequestMethod("GET");
@@ -194,15 +192,13 @@ public class TrackService {
                         JSONObject safetyAPI = new JSONObject(json);
                         float speedLimit;
                         int added = 1;
-                        try
-                        {
+                        try {
                             speedLimit = safetyAPI.getJSONObject("response").getJSONArray("route").getJSONObject(0).getJSONArray("leg").getJSONObject(0).getJSONArray("link").getJSONObject(0).getFloat("speedLimit");
-                            if (speed>speedLimit)
-                            {
-                                added = (int) (Math.floor(speed-speedLimit)*0.2);
-                                track.setSafetyNegativeSamples(track.getSafetyNegativeSamples()+added);
+                            if (speed > speedLimit) {
+                                added = (int) (Math.floor(speed - speedLimit) * 0.2);
+                                track.setSafetyNegativeSamples(track.getSafetyNegativeSamples() + added);
                             }
-                            track.setSafetySamples(track.getSafetySamples()+added);
+                            track.setSafetySamples(track.getSafetySamples() + added);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -210,7 +206,7 @@ public class TrackService {
                     }
                     track.addMetersToDistance(distance);
                     track.setEndPosiotion(latitude + ";" + longitude);
-                    trackRate = new TrackRate(track,speed,throttle,latitude,longitude,rpm,distance, keyTimestamp);
+                    trackRate = new TrackRate(track, speed, throttle, latitude, longitude, rpm, distance, keyTimestamp);
                     session.save(trackRate);
                     track.addTrackRate(trackRate);
                     track.calculateEcoPoints();
@@ -218,7 +214,7 @@ public class TrackService {
                 track.setTimeStamp(trackRate.getTimestamp());
                 session.update(track);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
-                logger.log(Level.INFO,"Track: " + track.getId() + " updated");
+                logger.log(Level.INFO, "Track: " + track.getId() + " updated");
             }
             tx.commit();
         } catch (HibernateException e) {
@@ -232,7 +228,7 @@ public class TrackService {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             e.printStackTrace(pw);
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("JSONException exception\n" + sw.toString());
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("JSONException exception\n" + sw);
         } catch (ProtocolException e) {
             e.printStackTrace();
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("ProtocolException exception\n");
@@ -251,11 +247,11 @@ public class TrackService {
     /**
      * WebMethods which update track without sending data.
      * <p>
+     *
      * @param request Object of HttpServletRequest represents our request.
      * @return Returns 200.
      */
-    public ResponseEntity updateTrack(HttpServletRequest request, HttpEntity<String> httpEntity)
-    {
+    public ResponseEntity updateTrack(HttpServletRequest request, HttpEntity<String> httpEntity) {
         // authorization
         if (request.getSession().getAttribute("car") == null) {
             logger.info("TrackService.updateTrack cannot update track (session not found)");
@@ -269,16 +265,13 @@ public class TrackService {
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            String getQuery = "SELECT t FROM Track t WHERE t.active = true AND t.car.id = " + ((Car)request.getSession().getAttribute("car")).getId();
+            String getQuery = "SELECT t FROM Track t WHERE t.active = true AND t.car.id = " + ((Car) request.getSession().getAttribute("car")).getId();
             Query query = session.createQuery(getQuery);
             Track track = (Track) query.getSingleResult();
-            if (track==null)
-            {
+            if (track == null) {
                 responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-            }
-            else
-            {
-                Date date= new Date();
+            } else {
+                Date date = new Date();
                 long time = date.getTime();
                 track.setTimeStamp(time);
                 session.update(track);
@@ -298,11 +291,11 @@ public class TrackService {
     /**
      * WebMethods which finished tracks.
      * <p>
+     *
      * @param request Object of HttpServletRequest represents our request.
      * @return Returns 200.
      */
-    public ResponseEntity endOfTrack(HttpServletRequest request, HttpEntity<String> httpEntity)
-    {
+    public ResponseEntity endOfTrack(HttpServletRequest request, HttpEntity<String> httpEntity) {
         Session session = null;
         Transaction tx = null;
         ResponseEntity responseEntity;
@@ -313,17 +306,16 @@ public class TrackService {
             String getQuery = "SELECT t FROM Track t WHERE t.active = true";
             Query query = session.createQuery(getQuery);
             List<Track> tracks = query.getResultList();
-            Date date= new Date();
-            long time = date.getTime()/1000;
-            for (Track track : tracks)
-            {
-                if (track.getTimeStamp()<(time-15)) {
+            Date date = new Date();
+            long time = date.getTime() / 1000;
+            for (Track track : tracks) {
+                if (track.getTimeStamp() < (time - 15)) {
                     track.getUser().addTrackToEcoPointScore(track);
-                    track.getUser().setTracksNumber(track.getUser().getTracksNumber()+1);
-                    track.getUser().setDistanceTravelled(track.getUser().getDistanceTravelled()+track.getDistance());
-                    track.getUser().setSamples(track.getUser().getSamples()+track.getSamples());
-                    track.getUser().setSafetyNegativeSamples(track.getUser().getSafetyNegativeSamples()+track.getSafetyNegativeSamples());
-                    track.getUser().setSafetySamples(track.getUser().getSafetySamples()+track.getSafetySamples());
+                    track.getUser().setTracksNumber(track.getUser().getTracksNumber() + 1);
+                    track.getUser().setDistanceTravelled(track.getUser().getDistanceTravelled() + track.getDistance());
+                    track.getUser().setSamples(track.getUser().getSamples() + track.getSamples());
+                    track.getUser().setSafetyNegativeSamples(track.getUser().getSafetyNegativeSamples() + track.getSafetyNegativeSamples());
+                    track.getUser().setSafetySamples(track.getUser().getSafetySamples() + track.getSafetySamples());
                     track.setActive(false);
                     track.setEnd(time - 8);
                     track.getUser().addTrackToEcoPointScore(track);
@@ -384,7 +376,8 @@ public class TrackService {
     /**
      * WebMethod that return tracks data list as array within a certain period of time .
      * <p>
-     * @param request  Object of HttpServletRequest represents our request.
+     *
+     * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200, user data as JsonString.
      */
@@ -409,23 +402,23 @@ public class TrackService {
             long dateToTimeStamp = new Timestamp(dateTo.getTime()).getTime();
 
             Query query = session.createQuery("SELECT t from Track t WHERE " +
-                    "t.timeStamp >= " + dateFromTimeStamp/1000
+                    "t.timeStamp >= " + dateFromTimeStamp / 1000
                     + " AND " +
-                    "t.timeStamp <= " + dateToTimeStamp/1000);
+                    "t.timeStamp <= " + dateToTimeStamp / 1000);
 
             List<Track> trackList = query.getResultList();
             JSONArray jsonArray = new JSONArray();
             for (Track t : trackList) {
                 JSONObject jo = new JSONObject();
-                jo.put("trackId",t.getId());
-                jo.put("distance",t.getDistance());
-                jo.put("carId",t.getCar().getId());
-                jo.put("startedTime",t.getStart());
-                jo.put("endedTime",t.getEnd());
-                jo.put("startLocation",t.getStartPosiotion()); //TODO API Reverse Geocoding
-                jo.put("endLocation",t.getEndPosiotion()); //TODO API Reverse Geocoding
-                jo.put("privateStatus",t.getPrivateTrack());
-                jo.put("activeStatus",t.getActive());
+                jo.put("trackId", t.getId());
+                jo.put("distance", t.getDistance());
+                jo.put("carId", t.getCar().getId());
+                jo.put("startedTime", t.getStart());
+                jo.put("endedTime", t.getEnd());
+                jo.put("startLocation", t.getStartPosiotion()); //TODO API Reverse Geocoding
+                jo.put("endLocation", t.getEndPosiotion()); //TODO API Reverse Geocoding
+                jo.put("privateStatus", t.getPrivateTrack());
+                jo.put("activeStatus", t.getActive());
                 jsonArray.put(jo);
             }
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonArray.toString());
@@ -447,7 +440,8 @@ public class TrackService {
     /**
      * WebMethod that return tracks data with given Id.
      * <p>
-     * @param request  Object of HttpServletRequest represents our request.
+     *
+     * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200, user data as JsonString.
      */
@@ -474,20 +468,17 @@ public class TrackService {
             Timestamp timestampBefore = Timestamp.valueOf(before.toLocalDateTime());
             ZonedDateTime after = before.with(LocalTime.MAX);
             Timestamp timestampAfter = Timestamp.valueOf(after.toLocalDateTime());
-            Query query = session.createQuery("Select t from TrackRate t WHERE t.timestamp > "+String.valueOf(timestampBefore.getTime()/1000)+" AND  t.timestamp < "+String.valueOf(timestampAfter.getTime()/1000)+" AND t.track.user.id = "+userID+" ORDER BY t.id ASC");
+            Query query = session.createQuery("Select t from TrackRate t WHERE t.timestamp > " + timestampBefore.getTime() / 1000 + " AND  t.timestamp < " + timestampAfter.getTime() / 1000 + " AND t.track.user.id = " + userID + " ORDER BY t.id ASC");
             List<TrackRate> trackRates = query.getResultList();
             boolean first = true;
             HashSet<Integer> tracksID = new HashSet<>();
             int last = 0;
             long timestamp = 0;
-            for (TrackRate trackRate : trackRates)
-            {
-                if (first)
-                {
-                    Query query2 = session.createQuery("Select t from TrackRate t WHERE t.track.id = "+trackRate.getTrack().getId()+" AND t.timestamp < "+trackRate.getTimestamp()+" ORDER BY t.id ASC");
+            for (TrackRate trackRate : trackRates) {
+                if (first) {
+                    Query query2 = session.createQuery("Select t from TrackRate t WHERE t.track.id = " + trackRate.getTrack().getId() + " AND t.timestamp < " + trackRate.getTimestamp() + " ORDER BY t.id ASC");
                     List<TrackRate> trackRates2 = query2.getResultList();
-                    for (TrackRate trackRate2 : trackRates2)
-                    {
+                    for (TrackRate trackRate2 : trackRates2) {
                         JSONObject tmp2 = new JSONObject();
                         tmp2.put("gpsX", trackRate2.getLatitude());
                         tmp2.put("gpsY", trackRate2.getLongitude());
@@ -513,10 +504,9 @@ public class TrackService {
                 tracksID.add(last);
                 timestamp = trackRate.getTimestamp();
             }
-            Query query3 = session.createQuery("Select t from TrackRate t WHERE t.track.id = "+last+" AND t.timestamp > "+timestamp+" ORDER BY t.id ASC");
+            Query query3 = session.createQuery("Select t from TrackRate t WHERE t.track.id = " + last + " AND t.timestamp > " + timestamp + " ORDER BY t.id ASC");
             List<TrackRate> trackRates3 = query3.getResultList();
-            for (TrackRate trackRate3 : trackRates3)
-            {
+            for (TrackRate trackRate3 : trackRates3) {
                 JSONObject tmp3 = new JSONObject();
                 tmp3.put("gpsX", trackRate3.getLatitude());
                 tmp3.put("gpsY", trackRate3.getLongitude());
@@ -527,28 +517,27 @@ public class TrackService {
                 tmp3.put("track", trackRate3.getTrack().getId());
                 points.put(tmp3);
             }
-            for (Integer trackID : tracksID)
-            {
-                Query query4 = session.createQuery("Select t from Track t WHERE t.id = "+trackID);
+            for (Integer trackID : tracksID) {
+                Query query4 = session.createQuery("Select t from Track t WHERE t.id = " + trackID);
                 Track track = (Track) query4.getSingleResult();
-                int lastID = track.getListofTrackRates().size()-1;
+                int lastID = track.getListOfTrackRates().size() - 1;
                 JSONObject start = new JSONObject();
                 start.put("vehicle", track.getCar().getLicensePlate());
-                start.put("gpsX", track.getListofTrackRates().get(0).getLatitude());
-                start.put("gpsY", track.getListofTrackRates().get(0).getLongitude());
-                start.put("rpm", track.getListofTrackRates().get(0).getRpm());
-                start.put("speed", track.getListofTrackRates().get(0).getSpeed());
-                start.put("throttle", track.getListofTrackRates().get(0).getThrottle());
-                start.put("time", track.getListofTrackRates().get(0).getTimestamp());
+                start.put("gpsX", track.getListOfTrackRates().get(0).getLatitude());
+                start.put("gpsY", track.getListOfTrackRates().get(0).getLongitude());
+                start.put("rpm", track.getListOfTrackRates().get(0).getRpm());
+                start.put("speed", track.getListOfTrackRates().get(0).getSpeed());
+                start.put("throttle", track.getListOfTrackRates().get(0).getThrottle());
+                start.put("time", track.getListOfTrackRates().get(0).getTimestamp());
                 startPoints.put(start);
                 JSONObject end = new JSONObject();
                 end.put("vehicle", track.getCar().getLicensePlate());
-                end.put("gpsX", track.getListofTrackRates().get(lastID).getLatitude());
-                end.put("gpsY", track.getListofTrackRates().get(lastID).getLongitude());
-                end.put("rpm", track.getListofTrackRates().get(lastID).getRpm());
-                end.put("speed", track.getListofTrackRates().get(lastID).getSpeed());
-                end.put("throttle", track.getListofTrackRates().get(lastID).getThrottle());
-                end.put("time", track.getListofTrackRates().get(lastID).getTimestamp());
+                end.put("gpsX", track.getListOfTrackRates().get(lastID).getLatitude());
+                end.put("gpsY", track.getListOfTrackRates().get(lastID).getLongitude());
+                end.put("rpm", track.getListOfTrackRates().get(lastID).getRpm());
+                end.put("speed", track.getListOfTrackRates().get(lastID).getSpeed());
+                end.put("throttle", track.getListOfTrackRates().get(lastID).getThrottle());
+                end.put("time", track.getListOfTrackRates().get(lastID).getTimestamp());
                 endPoints.put(end);
             }
             JSONObject output = new JSONObject();
@@ -570,7 +559,8 @@ public class TrackService {
     /**
      * WebMethod that return tracks data with given Id.
      * <p>
-     * @param request  Object of HttpServletRequest represents our request.
+     *
+     * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200, track data as JsonString.
      */
@@ -591,26 +581,23 @@ public class TrackService {
             tx = session.beginTransaction();
             JSONArray points = new JSONArray();
             JSONArray startPoints = new JSONArray();
-            JSONArray endPoints = new JSONArray();;
+            JSONArray endPoints = new JSONArray();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             ZonedDateTime before = LocalDate.parse(date, formatter).atStartOfDay(ZoneId.systemDefault());
             Timestamp timestampBefore = Timestamp.valueOf(before.toLocalDateTime());
             ZonedDateTime after = before.with(LocalTime.MAX);
             Timestamp timestampAfter = Timestamp.valueOf(after.toLocalDateTime());
-            Query query = session.createQuery("Select t from TrackRate t WHERE t.timestamp > "+String.valueOf(timestampBefore.getTime()/1000)+" AND  t.timestamp < "+String.valueOf(timestampAfter.getTime()/1000)+" AND t.track.car.id = "+userID+" ORDER BY t.id ASC");
+            Query query = session.createQuery("Select t from TrackRate t WHERE t.timestamp > " + timestampBefore.getTime() / 1000 + " AND  t.timestamp < " + timestampAfter.getTime() / 1000 + " AND t.track.car.id = " + userID + " ORDER BY t.id ASC");
             List<TrackRate> trackRates = query.getResultList();
             boolean first = true;
             HashSet<Integer> tracksID = new HashSet<>();
             int last = 0;
             long timestamp = 0;
-            for (TrackRate trackRate : trackRates)
-            {
-                if (first)
-                {
-                    Query query2 = session.createQuery("Select t from TrackRate t WHERE t.track.id = "+trackRate.getTrack().getId()+" AND t.timestamp < "+trackRate.getTimestamp()+" ORDER BY t.id ASC");
+            for (TrackRate trackRate : trackRates) {
+                if (first) {
+                    Query query2 = session.createQuery("Select t from TrackRate t WHERE t.track.id = " + trackRate.getTrack().getId() + " AND t.timestamp < " + trackRate.getTimestamp() + " ORDER BY t.id ASC");
                     List<TrackRate> trackRates2 = query2.getResultList();
-                    for (TrackRate trackRate2 : trackRates2)
-                    {
+                    for (TrackRate trackRate2 : trackRates2) {
                         JSONObject tmp2 = new JSONObject();
                         tmp2.put("gpsX", trackRate2.getLatitude());
                         tmp2.put("gpsY", trackRate2.getLongitude());
@@ -636,10 +623,9 @@ public class TrackService {
                 tracksID.add(last);
                 timestamp = trackRate.getTimestamp();
             }
-            Query query3 = session.createQuery("Select t from TrackRate t WHERE t.track.id = "+last+" AND t.timestamp > "+timestamp+" ORDER BY t.id ASC");
+            Query query3 = session.createQuery("Select t from TrackRate t WHERE t.track.id = " + last + " AND t.timestamp > " + timestamp + " ORDER BY t.id ASC");
             List<TrackRate> trackRates3 = query3.getResultList();
-            for (TrackRate trackRate3 : trackRates3)
-            {
+            for (TrackRate trackRate3 : trackRates3) {
                 JSONObject tmp3 = new JSONObject();
                 tmp3.put("gpsX", trackRate3.getLatitude());
                 tmp3.put("gpsY", trackRate3.getLongitude());
@@ -650,28 +636,27 @@ public class TrackService {
                 tmp3.put("track", trackRate3.getTrack().getId());
                 points.put(tmp3);
             }
-            for (Integer trackID : tracksID)
-            {
-                Query query4 = session.createQuery("Select t from Track t WHERE t.id = "+trackID);
+            for (Integer trackID : tracksID) {
+                Query query4 = session.createQuery("Select t from Track t WHERE t.id = " + trackID);
                 Track track = (Track) query4.getSingleResult();
-                int lastID = track.getListofTrackRates().size()-1;
+                int lastID = track.getListOfTrackRates().size() - 1;
                 JSONObject start = new JSONObject();
-                start.put("user", track.getUser().getName()+" "+track.getUser().getSurname());
-                start.put("gpsX", track.getListofTrackRates().get(0).getLatitude());
-                start.put("gpsY", track.getListofTrackRates().get(0).getLongitude());
-                start.put("rpm", track.getListofTrackRates().get(0).getRpm());
-                start.put("speed", track.getListofTrackRates().get(0).getSpeed());
-                start.put("throttle", track.getListofTrackRates().get(0).getThrottle());
-                start.put("time", track.getListofTrackRates().get(0).getTimestamp());
+                start.put("user", track.getUser().getName() + " " + track.getUser().getSurname());
+                start.put("gpsX", track.getListOfTrackRates().get(0).getLatitude());
+                start.put("gpsY", track.getListOfTrackRates().get(0).getLongitude());
+                start.put("rpm", track.getListOfTrackRates().get(0).getRpm());
+                start.put("speed", track.getListOfTrackRates().get(0).getSpeed());
+                start.put("throttle", track.getListOfTrackRates().get(0).getThrottle());
+                start.put("time", track.getListOfTrackRates().get(0).getTimestamp());
                 startPoints.put(start);
                 JSONObject end = new JSONObject();
-                end.put("user", track.getUser().getName()+" "+track.getUser().getSurname());
-                end.put("gpsX", track.getListofTrackRates().get(lastID).getLatitude());
-                end.put("gpsY", track.getListofTrackRates().get(lastID).getLongitude());
-                end.put("rpm", track.getListofTrackRates().get(lastID).getRpm());
-                end.put("speed", track.getListofTrackRates().get(lastID).getSpeed());
-                end.put("throttle", track.getListofTrackRates().get(lastID).getThrottle());
-                end.put("time", track.getListofTrackRates().get(lastID).getTimestamp());
+                end.put("user", track.getUser().getName() + " " + track.getUser().getSurname());
+                end.put("gpsX", track.getListOfTrackRates().get(lastID).getLatitude());
+                end.put("gpsY", track.getListOfTrackRates().get(lastID).getLongitude());
+                end.put("rpm", track.getListOfTrackRates().get(lastID).getRpm());
+                end.put("speed", track.getListOfTrackRates().get(lastID).getSpeed());
+                end.put("throttle", track.getListOfTrackRates().get(lastID).getThrottle());
+                end.put("time", track.getListOfTrackRates().get(lastID).getTimestamp());
                 endPoints.put(end);
             }
             JSONObject output = new JSONObject();
@@ -696,10 +681,10 @@ public class TrackService {
     // Calculate distance between two gps points, return distance in meters
     private float distFrom(double y1, double x1, double y2, double x2) {
         double earthRadius = 6371000; //meters
-        double dLat = Math.toRadians(y2-y1);
-        double dLng = Math.toRadians(x2-x1);
-        double a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(Math.toRadians(y1)) * Math.cos(Math.toRadians(y2)) * Math.sin(dLng/2) * Math.sin(dLng/2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double dLat = Math.toRadians(y2 - y1);
+        double dLng = Math.toRadians(x2 - x1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(y1)) * Math.cos(Math.toRadians(y2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return (float) (earthRadius * c);
     }
 
@@ -709,11 +694,11 @@ public class TrackService {
         Transaction tx = null;
 
         user.addDistanceTravelled(track.getDistance());
-        double percentOfNewDistance = (double) track.getDistance() /  (double) user.getDistanceTravelled();
+        double percentOfNewDistance = (double) track.getDistance() / (double) user.getDistanceTravelled();
 
         user.setEcoPointsAvg((float)
                 (percentOfNewDistance * track.getEcoPoints() +
-                        (1-percentOfNewDistance) * user.getEcoPointsAvg()));
+                        (1 - percentOfNewDistance) * user.getEcoPointsAvg()));
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
@@ -722,8 +707,7 @@ public class TrackService {
         } catch (HibernateException e) {
             e.printStackTrace();
             if (tx != null) tx.rollback();
-        }
-        finally {
+        } finally {
             if (session != null) session.close();
         }
     }
@@ -749,20 +733,20 @@ public class TrackService {
         } catch (HibernateException e) {
             e.printStackTrace();
             if (tx != null) tx.rollback();
-        }
-        finally {
+        } finally {
             if (session != null) session.close();
         }
     }
 
     /**
      * WebMethod which returns a list of tracks
-     * <P>
+     * <p>
+     *
      * @param request  Object of HttpServletRequest represents our request.
      * @param page     Page of tracks list. Parameter associated with pageSize.
      * @param pageSize Number of record we want to get.
-     * @param timeFrom    Time from we want to list tracks.
-     * @param timeTo    Time up to we want to list tracks.
+     * @param timeFrom Time from we want to list tracks.
+     * @param timeTo   Time up to we want to list tracks.
      * @return HttpStatus 200 Returns the contents of the page that contains a list of tracks in the JSON format.
      */
     public ResponseEntity<String> list(HttpServletRequest request, int userID, int page, int pageSize, String timeFrom, String timeTo) {
@@ -788,15 +772,15 @@ public class TrackService {
         User user;
         try {
             tx = session.beginTransaction();
-            Query selectUser = session.createQuery("SELECT u FROM User u WHERE id = "+userID);
+            Query selectUser = session.createQuery("SELECT u FROM User u WHERE id = " + userID);
             user = (User) selectUser.getSingleResult();
 
-            String countQ = "Select count (t.id) from Track t WHERE t.user = "+userID+" AND t.start > "+(timestampBefore.getTime()/1000)+" AND t.start < "+(timestampAfter.getTime()/1000)+" ";
+            String countQ = "Select count (t.id) from Track t WHERE t.user = " + userID + " AND t.start > " + (timestampBefore.getTime() / 1000) + " AND t.start < " + (timestampAfter.getTime() / 1000) + " ";
             Query countQuery = session.createQuery(countQ);
             Long countResults = (Long) countQuery.uniqueResult();
             lastPageNumber = (int) (Math.ceil(countResults / (double) pageSize));
 
-            Query selectQuery = session.createQuery("SELECT t from Track t WHERE t.user = "+userID+" AND t.start > "+(timestampBefore.getTime()/1000)+" AND t.start < "+(timestampAfter.getTime()/1000)+" ");
+            Query selectQuery = session.createQuery("SELECT t from Track t WHERE t.user = " + userID + " AND t.start > " + (timestampBefore.getTime() / 1000) + " AND t.start < " + (timestampAfter.getTime() / 1000) + " ");
             selectQuery.setFirstResult((page - 1) * pageSize);
             selectQuery.setMaxResults(pageSize);
             tracks = selectQuery.list();
@@ -821,7 +805,7 @@ public class TrackService {
             jsonArray.put(jsonObject);
         }
 
-        jsonOut.put("user", user.getName()+" "+user.getSurname());
+        jsonOut.put("user", user.getName() + " " + user.getSurname());
         jsonOut.put("page", page);
         jsonOut.put("pageMax", lastPageNumber);
         jsonOut.put("listOfTracks", jsonArray);
@@ -844,9 +828,9 @@ public class TrackService {
             }
             sc.close();
             JSONObject jsonObject = new JSONObject(json);
-            jsonOut.put("address", ((JSONObject)((JSONObject)jsonObject.getJSONArray("results").get(0)).getJSONArray("locations").get(0)).getString("street")+", "+((JSONObject)((JSONObject)jsonObject.getJSONArray("results").get(0)).getJSONArray("locations").get(0)).getString("adminArea5"));
+            jsonOut.put("address", ((JSONObject) ((JSONObject) jsonObject.getJSONArray("results").get(0)).getJSONArray("locations").get(0)).getString("street") + ", " + ((JSONObject) ((JSONObject) jsonObject.getJSONArray("results").get(0)).getJSONArray("locations").get(0)).getString("adminArea5"));
         } catch (IOException e) {
-            jsonOut.put("address", lon+";"+lat);
+            jsonOut.put("address", lon + ";" + lat);
         }
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }

@@ -2,6 +2,7 @@ package Service;
 
 import Entities.*;
 import HibernatePackage.HibernateRequests;
+import utilities.builders.CarBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
@@ -38,8 +39,7 @@ public class DevicesService {
     Logger logger;
 
     @Autowired
-    public DevicesService(HibernateRequests hibernateRequests, OtherClasses.Logger logger)
-    {
+    public DevicesService(HibernateRequests hibernateRequests, OtherClasses.Logger logger) {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
     }
@@ -47,6 +47,7 @@ public class DevicesService {
     /**
      * WebMethod which returns a list of devices.
      * <p>
+     *
      * @param request  Object of HttpServletRequest represents our request;
      * @param page     Page of users list. Parameter associated with pageSize.
      * @param pageSize Number of record we want to get
@@ -104,12 +105,12 @@ public class DevicesService {
                 Timestamp timestampBefore = Timestamp.valueOf(before);
                 LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochMilli(now.getTime()), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
                 Timestamp timestampAfter = Timestamp.valueOf(after);
-                Query countQ = session.createQuery("Select sum (t.distance) from TrackRate t WHERE t.timestamp > "+String.valueOf(timestampBefore.getTime()/1000)+" AND  t.timestamp < "+String.valueOf(timestampAfter.getTime()/1000)+" AND t.track.car.id = "+((Car) tmp).getId());
-                Long lonk = (Long)countQ.getSingleResult();
+                Query countQ = session.createQuery("Select sum (t.distance) from TrackRate t WHERE t.timestamp > " + timestampBefore.getTime() / 1000 + " AND  t.timestamp < " + timestampAfter.getTime() / 1000 + " AND t.track.car.id = " + ((Car) tmp).getId());
+                Long lonk = (Long) countQ.getSingleResult();
                 jsonObject.put("distance", String.valueOf(lonk == null ? 0 : lonk));
-                Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.active = true AND t.car.id = "+((Car) tmp).getId());
+                Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.active = true AND t.car.id = " + ((Car) tmp).getId());
                 List<Track> tracks = selectQuery.list();
-                if (tracks.size()>0) {
+                if (tracks.size() > 0) {
                     jsonObject.put("status", "Aktywny");
                 } else {
                     jsonObject.put("status", "Nieaktywny");
@@ -134,9 +135,10 @@ public class DevicesService {
 
     /**
      * WebMethod which returns a list of devices
-     * <P>
-     * @param request  Object of HttpServletRequest represents our request.
-     * @param regex    Part of name or surname we want to display.
+     * <p>
+     *
+     * @param request Object of HttpServletRequest represents our request.
+     * @param regex   Part of name or surname we want to display.
      * @return HttpStatus 200 Returns the contents of the page that contains a list of devices in the JSON format.
      */
     public ResponseEntity<String> listDevicesNames(HttpServletRequest request, String regex) {
@@ -171,7 +173,7 @@ public class DevicesService {
         for (Object tmp : cars) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id", ((Car) tmp).getId());
-            jsonObject.put("name", ((Car) tmp).getBrand()+" "+((Car) tmp).getModel()+" ("+((Car) tmp).getLicensePlate()+")");
+            jsonObject.put("name", ((Car) tmp).getBrand() + " " + ((Car) tmp).getModel() + " (" + ((Car) tmp).getLicensePlate() + ")");
             jsonObject.put("image", ((Car) tmp).getImage());
             jsonArray.put(jsonObject);
         }
@@ -182,7 +184,8 @@ public class DevicesService {
     /**
      * WebMethod which create device with given body and save it into database
      * <p>
-     * @param request Object of HttpServletRequest represents our request
+     *
+     * @param request    Object of HttpServletRequest represents our request
      * @param httpEntity Object of httpEntity
      * @return HttpStatus 201
      */
@@ -199,7 +202,7 @@ public class DevicesService {
         try {
             JSONObject inJSON = new JSONObject(httpEntity.getBody());
 
-            Car car = new Car();
+            Car car = new CarBuilder().createCar();
             try {
                 car.setLicensePlate(inJSON.getString("licensePlate"));
                 car.setBrand(inJSON.getString("brand"));
@@ -227,11 +230,11 @@ public class DevicesService {
             car.setLocationInterval(set2.getValue());
             session.save(car);
             tx.commit();
-            logger.log(Level.INFO,"Device id: " + car.getId() + " licence plate: " + car.getLicensePlate() + " | successfully saved to database.");
+            logger.log(Level.INFO, "Device id: " + car.getId() + " licence plate: " + car.getLicensePlate() + " | successfully saved to database.");
             responseEntity = ResponseEntity.status(HttpStatus.CREATED).body("");
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();//TODO
-            logger.log(Level.ERROR,"Hibernate Exception: " + e.toString());
+            logger.log(Level.ERROR, "Hibernate Exception: " + e);
             e.printStackTrace();
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
         } finally {
@@ -243,13 +246,13 @@ public class DevicesService {
     /**
      * WebMethod which get device with given id
      * <p>
-     * @param request Object of HttpServletRequest represents our request
+     *
+     * @param request    Object of HttpServletRequest represents our request
      * @param httpEntity Object of httpEntity
-     * @param id the id of the device
+     * @param id         the id of the device
      * @return HttpStatus 200, Json String representing device data
      */
-    public ResponseEntity getDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, int id)
-    {
+    public ResponseEntity getDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, int id) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("DevicesRest.getDeviceData cannot send data (session not found)");
@@ -281,8 +284,7 @@ public class DevicesService {
             try {
                 jsonObject.put("timeFrom", "---");
                 jsonObject.put("timeTo", "---");
-            }
-            catch (NullPointerException nullPointerException) {
+            } catch (NullPointerException nullPointerException) {
                 jsonObject.put("timeFrom", "---");
                 jsonObject.put("timeTo", "---");
             }
@@ -300,14 +302,14 @@ public class DevicesService {
 
     /**
      * WebMethod which change device data with given body
-     * <P>
-     * @param request Object of HttpServletRequest represents our request
+     * <p>
+     *
+     * @param request    Object of HttpServletRequest represents our request
      * @param httpEntity Object of httpEntity
-     * @param carID id of the device that we want to change
+     * @param carID      id of the device that we want to change
      * @return HttpStatus 200
      */
-    public ResponseEntity changeDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, int carID)
-    {
+    public ResponseEntity changeDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, int carID) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("DevicesRest.changeDeviceData cannot change device data (session not found)");
@@ -356,7 +358,7 @@ public class DevicesService {
             session.update(car);
             tx.commit();
             responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
-            logger.log(Level.INFO,"Car data changed (car id=" + carID + ") data changed to " +
+            logger.log(Level.INFO, "Car data changed (car id=" + carID + ") data changed to " +
                     "(licensePlate=" + licensePlate +
                     " brand=" + brand + " model=" + model + " engine=" + engine +
                     "fuelType=" + fuelType + "tank=" + tank + "norm=" + norm + ")");
@@ -373,14 +375,14 @@ public class DevicesService {
 
     /**
      * WebMethod which change device image
-     * <P>
-     * @param request Object of HttpServletRequest represents our request
+     * <p>
+     *
+     * @param request    Object of HttpServletRequest represents our request
      * @param httpEntity Object of httpEntity
-     * @param carID id of the device that we want to change
+     * @param carID      id of the device that we want to change
      * @return HttpStatus 200
      */
-    public ResponseEntity changeDeviceImage(HttpServletRequest request, HttpEntity<String> httpEntity, int carID)
-    {
+    public ResponseEntity changeDeviceImage(HttpServletRequest request, HttpEntity<String> httpEntity, int carID) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("DevicesRest.changeDeviceImage cannot change device image (session not found)");

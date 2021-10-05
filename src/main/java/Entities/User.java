@@ -6,44 +6,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import java.util.Objects;
 
 @Entity
-public class User
-{
+public class User {
     /**
-     * Identification number
-     */
-    @Id
-    @GeneratedValue
-    private int id;
-    /**
-     * User's nickname for login
-     */
-    private String nick;
-    /**
-     * User name
-     */
-    private String name;
-    /**
-     * User surname
-     */
-    private String surname;
-    /**
-     * Hash SHA256 from user password
-     */
-    private String password;
-    /**
-     * RBAC value
-     */
-    private UserPrivileges userPrivileges;
-    /**
-     * Image of user
-     */
-    @Lob
-    private String image;
-    /**
-     *  Phone number of user
+     * Phone number of user
      */
     int phoneNumber;
     /**
@@ -94,9 +61,40 @@ public class User
      * Safety negative samples
      */
     int safetyNegativeSamples;
+    /**
+     * Identification number
+     */
+    @Id
+    @GeneratedValue
+    private int id;
+    /**
+     * User's nickname for login
+     */
+    private String nick;
+    /**
+     * User name
+     */
+    private String name;
+    /**
+     * User surname
+     */
+    private String surname;
+    /**
+     * Hash SHA256 from user password
+     */
+    private String password;
+    /**
+     * RBAC value
+     */
+    private UserPrivileges userPrivileges;
+    /**
+     * Image of user
+     */
+    @Lob
+    private String image;
 
 
-    public User(){
+    public User() {
         super();
         init();
     }
@@ -253,13 +251,11 @@ public class User
         this.image = image;
     }
 
-    public int getPhoneNumber()
-    {
+    public int getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(int phoneNumber)
-    {
+    public void setPhoneNumber(int phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -292,7 +288,7 @@ public class User
     }
 
     public void addTrackToEcoPointScore(Track track) {
-        float o = (float) tracksNumber / (tracksNumber+1);
+        float o = (float) tracksNumber / (tracksNumber + 1);
         float n = 1 - o;
 
         this.ecoPointsAvg = o * this.ecoPointsAvg + n * track.getEcoPoints();

@@ -5,6 +5,7 @@ import Entities.User;
 import Entities.UserPrivileges;
 import HibernatePackage.HibernateRequests;
 import OtherClasses.Initializer;
+import utilities.builders.CarBuilder;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -44,10 +45,10 @@ class DevicesRESTTest {
     private HibernateRequests hibernateRequests;
 
     void populate(List<Car> devices) {
-        devices.add(new Car("ABC123","Ford","Laguna",LocalDate.now(),LocalDate.now(),null,"abc"));
-        devices.add(new Car("BBC123","Ford","Laguna",LocalDate.now(),LocalDate.now(),null,"abc"));
-        devices.add(new Car("ABA123","Skoda","Fabia",LocalDate.now(),LocalDate.now(),null,"abc"));
-        devices.add(new Car("AAA123","Porsche","911",LocalDate.now(),LocalDate.now(),null,"abc"));
+        devices.add(new CarBuilder().setLicensePlate("ABC123").setBrand("Ford").setModel("Laguna").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").createCar());
+        devices.add(new CarBuilder().setLicensePlate("BBC123").setBrand("Ford").setModel("Laguna").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").createCar());
+        devices.add(new CarBuilder().setLicensePlate("ABA123").setBrand("Skoda").setModel("Fabia").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").createCar());
+        devices.add(new CarBuilder().setLicensePlate("AAA123").setBrand("Porsche").setModel("911").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").createCar());
 
         Session session = null;
         Transaction tx = null;

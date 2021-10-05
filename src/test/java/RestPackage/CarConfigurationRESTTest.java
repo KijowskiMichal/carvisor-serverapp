@@ -6,6 +6,7 @@ import Entities.User;
 import Entities.UserPrivileges;
 import HibernatePackage.HibernateRequests;
 import OtherClasses.Initializer;
+import utilities.builders.CarBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -50,7 +51,7 @@ class CarConfigurationRESTTest {
 
             //initialization
 
-            Car car = new Car("fghfdhfdhf", null, null, null, null, null, DigestUtils.sha256Hex("dsgsdg"));
+            Car car = new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).createCar();
             car.setLocationInterval(null);
             car.setSendInterval(null);
             session.save(car);
@@ -130,7 +131,7 @@ class CarConfigurationRESTTest {
 
             //initialization
 
-            Car car = new Car("fghfdhfdhf", null, null, null, null, null, DigestUtils.sha256Hex("dsgsdg"));
+            Car car = new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).createCar();
             car.setLocationInterval(null);
             car.setSendInterval(null);
             session.save(car);
@@ -214,7 +215,7 @@ class CarConfigurationRESTTest {
             User user = new User("fsgfgdfsfhdgfh", null, null, null, UserPrivileges.ADMINISTRATOR, null, 0,"ZXCVA");
             session.save(user);
 
-            Car car = new Car("fghfdhfdhf", null, null, null, null, null, DigestUtils.sha256Hex("dsgsdg"));
+            Car car = new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).createCar();
             session.save(car);
 
             tx.commit();

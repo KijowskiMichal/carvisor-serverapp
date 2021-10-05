@@ -14,24 +14,21 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class HibernateRequests
-{
+public class HibernateRequests {
     SessionFactory sessionFactory;
 
     @Autowired
-    public HibernateRequests(EntityFactory entityFactory)
-    {
+    public HibernateRequests(EntityFactory entityFactory) {
         this.sessionFactory = entityFactory.getFactory();
     }
 
     /**
      * @param objectToLoad It's an object of class from package Entites to be loaded to the database.
      * @return Return true when our request is successfully performed and false if an error occured.
-     *
+     * <p>
      * This method is responsible for process of adding object to our database.
      */
-    public boolean addObject(Object objectToLoad)
-    {
+    public boolean addObject(Object objectToLoad) {
         Session session = getSession();
         Transaction tx = null;
         try {
@@ -41,7 +38,7 @@ public class HibernateRequests
             session.close();
             return true;
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (tx != null) tx.rollback();
             session.close();
             e.printStackTrace();
             return false;
@@ -51,11 +48,10 @@ public class HibernateRequests
     /**
      * @param objectToLoad It's an object of class from package Entites to be loaded to the database.
      * @return Return true when our request is successfully performed and false if an error occured.
-     *
+     * <p>
      * This method is responsible for process of adding object to our database.
      */
-    public boolean addUser(User objectToLoad)
-    {
+    public boolean addUser(User objectToLoad) {
         Session session = getSession();
         Transaction tx = null;
         try {
@@ -65,7 +61,7 @@ public class HibernateRequests
             session.close();
             return true;
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (tx != null) tx.rollback();
             session.close();
             e.printStackTrace();
             return false;
@@ -75,11 +71,10 @@ public class HibernateRequests
     /**
      * @param objectToLoad It's an object of class from package Entites to be loaded to the database.
      * @return Return true when our request is successfully performed and false if an error occured.
-     *
+     * <p>
      * This method is responsible for process of adding object to our database.
      */
-    public boolean addCar(Car objectToLoad)
-    {
+    public boolean addCar(Car objectToLoad) {
         Session session = getSession();
         Transaction tx = null;
         try {
@@ -89,7 +84,7 @@ public class HibernateRequests
             session.close();
             return true;
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (tx != null) tx.rollback();
             session.close();
             e.printStackTrace();
             return false;
@@ -99,11 +94,10 @@ public class HibernateRequests
     /**
      * @param objectToLoad It's an object of class from package Entites to be loaded to the database.
      * @return Return true when our request is successfully performed and false if an error occured.
-     *
+     * <p>
      * This method is responsible for process of adding object to our database.
      */
-    public boolean addTrack(Track objectToLoad)
-    {
+    public boolean addTrack(Track objectToLoad) {
         Session session = getSession();
         Transaction tx = null;
         try {
@@ -113,15 +107,14 @@ public class HibernateRequests
             session.close();
             return true;
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (tx != null) tx.rollback();
             session.close();
             e.printStackTrace();
             return false;
         }
     }
 
-    public boolean addSetting(Setting objectToLoad)
-    {
+    public boolean addSetting(Setting objectToLoad) {
         Session session = getSession();
         Transaction tx = null;
         try {
@@ -131,7 +124,7 @@ public class HibernateRequests
             session.close();
             return true;
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (tx != null) tx.rollback();
             session.close();
             e.printStackTrace();
             return false;
@@ -142,11 +135,10 @@ public class HibernateRequests
      * @param query This is a string containing sql to be executed in the database.
      * @param clazz This is the Entity class we want to receive.
      * @return Returns the list of results.
-     *
+     * <p>
      * This method is responsible for process of getting the specific sql request.
      */
-    public List<Object> getTableContent(String query, Class clazz)
-    {
+    public List<Object> getTableContent(String query, Class clazz) {
         Session session = getSession();
         Transaction tx = null;
         try {
@@ -156,7 +148,7 @@ public class HibernateRequests
             session.close();
             return list;
         } catch (HibernateException e) {
-            if (tx!=null) tx.rollback();
+            if (tx != null) tx.rollback();
             session.close();
             e.printStackTrace();
             return null;

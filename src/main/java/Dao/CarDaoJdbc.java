@@ -1,9 +1,7 @@
 package Dao;
 
 import Entities.Car;
-import Entities.Setting;
 import HibernatePackage.HibernateRequests;
-import OtherClasses.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -18,15 +16,15 @@ import java.util.Optional;
  * Class for operating on Car data from database
  */
 @Repository
-public class CarDaoJdbc extends HibernateDaoJdbc<Car>{
+public class CarDaoJdbc extends HibernateDaoJdbc<Car> {
 
     @Autowired
     public CarDaoJdbc(HibernateRequests hibernateRequests, OtherClasses.Logger logger) {
-        super(hibernateRequests,logger);
+        super(hibernateRequests, logger);
     }
 
     @Override
-    public Optional<Car> get(long id){
+    public Optional<Car> get(long id) {
         Session session = null;
         Transaction tx = null;
         Car car = null;

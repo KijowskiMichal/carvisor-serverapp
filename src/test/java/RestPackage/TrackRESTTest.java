@@ -6,6 +6,7 @@ import Entities.User;
 import Entities.UserPrivileges;
 import HibernatePackage.HibernateRequests;
 import OtherClasses.Initializer;
+import utilities.builders.CarBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -21,12 +22,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import utilities.builders.TrackBuilder;
 
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.util.HashMap;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(TrackREST.class)
@@ -54,7 +54,12 @@ class TrackRESTTest {
             User user = new User("fsgfgdfsfhdgfh", null, null, null, UserPrivileges.ADMINISTRATOR, null, 0,"ZXCFVAA");
             session.save(user);
 
-            Car car = new Car("fghfdhfhddsfgfdhf", null, null, null, null, null, DigestUtils.sha256Hex("dsgsdg"));
+
+            Car car = new CarBuilder()
+                    .setLicensePlate("fghfdhfhddsfgfdhf")
+                    .setPassword(DigestUtils.sha256Hex("dsgsdg"))
+                    .createCar();
+
             session.save(car);
 
             tx.commit();
@@ -109,7 +114,7 @@ class TrackRESTTest {
 
             //initialization
 
-            Car car = new Car("fghfdhfhddsfgfdhf", null, null, null, null, null, DigestUtils.sha256Hex("dsgsdg"));
+            Car car = new CarBuilder().setLicensePlate("fghfdhfhddsfgfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).createCar();
             session.save(car);
 
             tx.commit();
@@ -167,10 +172,10 @@ class TrackRESTTest {
 
             //initialization
 
-            Car car = new Car("fghfdhfhddsfgfdhf", null, null, null, null, null, DigestUtils.sha256Hex("dsgsdg"));
+            Car car = new CarBuilder().setLicensePlate("fghfdhfhddsfgfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).createCar();
             session.save(car);
 
-            Track track = new Track(car, null, 0, true, 43675465, "gsdfggfd");
+            Track track = new TrackBuilder().setCar(car).setUser(null).setNumberOfparameter(0).setPrivateTrack(true).setTimeStamp(43675465).setStartPosiotion("gsdfggfd").build();
             session.save(track);
 
             tx.commit();
@@ -221,10 +226,10 @@ class TrackRESTTest {
 
             //initialization
 
-            Car car = new Car("fghfdhfhddsfgfdhf", null, null, null, null, null, DigestUtils.sha256Hex("dsgsdg"));
+            Car car = new CarBuilder().setLicensePlate("fghfdhfhddsfgfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).createCar();
             session.save(car);
 
-            Track track = new Track(car, null, 0, true, 43675465, "gsdfggfd");
+            Track track = new TrackBuilder().setCar(car).setUser(null).setNumberOfparameter(0).setPrivateTrack(true).setTimeStamp(43675465).setStartPosiotion("gsdfggfd").build();
             session.save(track);
 
             tx.commit();

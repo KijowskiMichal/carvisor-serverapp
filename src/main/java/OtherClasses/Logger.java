@@ -5,14 +5,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class Logger {
-    private org.apache.logging.log4j.Logger LOG;
+    private final org.apache.logging.log4j.Logger LOG;
 
-    public Logger()
-    {
+    public Logger() {
         LOG = LogManager.getLogger();
     }
 
-    public org.apache.logging.log4j.Logger getLOG()  {
+    public org.apache.logging.log4j.Logger getLOG() {
         return LOG;
     }
 }

@@ -3,6 +3,7 @@ package RestPackage;
 import Entities.Car;
 import HibernatePackage.HibernateRequests;
 import OtherClasses.Initializer;
+import utilities.builders.CarBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -25,8 +26,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(CarAuthorizationREST.class)
@@ -57,7 +56,7 @@ class CarAuthorizationRESTTest {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
-            Car car = new Car("fghfdhfdhf", null, null, null, null, null, DigestUtils.sha256Hex("dsgsdg"));
+            Car car = new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).createCar();
             session.save(car);
 
             tx.commit();
@@ -115,7 +114,7 @@ class CarAuthorizationRESTTest {
         try {
             //check with first device logged
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("car", (Object)(new Car("fghfdhfdhf", null, null, null, null, null, null)));
+            sessionattr.put("car", (Object)(new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(null).createCar()));
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status")
                     .sessionAttrs(sessionattr))
@@ -129,7 +128,7 @@ class CarAuthorizationRESTTest {
 
             //check with second device logged
             sessionattr = new HashMap<String, Object>();
-            sessionattr.put("car", (Object)(new Car("ttrutrtt", null, null, null, null, null, null)));
+            sessionattr.put("car", (Object)(new CarBuilder().setLicensePlate("ttrutrtt").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(null).createCar()));
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status")
                     .sessionAttrs(sessionattr))
@@ -162,7 +161,7 @@ class CarAuthorizationRESTTest {
         {
             //check with first device logged
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("car", (Object)(new Car("fghfdhfdhf", null, null, null, null, null, null)));
+            sessionattr.put("car", (Object)(new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(null).createCar()));
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status")
                     .sessionAttrs(sessionattr))
@@ -181,7 +180,7 @@ class CarAuthorizationRESTTest {
 
             //check with second device logged
             sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new Car("fgdfdf", null, null, null, null, null, null)));
+            sessionattr.put("user", (Object)(new CarBuilder().setLicensePlate("fgdfdf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(null).createCar()));
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/logout")
                     .sessionAttrs(sessionattr))

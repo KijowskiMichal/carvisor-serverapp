@@ -1,10 +1,7 @@
 package Dao;
 
-import Entities.Car;
-import Entities.Setting;
 import Entities.Track;
 import HibernatePackage.HibernateRequests;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -19,7 +16,7 @@ import java.util.Optional;
  * Class for operating on Track data from database
  */
 @Repository
-public class TrackDaoJdbc extends HibernateDaoJdbc<Track>{
+public class TrackDaoJdbc extends HibernateDaoJdbc<Track> {
 
     @Autowired
     public TrackDaoJdbc(HibernateRequests hibernateRequests, OtherClasses.Logger logger) {
@@ -28,7 +25,7 @@ public class TrackDaoJdbc extends HibernateDaoJdbc<Track>{
 
 
     @Override
-    public Optional<Track> get(long id){
+    public Optional<Track> get(long id) {
         Session session = null;
         Transaction tx = null;
         Track track = null;

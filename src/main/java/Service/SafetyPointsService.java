@@ -11,7 +11,6 @@ import org.hibernate.query.Query;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,8 +27,7 @@ public class SafetyPointsService {
     Logger logger;
 
     @Autowired
-    public SafetyPointsService(HibernateRequests hibernateRequests, OtherClasses.Logger logger)
-    {
+    public SafetyPointsService(HibernateRequests hibernateRequests, OtherClasses.Logger logger) {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
     }
@@ -37,7 +35,8 @@ public class SafetyPointsService {
 
     /**
      * WebMethod which returns a list of users with safety points data.
-     * <P>
+     * <p>
+     *
      * @param request  Object of HttpServletRequest represents our request.
      * @param page     Page of users list. Parameter associated with pageSize.
      * @param pageSize Number of record we want to get.
@@ -85,12 +84,10 @@ public class SafetyPointsService {
             jsonObject.put("id", ((User) tmp).getId());
             jsonObject.put("name", ((User) tmp).getName());
             jsonObject.put("surname", ((User) tmp).getSurname());
-            if (((User) tmp).getSafetySamples()==0)
-            {
+            if (((User) tmp).getSafetySamples() == 0) {
                 jsonObject.put("rate", 0);
-            }
-            else {
-                jsonObject.put("rate", 5 - ((float)((User) tmp).getSafetyNegativeSamples() / ((User) tmp).getSafetySamples()) * 5);
+            } else {
+                jsonObject.put("rate", 5 - ((float) ((User) tmp).getSafetyNegativeSamples() / ((User) tmp).getSafetySamples()) * 5);
             }
             jsonObject.put("tracks", ((User) tmp).getTracksNumber());
             jsonArray.put(jsonObject);

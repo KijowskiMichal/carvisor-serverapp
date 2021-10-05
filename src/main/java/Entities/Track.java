@@ -10,9 +10,6 @@ import java.util.List;
 @Entity
 public class Track {
 
-    /**
-     * Identification number
-     */
     @Id
     @GeneratedValue
     int id;
@@ -30,7 +27,7 @@ public class Track {
      * Relation with objects represents data from device
      */
     @OneToMany
-    List<TrackRate> listofTrackRates;
+    List<TrackRate> listOfTrackRates;
     /**
      * number of parameter IoT send to server
      */
@@ -38,12 +35,12 @@ public class Track {
     /**
      * switch between company or private track
      */
-    @Type(type="org.hibernate.type.NumericBooleanType")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
     Boolean privateTrack;
     /**
      * boolean represents state of track
      */
-    @Type(type="org.hibernate.type.NumericBooleanType")
+    @Type(type = "org.hibernate.type.NumericBooleanType")
     Boolean active;
     /**
      * Start track position - y and x coordinates separated with ;
@@ -110,7 +107,6 @@ public class Track {
         this.timeStamp = timeStamp;
         this.startPosiotion = startPosiotion;
         this.endPosiotion = "";
-        Date date = new Date();
         this.start = new Date().getTime();
         this.end = 0;
         this.active = true;
@@ -123,7 +119,9 @@ public class Track {
     }
 
 
-    public Track() { super(); }
+    public Track() {
+        super();
+    }
 
     public int getSafetySamples() {
         return safetySamples;
@@ -205,12 +203,12 @@ public class Track {
         this.user = user;
     }
 
-    public List<TrackRate> getListofTrackRates() {
-        return listofTrackRates;
+    public List<TrackRate> getListOfTrackRates() {
+        return listOfTrackRates;
     }
 
-    public void setListofTrackRates(List<TrackRate> listofTrackRates) {
-        this.listofTrackRates = listofTrackRates;
+    public void setListOfTrackRates(List<TrackRate> listOfTrackRates) {
+        this.listOfTrackRates = listOfTrackRates;
     }
 
     public int getNumberOfparameter() {
@@ -225,16 +223,8 @@ public class Track {
         return privateTrack;
     }
 
-    public void setPrivateTrack(Boolean privateTrack) {
-        this.privateTrack = privateTrack;
-    }
-
     public Boolean isActive() {
         return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
     }
 
     public String getStartPosiotion() {
@@ -281,8 +271,16 @@ public class Track {
         return privateTrack;
     }
 
+    public void setPrivateTrack(Boolean privateTrack) {
+        this.privateTrack = privateTrack;
+    }
+
     public Boolean getActive() {
         return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public long getDistance() {
@@ -302,7 +300,7 @@ public class Track {
     }
 
     public void addTrackRate(TrackRate trackRate) {
-        listofTrackRates.add(trackRate);
+        listOfTrackRates.add(trackRate);
         samples++;
     }
 
@@ -310,38 +308,31 @@ public class Track {
         distance += meters;
     }
 
-
     public void calculateEcoPoints() {
         int eco = 10;
-        this.revolutions = listofTrackRates.stream().mapToInt(TrackRate::getRpm).sum() / listofTrackRates.size();
-        this.speed = listofTrackRates.stream().mapToInt(TrackRate::getSpeed).sum() / listofTrackRates.size();
-        this.throttle = listofTrackRates.stream().mapToInt(TrackRate::getThrottle).sum() / listofTrackRates.size();
+        this.revolutions = listOfTrackRates.stream().mapToInt(TrackRate::getRpm).sum() / listOfTrackRates.size();
+        this.speed = listOfTrackRates.stream().mapToInt(TrackRate::getSpeed).sum() / listOfTrackRates.size();
+        this.throttle = listOfTrackRates.stream().mapToInt(TrackRate::getThrottle).sum() / listOfTrackRates.size();
 
         if (speed > 140) {
             eco -= 4;
-        }
-        else if (speed > 120) {
+        } else if (speed > 120) {
             eco -= 2;
-        }
-        else if (speed > 100) {
+        } else if (speed > 100) {
             eco -= 1;
         }
         if (revolutions > 3000) {
             eco -= 4;
-        }
-        else if (revolutions > 2500) {
+        } else if (revolutions > 2500) {
             eco -= 2;
-        }
-        else if (revolutions > 2300) {
+        } else if (revolutions > 2300) {
             eco -= 1;
         }
         if (throttle > 80) {
             eco -= 4;
-        }
-        else if (throttle > 70) {
+        } else if (throttle > 70) {
             eco -= 2;
-        }
-        else if (throttle > 60) {
+        } else if (throttle > 60) {
             eco -= 1;
         }
         this.ecoPoints = (float) (Math.max(eco, 0) / 2.0);

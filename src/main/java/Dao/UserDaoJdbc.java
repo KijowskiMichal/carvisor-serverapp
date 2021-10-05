@@ -1,23 +1,19 @@
 package Dao;
 
-import Entities.Car;
-import Entities.Track;
 import Entities.User;
 import HibernatePackage.HibernateRequests;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class UserDaoJdbc extends HibernateDaoJdbc<User>{
+public class UserDaoJdbc extends HibernateDaoJdbc<User> {
 
     @Autowired
     public UserDaoJdbc(HibernateRequests hibernateRequests, OtherClasses.Logger logger) {
@@ -43,7 +39,7 @@ public class UserDaoJdbc extends HibernateDaoJdbc<User>{
         return user;
     }
 
-    public Optional<User> get(long id){
+    public Optional<User> get(long id) {
         Session session = null;
         Transaction tx = null;
         User user = null;

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import utilities.builders.TrackBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +36,7 @@ class TrackDaoJdbcTest {
     @Test
     void create() {
         TrackDaoJdbc trackDaoJdbc = new TrackDaoJdbc(hibernateRequests, logger);
-        Track track = new Track();
+        Track track = new TrackBuilder().build();
         trackDaoJdbc.save(track);
         Optional<Track> wrappedTrack = trackDaoJdbc.get(track.getId());
         if (wrappedTrack.isEmpty())
@@ -47,7 +48,7 @@ class TrackDaoJdbcTest {
     @Test
     void get() {
         TrackDaoJdbc trackDaoJdbc = new TrackDaoJdbc(hibernateRequests, logger);
-        Track track = new Track();
+        Track track = new TrackBuilder().build();
         trackDaoJdbc.save(track);
         Optional<Track> wrappedTrack = trackDaoJdbc.get(track.getId());
         if (wrappedTrack.isEmpty())
@@ -61,9 +62,9 @@ class TrackDaoJdbcTest {
         TrackDaoJdbc trackDaoJdbc = new TrackDaoJdbc(hibernateRequests, logger);
         List<Track> all = trackDaoJdbc.getAll();
         List<Track> tracks = Arrays.asList(
-                new Track(),
-                new Track(),
-                new Track()
+                new TrackBuilder().build(),
+                new TrackBuilder().build(),
+                new TrackBuilder().build()
         );
         int expectedAmount = all.size() + tracks.size();
         tracks.forEach(trackDaoJdbc::save);
@@ -75,7 +76,7 @@ class TrackDaoJdbcTest {
     @Test
     void delete() {
         TrackDaoJdbc trackDaoJdbc = new TrackDaoJdbc(hibernateRequests, logger);
-        Track track = new Track();
+        Track track = new TrackBuilder().build();
         trackDaoJdbc.save(track);
 
         Optional<Track> wrappedSetting = trackDaoJdbc.get(track.getId());
