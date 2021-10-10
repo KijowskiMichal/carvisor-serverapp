@@ -15,7 +15,6 @@ public class SecurityService {
         request.getSession().getAttribute(userAttribute);
         User user = (User) request.getSession().getAttribute(userAttribute);
         UserPrivileges userPrivileges = user.getUserPrivileges();
-
-        return true;
+        return requiredUserPrivilege.getLevel() <= userPrivileges.getLevel();
     }
 }

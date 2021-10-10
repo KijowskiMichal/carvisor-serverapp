@@ -10,4 +10,8 @@ public enum UserPrivileges {
     UserPrivileges(int level) {
         this.level = level;
     }
+
+    public int getLevel() {
+        return level;
+    }
 }
