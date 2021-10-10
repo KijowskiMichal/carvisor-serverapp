@@ -15,6 +15,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import utilities.jsonparser.UserJsonParser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -116,24 +117,15 @@ public class EcoPointsService {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
         }
-        JSONObject jsonOut = new JSONObject();
-        JSONArray jsonArray = new JSONArray();
-        for (Object tmp : users) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id", ((User) tmp).getId());
-            jsonObject.put("name", ((User) tmp).getName());
-            jsonObject.put("surname", ((User) tmp).getSurname());
-            jsonObject.put("rate", ((User) tmp).getEcoPointsAvg() / 2.0);
-            jsonObject.put("tracks", ((User) tmp).getTracksNumber());
-            jsonObject.put("combustion", ((User) tmp).getCombustionAVG());
-            jsonObject.put("revolutions", ((User) tmp).getRevolutionsAVG());
-            jsonObject.put("speed", ((User) tmp).getSpeedAVG());
-            jsonArray.put(jsonObject);
-        }
 
-        jsonOut.put("page", page);
-        jsonOut.put("pageMax", lastPageNumber);
-        jsonOut.put("listOfUsers", jsonArray);
+        JSONArray jsonArray = new JSONArray();
+        users.forEach(user -> jsonArray.put(UserJsonParser.parse((User) user)));
+
+        JSONObject jsonOut = new JSONObject()
+                .put("page", page)
+                .put("pageMax", lastPageNumber)
+                .put("listOfUsers", jsonArray);
+
         logger.info("UsersREST.list returns list of users (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }

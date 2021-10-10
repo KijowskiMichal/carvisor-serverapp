@@ -21,8 +21,8 @@ public class Car {
     private Integer tank;
     private String fuelType;
     private Double fuelNorm;
-    private LocalDate productionDate;
-    private LocalDate inCompanyDate;
+    private LocalDate productionDate;//todo refactor to year
+    private LocalDate inCompanyDate;//todo remove
     @Lob
     private String image;
     private Integer sendInterval;

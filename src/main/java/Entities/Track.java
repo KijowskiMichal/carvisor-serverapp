@@ -13,35 +13,20 @@ public class Track {
     @Id
     @GeneratedValue
     int id;
-    /**
-     * car associated with this track
-     */
     @ManyToOne
     Car car;
-    /**
-     * user associated with this track
-     */
     @ManyToOne
     User user;
-    /**
-     * Relation with objects represents data from device
-     */
     @OneToMany
     List<TrackRate> listOfTrackRates;
     /**
      * number of parameter IoT send to server
      */
     int numberOfparameter;
-    /**
-     * switch between company or private track
-     */
     @Type(type = "org.hibernate.type.NumericBooleanType")
     Boolean privateTrack;
-    /**
-     * boolean represents state of track
-     */
     @Type(type = "org.hibernate.type.NumericBooleanType")
-    Boolean active;
+    Boolean isActive;
     /**
      * Start track position - y and x coordinates separated with ;
      */
@@ -54,46 +39,26 @@ public class Track {
      * timeStamp of last update
      */
     long timeStamp;
-    /**
-     * timeStamp of start
-     */
-    long start;
-    /**
-     * timeStamp of end
-     */
-    long end;
-    /**
-     * meters since start
-     */
-    long distance;
-    /**
-     * eco points for track;
-     */
-    float ecoPoints;
-    /**
-     * amount of samples
-     */
-    int samples;
+    long startTrackTimeStamp;
+    long endTrackTimeStamp;
+    long distanceFromStart;
+    float ecoPointsScore;
+    int amountOfSamples;
     /**
      * combustion
      */
     double combustion;
-    /**
-     * speed of vehicle
-     */
-    int speed;
-    /**
-     * revolutions per minute
-     */
-    long revolutions;
+    int averageSpeed;
+    long averageRevolutionsPerMinute;
     /**
      * throttle
      */
-    long throttle;
+    //TODO change name to something smarter - average throttle "preasure", this should be byte?
+    long averageThrottle;
     /**
      * Safety samples
      */
-    int safetySamples;
+    int amountOfSafetySamples;
     /**
      * Safety negative samples
      */
@@ -107,15 +72,15 @@ public class Track {
         this.timeStamp = timeStamp;
         this.startPosiotion = startPosiotion;
         this.endPosiotion = "";
-        this.start = new Date().getTime();
-        this.end = 0;
-        this.active = true;
-        this.distance = 0;
-        this.samples = 0;
-        this.ecoPoints = 0;
+        this.startTrackTimeStamp = new Date().getTime();
+        this.endTrackTimeStamp = 0;
+        this.isActive = true;
+        this.distanceFromStart = 0;
+        this.amountOfSamples = 0;
+        this.ecoPointsScore = 0;
         this.combustion = 0;
-        this.speed = 0;
-        this.revolutions = 0;
+        this.averageSpeed = 0;
+        this.averageRevolutionsPerMinute = 0;
     }
 
 
@@ -123,12 +88,12 @@ public class Track {
         super();
     }
 
-    public int getSafetySamples() {
-        return safetySamples;
+    public int getAmountOfSafetySamples() {
+        return amountOfSafetySamples;
     }
 
-    public void setSafetySamples(int safetySamples) {
-        this.safetySamples = safetySamples;
+    public void setAmountOfSafetySamples(int amountOfSafetySamples) {
+        this.amountOfSafetySamples = amountOfSafetySamples;
     }
 
     public int getSafetyNegativeSamples() {
@@ -139,12 +104,12 @@ public class Track {
         this.safetyNegativeSamples = safetyNegativeSamples;
     }
 
-    public long getThrottle() {
-        return throttle;
+    public long getAverageThrottle() {
+        return averageThrottle;
     }
 
-    public void setThrottle(long throttle) {
-        this.throttle = throttle;
+    public void setAverageThrottle(long averageThrottle) {
+        this.averageThrottle = averageThrottle;
     }
 
     public double getCombustion() {
@@ -155,28 +120,28 @@ public class Track {
         this.combustion = combustion;
     }
 
-    public int getSpeed() {
-        return speed;
+    public int getAverageSpeed() {
+        return averageSpeed;
     }
 
-    public void setSpeed(int speed) {
-        this.speed = speed;
+    public void setAverageSpeed(int averageSpeed) {
+        this.averageSpeed = averageSpeed;
     }
 
-    public long getRevolutions() {
-        return revolutions;
+    public long getAverageRevolutionsPerMinute() {
+        return averageRevolutionsPerMinute;
     }
 
-    public void setRevolutions(long revolutions) {
-        this.revolutions = revolutions;
+    public void setAverageRevolutionsPerMinute(long averageRevolutionsPerMinute) {
+        this.averageRevolutionsPerMinute = averageRevolutionsPerMinute;
     }
 
-    public int getSamples() {
-        return samples;
+    public int getAmountOfSamples() {
+        return amountOfSamples;
     }
 
-    public void setSamples(int samples) {
-        this.samples = samples;
+    public void setAmountOfSamples(int amountOfSamples) {
+        this.amountOfSamples = amountOfSamples;
     }
 
     public int getId() {
@@ -224,7 +189,7 @@ public class Track {
     }
 
     public Boolean isActive() {
-        return active;
+        return isActive;
     }
 
     public String getStartPosiotion() {
@@ -251,20 +216,20 @@ public class Track {
         this.timeStamp = timeStamp;
     }
 
-    public long getStart() {
-        return start;
+    public long getStartTrackTimeStamp() {
+        return startTrackTimeStamp;
     }
 
-    public void setStart(long start) {
-        this.start = start;
+    public void setStartTrackTimeStamp(long startTrackTimeStamp) {
+        this.startTrackTimeStamp = startTrackTimeStamp;
     }
 
-    public long getEnd() {
-        return end;
+    public long getEndTrackTimeStamp() {
+        return endTrackTimeStamp;
     }
 
-    public void setEnd(long end) {
-        this.end = end;
+    public void setEndTrackTimeStamp(long endTrackTimeStamp) {
+        this.endTrackTimeStamp = endTrackTimeStamp;
     }
 
     public Boolean getPrivateTrack() {
@@ -275,66 +240,36 @@ public class Track {
         this.privateTrack = privateTrack;
     }
 
-    public Boolean getActive() {
-        return active;
+    public Boolean getIsActive() {
+        return isActive;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 
-    public long getDistance() {
-        return distance;
+    public long getDistanceFromStart() {
+        return distanceFromStart;
     }
 
-    public void setDistance(long distance) {
-        this.distance = distance;
+    public void setDistanceFromStart(long distanceFromStart) {
+        this.distanceFromStart = distanceFromStart;
     }
 
-    public float getEcoPoints() {
-        return ecoPoints;
+    public float getEcoPointsScore() {
+        return ecoPointsScore;
     }
 
-    public void setEcoPoints(float ecoPoints) {
-        this.ecoPoints = ecoPoints;
+    public void setEcoPointsScore(float ecoPointsScore) {
+        this.ecoPointsScore = ecoPointsScore;
     }
 
     public void addTrackRate(TrackRate trackRate) {
         listOfTrackRates.add(trackRate);
-        samples++;
+        amountOfSamples++;
     }
 
     public void addMetersToDistance(long meters) {
-        distance += meters;
-    }
-
-    public void calculateEcoPoints() {
-        int eco = 10;
-        this.revolutions = listOfTrackRates.stream().mapToInt(TrackRate::getRpm).sum() / listOfTrackRates.size();
-        this.speed = listOfTrackRates.stream().mapToInt(TrackRate::getSpeed).sum() / listOfTrackRates.size();
-        this.throttle = listOfTrackRates.stream().mapToInt(TrackRate::getThrottle).sum() / listOfTrackRates.size();
-
-        if (speed > 140) {
-            eco -= 4;
-        } else if (speed > 120) {
-            eco -= 2;
-        } else if (speed > 100) {
-            eco -= 1;
-        }
-        if (revolutions > 3000) {
-            eco -= 4;
-        } else if (revolutions > 2500) {
-            eco -= 2;
-        } else if (revolutions > 2300) {
-            eco -= 1;
-        }
-        if (throttle > 80) {
-            eco -= 4;
-        } else if (throttle > 70) {
-            eco -= 2;
-        } else if (throttle > 60) {
-            eco -= 1;
-        }
-        this.ecoPoints = (float) (Math.max(eco, 0) / 2.0);
+        distanceFromStart += meters;
     }
 }

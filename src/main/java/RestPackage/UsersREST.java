@@ -60,4 +60,6 @@ public class UsersREST {
     public ResponseEntity addUser(HttpServletRequest request, HttpEntity<String> httpEntity) {
         return userService.addUser(request, httpEntity);
     }
+
+    //TODO remove user
 }

@@ -46,6 +46,7 @@ public class HibernateRequests {
     }
 
     /**
+     *
      * @param objectToLoad It's an object of class from package Entites to be loaded to the database.
      * @return Return true when our request is successfully performed and false if an error occured.
      * <p>

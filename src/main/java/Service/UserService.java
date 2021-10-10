@@ -20,6 +20,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import utilities.builders.UserBuilder;
+import utilities.jsonparser.UserJsonParser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -34,6 +36,7 @@ import java.util.*;
  */
 @Service
 public class UserService {
+
 
     HibernateRequests hibernateRequests;
     Logger logger;
@@ -107,7 +110,7 @@ public class UserService {
                 if (tracks.size() > 0) {
                     jsonObject.put("status", "Aktywny");
                     SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-                    Date date = new Date(tracks.get(0).getStart() * 1000);
+                    Date date = new Date(tracks.get(0).getStartTrackTimeStamp() * 1000);
                     jsonObject.put("startTime", format.format(date));
                     jsonObject.put("finishTime", "------");
                     jsonObject.put("licensePlate", tracks.get(0).getCar().getLicensePlate());
@@ -117,7 +120,7 @@ public class UserService {
                     tracks = selectQuery.list();
                     if (tracks.size() > 0) {
                         SimpleDateFormat format = new SimpleDateFormat("dd.MM.yy HH:mm");
-                        Date date = new Date(tracks.get(0).getEnd() * 1000);
+                        Date date = new Date(tracks.get(0).getEndTrackTimeStamp() * 1000);
                         jsonObject.put("finishTime", format.format(date));
                     } else jsonObject.put("finishTime", "------");
                     jsonObject.put("status", "Nieaktywny");
@@ -309,7 +312,7 @@ public class UserService {
     /**
      * WebMethod that change user data for user with given Id.
      * <p>
-     *
+     * @Deprecated use xyz
      * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200.
@@ -456,7 +459,7 @@ public class UserService {
     /**
      * WebMethod that create user with given json.
      * <p>
-     *
+     * @deprecated use "add" instead
      * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200.
@@ -477,7 +480,7 @@ public class UserService {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
             JSONObject jsonObject = new JSONObject(httpEntity.getBody());
-            User user = new User();
+            User user = new UserBuilder().build();
             user.setName(jsonObject.getString("name"));
             user.setSurname(jsonObject.getString("surname"));
             user.setNick(jsonObject.getString("nick"));
@@ -519,20 +522,7 @@ public class UserService {
         }
 
         //creating User from json
-        JSONObject jsonObject = new JSONObject(httpEntity.getBody());
-        User user = new User();
-        user.setName(jsonObject.getString("name"));
-        user.setSurname(jsonObject.getString("surname"));
-        user.setNick(jsonObject.getString("nick"));
-        user.setPassword(DigestUtils.sha256Hex(jsonObject.getString("password")));
-        user.setPhoneNumber(jsonObject.getInt("phoneNumber"));
-        String image;
-        try {
-            image = jsonObject.getString("image");
-        } catch (JSONException jsonException) {
-            image = null;
-        }
-        user.setImage(image);
+        User user = UserJsonParser.parseFromRegistrationFrom(new JSONObject(httpEntity.getBody()));
 
         if (userDaoJdbc.save(user).isPresent()) {
             return ResponseEntity.status(HttpStatus.CREATED).body("");

@@ -22,6 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import utilities.builders.UserBuilder;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -45,10 +46,10 @@ class DevicesRESTTest {
     private HibernateRequests hibernateRequests;
 
     void populate(List<Car> devices) {
-        devices.add(new CarBuilder().setLicensePlate("ABC123").setBrand("Ford").setModel("Laguna").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").createCar());
-        devices.add(new CarBuilder().setLicensePlate("BBC123").setBrand("Ford").setModel("Laguna").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").createCar());
-        devices.add(new CarBuilder().setLicensePlate("ABA123").setBrand("Skoda").setModel("Fabia").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").createCar());
-        devices.add(new CarBuilder().setLicensePlate("AAA123").setBrand("Porsche").setModel("911").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").createCar());
+        devices.add(new CarBuilder().setLicensePlate("ABC123").setBrand("Ford").setModel("Laguna").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").build());
+        devices.add(new CarBuilder().setLicensePlate("BBC123").setBrand("Ford").setModel("Laguna").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").build());
+        devices.add(new CarBuilder().setLicensePlate("ABA123").setBrand("Skoda").setModel("Fabia").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").build());
+        devices.add(new CarBuilder().setLicensePlate("AAA123").setBrand("Porsche").setModel("911").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").build());
 
         Session session = null;
         Transaction tx = null;
@@ -74,7 +75,7 @@ class DevicesRESTTest {
         populate(devices);
 
         //auth
-        User user = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
+        User user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
         HashMap<String, Object> sessionattr = new HashMap<String, Object>();
         sessionattr.put("user",user);
 
@@ -98,7 +99,7 @@ class DevicesRESTTest {
         populate(devices);
 
         //auth
-        User user = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
+        User user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
         HashMap<String, Object> sessionattr = new HashMap<String, Object>();
         sessionattr.put("user",user);
 
@@ -132,7 +133,7 @@ class DevicesRESTTest {
         populate(devices);
 
         //auth
-        User user = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
+        User user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
         HashMap<String, Object> sessionattr = new HashMap<String, Object>();
         sessionattr.put("user",user);
 
@@ -191,7 +192,7 @@ class DevicesRESTTest {
             tx = session.beginTransaction();
 
 
-            user = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
+            user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
             sessionattr.put("user",user);
 

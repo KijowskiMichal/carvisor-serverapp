@@ -7,11 +7,11 @@ import Entities.User;
 import java.util.Date;
 
 public class TrackBuilder {
-    private Car car;
-    private User user;
-    private int numberOfparameter;
-    private Boolean privateTrack;
-    private long timeStamp;
+    private Car car = null;
+    private User user = null;
+    private int numberOfparameter = 0;
+    private Boolean privateTrack = false;
+    private long timeStamp = 0;
     private String startPosiotion;
     //def values
     private final long start = new Date().getTime();
@@ -63,14 +63,14 @@ public class TrackBuilder {
         track.setTimeStamp(this.timeStamp);
         track.setStartPosiotion(this.startPosiotion);
 
-        track.setDistance(this.distance);
-        track.setActive(this.active);
-        track.setSamples(this.samples);
-        track.setEcoPoints(this.ecoPoints);
+        track.setDistanceFromStart(this.distance);
+        track.setIsActive(this.active);
+        track.setAmountOfSamples(this.samples);
+        track.setEcoPointsScore(this.ecoPoints);
         track.setCombustion(this.combustion);
-        track.setSpeed(this.speed);
-        track.setRevolutions(this.revolutions);
-        track.setStart(this.start);
+        track.setAverageSpeed(this.speed);
+        track.setAverageRevolutionsPerMinute(this.revolutions);
+        track.setStartTrackTimeStamp(this.start);
 
         return track;
     }

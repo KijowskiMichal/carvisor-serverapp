@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import utilities.builders.UserBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +37,7 @@ class UserDaoJdbcTest {
     @Test
     void create() {
         UserDaoJdbc userDaoJdbc = new UserDaoJdbc(hibernateRequests, logger);
-        User user = new User();
+        User user = new UserBuilder().build();
         userDaoJdbc.save(user);
         Optional<User> wrappedUser = userDaoJdbc.get(user.getId());
         if (wrappedUser.isEmpty())
@@ -48,7 +49,7 @@ class UserDaoJdbcTest {
     @Test
     void get() {
         UserDaoJdbc userDaoJdbc = new UserDaoJdbc(hibernateRequests, logger);
-        User user = new User();
+        User user = new UserBuilder().build();
         userDaoJdbc.save(user);
 
         Optional<User> user1 = userDaoJdbc.get(user.getId());
@@ -63,9 +64,9 @@ class UserDaoJdbcTest {
         UserDaoJdbc userDaoJdbc = new UserDaoJdbc(hibernateRequests, logger);
         List<User> all = userDaoJdbc.getAll();
         List<User> users = Arrays.asList(
-                new User(),
-                new User(),
-                new User()
+                new UserBuilder().build(),
+                new UserBuilder().build(),
+                new UserBuilder().build()
         );
         int expectedCarsAmount = all.size() + users.size();
         users.forEach(userDaoJdbc::save);
@@ -77,7 +78,7 @@ class UserDaoJdbcTest {
     @Test
     void delete() {
         UserDaoJdbc userDaoJdbc = new UserDaoJdbc(hibernateRequests, logger);
-        User user = new User();
+        User user = new UserBuilder().build();
         userDaoJdbc.save(user);
 
         Optional<User> wrappedUser = userDaoJdbc.get(user.getId());

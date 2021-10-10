@@ -24,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import utilities.builders.UserBuilder;
 
 import javax.transaction.Transactional;
 import java.util.HashMap;
@@ -51,12 +52,12 @@ class CarConfigurationRESTTest {
 
             //initialization
 
-            Car car = new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).createCar();
+            Car car = new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).build();
             car.setLocationInterval(null);
             car.setSendInterval(null);
             session.save(car);
 
-            User user = new User("fsgfgdfsfhdgfh", null, null, null, UserPrivileges.ADMINISTRATOR, null, 0,"ZXCVA");
+            User user = new UserBuilder().setNick("fsgfgdfsfhdgfh").setName(null).setSurname(null).setPassword(null).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("ZXCVA").build();
             session.save(user);
 
             tx.commit();
@@ -131,7 +132,11 @@ class CarConfigurationRESTTest {
 
             //initialization
 
-            Car car = new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).createCar();
+            Car car = new CarBuilder()
+                    .setLicensePlate("fghfdhfdhf")
+                    .setPassword(DigestUtils.sha256Hex("dsgsdg"))
+                    .build();
+
             car.setLocationInterval(null);
             car.setSendInterval(null);
             session.save(car);
@@ -212,10 +217,10 @@ class CarConfigurationRESTTest {
 
             //initialization
 
-            User user = new User("fsgfgdfsfhdgfh", null, null, null, UserPrivileges.ADMINISTRATOR, null, 0,"ZXCVA");
+            User user = new UserBuilder().setNick("fsgfgdfsfhdgfh").setName(null).setSurname(null).setPassword(null).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("ZXCVA").build();
             session.save(user);
 
-            Car car = new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).createCar();
+            Car car = new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).build();
             session.save(car);
 
             tx.commit();
@@ -279,7 +284,7 @@ class CarConfigurationRESTTest {
 
             //initialization
 
-            User user = new User("fsgfgdfsfhdgfh", null, null, null, UserPrivileges.ADMINISTRATOR, null, 0,"ZXCVA");
+            User user = new UserBuilder().setNick("fsgfgdfsfhdgfh").setName(null).setSurname(null).setPassword(null).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("ZXCVA").build();
             session.save(user);
 
             tx.commit();
@@ -344,7 +349,7 @@ class CarConfigurationRESTTest {
 
             //initialization
 
-            User user = new User("fsgfgdfsfhdgfh", null, null, null, UserPrivileges.ADMINISTRATOR, null, 0,"ZXCVA");
+            User user = new UserBuilder().setNick("fsgfgdfsfhdgfh").setName(null).setSurname(null).setPassword(null).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("ZXCVA").build();
             session.save(user);
 
             tx.commit();

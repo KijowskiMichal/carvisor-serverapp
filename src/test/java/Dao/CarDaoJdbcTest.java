@@ -43,7 +43,7 @@ public class CarDaoJdbcTest {
                 .setBrand("Skoda")
                 .setModel("Fabia")
                 .setPassword(DigestUtils.sha256Hex("ABCD"))
-                .createCar();
+                .build();
         carDaoJdbc.save(car1);
 
         Optional<Car> wrappedCar2 = carDaoJdbc.get(car1.getId());
@@ -60,13 +60,13 @@ public class CarDaoJdbcTest {
         CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
         List<Car> all = carDaoJdbc.getAll();
         List<Car> cars = Arrays.asList(
-                new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("ABCD")).createCar(),
-                new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("ABCD")).createCar(),
-                new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("ABCD")).createCar()
+                new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setPassword(DigestUtils.sha256Hex("ABCD")).build(),
+                new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setPassword(DigestUtils.sha256Hex("ABCD")).build(),
+                new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setPassword(DigestUtils.sha256Hex("ABCD")).build()
         );
+
         int expectedCarsAmount = all.size() + cars.size();
         cars.forEach(carDaoJdbc::save);
-
         int actualSize = carDaoJdbc.getAll().size();
         Assertions.assertEquals(expectedCarsAmount, actualSize);
     }
@@ -74,7 +74,13 @@ public class CarDaoJdbcTest {
     @Test
     void delete() {
         CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
-        Car car1 = new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("ABCD")).createCar();
+        Car car1 = new CarBuilder()
+                .setLicensePlate("ABCD")
+                .setBrand("Skoda")
+                .setModel("Fabia")
+                .setPassword(DigestUtils.sha256Hex("ABCD"))
+                .build();
+
         carDaoJdbc.save(car1);
 
         Optional<Car> wrappedCar2 = carDaoJdbc.get(car1.getId());

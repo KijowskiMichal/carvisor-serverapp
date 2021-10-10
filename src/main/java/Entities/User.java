@@ -9,13 +9,7 @@ import javax.persistence.Lob;
 
 @Entity
 public class User {
-    /**
-     * Phone number of user
-     */
     int phoneNumber;
-    /**
-     * NFC tag
-     */
     String nfcTag;
     /**
      * Eco Point
@@ -49,9 +43,6 @@ public class User {
      * Number of samples
      */
     int samplesNumber;
-    /**
-     * throttle
-     */
     int throttle;
     /**
      * Safety samples
@@ -61,23 +52,12 @@ public class User {
      * Safety negative samples
      */
     int safetyNegativeSamples;
-    /**
-     * Identification number
-     */
+
     @Id
     @GeneratedValue
     private int id;
-    /**
-     * User's nickname for login
-     */
     private String nick;
-    /**
-     * User name
-     */
     private String name;
-    /**
-     * User surname
-     */
     private String surname;
     /**
      * Hash SHA256 from user password
@@ -87,9 +67,6 @@ public class User {
      * RBAC value
      */
     private UserPrivileges userPrivileges;
-    /**
-     * Image of user
-     */
     @Lob
     private String image;
 
@@ -291,11 +268,11 @@ public class User {
         float o = (float) tracksNumber / (tracksNumber + 1);
         float n = 1 - o;
 
-        this.ecoPointsAvg = o * this.ecoPointsAvg + n * track.getEcoPoints();
-        this.revolutionsAVG = (int) (o * this.revolutionsAVG + n * track.getRevolutions());
-        this.speedAVG = (int) (o * this.speedAVG + n * track.getSpeed());
-        this.throttle = (int) (o * this.throttle + n * track.getThrottle());
-        this.distanceTravelled += track.distance;
+        this.ecoPointsAvg = o * this.ecoPointsAvg + n * track.getEcoPointsScore();
+        this.revolutionsAVG = (int) (o * this.revolutionsAVG + n * track.getAverageRevolutionsPerMinute());
+        this.speedAVG = (int) (o * this.speedAVG + n * track.getAverageSpeed());
+        this.throttle = (int) (o * this.throttle + n * track.getAverageThrottle());
+        this.distanceTravelled += track.distanceFromStart;
     }
 
     @Override
@@ -308,6 +285,7 @@ public class User {
                 '}';
     }
 
+    @Deprecated
     public String asJson() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("image", image);

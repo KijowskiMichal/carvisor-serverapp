@@ -74,11 +74,13 @@ public class AuthorizationService {
     public ResponseEntity<String> status(HttpServletRequest request) {
         JSONObject outJSON = new JSONObject();
         if (request.getSession().getAttribute("user") == null) {
-            outJSON.put("logged", false);
+            outJSON
+                    .put("logged", false);
         } else {
-            outJSON.put("logged", true);
-            outJSON.put("nickname", ((User) request.getSession().getAttribute("user")).getNick());
-            outJSON.put("rbac", ((User) request.getSession().getAttribute("user")).getUserPrivileges());
+            outJSON
+                    .put("logged", true)
+                    .put("nickname", ((User) request.getSession().getAttribute("user")).getNick())
+                    .put("rbac", ((User) request.getSession().getAttribute("user")).getUserPrivileges());
         }
         return ResponseEntity.status(HttpStatus.OK).body(outJSON.toString());
     }

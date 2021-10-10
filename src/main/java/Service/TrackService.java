@@ -16,6 +16,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import utilities.EcoPointsCalculator;
 import utilities.builders.TrackBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -92,10 +93,10 @@ public class TrackService {
             Track track = new TrackBuilder().build();
             track.setUser(user);
             track.setCar(car);
-            track.setActive(true);
+            track.setIsActive(true);
             track.setPrivateTrack(isPrivateTrack);
             track.setTimeStamp(startTime);
-            track.setStart(startTime);
+            track.setStartTrackTimeStamp(startTime);
             track.setStartPosiotion(gpsLatitude + ";" + gpsLongitude);
             track.setEndPosiotion(gpsLatitude + ";" + gpsLongitude);
             track.setListOfTrackRates(new ArrayList<>());
@@ -198,7 +199,7 @@ public class TrackService {
                                 added = (int) (Math.floor(speed - speedLimit) * 0.2);
                                 track.setSafetyNegativeSamples(track.getSafetyNegativeSamples() + added);
                             }
-                            track.setSafetySamples(track.getSafetySamples() + added);
+                            track.setAmountOfSafetySamples(track.getAmountOfSafetySamples() + added);
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -209,7 +210,7 @@ public class TrackService {
                     trackRate = new TrackRate(track, speed, throttle, latitude, longitude, rpm, distance, keyTimestamp);
                     session.save(trackRate);
                     track.addTrackRate(trackRate);
-                    track.calculateEcoPoints();
+                    EcoPointsCalculator.calculateEcoPoints(track);
                 }
                 track.setTimeStamp(trackRate.getTimestamp());
                 session.update(track);
@@ -312,12 +313,12 @@ public class TrackService {
                 if (track.getTimeStamp() < (time - 15)) {
                     track.getUser().addTrackToEcoPointScore(track);
                     track.getUser().setTracksNumber(track.getUser().getTracksNumber() + 1);
-                    track.getUser().setDistanceTravelled(track.getUser().getDistanceTravelled() + track.getDistance());
-                    track.getUser().setSamples(track.getUser().getSamples() + track.getSamples());
+                    track.getUser().setDistanceTravelled(track.getUser().getDistanceTravelled() + track.getDistanceFromStart());
+                    track.getUser().setSamples(track.getUser().getSamples() + track.getAmountOfSamples());
                     track.getUser().setSafetyNegativeSamples(track.getUser().getSafetyNegativeSamples() + track.getSafetyNegativeSamples());
-                    track.getUser().setSafetySamples(track.getUser().getSafetySamples() + track.getSafetySamples());
-                    track.setActive(false);
-                    track.setEnd(time - 8);
+                    track.getUser().setSafetySamples(track.getUser().getSafetySamples() + track.getAmountOfSafetySamples());
+                    track.setIsActive(false);
+                    track.setEndTrackTimeStamp(time - 8);
                     track.getUser().addTrackToEcoPointScore(track);
                     session.update(track);
                 }
@@ -411,14 +412,14 @@ public class TrackService {
             for (Track t : trackList) {
                 JSONObject jo = new JSONObject();
                 jo.put("trackId", t.getId());
-                jo.put("distance", t.getDistance());
+                jo.put("distance", t.getDistanceFromStart());
                 jo.put("carId", t.getCar().getId());
-                jo.put("startedTime", t.getStart());
-                jo.put("endedTime", t.getEnd());
+                jo.put("startedTime", t.getStartTrackTimeStamp());
+                jo.put("endedTime", t.getEndTrackTimeStamp());
                 jo.put("startLocation", t.getStartPosiotion()); //TODO API Reverse Geocoding
                 jo.put("endLocation", t.getEndPosiotion()); //TODO API Reverse Geocoding
                 jo.put("privateStatus", t.getPrivateTrack());
-                jo.put("activeStatus", t.getActive());
+                jo.put("activeStatus", t.getIsActive());
                 jsonArray.put(jo);
             }
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonArray.toString());
@@ -693,11 +694,11 @@ public class TrackService {
         Session session = null;
         Transaction tx = null;
 
-        user.addDistanceTravelled(track.getDistance());
-        double percentOfNewDistance = (double) track.getDistance() / (double) user.getDistanceTravelled();
+        user.addDistanceTravelled(track.getDistanceFromStart());
+        double percentOfNewDistance = (double) track.getDistanceFromStart() / (double) user.getDistanceTravelled();
 
         user.setEcoPointsAvg((float)
-                (percentOfNewDistance * track.getEcoPoints() +
+                (percentOfNewDistance * track.getEcoPointsScore() +
                         (1 - percentOfNewDistance) * user.getEcoPointsAvg()));
         try {
             session = hibernateRequests.getSession();
@@ -727,7 +728,7 @@ public class TrackService {
 
             //TODO CalculateEcoPoints
             Random random = new Random();
-            track.setEcoPoints(random.nextInt(10));
+            track.setEcoPointsScore(random.nextInt(10));
             session.update(track);
             tx.commit();
         } catch (HibernateException e) {
@@ -799,9 +800,9 @@ public class TrackService {
             jsonObject.put("id", ((Track) tmp).getId());
             jsonObject.put("from", ((Track) tmp).getStartPosiotion());
             jsonObject.put("to", ((Track) tmp).getEndPosiotion());
-            jsonObject.put("start", ((Track) tmp).getStart());
-            jsonObject.put("end", ((Track) tmp).getEnd());
-            jsonObject.put("distance", ((Track) tmp).getDistance());
+            jsonObject.put("start", ((Track) tmp).getStartTrackTimeStamp());
+            jsonObject.put("end", ((Track) tmp).getEndTrackTimeStamp());
+            jsonObject.put("distance", ((Track) tmp).getDistanceFromStart());
             jsonArray.put(jsonObject);
         }
 

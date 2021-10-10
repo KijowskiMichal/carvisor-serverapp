@@ -80,10 +80,11 @@ public class SafetyPointsService {
         JSONObject jsonOut = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         for (Object tmp : users) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id", ((User) tmp).getId());
-            jsonObject.put("name", ((User) tmp).getName());
-            jsonObject.put("surname", ((User) tmp).getSurname());
+            JSONObject jsonObject = new JSONObject()
+                    .put("id", ((User) tmp).getId())
+                    .put("name", ((User) tmp).getName())
+                    .put("surname", ((User) tmp).getSurname());
+
             if (((User) tmp).getSafetySamples() == 0) {
                 jsonObject.put("rate", 0);
             } else {

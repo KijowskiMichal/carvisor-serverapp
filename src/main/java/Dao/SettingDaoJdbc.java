@@ -25,11 +25,9 @@ public class SettingDaoJdbc extends HibernateDaoJdbc<Setting> {
 
     @Override
     public Optional<Setting> get(long id) {
-        Session session = null;
         Transaction tx = null;
         Setting setting = null;
-        try {
-            session = hibernateRequests.getSession();
+        try (Session session = hibernateRequests.getSession()) {
             tx = session.beginTransaction();
             Query query = session.createQuery("SELECT s FROM Setting s WHERE s.id=" + id);
             setting = (Setting) query.getResultList().stream().findFirst().orElse(null);
@@ -37,19 +35,15 @@ public class SettingDaoJdbc extends HibernateDaoJdbc<Setting> {
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
         }
         return Optional.ofNullable(setting);
     }
 
     @Override
     public List<Setting> getAll() {
-        Session session = null;
         Transaction tx = null;
         List<Setting> settings = null;
-        try {
-            session = hibernateRequests.getSession();
+        try (Session session = hibernateRequests.getSession()) {
             tx = session.beginTransaction();
             Query query = session.createQuery("SELECT s FROM Setting s");
             settings = query.getResultList();
@@ -57,8 +51,6 @@ public class SettingDaoJdbc extends HibernateDaoJdbc<Setting> {
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
         }
         return settings;
     }

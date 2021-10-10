@@ -6,20 +6,12 @@ import javax.persistence.*;
 
 @Entity
 public class TrackRate {
-    /**
-     * Identification number
-     */
+
     @Id
     @GeneratedValue
     int id;
-    /**
-     * Track associated with this rate
-     */
     @ManyToOne
     Track track;
-    /**
-     * Car speed
-     */
     @Column(nullable = true)
     Short speed;
     /**
@@ -27,14 +19,8 @@ public class TrackRate {
      */
     @Column(nullable = true)
     Byte throttle;
-    /**
-     * gps latitude
-     */
     @Column(nullable = true)
     Double latitude;
-    /**
-     * gps longitude
-     */
     @Column(nullable = true)
     Double longitude;
     /**
@@ -135,19 +121,5 @@ public class TrackRate {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
-    }
-
-    /**
-     * @return data of track rate as Json String.
-     */
-    public String getContent() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("Speed", speed);
-        jsonObject.put("Throttle Pos", throttle);
-        jsonObject.put("gps_longitude", longitude);
-        jsonObject.put("gps_latitude", latitude);
-        jsonObject.put("RPM", rpm);
-        jsonObject.put("time", timestamp);
-        return jsonObject.toString();
     }
 }

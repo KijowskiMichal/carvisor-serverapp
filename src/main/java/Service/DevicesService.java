@@ -18,6 +18,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import utilities.jsonparser.CarJsonParser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -91,12 +92,7 @@ public class DevicesService {
         JSONObject jsonOut = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         for (Object tmp : devices) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id", ((Car) tmp).getId());
-            jsonObject.put("licensePlate", ((Car) tmp).getLicensePlate());
-            jsonObject.put("brand", ((Car) tmp).getBrand());
-            jsonObject.put("model", ((Car) tmp).getModel());
-            jsonObject.put("image", ((Car) tmp).getImage());
+            JSONObject jsonObject = CarJsonParser.parseBasic((Car) tmp);
             try {
                 session = hibernateRequests.getSession();
                 tx = session.beginTransaction();
@@ -126,9 +122,10 @@ public class DevicesService {
             jsonArray.put(jsonObject);
         }
 
-        jsonOut.put("page", page);
-        jsonOut.put("pageMax", lastPageNumber);
-        jsonOut.put("listOfDevices", jsonArray);
+        jsonOut.put("page", page)
+                .put("pageMax", lastPageNumber)
+                .put("listOfDevices", jsonArray);
+
         logger.info("DevicesREST.list returns list of devices (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
@@ -202,20 +199,21 @@ public class DevicesService {
         try {
             JSONObject inJSON = new JSONObject(httpEntity.getBody());
 
-            Car car = new CarBuilder().createCar();
+            CarBuilder carBuilder = new CarBuilder();
             try {
-                car.setLicensePlate(inJSON.getString("licensePlate"));
-                car.setBrand(inJSON.getString("brand"));
-                car.setModel(inJSON.getString("model"));
-                car.setEngine(inJSON.getString("engine"));
-                car.setFuelType(inJSON.getString("fuel"));
-                car.setTank(Integer.parseInt(inJSON.getString("tank")));
-                car.setFuelNorm(Double.parseDouble(inJSON.getString("norm")));
-                car.setPassword(DigestUtils.sha256Hex(String.valueOf(inJSON.get("password"))));
+                carBuilder
+                        .setLicensePlate(inJSON.getString("licensePlate"))
+                        .setBrand(inJSON.getString("brand"))
+                        .setModel(inJSON.getString("model"))
+                        .setEngine(inJSON.getString("engine"))
+                        .setFuelType(inJSON.getString("fuel"))
+                        .setFuelNorm(Double.parseDouble(inJSON.getString("norm")))
+                        .setTank(Integer.parseInt(inJSON.getString("tank")))
+                        .setPassword(DigestUtils.sha256Hex(String.valueOf(inJSON.get("password"))));
             } catch (JSONException jsonException) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad body");
             }
-
+            Car car = carBuilder.build();
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
@@ -271,22 +269,26 @@ public class DevicesService {
             Query query = session.createQuery(getQuery);
             Car car = (Car) query.getSingleResult();
             tx.commit();
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("image", car.getImage());
-            jsonObject.put("licensePlate", car.getLicensePlate());
-            jsonObject.put("brand", car.getBrand());
-            jsonObject.put("model", car.getModel());
-            jsonObject.put("engine", car.getEngine());
-            jsonObject.put("fuel", car.getFuelType());
-            jsonObject.put("tank", car.getTank());
-            jsonObject.put("norm", car.getFuelNorm());
+            JSONObject jsonObject = new JSONObject()
+                    .put("image", car.getImage())
+                    .put("licensePlate", car.getLicensePlate())
+                    .put("brand", car.getBrand())
+                    .put("model", car.getModel())
+                    .put("engine", car.getEngine())
+                    .put("fuel", car.getFuelType())
+                    .put("tank", car.getTank())
+                    .put("norm", car.getFuelNorm())
+                    .put("a","a"); //todo
+
 
             try {
-                jsonObject.put("timeFrom", "---");
-                jsonObject.put("timeTo", "---");
+                jsonObject
+                        .put("timeFrom", "---")
+                        .put("timeTo", "---");
             } catch (NullPointerException nullPointerException) {
-                jsonObject.put("timeFrom", "---");
-                jsonObject.put("timeTo", "---");
+                jsonObject
+                        .put("timeFrom", "---")
+                        .put("timeTo", "---");
             }
             jsonObject.put("yearOfProduction", car.getProductionDate());
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
@@ -395,17 +397,13 @@ public class DevicesService {
 
         try {
             JSONObject inJSON = new JSONObject(httpEntity.getBody());
-            String image;
-            try {
-                image = inJSON.getString("image");
-            } catch (JSONException jsonException) {
+            if (!inJSON.has("image")) {
                 responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
                 return responseEntity;
             }
-
+            String image = inJSON.getString("image");
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-
             String getQuery = "SELECT c FROM Car c WHERE c.id like " + carID;
             Query query = session.createQuery(getQuery);
             Car car = (Car) query.getSingleResult();

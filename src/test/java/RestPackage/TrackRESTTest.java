@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import utilities.builders.TrackBuilder;
+import utilities.builders.UserBuilder;
 
 import javax.persistence.Query;
 import javax.transaction.Transactional;
@@ -51,14 +52,14 @@ class TrackRESTTest {
 
             //initialization
 
-            User user = new User("fsgfgdfsfhdgfh", null, null, null, UserPrivileges.ADMINISTRATOR, null, 0,"ZXCFVAA");
+            User user = new UserBuilder().setNick("fsgfgdfsfhdgfh").setName(null).setSurname(null).setPassword(null).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("ZXCFVAA").build();
             session.save(user);
 
 
             Car car = new CarBuilder()
                     .setLicensePlate("fghfdhfhddsfgfdhf")
                     .setPassword(DigestUtils.sha256Hex("dsgsdg"))
-                    .createCar();
+                    .build();
 
             session.save(car);
 
@@ -113,8 +114,10 @@ class TrackRESTTest {
             tx = session.beginTransaction();
 
             //initialization
-
-            Car car = new CarBuilder().setLicensePlate("fghfdhfhddsfgfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).createCar();
+            Car car = new CarBuilder()
+                    .setLicensePlate("AAB")
+                    .setPassword(DigestUtils.sha256Hex("password"))
+                    .build();
             session.save(car);
 
             tx.commit();
@@ -171,11 +174,16 @@ class TrackRESTTest {
             tx = session.beginTransaction();
 
             //initialization
-
-            Car car = new CarBuilder().setLicensePlate("fghfdhfhddsfgfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).createCar();
+            Car car = new CarBuilder().setLicensePlate("fghfdhfhddsfgfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).build();
             session.save(car);
 
-            Track track = new TrackBuilder().setCar(car).setUser(null).setNumberOfparameter(0).setPrivateTrack(true).setTimeStamp(43675465).setStartPosiotion("gsdfggfd").build();
+            Track track = new TrackBuilder()
+                    .setCar(car)
+                    .setNumberOfparameter(0)
+                    .setPrivateTrack(true)
+                    .setTimeStamp(43675465)
+                    .setStartPosiotion("gsdfggfd")
+                    .build();
             session.save(track);
 
             tx.commit();
@@ -226,10 +234,16 @@ class TrackRESTTest {
 
             //initialization
 
-            Car car = new CarBuilder().setLicensePlate("fghfdhfhddsfgfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).createCar();
+            Car car = new CarBuilder().setLicensePlate("fghfdhfhddsfgfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).build();
             session.save(car);
 
-            Track track = new TrackBuilder().setCar(car).setUser(null).setNumberOfparameter(0).setPrivateTrack(true).setTimeStamp(43675465).setStartPosiotion("gsdfggfd").build();
+            Track track = new TrackBuilder()
+                    .setCar(car)
+                    .setNumberOfparameter(0)
+                    .setPrivateTrack(true)
+                    .setTimeStamp(43675465)
+                    .setStartPosiotion("gsdfggfd")
+                    .build();
             session.save(track);
 
             tx.commit();
@@ -238,7 +252,6 @@ class TrackRESTTest {
             tx = session.beginTransaction();
 
             //starting
-
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/track/endOfTrack/"))
                     .andReturn();
 
@@ -250,7 +263,7 @@ class TrackRESTTest {
 
             track = (Track) session.createQuery("SELECT t from Track t WHERE t.id = "+track.getId()).getSingleResult();
             Assert.assertTrue(result.getResponse().getStatus()==200);
-            Assert.assertTrue(track.getActive()==false);
+            Assert.assertTrue(!track.getIsActive());
             //finishing
             tx.commit();
             session.close();

@@ -1,7 +1,5 @@
 package RestPackage;
 
-import Dao.UserDaoJdbc;
-import Entities.Car;
 import Entities.User;
 import Entities.UserPrivileges;
 import HibernatePackage.HibernateRequests;
@@ -14,10 +12,6 @@ import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Assert;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import utilities.builders.UserBuilder;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -50,10 +45,10 @@ class UsersRESTTest {
     private Logger logger = new Logger();
 
     void addUsers(List<User> users) {
-        users.add(new User("Timi", "Tom", "Zablocki", "123", UserPrivileges.ADMINISTRATOR, null, 123456789,"AB"));
-        users.add(new User("Ola", "Ola", "Tomczyk", "123", UserPrivileges.ADMINISTRATOR, null, 123456789,"AB"));
-        users.add(new User("Krzys", "Krzysztof", "Zablocki", "123", UserPrivileges.ADMINISTRATOR, null, 123456789,"AB"));
-        users.add(new User("ABC", "Aga", "Talarek", "123", UserPrivileges.ADMINISTRATOR, null, 123456789,"AB"));
+        users.add(new UserBuilder().setNick("Timi").setName("Tom").setSurname("Zablocki").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(123456789).setNfcTag("AB").build());
+        users.add(new UserBuilder().setNick("Ola").setName("Ola").setSurname("Tomczyk").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(123456789).setNfcTag("AB").build());
+        users.add(new UserBuilder().setNick("Krzys").setName("Krzysztof").setSurname("Zablocki").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(123456789).setNfcTag("AB").build());
+        users.add(new UserBuilder().setNick("ABC").setName("Aga").setSurname("Talarek").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(123456789).setNfcTag("AB").build());
         Session session = null;
         Transaction tx = null;
         try {
@@ -84,7 +79,7 @@ class UsersRESTTest {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
-            user = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
+            user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
             sessionattr.put("user",user);
 
@@ -116,7 +111,7 @@ class UsersRESTTest {
         List<User> users = new ArrayList<>();
         addUsers(users);
 
-        User user = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
+        User user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
         HashMap<String, Object> sessionattr = new HashMap<String, Object>();
         sessionattr.put("user",user);
 
@@ -137,7 +132,7 @@ class UsersRESTTest {
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            User user = new User("abcdefg", null, null, "abc", UserPrivileges.ADMINISTRATOR, null, 0,"ZXCFVAA");
+            User user = new UserBuilder().setNick("abcdefg").setName(null).setSurname(null).setPassword("abc").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("ZXCFVAA").build();
             String oldPassword = DigestUtils.sha256Hex("abc");
             session.save(user);
             tx.commit();
@@ -186,7 +181,7 @@ class UsersRESTTest {
         addUsers(users);
 
         //auth
-        User user = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
+        User user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
         HashMap<String, Object> sessionattr = new HashMap<String, Object>();
         sessionattr.put("user",user);
 
@@ -244,7 +239,7 @@ class UsersRESTTest {
             List<User> userList = query.getResultList();
             long userId = userList.get(1).getId();
 
-            user = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
+            user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
             sessionattr.put("user",user);
 
@@ -280,7 +275,7 @@ class UsersRESTTest {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
-            user = new User("Ala", null, null, "123", UserPrivileges.ADMINISTRATOR, null, 0,"AB");
+            user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
             sessionattr.put("user",user);
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/users/addUser")
