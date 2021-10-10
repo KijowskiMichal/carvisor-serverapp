@@ -122,7 +122,7 @@ $('.navPadding').css('padding-top', $('.fixedNav').css("height"));
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>RestPackage.CarAuthorizationREST</li>
+<li>restpackage.CarAuthorizationREST</li>
 </ul>
 </li>
 </ul>
@@ -251,7 +251,7 @@ public&nbsp;org.springframework.http.ResponseEntity&nbsp;authorize&#8203;(javax.
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>Returns 406 (NOT_ACCEPTABLE) when the car does not exist or the password is incorrect. Returns 200 (OK) on successful authentication.
 
- WebMethods which is responsible for authenticate cars. Client send JSON ({licensePlate: <licensePlate>, password: <password>}), this method check this credentials and starting a session if all is ok.</dd>
+ WebMethods which is responsible for authenticate cars. Client send JSON ({licensePlate: </licensePlate>, password: </password>}), this method check this credentials and starting a session if all is ok.</dd>
 </dl>
 </li>
 </ul>
@@ -269,7 +269,7 @@ public&nbsp;org.springframework.http.ResponseEntity&lt;java.lang.String&gt;&nbsp
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>request</code> - Object of HttpServletRequest represents our request;</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>Returns JSON {"logged": true, "licensePlate": <licensePlate>} if user is correctly logged or {"logged": false} if not;
+<dd>Returns JSON {"logged": true, "licensePlate": </licensePlate>} if user is correctly logged or {"logged": false} if not;
 
  WebMethods which returns login status;</dd>
 </dl>
