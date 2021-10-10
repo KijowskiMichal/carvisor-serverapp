@@ -1,7 +1,6 @@
 package utilities.jsonparser;
 
-import Entities.Car;
-import Entities.User;
+import entities.Car;
 import org.json.JSONObject;
 
 public class CarJsonParser {

@@ -1,9 +1,7 @@
 package utilities.builders;
 
-import Entities.User;
-import Entities.UserPrivileges;
-
-import javax.transaction.UserTransaction;
+import entities.User;
+import entities.UserPrivileges;
 
 public class UserBuilder {
     private String nick;

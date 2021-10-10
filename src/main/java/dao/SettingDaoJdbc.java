@@ -1,0 +1,75 @@
+package dao;
+
+import entities.Setting;
+import hibernatepackage.HibernateRequests;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+/**
+ * Class for operating on Setting data from database
+ */
+@Repository
+public class SettingDaoJdbc extends HibernateDaoJdbc<Setting> {
+
+    @Autowired
+    public SettingDaoJdbc(HibernateRequests hibernateRequests, otherclasses.Logger logger) {
+        super(hibernateRequests, logger);
+    }
+
+    @Override
+    public Optional<Setting> get(long id) {
+        Transaction tx = null;
+        Setting setting = null;
+        try (Session session = hibernateRequests.getSession()) {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("SELECT s FROM Setting s WHERE s.id=" + id);
+            setting = (Setting) query.getResultList().stream().findFirst().orElse(null);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+        }
+        return Optional.ofNullable(setting);
+    }
+
+    @Override
+    public List<Setting> getAll() {
+        Transaction tx = null;
+        List<Setting> settings = null;
+        try (Session session = hibernateRequests.getSession()) {
+            tx = session.beginTransaction();
+            Query query = session.createQuery("SELECT s FROM Setting s");
+            settings = query.getResultList();
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+        }
+        return settings;
+    }
+
+    @Override
+    public Optional<Setting> delete(long id) {
+        Transaction tx = null;
+        Optional<Setting> setting = Optional.empty();
+        try (Session session = hibernateRequests.getSession()) {
+            tx = session.beginTransaction();
+            setting = get(id);
+            if (setting.isEmpty())
+                throw new HibernateException("");
+            session.delete(setting.get());
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+        }
+        return setting;
+    }
+}

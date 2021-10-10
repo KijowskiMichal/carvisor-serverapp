@@ -1,8 +1,8 @@
 package utilities.builders;
 
-import Entities.Car;
-import Entities.Track;
-import Entities.User;
+import entities.Car;
+import entities.Track;
+import entities.User;
 
 import java.util.Date;
 

@@ -9,10 +9,10 @@
         <property name = "hibernate.connection.username">carvisoru</property>
         <property name = "hibernate.connection.password">EkEyW28W1jXquuC</property>
         <!-- List of XML mapping files -->
-        <mapping class="Entities.User" />
-        <mapping class="Entities.Car" />
-        <mapping class="Entities.Track" />
-        <mapping class="Entities.Setting" />
-        <mapping class="Entities.TrackRate" />
+        <mapping class="entities.User" />
+        <mapping class="entities.Car" />
+        <mapping class="entities.Track" />
+        <mapping class="entities.Setting" />
+        <mapping class="entities.TrackRate" />
     </session-factory>
 </hibernate-configuration>

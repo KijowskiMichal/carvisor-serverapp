@@ -1,7 +1,7 @@
 package utilities;
 
-import Entities.Track;
-import Entities.TrackRate;
+import entities.Track;
+import entities.TrackRate;
 
 import java.util.List;
 

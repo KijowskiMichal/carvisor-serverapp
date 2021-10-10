@@ -1,7 +1,6 @@
 package utilities.jsonparser;
 
-import Entities.User;
-import Service.UserService;
+import entities.User;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONObject;
 import utilities.builders.UserBuilder;
