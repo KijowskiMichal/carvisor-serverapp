@@ -1,10 +1,18 @@
 package restpackage;
 
-import entities.Car;
-import entities.Track;
-import entities.User;
-import entities.UserPrivileges;
+import Utils.RequestBuilder;
+import constants.TrackKey;
+import dao.CarDaoJdbc;
+import dao.SettingDaoJdbc;
+import dao.TrackDaoJdbc;
+import dao.UserDaoJdbc;
+import entities.*;
 import hibernatepackage.HibernateRequests;
+import org.json.JSONObject;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.http.HttpEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import otherclasses.Initializer;
 import utilities.builders.CarBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -28,11 +36,12 @@ import utilities.builders.UserBuilder;
 import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(TrackREST.class)
 @ContextConfiguration(classes = {Initializer.class})
-@Transactional
 class TrackRESTTest {
 
     @Autowired
@@ -41,67 +50,44 @@ class TrackRESTTest {
     @Autowired
     private HibernateRequests hibernateRequests;
 
+    @Autowired
+    private TrackREST trackREST;
+
+    @Autowired
+    UserDaoJdbc userDaoJdbc;
+    @Autowired
+    CarDaoJdbc carDaoJdbc;
+    @Autowired
+    SettingDaoJdbc settingDaoJdbc;
+    @Autowired
+    TrackDaoJdbc trackDaoJdbc;
+
+    @AfterEach
+    void cleanupDatabase() {
+        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
+        carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
+        settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
+        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
+    }
+
+
     @Test
-    void startTrack()
-    {
-        Session session = null;
-        Transaction tx = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
+    void startTrack() {
+        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.STANDARD_USER);
+        Car car = new CarBuilder().build();
+        carDaoJdbc.save(car);
+        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute("car",car);
+        JSONObject jsonObject = new JSONObject()
+                .put(TrackKey.TIME,165000)
+                .put(TrackKey.PRIVATE,false)
+                .put(TrackKey.GPS_LONGITUDE,15.50F)
+                .put(TrackKey.GPS_LATITUDE,26.35F)
+                .put(TrackKey.NFC_TAG,"ABB");
 
-            //initialization
+        trackREST.startTrack(mockHttpServletRequest,new HttpEntity<>(jsonObject.toString()));
+        List<Track> tracks = trackDaoJdbc.getAll();
+        Assertions.assertEquals(1,tracks.size());
 
-            User user = new UserBuilder().setNick("fsgfgdfsfhdgfh").setName(null).setSurname(null).setPassword(null).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("ZXCFVAA").build();
-            session.save(user);
-
-
-            Car car = new CarBuilder()
-                    .setLicensePlate("fghfdhfhddsfgfdhf")
-                    .setPassword(DigestUtils.sha256Hex("dsgsdg"))
-                    .build();
-
-            session.save(car);
-
-            tx.commit();
-            session.close();
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-
-            //starting
-
-            HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("car", car);
-
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/track/start/")
-                    .sessionAttrs(sessionattr)
-                    .content("{\"time\": \"324\",\"private\": true,\"gps_longitude\": \"1.0\",\"gps_latitude\": \"2.0\",\"nfc_tag\": \"ZXCFVAA\"}")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
-                    .andReturn();
-
-            tx.commit();
-            session.close();
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-
-            String getQuery = "SELECT t FROM Track t WHERE t.car like '"+car.getId()+"'";
-            Query queryInner = session.createQuery(getQuery);
-            Track track = (Track) queryInner.getSingleResult();
-
-
-            Assert.assertTrue(result.getResponse().getStatus()==200);
-            //finishing
-            tx.commit();
-            session.close();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
     }
 
     @Test
@@ -174,7 +160,7 @@ class TrackRESTTest {
             tx = session.beginTransaction();
 
             //initialization
-            Car car = new CarBuilder().setLicensePlate("fghfdhfhddsfgfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).build();
+            Car car = new CarBuilder().setLicensePlate("fghfdhfhddsfgfdhf").setPassword(DigestUtils.sha256Hex("dsgsdg")).build();
             session.save(car);
 
             Track track = new TrackBuilder()
@@ -234,7 +220,7 @@ class TrackRESTTest {
 
             //initialization
 
-            Car car = new CarBuilder().setLicensePlate("fghfdhfhddsfgfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).build();
+            Car car = new CarBuilder().setLicensePlate("abc").setPassword(DigestUtils.sha256Hex("abc")).build();
             session.save(car);
 
             Track track = new TrackBuilder()
@@ -275,11 +261,5 @@ class TrackRESTTest {
         } finally {
             if (session != null) session.close();
         }
-    }
-
-    @Test
-    void list()
-    {
-        //todo
     }
 }

@@ -1,17 +1,13 @@
 package entities;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import java.time.LocalDate;
+import javax.persistence.*;
 
 
 @Entity
 public class Car {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private int id;
     private String licensePlate;
     private String password;
@@ -21,8 +17,7 @@ public class Car {
     private Integer tank;
     private String fuelType;
     private Double fuelNorm;
-    private LocalDate productionDate;//todo refactor to year
-    private LocalDate inCompanyDate;//todo remove
+    private Integer productionYear;//todo refactor to year
     @Lob
     private String image;
     private Integer sendInterval;
@@ -30,34 +25,6 @@ public class Car {
 
     public Car() {
         super();
-    }
-
-    public Car(String licensePlate, String brand, String model, LocalDate productionDate, LocalDate inCompanyDate, String image, String password) {
-        this.licensePlate = licensePlate;
-        this.brand = brand;
-        this.model = model;
-        this.productionDate = productionDate;
-        this.inCompanyDate = inCompanyDate;
-        this.image = image;
-        this.password = password;
-    }
-
-    public Car(String licensePlate, String password, String brand, String model, String engine,
-               Integer tank, String fuelType, Double fuelNorm, LocalDate productionDate, LocalDate inCompanyDate,
-               String image, Integer sendInterval, Integer locationInterval) {
-        this.licensePlate = licensePlate;
-        this.password = password;
-        this.brand = brand;
-        this.model = model;
-        this.engine = engine;
-        this.tank = tank;
-        this.fuelType = fuelType;
-        this.fuelNorm = fuelNorm;
-        this.productionDate = productionDate;
-        this.inCompanyDate = inCompanyDate;
-        this.image = image;
-        this.sendInterval = sendInterval;
-        this.locationInterval = locationInterval;
     }
 
     public int getId() {
@@ -92,20 +59,12 @@ public class Car {
         this.model = model;
     }
 
-    public LocalDate getProductionDate() {
-        return productionDate;
+    public Integer getProductionYear() {
+        return productionYear;
     }
 
-    public void setProductionDate(LocalDate productionDate) {
-        this.productionDate = productionDate;
-    }
-
-    public LocalDate getInCompanyDate() {
-        return inCompanyDate;
-    }
-
-    public void setInCompanyDate(LocalDate inCompanyDate) {
-        this.inCompanyDate = inCompanyDate;
+    public void setProductionYear(Integer productionYear) {
+        this.productionYear = productionYear;
     }
 
     public String getImage() {
@@ -136,7 +95,7 @@ public class Car {
         return tank;
     }
 
-    public void setTank(int tank) {
+    public void setTank(Integer tank) {
         this.tank = tank;
     }
 
@@ -152,7 +111,7 @@ public class Car {
         return fuelNorm;
     }
 
-    public void setFuelNorm(double fuelNorm) {
+    public void setFuelNorm(Double fuelNorm) {
         this.fuelNorm = fuelNorm;
     }
 

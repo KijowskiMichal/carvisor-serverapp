@@ -1,5 +1,6 @@
 package service;
 
+import dao.UserDaoJdbc;
 import entities.*;
 import hibernatepackage.HibernateRequests;
 import org.apache.logging.log4j.Level;
@@ -40,8 +41,11 @@ import java.util.*;
 @Service
 public class TrackService {
 
+    private final static String SELECT_ACTIVE_TRACKS = "SELECT t FROM Track t WHERE t.active = true";
     HibernateRequests hibernateRequests;
     Logger logger;
+    @Autowired
+    UserDaoJdbc userDaoJdbc;
 
     @Autowired
     public TrackService(HibernateRequests hibernateRequests, otherclasses.Logger logger) {
@@ -85,6 +89,7 @@ public class TrackService {
             tx = session.beginTransaction();
             Car car = (Car) request.getSession().getAttribute("car");
             //check if car has started track
+            //todo naprawa tego bo wypierdala, nie wiem czemu, tego nie ruszałem :/
             Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.car.id=" + car.getId() + " and t.active=1");
             if (selectQuery.uniqueResult() != null) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Car with id=" + car.getId() + " have started track");
@@ -304,8 +309,7 @@ public class TrackService {
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            String getQuery = "SELECT t FROM Track t WHERE t.active = true";
-            Query query = session.createQuery(getQuery);
+            Query query = session.createQuery(SELECT_ACTIVE_TRACKS);
             List<Track> tracks = query.getResultList();
             Date date = new Date();
             long time = date.getTime() / 1000;
@@ -521,30 +525,35 @@ public class TrackService {
             for (Integer trackID : tracksID) {
                 Query query4 = session.createQuery("Select t from Track t WHERE t.id = " + trackID);
                 Track track = (Track) query4.getSingleResult();
-                int lastID = track.getListOfTrackRates().size() - 1;
-                JSONObject start = new JSONObject();
-                start.put("vehicle", track.getCar().getLicensePlate());
-                start.put("gpsX", track.getListOfTrackRates().get(0).getLatitude());
-                start.put("gpsY", track.getListOfTrackRates().get(0).getLongitude());
-                start.put("rpm", track.getListOfTrackRates().get(0).getRpm());
-                start.put("speed", track.getListOfTrackRates().get(0).getSpeed());
-                start.put("throttle", track.getListOfTrackRates().get(0).getThrottle());
-                start.put("time", track.getListOfTrackRates().get(0).getTimestamp());
+                List<TrackRate> listOfTrackRates = track.getListOfTrackRates();
+                TrackRate firstTrackRate = listOfTrackRates.get(0);
+                TrackRate lastTrackRate = listOfTrackRates.get(listOfTrackRates.size() - 1);
+
+                JSONObject start = new JSONObject()
+                        .put("vehicle", track.getCar().getLicensePlate())
+                        .put("gpsX", firstTrackRate.getLatitude())
+                        .put("gpsY", firstTrackRate.getLongitude())
+                        .put("rpm", firstTrackRate.getRpm())
+                        .put("speed", firstTrackRate.getSpeed())
+                        .put("throttle", firstTrackRate.getThrottle())
+                        .put("time", firstTrackRate.getTimestamp());
                 startPoints.put(start);
-                JSONObject end = new JSONObject();
-                end.put("vehicle", track.getCar().getLicensePlate());
-                end.put("gpsX", track.getListOfTrackRates().get(lastID).getLatitude());
-                end.put("gpsY", track.getListOfTrackRates().get(lastID).getLongitude());
-                end.put("rpm", track.getListOfTrackRates().get(lastID).getRpm());
-                end.put("speed", track.getListOfTrackRates().get(lastID).getSpeed());
-                end.put("throttle", track.getListOfTrackRates().get(lastID).getThrottle());
-                end.put("time", track.getListOfTrackRates().get(lastID).getTimestamp());
+
+                JSONObject end = new JSONObject()
+                        .put("vehicle", track.getCar().getLicensePlate())
+                        .put("gpsX", lastTrackRate.getLatitude())
+                        .put("gpsY", lastTrackRate.getLongitude())
+                        .put("rpm", lastTrackRate.getRpm())
+                        .put("speed", lastTrackRate.getSpeed())
+                        .put("throttle", lastTrackRate.getThrottle())
+                        .put("time", lastTrackRate.getTimestamp());
                 endPoints.put(end);
             }
-            JSONObject output = new JSONObject();
-            output.put("points", points);
-            output.put("startPoints", startPoints);
-            output.put("endPoints", endPoints);
+
+            JSONObject output = new JSONObject()
+                    .put("points", points)
+                    .put("startPoints", startPoints)
+                    .put("endPoints", endPoints);
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(output.toString());
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
@@ -687,56 +696,6 @@ public class TrackService {
         double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(y1)) * Math.cos(Math.toRadians(y2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return (float) (earthRadius * c);
-    }
-
-    //add ecopoints to user from track
-    private void addTrackToEcoPointScore(User user, Track track) {
-        Session session = null;
-        Transaction tx = null;
-
-        user.addDistanceTravelled(track.getDistanceFromStart());
-        double percentOfNewDistance = (double) track.getDistanceFromStart() / (double) user.getDistanceTravelled();
-
-        user.setEcoPointsAvg((float)
-                (percentOfNewDistance * track.getEcoPointsScore() +
-                        (1 - percentOfNewDistance) * user.getEcoPointsAvg()));
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            session.update(user);
-            tx.commit();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (tx != null) tx.rollback();
-        } finally {
-            if (session != null) session.close();
-        }
-    }
-
-
-    private void calculateTrackEcoPoints(Track track) {
-        Session session = null;
-        Transaction tx = null;
-
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-
-            String getQuery = "SELECT t FROM TrackRate t WHERE t.track.id = " + track.getId();
-            Query query = session.createQuery(getQuery);
-            List<TrackRate> rateList = query.getResultList();
-
-            //TODO CalculateEcoPoints
-            Random random = new Random();
-            track.setEcoPointsScore(random.nextInt(10));
-            session.update(track);
-            tx.commit();
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (tx != null) tx.rollback();
-        } finally {
-            if (session != null) session.close();
-        }
     }
 
     /**

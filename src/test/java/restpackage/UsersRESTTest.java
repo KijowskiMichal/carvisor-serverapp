@@ -1,10 +1,19 @@
 package restpackage;
 
-import entities.User;
-import entities.UserPrivileges;
+import Utils.DatabaseCleaner;
+import Utils.RequestBuilder;
+import constants.UserKey;
+import dao.CarDaoJdbc;
+import dao.SettingDaoJdbc;
+import dao.TrackDaoJdbc;
+import dao.UserDaoJdbc;
+import entities.*;
 import hibernatepackage.HibernateRequests;
+import org.junit.jupiter.api.AfterEach;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import otherclasses.Initializer;
-import otherclasses.Logger;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -22,52 +31,57 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import otherclasses.Logger;
+import service.PasswordService;
+import service.UserService;
 import utilities.builders.UserBuilder;
 
-import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import javax.xml.crypto.Data;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(TrackREST.class)
 @ContextConfiguration(classes = {Initializer.class})
-@Transactional
 class UsersRESTTest {
+
+    private final otherclasses.Logger logger = new Logger();
+
 
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     private HibernateRequests hibernateRequests;
-    private Logger logger = new Logger();
+    @Autowired
+    private UsersREST usersREST;
 
-    void addUsers(List<User> users) {
-        users.add(new UserBuilder().setNick("Timi").setName("Tom").setSurname("Zablocki").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(123456789).setNfcTag("AB").build());
-        users.add(new UserBuilder().setNick("Ola").setName("Ola").setSurname("Tomczyk").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(123456789).setNfcTag("AB").build());
-        users.add(new UserBuilder().setNick("Krzys").setName("Krzysztof").setSurname("Zablocki").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(123456789).setNfcTag("AB").build());
-        users.add(new UserBuilder().setNick("ABC").setName("Aga").setSurname("Talarek").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(123456789).setNfcTag("AB").build());
-        Session session = null;
-        Transaction tx = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            for (User u:users) {
-                session.save(u);
-            }
-            tx.commit();
-            session.close();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        }finally {
-            if (session != null) session.close();
-        }
+    @Autowired
+    UserDaoJdbc userDaoJdbc;
+    @Autowired
+    CarDaoJdbc carDaoJdbc;
+    @Autowired
+    SettingDaoJdbc settingDaoJdbc;
+    @Autowired
+    TrackDaoJdbc trackDaoJdbc;
+
+    @AfterEach
+    void cleanupDatabase() {
+        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
+        carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
+        settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
+        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
     }
 
-    @Test
+    void addUsers(List<User> users) {
+        users.add(new UserBuilder().setNick("Timi").setName("Tom").setSurname("Zablocki").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(123456789).setNfcTag("ABC").build());
+        users.add(new UserBuilder().setNick("Ola").setName("Ola").setSurname("Tomczyk").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(123456789).setNfcTag("BBA").build());
+        users.add(new UserBuilder().setNick("Krzys").setName("Krzysztof").setSurname("Zablocki").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(123456789).setNfcTag("CBA").build());
+        users.add(new UserBuilder().setNick("Aga").setName("Agata").setSurname("Talarek").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(123456789).setNfcTag("BCA").build());
+        users.forEach(userDaoJdbc::save);
+    }
+
+    @Test //todo
     void list() {
         List<User> users = new ArrayList<>();
         addUsers(users);
@@ -79,7 +93,7 @@ class UsersRESTTest {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
-            user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
+            user = new UserBuilder().setNick("Ala").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("AB").build();
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
             sessionattr.put("user",user);
 
@@ -111,8 +125,13 @@ class UsersRESTTest {
         List<User> users = new ArrayList<>();
         addUsers(users);
 
-        User user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
-        HashMap<String, Object> sessionattr = new HashMap<String, Object>();
+        User user = new UserBuilder()
+                .setNick("Ala")
+                .setPassword("123")
+                .setUserPrivileges(UserPrivileges.ADMINISTRATOR)
+                .build();
+
+        HashMap<String, Object> sessionattr = new HashMap<>();
         sessionattr.put("user",user);
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/listUserNames/Ala/")
@@ -125,186 +144,129 @@ class UsersRESTTest {
     }
 
     @Test
-    //TODO
     void changePassword() {
-        Session session = null;
-        Transaction tx = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            User user = new UserBuilder().setNick("abcdefg").setName(null).setSurname(null).setPassword("abc").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("ZXCFVAA").build();
-            String oldPassword = DigestUtils.sha256Hex("abc");
-            session.save(user);
-            tx.commit();
-            tx = session.beginTransaction();
+        User user = new UserBuilder()
+                .setName("Tom")
+                .setPassword("MyPassword")
+                .setUserPrivileges(UserPrivileges.STANDARD_USER)
+                .build();
+        userDaoJdbc.save(user);
+        int userId = user.getId();
 
-            HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user",user);
+        JSONObject jsonObject = new JSONObject()
+                .put("firstPassword","string")
+                .put("secondPassword","string");
 
-            //check without changing password
-            Query query = session.createQuery("SELECT u FROM User u WHERE u.nick='" + "abcdefg'");
-            User newUser = (User) query.getSingleResult();
-            assertEquals(
-                    DigestUtils.sha256Hex(user.getPassword()),
-                    DigestUtils.sha256Hex(newUser.getPassword()));
+        HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
+        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute("user",user);
 
-            //change pass
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/users/changePassword")
-                    .sessionAttrs(sessionattr)
-                    .content("{\n" +
-                            "  \"firstPassword\":\"cba\",\n" +
-                            "  \"secondPassword\":\"cba\"\n" +
-                            "}"))
-                    .andReturn();
+        usersREST.changePassword(mockHttpServletRequest,httpEntity);
+        Optional<User> user1 = userDaoJdbc.get(userId);
+        if (user1.isEmpty()) fail();
+        assertEquals(PasswordService.hashPassword("string"),user1.get().getPassword());
+    }
 
-            Query q2 = session.createQuery("SELECT u FROM User u WHERE u.nick='" + "abcdefg'");
-            User newNewUser = (User) q2.getSingleResult();
-            System.out.println(newNewUser.getPassword());
-            session.delete(newUser);
-            tx.commit();
-            assertNotEquals(oldPassword,newNewUser.getPassword());
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
+    @Test
+    void changePasswordById() {
+        User user = new UserBuilder()
+                .setName("Tom")
+                .setPassword("MyPassword")
+                .setUserPrivileges(UserPrivileges.STANDARD_USER)
+                .build();
+        userDaoJdbc.save(user);
+        int userId = user.getId();
 
+        JSONObject jsonObject = new JSONObject()
+            .put("firstPassword","string")
+            .put("secondPassword","string");
+        HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
+        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);
 
+        usersREST.changePasswordById(mockHttpServletRequest,httpEntity, userId);
+        Optional<User> user1 = userDaoJdbc.get(userId);
+        if (user1.isEmpty()) fail();
+        assertEquals(PasswordService.hashPassword("string"),user1.get().getPassword());
     }
 
     @Test
     void changeUserData() {
-        List<User> users = new ArrayList<>();
-        addUsers(users);
+        User user = new UserBuilder()
+                .setName("Tom")
+                .setSurname("Zablocki")
+                .setUserPrivileges(UserPrivileges.ADMINISTRATOR)
+                .setPhoneNumber(123456789)
+                .build();
+        userDaoJdbc.save(user);
+        int userId = user.getId();
 
-        //auth
-        User user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
-        HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-        sessionattr.put("user",user);
+        JSONObject inputUserJson = new JSONObject()
+                .put(UserKey.NAME,"Zbigniew Wodecki")
+                .put(UserKey.PHONE_NUMBER,"112");
 
-        Session session = null;
-        Transaction transaction = null;
-        try {
-            session = hibernateRequests.getSession();
-            transaction = session.beginTransaction();
+        HttpEntity<String> httpEntity = new HttpEntity<>(inputUserJson.toString());
 
-            Query query = session.createQuery("SELECT u FROM User u");
-            List<User> userList = query.getResultList();
-            User oldUser = userList.get(1);
-            long userId = oldUser.getId();
+        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);
+        ResponseEntity<String> stringResponseEntity = usersREST.changeUserData(mockHttpServletRequest, httpEntity, userId);
+        assertEquals(200,stringResponseEntity.getStatusCodeValue());
 
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/users/changeUserData/" + userId + "/")
-                    .sessionAttrs(sessionattr)
-                    .content("{\n" +
-                            "  \"name\": \"string string\",\n" +
-                            "  \"image\": \"string\",\n" +
-                            "  \"telephone\": \"1234566\",\n" +
-                            "  \"userPrivileges\": \"string\"\n" +
-                            "}")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
-                    .andReturn();
-            transaction.commit();
-            session.close();
-
-            session = hibernateRequests.getSession();
-            transaction = session.beginTransaction();
-            Query newQuery = session.createQuery("SELECT u FROM User u WHERE u.id=" + userId);
-            User changedUser = (User) newQuery.getSingleResult();
-            assertNotEquals(oldUser,changedUser);
-            assertEquals(200, result.getResponse().getStatus());
-
-            transaction.commit();
-            session.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail();
-        }
+        Optional<User> wrappedUser = userDaoJdbc.get(userId);
+        if (wrappedUser.isEmpty()) fail();
+        User zxc = wrappedUser.get();
+        assertEquals("Zbigniew",zxc.getName());
+        assertEquals("Wodecki",zxc.getSurname());
+        assertEquals(112,zxc.getPhoneNumber());
     }
 
     @Test
     void getUserData() {
-        List<User> users = new ArrayList<>();
-        addUsers(users);
-        Session session = null;
-        Transaction tx = null;
-        User user = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            Query query = session.createQuery("SELECT u FROM User u");
-            List<User> userList = query.getResultList();
-            long userId = userList.get(1).getId();
+        User user = new UserBuilder()
+                .setNick("Timi")
+                .setName("Tom")
+                .setSurname("Zablocki")
+                .setPassword("123")
+                .setUserPrivileges(UserPrivileges.ADMINISTRATOR)
+                .setPhoneNumber(123456789)
+                .setImage("image")
+                .build();
+        userDaoJdbc.save(user);
+        int userId = user.getId();
 
-            user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
-            HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user",user);
+        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);
+        ResponseEntity<String> userData = usersREST.getUserData(mockHttpServletRequest, null, userId);
 
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/getUserData/"+userId+"/")
-                    .sessionAttrs(sessionattr))
-                    .andReturn();
-            JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            assertEquals("ADMINISTRATOR",jsonObject.getString("userPrivileges"));
-            assertEquals("Ola Tomczyk",jsonObject.getString("name"));
-            assertEquals(123456789,jsonObject.getInt("telephone"));
-            assertEquals(200, result.getResponse().getStatus());
-            tx.commit();
-            session.close();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            if (user != null) session.delete(user);
-            e.printStackTrace();
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            if (user != null) session.delete(user);
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
+        JSONObject jsonObject = new JSONObject(userData.getBody());
+        assertEquals(user.getName() + " " + user.getSurname(),jsonObject.get(UserKey.NAME));
+        assertEquals(user.getPhoneNumber(),jsonObject.get(UserKey.PHONE_NUMBER));
+        assertEquals(user.getImage(),jsonObject.get(UserKey.IMAGE));
+        assertEquals("ADMINISTRATOR",jsonObject.get(UserKey.USER_PRIVILEGES));
     }
 
     @Test
     void addUser() {
-        Session session = null;
-        Transaction tx = null;
-        User user = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
+        JSONObject jsonObject = new JSONObject()
+                .put(UserKey.NAME,"Tomek")
+                .put(UserKey.SURNAME,"Wodecki")
+                .put(UserKey.NICK,"Tomiro")
+                .put(UserKey.PASSWORD,"abcd")
+                .put(UserKey.PHONE_NUMBER,991)
+                .put(UserKey.IMAGE,"my image");
 
-            user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
-            HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user",user);
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/users/addUser")
-                    .sessionAttrs(sessionattr)
-                    .content(" {\n" +
-                            "  \"name\":\"abc\",\n" +
-                            "  \"surname\":\"cba\",\n" +
-                            "  \"nick\":\"cba\",\n" +
-                            "  \"password\":\"cba\",\n" +
-                            "  \"phoneNumber\":123456,\n" +
-                            "  \"image\":\"aaabbb\"\n" +
-                            "}"))
-                    .andReturn();
-            assertEquals(201,result.getResponse().getStatus());
-            Query query1 = session.createQuery("SELECT u FROM User u");
-            List<User> users = query1.getResultList();
-            assertEquals(1,users.size());
-            tx.commit();
-            session.close();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            if (user != null) session.delete(user);
-            e.printStackTrace();
-        } catch (Exception e) {
-            if (tx != null) tx.rollback();
-            if (user != null) session.delete(user);
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
+        HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
+        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);
+
+        usersREST.addUser(mockHttpServletRequest,httpEntity);
+        List<User> all = userDaoJdbc.getAll();
+        assertEquals(1,all.size());
+    }
+
+    @Test
+    void removeUser() {
+        User user = new UserBuilder().setName("Zbigniew").setSurname("Kowalski").setUserPrivileges(UserPrivileges.STANDARD_USER).build();
+        userDaoJdbc.save(user);
+        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);
+
+        usersREST.removeUser(mockHttpServletRequest, null,user.getId());
+        assertEquals(0,userDaoJdbc.getAll().size());
     }
 }

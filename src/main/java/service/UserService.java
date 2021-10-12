@@ -1,5 +1,7 @@
 package service;
 
+import constants.DefaultResponse;
+import constants.UserKey;
 import dao.UserDaoJdbc;
 import entities.Track;
 import entities.User;
@@ -21,7 +23,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import utilities.builders.UserBuilder;
-import utilities.jsonparser.UserJsonParser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -43,7 +44,8 @@ public class UserService {
     UserDaoJdbc userDaoJdbc;
 
     @Autowired
-    public UserService(HibernateRequests hibernateRequests, otherclasses.Logger logger, UserDaoJdbc userDaoJdbc) {
+    public UserService(HibernateRequests hibernateRequests, otherclasses.Logger logger,
+                       UserDaoJdbc userDaoJdbc) {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
         this.userDaoJdbc = userDaoJdbc;
@@ -251,62 +253,23 @@ public class UserService {
      * @return HttpStatus 200, user data as JsonString.
      */
     @Deprecated
-    public ResponseEntity getUserData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID) {
+    public ResponseEntity<String> getUserData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.getUserData cannot send data (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
 
-        Session session = null;
-        Transaction tx = null;
-        ResponseEntity responseEntity;
-
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-
-            String getQuery = "SELECT u FROM User u WHERE u.id like " + userID;
-            Query query = session.createQuery(getQuery);
-            User user = (User) query.getSingleResult();
-            tx.commit();
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("image", user.getImage());
-            jsonObject.put("name", user.getName() + " " + user.getSurname());
-            jsonObject.put("telephone", user.getPhoneNumber());
-            jsonObject.put("userPrivileges", user.getUserPrivileges());
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-        } finally {
-            if (session != null) session.close();
-        }
-
-        return responseEntity;
-    }
-
-    /**
-     * WebMethod that return user data with given Id.
-     * <p>
-     *
-     * @param request Object of HttpServletRequest represents our request.
-     * @return HttpStatus 200, user data as JsonString.
-     */ //TODO TEST
-    public ResponseEntity getUserData(HttpServletRequest request, int userID) {
-        // authorization
-        if (request.getSession().getAttribute("user") == null) {
-            logger.info("UserREST.getUserData cannot send data (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-        }
-
-        User user = userDaoJdbc.get(userID).orElse(null);
-        //checking if user exists
-        if (Objects.equals(user, null))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-
-        return ResponseEntity.status(HttpStatus.OK).body(user.asJson());
+        Optional<User> wrappedUser = userDaoJdbc.get(userID);
+        if (wrappedUser.isEmpty())
+            return DefaultResponse.BAD_REQUEST;
+        User user = wrappedUser.get();
+        JSONObject jsonObject = new JSONObject()
+                .put(UserKey.IMAGE, user.getImage())
+                .put(UserKey.NAME, user.getName() + " " + user.getSurname())
+                .put(UserKey.PHONE_NUMBER, user.getPhoneNumber())
+                .put(UserKey.USER_PRIVILEGES, user.getUserPrivileges());
+        return DefaultResponse.ok(jsonObject.toString());
     }
 
     /**
@@ -337,8 +300,7 @@ public class UserService {
                 name = inJSON.getString("name");
                 telephone = Integer.parseInt(inJSON.getString("telephone"));
             } catch (JSONException jsonException) {
-                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-                return responseEntity;
+                return DefaultResponse.BAD_REQUEST;
             }
 
             session = hibernateRequests.getSession();
@@ -459,77 +421,32 @@ public class UserService {
     /**
      * WebMethod that create user with given json.
      * <p>
-     * @deprecated use "add" instead
      * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200.
      */
-    @Deprecated
-    public ResponseEntity addUser(HttpServletRequest request, HttpEntity<String> httpEntity) {
+    public ResponseEntity<String> addUser(HttpServletRequest request, HttpEntity<String> httpEntity) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.addUser cannot add user (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
 
-        Session session = null;
-        Transaction tx = null;
-        ResponseEntity responseEntity;
-
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            JSONObject jsonObject = new JSONObject(httpEntity.getBody());
-            User user = new UserBuilder().build();
-            user.setName(jsonObject.getString("name"));
-            user.setSurname(jsonObject.getString("surname"));
-            user.setNick(jsonObject.getString("nick"));
-            user.setPassword(DigestUtils.sha256Hex(jsonObject.getString("password")));
-            user.setPhoneNumber(jsonObject.getInt("phoneNumber"));
-            String image;
-            try {
-                image = jsonObject.getString("image");
-            } catch (JSONException jsonException) {
-                image = null;
-            }
-            user.setImage(image);
-            session.save(user);
-            tx.commit();
-            responseEntity = ResponseEntity.status(HttpStatus.CREATED).body("");
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-        } finally {
-            if (session != null) session.close();
+        JSONObject jsonObject = new JSONObject(httpEntity.getBody());
+        UserBuilder userBuilder = new UserBuilder()
+                .setName(jsonObject.getString("name"))
+                .setSurname(jsonObject.getString("surname"))
+                .setNick(jsonObject.getString("nick"))
+                .setPassword(PasswordService.hashPassword(jsonObject.getString(UserKey.PASSWORD)))
+                .setPhoneNumber(jsonObject.getInt(UserKey.PHONE_NUMBER));
+        if (!jsonObject.getString("image").isEmpty()) {
+            userBuilder.setImage(jsonObject.getString("image"));
         }
-        return responseEntity;
+        Optional<User> save = userDaoJdbc.save(userBuilder.build());
+        if (save.isPresent()) return DefaultResponse.OK;
+        else return DefaultResponse.BAD_REQUEST;
     }
 
-    /**
-     * WebMethod that create user with given json.
-     * <p>
-     *
-     * @param request    Object of HttpServletRequest represents our request.
-     * @param httpEntity Object of HttpEntity represents content of our request.
-     * @return HttpStatus 200.
-     */
-    public ResponseEntity add(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        // authorization
-        if (request.getSession().getAttribute("user") == null) {
-            logger.info("UserREST.addUser cannot add user (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-        }
-
-        //creating User from json
-        User user = UserJsonParser.parseFromRegistrationFrom(new JSONObject(httpEntity.getBody()));
-
-        if (userDaoJdbc.save(user).isPresent()) {
-            return ResponseEntity.status(HttpStatus.CREATED).body("");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-        }
-    }
 
     public Optional<User> removeStandardUser(int userID) {
         return userDaoJdbc
@@ -541,5 +458,24 @@ public class UserService {
 
     public Optional<User> removeUser(int userID) {
         return userDaoJdbc.delete(userID);
+    }
+
+    public Optional<User> changeUserPassword(int userID, String oldPassword, String newPassword) {
+        Optional<User> user = userDaoJdbc.get(userID);
+        if (user.isEmpty()) return Optional.empty();
+        User unwrappedUser = user.get();
+        unwrappedUser.setPassword(newPassword);
+        userDaoJdbc.update(unwrappedUser);
+        return user;
+    }
+
+    public Optional<User> changeStandardUserPassword(int userID, String oldPassword, String newPassword) {
+        Optional<User> user = userDaoJdbc
+                .get(userID)
+                .filter(optUser -> UserPrivileges.STANDARD_USER.equals(optUser.getUserPrivileges()));
+        if (user.isEmpty()) return Optional.empty();
+        if (!oldPassword.equals(user.get().getPassword())) return Optional.empty();
+        user.get().setPassword(newPassword);
+        return user;
     }
 }

@@ -1,7 +1,10 @@
 package restpackage;
 
-import entities.User;
-import entities.UserPrivileges;
+import dao.CarDaoJdbc;
+import dao.SettingDaoJdbc;
+import dao.TrackDaoJdbc;
+import dao.UserDaoJdbc;
+import entities.*;
 import hibernatepackage.HibernateRequests;
 import otherclasses.Initializer;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -42,13 +45,23 @@ class AuthorizationRESTTest {
     @Autowired
     private HibernateRequests hibernateRequests;
 
-    @BeforeEach
-    void setUp() {
-    }
+    @Autowired
+    UserDaoJdbc userDaoJdbc;
+    @Autowired
+    CarDaoJdbc carDaoJdbc;
+    @Autowired
+    SettingDaoJdbc settingDaoJdbc;
+    @Autowired
+    TrackDaoJdbc trackDaoJdbc;
 
     @AfterEach
-    void tearDown() {
+    void cleanupDatabase() {
+        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
+        carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
+        settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
+        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
     }
+
 
     @Test
     void authorize()
@@ -59,7 +72,7 @@ class AuthorizationRESTTest {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
-            User user = new UserBuilder().setNick("fsgfgdfsfhdgfh").setName(null).setSurname(null).setPassword(DigestUtils.sha256Hex("dsgdsgdfsg")).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AGAAA").build();
+            User user = new UserBuilder().setNick("fsgfgdfsfhdgfh").setPassword(DigestUtils.sha256Hex("dsgdsgdfsg")).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("AGAAA").build();
             session.save(user);
 
             tx.commit();

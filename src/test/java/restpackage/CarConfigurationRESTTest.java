@@ -1,10 +1,12 @@
 package restpackage;
 
-import entities.Car;
-import entities.Setting;
-import entities.User;
-import entities.UserPrivileges;
+import dao.CarDaoJdbc;
+import dao.SettingDaoJdbc;
+import dao.TrackDaoJdbc;
+import dao.UserDaoJdbc;
+import entities.*;
 import hibernatepackage.HibernateRequests;
+import org.junit.jupiter.api.AfterEach;
 import otherclasses.Initializer;
 import utilities.builders.CarBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -41,6 +43,24 @@ class CarConfigurationRESTTest {
     @Autowired
     private HibernateRequests hibernateRequests;
 
+    @Autowired
+    UserDaoJdbc userDaoJdbc;
+    @Autowired
+    CarDaoJdbc carDaoJdbc;
+    @Autowired
+    SettingDaoJdbc settingDaoJdbc;
+    @Autowired
+    TrackDaoJdbc trackDaoJdbc;
+
+    @AfterEach
+    void cleanupDatabase() {
+        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
+        carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
+        settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
+        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
+    }
+
+
     @Test
     void getConfiguration()
     {
@@ -52,12 +72,12 @@ class CarConfigurationRESTTest {
 
             //initialization
 
-            Car car = new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).build();
+            Car car = new CarBuilder().setLicensePlate("fghfdhfdhf").setPassword(DigestUtils.sha256Hex("dsgsdg")).build();
             car.setLocationInterval(null);
             car.setSendInterval(null);
             session.save(car);
 
-            User user = new UserBuilder().setNick("fsgfgdfsfhdgfh").setName(null).setSurname(null).setPassword(null).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("ZXCVA").build();
+            User user = new UserBuilder().setNick("fsgfgdfsfhdgfh").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("ZXCVA").build();
             session.save(user);
 
             tx.commit();
@@ -217,10 +237,10 @@ class CarConfigurationRESTTest {
 
             //initialization
 
-            User user = new UserBuilder().setNick("fsgfgdfsfhdgfh").setName(null).setSurname(null).setPassword(null).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("ZXCVA").build();
+            User user = new UserBuilder().setNick("fsgfgdfsfhdgfh").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("ZXCVA").build();
             session.save(user);
 
-            Car car = new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).build();
+            Car car = new CarBuilder().setLicensePlate("fghfdhfdhf").setPassword(DigestUtils.sha256Hex("dsgsdg")).build();
             session.save(car);
 
             tx.commit();

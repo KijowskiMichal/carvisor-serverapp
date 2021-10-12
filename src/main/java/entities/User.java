@@ -11,46 +11,16 @@ import javax.persistence.Lob;
 public class User {
     int phoneNumber;
     String nfcTag;
-    /**
-     * Eco Point
-     */
     float ecoPointsAvg;
-    /**
-     * Average combustion
-     */
     float combustionAVG;
-    /**
-     * Average  speed
-     */
     int speedAVG;
-    /**
-     * number of tracks
-     */
     int tracksNumber;
-    /**
-     * Average  revolutions
-     */
     int revolutionsAVG;
-    /**
-     * Distance Travelled;
-     */
     long distanceTravelled;
-    /**
-     * Number of samples
-     */
     int samples;
-    /**
-     * Number of samples
-     */
     int samplesNumber;
     int throttle;
-    /**
-     * Safety samples
-     */
     int safetySamples;
-    /**
-     * Safety negative samples
-     */
     int safetyNegativeSamples;
 
     @Id

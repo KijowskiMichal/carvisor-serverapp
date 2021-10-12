@@ -1,6 +1,13 @@
 package restpackage;
 
+import dao.CarDaoJdbc;
+import dao.SettingDaoJdbc;
+import dao.TrackDaoJdbc;
+import dao.UserDaoJdbc;
 import entities.Car;
+import entities.Setting;
+import entities.Track;
+import entities.User;
 import hibernatepackage.HibernateRequests;
 import otherclasses.Initializer;
 import utilities.builders.CarBuilder;
@@ -39,13 +46,24 @@ class CarAuthorizationRESTTest {
     @Autowired
     private HibernateRequests hibernateRequests;
 
-    @BeforeEach
-    void setUp() {
-    }
+
+    @Autowired
+    UserDaoJdbc userDaoJdbc;
+    @Autowired
+    CarDaoJdbc carDaoJdbc;
+    @Autowired
+    SettingDaoJdbc settingDaoJdbc;
+    @Autowired
+    TrackDaoJdbc trackDaoJdbc;
 
     @AfterEach
-    void tearDown() {
+    void cleanupDatabase() {
+        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
+        carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
+        settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
+        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
     }
+
 
     @Test
     void authorize()
@@ -56,7 +74,7 @@ class CarAuthorizationRESTTest {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
-            Car car = new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(DigestUtils.sha256Hex("dsgsdg")).build();
+            Car car = new CarBuilder().setLicensePlate("fghfdhfdhf").setPassword(DigestUtils.sha256Hex("dsgsdg")).build();
             session.save(car);
 
             tx.commit();
@@ -114,7 +132,7 @@ class CarAuthorizationRESTTest {
         try {
             //check with first device logged
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("car", (Object)(new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(null).build()));
+            sessionattr.put("car", (Object)(new CarBuilder().setLicensePlate("fghfdhfdhf").build()));
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status")
                     .sessionAttrs(sessionattr))
@@ -128,7 +146,7 @@ class CarAuthorizationRESTTest {
 
             //check with second device logged
             sessionattr = new HashMap<String, Object>();
-            sessionattr.put("car", (Object)(new CarBuilder().setLicensePlate("ttrutrtt").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(null).build()));
+            sessionattr.put("car", (Object)(new CarBuilder().setLicensePlate("ttrutrtt").build()));
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status")
                     .sessionAttrs(sessionattr))
@@ -161,7 +179,7 @@ class CarAuthorizationRESTTest {
         {
             //check with first device logged
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("car", (Object)(new CarBuilder().setLicensePlate("fghfdhfdhf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(null).build()));
+            sessionattr.put("car", (Object)(new CarBuilder().setLicensePlate("fghfdhfdhf").build()));
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status")
                     .sessionAttrs(sessionattr))
@@ -180,7 +198,7 @@ class CarAuthorizationRESTTest {
 
             //check with second device logged
             sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new CarBuilder().setLicensePlate("fgdfdf").setBrand(null).setModel(null).setProductionDate(null).setInCompanyDate(null).setImage(null).setPassword(null).build()));
+            sessionattr.put("user", (Object)(new CarBuilder().setLicensePlate("fgdfdf").build()));
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/logout")
                     .sessionAttrs(sessionattr))

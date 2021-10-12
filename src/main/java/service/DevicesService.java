@@ -290,7 +290,7 @@ public class DevicesService {
                         .put("timeFrom", "---")
                         .put("timeTo", "---");
             }
-            jsonObject.put("yearOfProduction", car.getProductionDate());
+            jsonObject.put("yearOfProduction", car.getProductionYear());
             responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();

@@ -1,9 +1,12 @@
 package restpackage;
 
-import entities.Car;
-import entities.User;
-import entities.UserPrivileges;
+import dao.CarDaoJdbc;
+import dao.SettingDaoJdbc;
+import dao.TrackDaoJdbc;
+import dao.UserDaoJdbc;
+import entities.*;
 import hibernatepackage.HibernateRequests;
+import org.junit.jupiter.api.AfterEach;
 import otherclasses.Initializer;
 import utilities.builders.CarBuilder;
 import org.hibernate.HibernateException;
@@ -36,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @RunWith(SpringRunner.class)
 @WebMvcTest(TrackREST.class)
 @ContextConfiguration(classes = {Initializer.class})
-@Transactional
 class DevicesRESTTest {
 
     @Autowired
@@ -45,28 +47,30 @@ class DevicesRESTTest {
     @Autowired
     private HibernateRequests hibernateRequests;
 
-    void populate(List<Car> devices) {
-        devices.add(new CarBuilder().setLicensePlate("ABC123").setBrand("Ford").setModel("Laguna").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").build());
-        devices.add(new CarBuilder().setLicensePlate("BBC123").setBrand("Ford").setModel("Laguna").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").build());
-        devices.add(new CarBuilder().setLicensePlate("ABA123").setBrand("Skoda").setModel("Fabia").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").build());
-        devices.add(new CarBuilder().setLicensePlate("AAA123").setBrand("Porsche").setModel("911").setProductionDate(LocalDate.now()).setInCompanyDate(LocalDate.now()).setImage(null).setPassword("abc").build());
+    @Autowired
+    UserDaoJdbc userDaoJdbc;
+    @Autowired
+    CarDaoJdbc carDaoJdbc;
+    @Autowired
+    SettingDaoJdbc settingDaoJdbc;
+    @Autowired
+    TrackDaoJdbc trackDaoJdbc;
 
-        Session session = null;
-        Transaction tx = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            for (Car c:devices) {
-                session.save(c);
-            }
-            tx.commit();
-            session.close();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        }finally {
-            if (session != null) session.close();
-        }
+    @AfterEach
+    void cleanupDatabase() {
+        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
+        carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
+        settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
+        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
+    }
+
+
+    void populate(List<Car> devices) {
+        devices.add(new CarBuilder().setLicensePlate("ABC123").setBrand("Ford").setModel("Laguna").setProductionDate(1993).setPassword("abc").build());
+        devices.add(new CarBuilder().setLicensePlate("BBC123").setBrand("Ford").setModel("Laguna").setProductionDate(1993).setPassword("abc").build());
+        devices.add(new CarBuilder().setLicensePlate("ABA123").setBrand("Skoda").setModel("Fabia").setProductionDate(1993).setPassword("abc").build());
+        devices.add(new CarBuilder().setLicensePlate("AAA123").setBrand("Porsche").setModel("911").setProductionDate(1993).setPassword("abc").build());
+        devices.forEach(carDaoJdbc::save);
     }
 
     @Test
@@ -75,7 +79,7 @@ class DevicesRESTTest {
         populate(devices);
 
         //auth
-        User user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
+        User user = new UserBuilder().setNick("Ala").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("AB").build();
         HashMap<String, Object> sessionattr = new HashMap<String, Object>();
         sessionattr.put("user",user);
 
@@ -99,7 +103,7 @@ class DevicesRESTTest {
         populate(devices);
 
         //auth
-        User user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
+        User user = new UserBuilder().setNick("Ala").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("AB").build();
         HashMap<String, Object> sessionattr = new HashMap<String, Object>();
         sessionattr.put("user",user);
 
@@ -133,7 +137,7 @@ class DevicesRESTTest {
         populate(devices);
 
         //auth
-        User user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
+        User user = new UserBuilder().setNick("Ala").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("AB").build();
         HashMap<String, Object> sessionattr = new HashMap<String, Object>();
         sessionattr.put("user",user);
 
@@ -192,7 +196,7 @@ class DevicesRESTTest {
             tx = session.beginTransaction();
 
 
-            user = new UserBuilder().setNick("Ala").setName(null).setSurname(null).setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("AB").build();
+            user = new UserBuilder().setNick("Ala").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("AB").build();
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
             sessionattr.put("user",user);
 

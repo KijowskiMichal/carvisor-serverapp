@@ -1,5 +1,8 @@
 package service;
 
+import dao.TrackDaoJdbc;
+import dao.UserDaoJdbc;
+import entities.Track;
 import entities.User;
 import entities.UserPrivileges;
 import hibernatepackage.HibernateRequests;
@@ -26,7 +29,14 @@ import java.util.List;
 public class EcoPointsService {
 
     HibernateRequests hibernateRequests;
+
     Logger logger;
+
+    @Autowired
+    UserDaoJdbc userDaoJdbc;
+
+    @Autowired
+    TrackDaoJdbc trackDaoJdbc;
 
     @Autowired
     public EcoPointsService(HibernateRequests hibernateRequests, otherclasses.Logger logger) {
@@ -128,5 +138,11 @@ public class EcoPointsService {
 
         logger.info("UsersREST.list returns list of users (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
+    }
+
+    //todo
+    public List<Track> listUser(int userId, String dateFrom, String dateTo) {
+        //todo filtrowanie listy Userów i ewentualnie dodanie getUserTracks(userId,dateFrom,dateTo)
+        return trackDaoJdbc.getUserTracks(userId);
     }
 }

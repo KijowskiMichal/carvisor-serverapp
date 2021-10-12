@@ -8,6 +8,7 @@ import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,7 +49,9 @@ public abstract class HibernateDaoJdbc<T> {
 
     public Optional<T> update(T t) {
         Transaction tx = null;
-        try (Session session = hibernateRequests.getSession()) {
+        Session session = null;
+        try {
+            session = hibernateRequests.getSession();
             tx = session.beginTransaction();
             session.update(t);
             tx.commit();
@@ -57,6 +60,16 @@ public abstract class HibernateDaoJdbc<T> {
             e.printStackTrace();
         }
         return Optional.of(t);
+    }
+
+    public Optional<T> getObject(String query) {
+        //todo
+        return Optional.empty();
+    }
+
+    public List<T> getList(String query) {
+        //todo
+        return new ArrayList<>();
     }
 
     public abstract Optional<T> delete(long id);

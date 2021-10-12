@@ -2,14 +2,11 @@ package utilities.builders;
 
 import entities.Car;
 
-import java.time.LocalDate;
-
 public class CarBuilder {
     private String licensePlate = null;
     private String brand = null;
     private String model = null;
-    private LocalDate productionDate = null;
-    private LocalDate inCompanyDate = null;
+    private Integer productionDate = null;
     private String image = null;
     private String password = null;
     private String engine = null;
@@ -34,13 +31,8 @@ public class CarBuilder {
         return this;
     }
 
-    public CarBuilder setProductionDate(LocalDate productionDate) {
+    public CarBuilder setProductionDate(Integer productionDate) {
         this.productionDate = productionDate;
-        return this;
-    }
-
-    public CarBuilder setInCompanyDate(LocalDate inCompanyDate) {
-        this.inCompanyDate = inCompanyDate;
         return this;
     }
 
@@ -95,8 +87,7 @@ public class CarBuilder {
         car.setTank(this.tank);
         car.setFuelType(this.fuelType);
         car.setFuelNorm(this.fuelNorm);
-        car.setProductionDate(this.productionDate);
-        car.setInCompanyDate(this.inCompanyDate);
+        car.setProductionYear(this.productionDate);
         car.setSendInterval(this.sendInterval);
         car.setImage(this.image);
         return car;

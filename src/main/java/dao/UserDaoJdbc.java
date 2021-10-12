@@ -23,18 +23,22 @@ public class UserDaoJdbc extends HibernateDaoJdbc<User> {
 
     @Override
     public Optional<User> delete(long id) {
+        Session session = null;
         Transaction tx = null;
         Optional<User> user = Optional.empty();
-        try (Session session = hibernateRequests.getSession()) {
+        try {
+            session = hibernateRequests.getSession();
             tx = session.beginTransaction();
             user = get(id);
             if (user.isEmpty())
-                throw new HibernateException("");
+                throw new HibernateException("User doesn't exists");
             session.delete(user.get());
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
         }
         return user;
     }
