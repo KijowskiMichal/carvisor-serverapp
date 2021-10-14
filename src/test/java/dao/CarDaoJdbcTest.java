@@ -4,7 +4,7 @@ import entities.Car;
 import hibernatepackage.HibernateRequests;
 import otherclasses.Initializer;
 import otherclasses.Logger;
-import utilities.builders.CarBuilder;
+import entities.builders.CarBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;

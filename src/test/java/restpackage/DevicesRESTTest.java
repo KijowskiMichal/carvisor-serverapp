@@ -1,5 +1,6 @@
 package restpackage;
 
+import Utils.RequestBuilder;
 import dao.CarDaoJdbc;
 import dao.SettingDaoJdbc;
 import dao.TrackDaoJdbc;
@@ -7,8 +8,10 @@ import dao.UserDaoJdbc;
 import entities.*;
 import hibernatepackage.HibernateRequests;
 import org.junit.jupiter.api.AfterEach;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import otherclasses.Initializer;
-import utilities.builders.CarBuilder;
+import entities.builders.CarBuilder;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -25,10 +28,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import utilities.builders.UserBuilder;
+import entities.builders.UserBuilder;
 
-import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +49,8 @@ class DevicesRESTTest {
     private HibernateRequests hibernateRequests;
 
     @Autowired
+    DevicesREST devicesREST;
+    @Autowired
     UserDaoJdbc userDaoJdbc;
     @Autowired
     CarDaoJdbc carDaoJdbc;
@@ -64,7 +67,6 @@ class DevicesRESTTest {
         trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
     }
 
-
     void populate(List<Car> devices) {
         devices.add(new CarBuilder().setLicensePlate("ABC123").setBrand("Ford").setModel("Laguna").setProductionDate(1993).setPassword("abc").build());
         devices.add(new CarBuilder().setLicensePlate("BBC123").setBrand("Ford").setModel("Laguna").setProductionDate(1993).setPassword("abc").build());
@@ -73,31 +75,19 @@ class DevicesRESTTest {
         devices.forEach(carDaoJdbc::save);
     }
 
-    @Test
-    void list()  {
+    @Test //todo
+    void list() {
         List<Car> devices = new ArrayList<>();
         populate(devices);
-
-        //auth
-        User user = new UserBuilder().setNick("Ala").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("AB").build();
-        HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-        sessionattr.put("user",user);
-
-        try {
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/devices/list/1/5/F/")
-                    .sessionAttrs(sessionattr))
-                    .andReturn();
-            JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            JSONArray jsonArray = jsonObject.getJSONArray("listOfDevices");
-            List<Object> list = jsonArray.toList();
-            assertEquals(200, result.getResponse().getStatus());
-            assertEquals(3, list.size());
-        } catch (Exception e) {
-            fail();
-        }
+        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);
+        ResponseEntity<String> result = devicesREST.list(mockHttpServletRequest, 1, 5, "F");
+        JSONObject jsonObject = new JSONObject(result.getBody());
+        JSONArray jsonArray = jsonObject.getJSONArray("listOfDevices");
+        List<Object> list = jsonArray.toList();
+        assertEquals(3, list.size());
     }
 
-    @Test
+    @Test //todo
     void getDeviceData() throws Exception {
         List<Car> devices = new ArrayList<>();
         populate(devices);
@@ -131,7 +121,7 @@ class DevicesRESTTest {
         }
     }
 
-    @Test
+    @Test //todo
     void changeDeviceData() {
         List<Car> devices = new ArrayList<>();
         populate(devices);
@@ -186,7 +176,7 @@ class DevicesRESTTest {
         }
     }
 
-    @Test
+    @Test //todo
     void addDevice() {
         Session session = null;
         Transaction tx = null;

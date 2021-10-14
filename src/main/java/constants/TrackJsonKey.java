@@ -1,6 +1,6 @@
 package constants;
 
-public class TrackKey {
+public class TrackJsonKey {
 
     public static final String TIME = "time";
     public static final String PRIVATE = "private";

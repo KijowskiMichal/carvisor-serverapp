@@ -1,11 +1,17 @@
 package restpackage;
 
+import constants.AuthorizationJsonKey;
+import constants.SessionAttributeKey;
 import dao.CarDaoJdbc;
 import dao.SettingDaoJdbc;
 import dao.TrackDaoJdbc;
 import dao.UserDaoJdbc;
 import entities.*;
 import hibernatepackage.HibernateRequests;
+import org.junit.jupiter.api.Assertions;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import otherclasses.Initializer;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.HibernateException;
@@ -14,7 +20,6 @@ import org.hibernate.Transaction;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,18 +30,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import utilities.builders.UserBuilder;
+import entities.builders.UserBuilder;
+import service.PasswordService;
 
 import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(AuthorizationREST.class)
 @ContextConfiguration(classes = {Initializer.class})
-@Transactional
 class AuthorizationRESTTest {
 
     @Autowired
@@ -45,6 +51,8 @@ class AuthorizationRESTTest {
     @Autowired
     private HibernateRequests hibernateRequests;
 
+    @Autowired
+    AuthorizationREST authorizationREST;
     @Autowired
     UserDaoJdbc userDaoJdbc;
     @Autowired
@@ -64,8 +72,7 @@ class AuthorizationRESTTest {
 
 
     @Test
-    void authorize()
-    {
+    void authorize() {
         Session session = null;
         Transaction tx = null;
         try {
@@ -125,12 +132,29 @@ class AuthorizationRESTTest {
     }
 
     @Test
+    void authorizez() {
+        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+        User user = new UserBuilder().setNick("ala").setName("abc").setPassword(PasswordService.hashPassword("password")).build();
+
+        JSONObject jsonObject = new JSONObject().put(AuthorizationJsonKey.LOGIN,"ala").put(AuthorizationJsonKey.PASSWORD,"password");
+        HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
+
+        ResponseEntity authorize = authorizationREST.authorize(mockHttpServletRequest, httpEntity);
+        Assertions.assertNotEquals(200,authorize.getStatusCodeValue());
+
+        userDaoJdbc.save(user);
+
+        ResponseEntity authorizeSecond = authorizationREST.authorize(mockHttpServletRequest, httpEntity);
+        Assertions.assertEquals(200,authorizeSecond.getStatusCodeValue());
+    }
+
+    @Test
     void status()
     {
         try {
             //check with first user logged
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new UserBuilder().setNick("fsgfgdfsfhdgfh").setName(null).setSurname(null).setPassword(null).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(null).setPhoneNumber(0).setNfcTag("ZXCVA").build()));
+            sessionattr.put("user", (Object)(new UserBuilder().setNick("fsgfgdfsfhdgfh").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("ZXCVA").build()));
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status")
                     .sessionAttrs(sessionattr))
@@ -203,7 +227,7 @@ class AuthorizationRESTTest {
 
             //check with second user logged
             sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new UserBuilder().setNick("fsgfggfggfdgdfsfhdgfh").setName(null).setSurname(null).setPassword(null).setUserPrivileges(UserPrivileges.MODERATOR).setImage(null).setPhoneNumber(0).setNfcTag("CVZXCVXZCV").build()));
+            sessionattr.put("user", (Object)(new UserBuilder().setNick("fsgfggfggfdgdfsfhdgfh").setUserPrivileges(UserPrivileges.MODERATOR).setPhoneNumber(0).setNfcTag("CVZXCVXZCV").build()));
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/logout")
                     .sessionAttrs(sessionattr))

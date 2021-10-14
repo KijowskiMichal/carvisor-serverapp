@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import utilities.EcoPointsCalculator;
-import utilities.builders.TrackBuilder;
+import entities.builders.TrackBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -90,7 +90,7 @@ public class TrackService {
             Car car = (Car) request.getSession().getAttribute("car");
             //check if car has started track
             //todo naprawa tego bo wypierdala, nie wiem czemu, tego nie ruszałem :/
-            Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.car.id=" + car.getId() + " and t.active=1");
+            Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.car.id=" + car.getId() + " and t.isActive=1");
             if (selectQuery.uniqueResult() != null) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Car with id=" + car.getId() + " have started track");
             }
@@ -777,7 +777,7 @@ public class TrackService {
         ResponseEntity responseEntity = null;
         JSONObject jsonOut = new JSONObject();
         try {
-            URL url = new URL("http://open.mapquestapi.com/geocoding/v1/reverse?key=X6gyYLjl2XsAApWachPDkLRHfUA3ZPGI&location=" + lon + "," + lat + "&includeRoadMetadata=true&includeNearestIntersection=true");
+            URL url = createUrlForGeocoding(lon, lat);
             String json = "";
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
@@ -793,5 +793,15 @@ public class TrackService {
             jsonOut.put("address", lon + ";" + lat);
         }
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
+    }
+
+    public URL createUrlForGeocoding(String lon, String lat) throws MalformedURLException {
+        String urlString = "http://open.mapquestapi.com" +
+                "/geocoding/v1" +
+                "/reverse?key=X6gyYLjl2XsAApWachPDkLRHfUA3ZPGI" +
+                "&location=" + lon + "," + lat +
+                "&includeRoadMetadata=true" +
+                "&includeNearestIntersection=true";
+        return new URL(urlString);
     }
 }

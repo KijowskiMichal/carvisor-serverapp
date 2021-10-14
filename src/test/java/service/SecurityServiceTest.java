@@ -1,9 +1,11 @@
 package service;
 
+import constants.SessionAttributeKey;
+import constants.UserJsonKey;
 import entities.UserPrivileges;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import utilities.builders.UserBuilder;
+import entities.builders.UserBuilder;
 
 
 import java.util.Objects;
@@ -51,7 +53,7 @@ class SecurityServiceTest {
     public MockHttpServletRequest buildRequestWithUser(UserPrivileges userPrivileges) {
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
         Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(
-                "user",
+                SessionAttributeKey.USER_KEY,
                 new UserBuilder().setUserPrivileges(userPrivileges).build()
         );
         return mockHttpServletRequest;

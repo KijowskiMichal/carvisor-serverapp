@@ -1,4 +1,4 @@
-package utilities.builders;
+package entities.builders;
 
 import entities.Car;
 

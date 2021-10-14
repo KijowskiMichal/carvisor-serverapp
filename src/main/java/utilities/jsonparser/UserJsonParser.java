@@ -3,7 +3,7 @@ package utilities.jsonparser;
 import entities.User;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONObject;
-import utilities.builders.UserBuilder;
+import entities.builders.UserBuilder;
 
 public class UserJsonParser {
 

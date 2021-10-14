@@ -2,7 +2,7 @@ package service;
 
 import entities.*;
 import hibernatepackage.HibernateRequests;
-import utilities.builders.CarBuilder;
+import entities.builders.CarBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
@@ -104,7 +104,7 @@ public class DevicesService {
                 Query countQ = session.createQuery("Select sum (t.distance) from TrackRate t WHERE t.timestamp > " + timestampBefore.getTime() / 1000 + " AND  t.timestamp < " + timestampAfter.getTime() / 1000 + " AND t.track.car.id = " + ((Car) tmp).getId());
                 Long lonk = (Long) countQ.getSingleResult();
                 jsonObject.put("distance", String.valueOf(lonk == null ? 0 : lonk));
-                Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.active = true AND t.car.id = " + ((Car) tmp).getId());
+                Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.isActive = true AND t.car.id = " + ((Car) tmp).getId());
                 List<Track> tracks = selectQuery.list();
                 if (tracks.size() > 0) {
                     jsonObject.put("status", "Aktywny");

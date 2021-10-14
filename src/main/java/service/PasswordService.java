@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service;
 public class PasswordService {
 
     public static String hashPassword(String password) {
-        return DigestUtils.sha256Hex(password); //todo hash password
+        return DigestUtils.sha256Hex(password);
     }
 }

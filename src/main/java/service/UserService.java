@@ -1,7 +1,7 @@
 package service;
 
 import constants.DefaultResponse;
-import constants.UserKey;
+import constants.UserJsonKey;
 import dao.UserDaoJdbc;
 import entities.Track;
 import entities.User;
@@ -22,7 +22,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import utilities.builders.UserBuilder;
+import entities.builders.UserBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -265,10 +265,10 @@ public class UserService {
             return DefaultResponse.BAD_REQUEST;
         User user = wrappedUser.get();
         JSONObject jsonObject = new JSONObject()
-                .put(UserKey.IMAGE, user.getImage())
-                .put(UserKey.NAME, user.getName() + " " + user.getSurname())
-                .put(UserKey.PHONE_NUMBER, user.getPhoneNumber())
-                .put(UserKey.USER_PRIVILEGES, user.getUserPrivileges());
+                .put(UserJsonKey.IMAGE, user.getImage())
+                .put(UserJsonKey.NAME, user.getName() + " " + user.getSurname())
+                .put(UserJsonKey.PHONE_NUMBER, user.getPhoneNumber())
+                .put(UserJsonKey.USER_PRIVILEGES, user.getUserPrivileges());
         return DefaultResponse.ok(jsonObject.toString());
     }
 
@@ -437,8 +437,8 @@ public class UserService {
                 .setName(jsonObject.getString("name"))
                 .setSurname(jsonObject.getString("surname"))
                 .setNick(jsonObject.getString("nick"))
-                .setPassword(PasswordService.hashPassword(jsonObject.getString(UserKey.PASSWORD)))
-                .setPhoneNumber(jsonObject.getInt(UserKey.PHONE_NUMBER));
+                .setPassword(PasswordService.hashPassword(jsonObject.getString(UserJsonKey.PASSWORD)))
+                .setPhoneNumber(jsonObject.getInt(UserJsonKey.PHONE_NUMBER));
         if (!jsonObject.getString("image").isEmpty()) {
             userBuilder.setImage(jsonObject.getString("image"));
         }

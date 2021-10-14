@@ -1,8 +1,10 @@
 package constants;
 
-public class UserKey {
+/**
+ *
+ */
+public  class UserJsonKey {
 
-    //TODO populate this with user json keysU
     public final static String NAME = "name";
     public final static String SURNAME = "surname";
     public final static String NICK = "nick";

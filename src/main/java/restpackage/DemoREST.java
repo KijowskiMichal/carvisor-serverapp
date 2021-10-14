@@ -5,7 +5,7 @@ import dao.SettingDaoJdbc;
 import dao.TrackDaoJdbc;
 import dao.UserDaoJdbc;
 import entities.*;
-import utilities.builders.CarBuilder;
+import entities.builders.CarBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,9 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import utilities.builders.UserBuilder;
+import entities.builders.UserBuilder;
 
-import java.time.LocalDate;
 import java.util.List;
 
 /**

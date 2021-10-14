@@ -8,7 +8,7 @@ import entities.*;
 import hibernatepackage.HibernateRequests;
 import org.junit.jupiter.api.AfterEach;
 import otherclasses.Initializer;
-import utilities.builders.CarBuilder;
+import entities.builders.CarBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -26,7 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import utilities.builders.UserBuilder;
+import entities.builders.UserBuilder;
 
 import javax.transaction.Transactional;
 import java.util.HashMap;
@@ -226,9 +226,8 @@ class CarConfigurationRESTTest {
         }
     }
 
-    @Test
-    void changeConfiguration()
-    {
+    @Test //todo
+    void changeConfiguration() {
         Session session = null;
         Transaction tx = null;
         try {
