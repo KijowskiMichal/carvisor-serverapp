@@ -15,6 +15,6 @@ public class DefaultResponse {
     }
 
     public static ResponseEntity<String> ok(String responseBody) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 }

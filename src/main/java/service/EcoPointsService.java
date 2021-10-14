@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import utilities.jsonparser.UserJsonParser;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,7 +143,13 @@ public class EcoPointsService {
 
     //todo
     public List<Track> listUser(int userId, String dateFrom, String dateTo) {
-        //todo filtrowanie listy Userów i ewentualnie dodanie getUserTracks(userId,dateFrom,dateTo)
-        return trackDaoJdbc.getUserTracks(userId);
+        Timestamp fromTimeStamp = DataService.dateBeginningTimestamp(dateFrom);
+        Timestamp endTimestamp = DataService.dateEndTimestamp(dateFrom);
+        String selectQuery = "SELECT t from Track t " +
+                "WHERE " +
+                "t.user = " + userId + " AND " +
+                "t.endTrackTimeStamp > " + (endTimestamp.getTime() / 1000) + " AND " +
+                "t.startTrackTimeStamp < " + (fromTimeStamp.getTime() / 1000) + " ";
+        return trackDaoJdbc.getList(selectQuery);
     }
 }

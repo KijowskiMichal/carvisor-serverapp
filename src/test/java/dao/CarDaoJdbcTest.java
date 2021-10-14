@@ -38,21 +38,22 @@ public class CarDaoJdbcTest {
     @Test
     void get() {
         CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
-        Car car1 = new CarBuilder()
+        Car carToSave = new CarBuilder()
                 .setLicensePlate("ABCD")
                 .setBrand("Skoda")
                 .setModel("Fabia")
                 .setPassword(DigestUtils.sha256Hex("ABCD"))
                 .build();
-        carDaoJdbc.save(car1);
+        carDaoJdbc.save(carToSave);
 
-        Optional<Car> wrappedCar2 = carDaoJdbc.get(car1.getId());
-        if (wrappedCar2.isEmpty())
-            Assertions.fail();
-        Car car2 = wrappedCar2.get();
-        Assertions.assertEquals(car1.getLicensePlate(), car2.getLicensePlate());
-        Assertions.assertEquals(car1.getBrand(), car2.getBrand());
-        Assertions.assertEquals(car1.getModel(), car2.getModel());
+        Optional<Car> carFromDatabaseWrapped = carDaoJdbc.get(carToSave.getId());
+
+        if (carFromDatabaseWrapped.isEmpty()) Assertions.fail();
+
+        Car carFromDatabaseUnwrapped = carFromDatabaseWrapped.get();
+        Assertions.assertEquals(carToSave.getLicensePlate(), carFromDatabaseUnwrapped.getLicensePlate());
+        Assertions.assertEquals(carToSave.getBrand(), carFromDatabaseUnwrapped.getBrand());
+        Assertions.assertEquals(carToSave.getModel(), carFromDatabaseUnwrapped.getModel());
     }
 
     @Test

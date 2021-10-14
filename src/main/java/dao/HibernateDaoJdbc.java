@@ -1,5 +1,6 @@
 package dao;
 
+import entities.User;
 import hibernatepackage.HibernateRequests;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -67,9 +68,23 @@ public abstract class HibernateDaoJdbc<T> {
         return Optional.empty();
     }
 
+    @SuppressWarnings("unchecked")
     public List<T> getList(String query) {
-        //todo
-        return new ArrayList<>();
+        Transaction tx = null;
+        Session session = null;
+        List<T> listOfObjects = null;
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+            listOfObjects = session.createQuery(query).getResultList();
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+        }
+
+        if (listOfObjects == null) return new ArrayList<>();
+        else return listOfObjects;
     }
 
     public abstract Optional<T> delete(long id);

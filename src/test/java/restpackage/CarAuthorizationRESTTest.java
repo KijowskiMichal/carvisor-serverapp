@@ -36,7 +36,6 @@ import java.util.HashMap;
 @RunWith(SpringRunner.class)
 @WebMvcTest(CarAuthorizationREST.class)
 @ContextConfiguration(classes = {Initializer.class})
-@Transactional
 class CarAuthorizationRESTTest {
 
     @Autowired
@@ -44,7 +43,6 @@ class CarAuthorizationRESTTest {
 
     @Autowired
     private HibernateRequests hibernateRequests;
-
 
     @Autowired
     UserDaoJdbc userDaoJdbc;
