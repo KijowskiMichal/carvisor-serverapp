@@ -23,26 +23,11 @@ public class TrackDaoJdbc extends HibernateDaoJdbc<Track> {
         super(hibernateRequests, logger);
     }
 
-
     @Override
-    public Optional<Track> get(long id) {
-        Session session = null;
-        Transaction tx = null;
-        Track track = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            Query query = session.createQuery("SELECT t FROM Track t WHERE t.id=" + id);
-            track = (Track) query.getResultList().stream().findFirst().orElse(null);
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
-        return Optional.ofNullable(track);
+    protected String getTableName() {
+        return "Track";
     }
+
 
     public List<Track> getUserTracks(long userId) {
         Session session = null;
@@ -59,44 +44,6 @@ public class TrackDaoJdbc extends HibernateDaoJdbc<Track> {
             e.printStackTrace();
         } finally {
             if (session != null) session.close();
-        }
-        return track;
-    }
-
-    @Override
-    public List<Track> getAll() {
-        Session session = null;
-        Transaction tx = null;
-        List<Track> tracks = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            Query query = session.createQuery("SELECT t FROM Track t");
-            tracks = query.getResultList();
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
-        return tracks;
-    }
-
-    @Override
-    public Optional<Track> delete(long id) {
-        Transaction tx = null;
-        Optional<Track> track = Optional.empty();
-        try (Session session = hibernateRequests.getSession()) {
-            tx = session.beginTransaction();
-            track = get(id);
-            if (track.isEmpty())
-                throw new HibernateException("");
-            session.delete(track.get());
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
         }
         return track;
     }

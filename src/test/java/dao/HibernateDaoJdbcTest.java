@@ -1,6 +1,9 @@
 package dao;
 
 import entities.Car;
+import entities.Setting;
+import entities.Track;
+import entities.User;
 import entities.builders.CarBuilder;
 import hibernatepackage.HibernateRequests;
 import org.junit.jupiter.api.AfterEach;
@@ -12,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import otherclasses.Initializer;
 import otherclasses.Logger;
+import restpackage.DevicesREST;
 
 import java.util.List;
 
@@ -28,12 +32,32 @@ class HibernateDaoJdbcTest {
     private HibernateRequests hibernateRequests;
 
     @Autowired
+    ErrorDaoJdbc errorDaoJdbc;
+    @Autowired
+    UserDaoJdbc userDaoJdbc;
+    @Autowired
     CarDaoJdbc carDaoJdbc;
+    @Autowired
+    SettingDaoJdbc settingDaoJdbc;
+    @Autowired
+    TrackDaoJdbc trackDaoJdbc;
 
     @AfterEach
     void clearDatabase() {
-        CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
-        carDaoJdbc.getAll().stream().mapToInt(Car::getId).forEach(carDaoJdbc::delete);
+        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
+        settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
+        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
+        carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
+    }
+
+    @Test
+    void delete() {
+        Car car = new CarBuilder().build();
+        carDaoJdbc.save(car);
+        int id = car.getId();
+        assertEquals(1,carDaoJdbc.getAll().size());
+        carDaoJdbc.delete(id);
+        assertEquals(0,carDaoJdbc.getAll().size());
     }
 
     @Test
@@ -44,7 +68,6 @@ class HibernateDaoJdbcTest {
                 new CarBuilder().build(),
                 new CarBuilder().build()
         ).forEach(carDaoJdbc::save);
-
         List<Car> selectCFromCar = carDaoJdbc.getList("SELECT c FROM Car c");
         assertEquals(4,selectCFromCar.size());
     }

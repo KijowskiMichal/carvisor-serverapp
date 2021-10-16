@@ -1,30 +1,30 @@
 package dao;
 
 import entities.Car;
+import entities.Error;
 import hibernatepackage.HibernateRequests;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import otherclasses.Logger;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Class for operating on Car data from database
+ * Class for operating on Error data from database
  */
 @Repository
-public class CarDaoJdbc extends HibernateDaoJdbc<Car> {
+public class ErrorDaoJdbc extends HibernateDaoJdbc<Error> {
 
     @Autowired
-    public CarDaoJdbc(HibernateRequests hibernateRequests, otherclasses.Logger logger) {
+    public ErrorDaoJdbc(HibernateRequests hibernateRequests, Logger logger) {
         super(hibernateRequests, logger);
     }
 
     @Override
     protected String getTableName() {
-        return "Car";
+        return "Error";
     }
+
+
 }

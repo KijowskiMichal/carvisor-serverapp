@@ -20,64 +20,10 @@ public class UserDaoJdbc extends HibernateDaoJdbc<User> {
         super(hibernateRequests, logger);
     }
 
-
     @Override
-    public Optional<User> delete(long id) {
-        Session session = null;
-        Transaction tx = null;
-        Optional<User> user = Optional.empty();
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            user = get(id);
-            if (user.isEmpty())
-                throw new HibernateException("User doesn't exists");
-            session.delete(user.get());
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
-        return user;
+    protected String getTableName() {
+        return "User";
     }
 
-    public Optional<User> get(long id) {
-        Session session = null;
-        Transaction tx = null;
-        User user = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            Query query = session.createQuery("SELECT u FROM User u WHERE u.id=" + id);
-            user = (User) query.getResultList().stream().findFirst().orElse(null);
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
-        return Optional.ofNullable(user);
-    }
 
-    public List<User> getAll() {
-        Session session = null;
-        Transaction tx = null;
-        List<User> users = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            Query query = session.createQuery("SELECT u FROM User u");
-            users = query.getResultList();
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
-        return users;
-    }
 }

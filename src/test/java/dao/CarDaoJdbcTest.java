@@ -19,8 +19,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-
-@RunWith(SpringRunner.class)
 @WebMvcTest(CarDaoJdbc.class)
 @ContextConfiguration(classes = {Initializer.class})
 public class CarDaoJdbcTest {
