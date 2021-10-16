@@ -1,7 +1,5 @@
 package dao;
 
-import entities.Car;
-import entities.User;
 import hibernatepackage.HibernateRequests;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -145,10 +143,6 @@ public abstract class HibernateDaoJdbc<T> {
     }
 
     private HibernateException createThereIsNoSuchElementException(String tableName, Number givenId) {
-        return new HibernateException("There is no " + tableName + " with given id=" + givenId.toString());
-    }
-
-    private HibernateException createCantGetQueryException(String tableName, Number givenId) {
         return new HibernateException("There is no " + tableName + " with given id=" + givenId.toString());
     }
 }

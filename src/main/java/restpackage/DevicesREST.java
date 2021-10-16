@@ -45,11 +45,12 @@ public class DevicesREST {
 
     @RequestMapping(value = "/devices/removeDevice/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity removeDevice(HttpServletRequest request,@PathVariable("id") int id) {
-        if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
-            Optional<Car> car = devicesService.removeDevice(id);
-            if (car.isPresent()) return DefaultResponse.OK;
-            else return DefaultResponse.BAD_REQUEST;
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+            return DefaultResponse.UNAUTHORIZED;
         }
+
+        Optional<Car> car = devicesService.removeDevice(id);
+        if (car.isPresent()) return DefaultResponse.OK;
         else return DefaultResponse.BAD_REQUEST;
     }
 

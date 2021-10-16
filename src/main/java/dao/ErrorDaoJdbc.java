@@ -25,6 +25,4 @@ public class ErrorDaoJdbc extends HibernateDaoJdbc<Error> {
     protected String getTableName() {
         return "Error";
     }
-
-
 }
