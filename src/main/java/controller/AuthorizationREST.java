@@ -1,4 +1,4 @@
-package restpackage;
+package controller;
 
 import service.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;

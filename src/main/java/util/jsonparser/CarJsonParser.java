@@ -1,4 +1,4 @@
-package utilities.jsonparser;
+package util.jsonparser;
 
 import entities.Car;
 import org.json.JSONObject;

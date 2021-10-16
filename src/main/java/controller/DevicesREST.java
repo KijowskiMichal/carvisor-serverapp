@@ -1,4 +1,4 @@
-package restpackage;
+package controller;
 
 import constants.DefaultResponse;
 import entities.Car;

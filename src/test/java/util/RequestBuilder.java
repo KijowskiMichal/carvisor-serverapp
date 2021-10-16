@@ -1,4 +1,4 @@
-package Utils;
+package util;
 
 import entities.User;
 import entities.UserPrivileges;

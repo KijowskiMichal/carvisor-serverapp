@@ -1,4 +1,4 @@
-package restpackage;
+package controller;
 
 import constants.DefaultResponse;
 import constants.TrackJsonKey;
@@ -7,7 +7,7 @@ import entities.UserPrivileges;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import service.DataService;
-import service.SafetyPointsService;
+import service.EcoPointsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,28 +22,28 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/safetyPoints")
-public class SafetyPointsREST {
-    private final SafetyPointsService safetyPointsService;
+@RequestMapping("/ecoPoints")
+public class EcoPointsREST {
+    private final EcoPointsService ecoPointsService;
     private final SecurityService securityService;
 
     @Autowired
-    public SafetyPointsREST(SafetyPointsService safetyPointsService, SecurityService securityService) {
-        this.safetyPointsService = safetyPointsService;
+    public EcoPointsREST(EcoPointsService ecoPointsService, SecurityService securityService) {
+        this.ecoPointsService = ecoPointsService;
         this.securityService = securityService;
     }
 
 
     @RequestMapping(value = "/list/{page}/{pagesize}/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("regex") String regex) {
-        return safetyPointsService.list(request, page, pageSize, regex);
+        return ecoPointsService.list(request, page, pageSize, regex);
     }
 
     @RequestMapping(value = "/getUserDetails/{id}/{dateFrom}/{dateTo}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> listUser(HttpServletRequest request, @PathVariable("id") int userId, @PathVariable("dateFrom") String dateFrom, @PathVariable("dateTo") String dateTo) {
 
         if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
-            List<Track> tracks = safetyPointsService.listUser(userId, dateFrom, dateTo);
+            List<Track> tracks = ecoPointsService.listUser(userId, dateFrom, dateTo);
             return DefaultResponse.ok(parseToJson(tracks));
         }
         else {
@@ -55,7 +55,7 @@ public class SafetyPointsREST {
         JSONObject mainJson = new JSONObject().put("name","placeholder");
         JSONArray listOfDays = new JSONArray();
         trackList.stream().map(this::trackToJson).forEach(listOfDays::put);
-        return mainJson.put("listOfOffencess",listOfDays).toString();
+        return mainJson.put("listOfDays",listOfDays).toString();
     }
 
     private JSONObject trackToJson(Track track) {

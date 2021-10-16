@@ -1,4 +1,4 @@
-package restpackage;
+package controller;
 
 import dao.CarDaoJdbc;
 import dao.SettingDaoJdbc;
@@ -34,7 +34,6 @@ import java.util.HashMap;
 @RunWith(SpringRunner.class)
 @WebMvcTest(CarConfigurationREST.class)
 @ContextConfiguration(classes = {Initializer.class})
-@Transactional
 class CarConfigurationRESTTest {
 
     @Autowired

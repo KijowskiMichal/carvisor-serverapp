@@ -15,7 +15,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import otherclasses.Initializer;
 import otherclasses.Logger;
-import restpackage.DevicesREST;
 
 import java.util.List;
 

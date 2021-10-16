@@ -1,6 +1,6 @@
-package restpackage;
+package controller;
 
-import Utils.RequestBuilder;
+import util.RequestBuilder;
 import constants.SessionAttributeKey;
 import constants.UserJsonKey;
 import dao.CarDaoJdbc;
@@ -28,7 +28,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import otherclasses.Logger;
 import service.PasswordService;
 import entities.builders.UserBuilder;
 

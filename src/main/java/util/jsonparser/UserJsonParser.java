@@ -1,4 +1,4 @@
-package utilities.jsonparser;
+package util.jsonparser;
 
 import entities.User;
 import org.apache.commons.codec.digest.DigestUtils;

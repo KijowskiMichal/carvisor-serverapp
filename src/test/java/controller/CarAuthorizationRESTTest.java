@@ -1,4 +1,4 @@
-package restpackage;
+package controller;
 
 import dao.CarDaoJdbc;
 import dao.SettingDaoJdbc;
@@ -29,7 +29,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 

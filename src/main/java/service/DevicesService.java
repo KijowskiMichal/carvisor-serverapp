@@ -19,7 +19,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import utilities.jsonparser.CarJsonParser;
+import util.jsonparser.CarJsonParser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;

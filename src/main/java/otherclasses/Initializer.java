@@ -11,10 +11,11 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 @Configuration
 @EnableWebMvc
 @ComponentScan("Service")
-@ComponentScan("RestPackage")
+@ComponentScan("controller")
 @ComponentScan("hibernatepackage")
 @ComponentScan("otherclasses")
-@ComponentScan("Dao")
+@ComponentScan("util")
+@ComponentScan("dao")
 public class Initializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override

@@ -1,11 +1,10 @@
-package restpackage;
+package controller;
 
-import Utils.RequestBuilder;
+import util.RequestBuilder;
 import constants.ErrorJsonKey;
 import dao.*;
 import entities.*;
 import entities.Error;
-import entities.builders.ErrorBuilder;
 import hibernatepackage.HibernateRequests;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

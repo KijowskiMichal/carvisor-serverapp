@@ -17,7 +17,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import utilities.EcoPointsCalculator;
+import util.EcoPointsCalculator;
 import entities.builders.TrackBuilder;
 
 import javax.servlet.http.HttpServletRequest;

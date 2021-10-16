@@ -1,4 +1,4 @@
-package restpackage;
+package controller;
 
 import dao.CarDaoJdbc;
 import dao.SettingDaoJdbc;

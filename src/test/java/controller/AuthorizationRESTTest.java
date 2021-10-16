@@ -1,7 +1,6 @@
-package restpackage;
+package controller;
 
 import constants.AuthorizationJsonKey;
-import constants.SessionAttributeKey;
 import dao.CarDaoJdbc;
 import dao.SettingDaoJdbc;
 import dao.TrackDaoJdbc;
@@ -33,10 +32,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import entities.builders.UserBuilder;
 import service.PasswordService;
 
-import javax.transaction.Transactional;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
