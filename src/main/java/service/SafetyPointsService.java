@@ -1,5 +1,6 @@
 package service;
 
+import entities.Track;
 import entities.User;
 import entities.UserPrivileges;
 import hibernatepackage.HibernateRequests;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,5 +101,16 @@ public class SafetyPointsService {
         jsonOut.put("listOfUsers", jsonArray);
         logger.info("SafetyPointsService.list returns list of users (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
+    }
+
+    public List<Track> listUser(int userId, String dateFrom, String dateTo) {
+        Timestamp fromTimeStamp = DataService.dateBeginningTimestamp(dateFrom);
+        Timestamp endTimestamp = DataService.dateEndTimestamp(dateFrom);
+        String selectQuery = "SELECT t from Track t " +
+                "WHERE " +
+                "t.user = " + userId + " AND " +
+                "t.endTrackTimeStamp > " + (endTimestamp.getTime() / 1000) + " AND " +
+                "t.startTrackTimeStamp < " + (fromTimeStamp.getTime() / 1000) + " ";
+        return new ArrayList<>(); //todo :(
     }
 }

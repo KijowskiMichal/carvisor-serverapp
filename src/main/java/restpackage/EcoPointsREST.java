@@ -45,7 +45,7 @@ public class EcoPointsREST {
 
         if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
             List<Track> tracks = ecoPointsService.listUser(userId, dateFrom, dateTo);
-            return DefaultResponse.ok(parseToJson(tracks));//todo
+            return DefaultResponse.ok(parseToJson(tracks));
         }
         else {
             return DefaultResponse.UNAUTHORIZED;

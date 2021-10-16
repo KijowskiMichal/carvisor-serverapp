@@ -230,4 +230,16 @@ class DevicesRESTTest {
             if (session != null) session.close();
         }
     }
+
+    @Test
+    void removeDevice() {
+        Car firstCar = new CarBuilder().build();
+        Car secondCar = new CarBuilder().build();
+        carDaoJdbc.save(firstCar);
+        carDaoJdbc.save(secondCar);
+        assertEquals(2,carDaoJdbc.getAll().size());
+        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR);
+        devicesREST.removeDevice(mockHttpServletRequest,firstCar.getId());
+        assertEquals(1,carDaoJdbc.getAll().size());
+    }
 }

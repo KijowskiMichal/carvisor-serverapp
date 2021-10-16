@@ -1,5 +1,6 @@
 package service;
 
+import dao.CarDaoJdbc;
 import entities.*;
 import hibernatepackage.HibernateRequests;
 import entities.builders.CarBuilder;
@@ -25,10 +26,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * Class representing device service
@@ -38,11 +36,13 @@ public class DevicesService {
 
     HibernateRequests hibernateRequests;
     Logger logger;
+    CarDaoJdbc carDaoJdbc;
 
     @Autowired
-    public DevicesService(HibernateRequests hibernateRequests, otherclasses.Logger logger) {
+    public DevicesService(HibernateRequests hibernateRequests, otherclasses.Logger logger, CarDaoJdbc carDaoJdbc) {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
+        this.carDaoJdbc = carDaoJdbc;
     }
 
     /**
@@ -420,5 +420,9 @@ public class DevicesService {
         }
 
         return responseEntity;
+    }
+
+    public Optional<Car> removeDevice(int id) {
+        return carDaoJdbc.delete(id);
     }
 }

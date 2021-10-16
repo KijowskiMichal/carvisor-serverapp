@@ -10,21 +10,13 @@ public class TrackRate {
     int id;
     @ManyToOne
     Track track;
-    @Column(nullable = true)
     Short speed;
     /**
      * throttle in %
      */
-    @Column(nullable = true)
     Byte throttle;
-    @Column(nullable = true)
     Double latitude;
-    @Column(nullable = true)
     Double longitude;
-    /**
-     * revolutions per minute
-     */
-    @Column(nullable = true)
     Short rpm;
     /**
      * meters since start
