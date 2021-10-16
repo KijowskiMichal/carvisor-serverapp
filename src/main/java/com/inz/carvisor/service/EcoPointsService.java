@@ -6,6 +6,7 @@ import com.inz.carvisor.entities.Track;
 import com.inz.carvisor.entities.User;
 import com.inz.carvisor.entities.UserPrivileges;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
+import com.inz.carvisor.util.jsonparser.UserJsonParser;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -18,7 +19,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.inz.carvisor.util.jsonparser.UserJsonParser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;

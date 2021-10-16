@@ -7,12 +7,6 @@ import com.inz.carvisor.entities.User;
 import java.util.Date;
 
 public class TrackBuilder {
-    private Car car = null;
-    private User user = null;
-    private int numberOfparameter = 0;
-    private Boolean privateTrack = false;
-    private long timeStamp = 0;
-    private String startPosiotion;
     //def values
     private final long start = new Date().getTime();
     private final long end = 0;
@@ -23,6 +17,12 @@ public class TrackBuilder {
     private final double combustion = 0;
     private final int speed = 0;
     private final long revolutions = 0;
+    private Car car = null;
+    private User user = null;
+    private int numberOfparameter = 0;
+    private Boolean privateTrack = false;
+    private long timeStamp = 0;
+    private String startPosiotion;
 
     public TrackBuilder setCar(Car car) {
         this.car = car;

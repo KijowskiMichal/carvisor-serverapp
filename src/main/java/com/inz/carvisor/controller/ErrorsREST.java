@@ -5,6 +5,8 @@ import com.inz.carvisor.constants.ErrorJsonKey;
 import com.inz.carvisor.entities.Error;
 import com.inz.carvisor.entities.UserPrivileges;
 import com.inz.carvisor.entities.builders.ErrorBuilder;
+import com.inz.carvisor.service.ErrorService;
+import com.inz.carvisor.service.SecurityService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -13,8 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import com.inz.carvisor.service.ErrorService;
-import com.inz.carvisor.service.SecurityService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -37,7 +37,7 @@ public class ErrorsREST {
 
     @RequestMapping(value = "/addError", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> addError(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER,request)) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, request)) {
             return DefaultResponse.UNAUTHORIZED;
         } else if (!httpEntity.hasBody()) {
             return DefaultResponse.EMPTY_BODY;

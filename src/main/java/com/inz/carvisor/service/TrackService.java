@@ -2,7 +2,9 @@ package com.inz.carvisor.service;
 
 import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.*;
+import com.inz.carvisor.entities.builders.TrackBuilder;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
+import com.inz.carvisor.util.EcoPointsCalculator;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -17,8 +19,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.inz.carvisor.util.EcoPointsCalculator;
-import com.inz.carvisor.entities.builders.TrackBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;

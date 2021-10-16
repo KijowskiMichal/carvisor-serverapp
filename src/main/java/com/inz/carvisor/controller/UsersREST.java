@@ -29,17 +29,14 @@ import java.util.Optional;
 @RequestMapping("/users")
 public class UsersREST {
 
-    @Autowired
-    SecurityService securityService;
-
-    @Autowired
-    UserService userService;
-
-    JsonParser jsonParser = new JsonParser();
-
     private static final String FIRST_PASSWORD_KEY = "firstPassword";
     private static final String SECOND_PASSWORD_KEY = "secondPassword";
     private static final String PASSWORD_DOESNT_MATCH = "passwords doesn't match";
+    @Autowired
+    SecurityService securityService;
+    @Autowired
+    UserService userService;
+    JsonParser jsonParser = new JsonParser();
 
     @RequestMapping(value = "/list/{page}/{pagesize}/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("regex") String regex) {
@@ -68,9 +65,9 @@ public class UsersREST {
             return DefaultResponse.badBody(PASSWORD_DOESNT_MATCH);
         }
 
-        if (securityService.securityProtocolPassed(UserPrivileges.ADMINISTRATOR,request)) {
+        if (securityService.securityProtocolPassed(UserPrivileges.ADMINISTRATOR, request)) {
             user = userService.changeUserPassword(userID, firstPasswordHashed, secondPasswordHashed);
-        } else if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+        } else if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             user = userService.changeStandardUserPassword(userID, firstPasswordHashed, secondPasswordHashed);
         } else {
             return DefaultResponse.UNAUTHORIZED;
@@ -103,9 +100,9 @@ public class UsersREST {
     @RequestMapping(value = "/removeUser/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public ResponseEntity<String> removeUser(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID) {
         Optional<User> deletedUser;
-        if (securityService.securityProtocolPassed(UserPrivileges.ADMINISTRATOR,request)) {
+        if (securityService.securityProtocolPassed(UserPrivileges.ADMINISTRATOR, request)) {
             deletedUser = userService.removeUser(userID);
-        } else if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+        } else if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             deletedUser = userService.removeStandardUser(userID);
         } else {
             return DefaultResponse.UNAUTHORIZED;

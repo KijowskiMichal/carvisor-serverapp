@@ -22,6 +22,7 @@ public class ErrorService {
         this.logger = logger.getLOG();
         this.errorDaoJdbc = errorDaoJdbc;
     }
+
     public Optional<Error> addError(Error error) {
         return errorDaoJdbc.save(error);
     }

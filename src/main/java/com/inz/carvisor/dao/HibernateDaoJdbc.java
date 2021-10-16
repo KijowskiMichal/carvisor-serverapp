@@ -112,7 +112,7 @@ public abstract class HibernateDaoJdbc<T> {
             session = hibernateRequests.getSession();
             transaction = session.beginTransaction();
             object = get(id);
-            if (object.isEmpty()) throw createThereIsNoSuchElementException(getTableName(),id);
+            if (object.isEmpty()) throw createThereIsNoSuchElementException(getTableName(), id);
             session.delete(object.get());
             transaction.commit();
         } catch (HibernateException hibernateException) {
@@ -130,7 +130,7 @@ public abstract class HibernateDaoJdbc<T> {
 
     public List<T> getAll() {
         return getList(createSelectGetAll());
-    };
+    }
 
     protected abstract String getTableName();
 

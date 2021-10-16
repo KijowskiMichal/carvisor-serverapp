@@ -3,7 +3,7 @@ package com.inz.carvisor.constants;
 /**
  *
  */
-public  class UserJsonKey {
+public class UserJsonKey {
 
     public final static String NAME = "name";
     public final static String SURNAME = "surname";

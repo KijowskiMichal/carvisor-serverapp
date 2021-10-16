@@ -6,6 +6,7 @@ import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.Track;
 import com.inz.carvisor.entities.User;
 import com.inz.carvisor.entities.UserPrivileges;
+import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Level;
@@ -22,7 +23,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.inz.carvisor.entities.builders.UserBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -275,10 +275,11 @@ public class UserService {
     /**
      * WebMethod that change user data for user with given Id.
      * <p>
-     * @Deprecated use xyz
+     *
      * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200.
+     * @Deprecated use xyz
      */
     @Deprecated
     public ResponseEntity changeUserData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID) {
@@ -421,6 +422,7 @@ public class UserService {
     /**
      * WebMethod that create user with given json.
      * <p>
+     *
      * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200.

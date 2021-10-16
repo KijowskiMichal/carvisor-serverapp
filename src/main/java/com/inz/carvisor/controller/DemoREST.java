@@ -4,8 +4,10 @@ import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
-import com.inz.carvisor.entities.*;
+import com.inz.carvisor.entities.Setting;
+import com.inz.carvisor.entities.UserPrivileges;
 import com.inz.carvisor.entities.builders.CarBuilder;
+import com.inz.carvisor.entities.builders.UserBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import com.inz.carvisor.entities.builders.UserBuilder;
 
 import java.util.List;
 

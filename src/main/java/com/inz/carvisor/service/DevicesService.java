@@ -2,8 +2,9 @@ package com.inz.carvisor.service;
 
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.entities.*;
-import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.entities.builders.CarBuilder;
+import com.inz.carvisor.hibernatepackage.HibernateRequests;
+import com.inz.carvisor.util.jsonparser.CarJsonParser;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
@@ -19,7 +20,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import com.inz.carvisor.util.jsonparser.CarJsonParser;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
@@ -278,7 +278,7 @@ public class DevicesService {
                     .put("fuel", car.getFuelType())
                     .put("tank", car.getTank())
                     .put("norm", car.getFuelNorm())
-                    .put("a","a"); //todo
+                    .put("a", "a"); //todo
 
 
             try {

@@ -4,15 +4,6 @@ import com.inz.carvisor.entities.User;
 import com.inz.carvisor.entities.UserPrivileges;
 
 public class UserBuilder {
-    private String nick;
-    private String name;
-    private String surname;
-    private String password;
-    private UserPrivileges userPrivileges;
-    private String image;
-    private int phoneNumber;
-    private String nfcTag;
-
     private final int samples = 0;
     private final int throttle = 0;
     private final int revolutionsAVG = 0;
@@ -22,6 +13,14 @@ public class UserBuilder {
     private final int samplesNumber = 0;
     private final int safetyNegativeSamples = 0;
     private final int safetySamples = 0;
+    private String nick;
+    private String name;
+    private String surname;
+    private String password;
+    private UserPrivileges userPrivileges;
+    private String image;
+    private int phoneNumber;
+    private String nfcTag;
 
     public UserBuilder setNick(String nick) {
         this.nick = nick;

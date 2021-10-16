@@ -4,6 +4,7 @@ import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.entities.Car;
 import com.inz.carvisor.entities.UserPrivileges;
 import com.inz.carvisor.service.DevicesService;
+import com.inz.carvisor.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import com.inz.carvisor.service.SecurityService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -44,8 +44,8 @@ public class DevicesREST {
     }
 
     @RequestMapping(value = "/devices/removeDevice/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public ResponseEntity removeDevice(HttpServletRequest request,@PathVariable("id") int id) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+    public ResponseEntity removeDevice(HttpServletRequest request, @PathVariable("id") int id) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return DefaultResponse.UNAUTHORIZED;
         }
 
