@@ -28,7 +28,6 @@ public class TrackDaoJdbc extends HibernateDaoJdbc<Track> {
         return "Track";
     }
 
-
     public List<Track> getUserTracks(long userId) {
         Session session = null;
         Transaction tx = null;

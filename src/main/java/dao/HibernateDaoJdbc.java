@@ -87,38 +87,39 @@ public abstract class HibernateDaoJdbc<T> {
 
     @SuppressWarnings("unchecked")
     public List<T> getList(String query) {
-        Transaction tx = null;
         Session session = null;
+        Transaction transaction = null;
         List<T> listOfObjects = null;
         try {
             session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
+            transaction = session.beginTransaction();
             listOfObjects = session.createQuery(query).getResultList();
-            tx.commit();
+            transaction.commit();
         } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
+            if (transaction != null) transaction.rollback();
             e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
         }
 
         if (listOfObjects == null) return new ArrayList<>();
         else return listOfObjects;
     }
 
-    public Optional<T> delete(long id) {
+    public Optional<T> delete(Number id) {
         Session session = null;
-        Transaction tx = null;
+        Transaction transaction = null;
         Optional<T> object = Optional.empty();
         try {
             session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
+            transaction = session.beginTransaction();
             object = get(id);
-            if (object.isEmpty())
-                throw new HibernateException("");
+            if (object.isEmpty()) throw createThereIsNoSuchElementException(getTableName(),id);
             session.delete(object.get());
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
+            transaction.commit();
+        } catch (HibernateException hibernateException) {
+            if (transaction != null) transaction.rollback();
+            hibernateException.printStackTrace();
         } finally {
             if (session != null) session.close();
         }
@@ -135,11 +136,19 @@ public abstract class HibernateDaoJdbc<T> {
 
     protected abstract String getTableName();
 
-    protected String createSelectGetById(Number number) {
+    protected final String createSelectGetById(Number number) {
         return "SELECT t FROM " + getTableName() + " t " + "WHERE t.id=" + number;
     }
 
-    protected String createSelectGetAll() {
+    protected final String createSelectGetAll() {
         return "SELECT t FROM " + getTableName() + " t ";
+    }
+
+    private HibernateException createThereIsNoSuchElementException(String tableName, Number givenId) {
+        return new HibernateException("There is no " + tableName + " with given id=" + givenId.toString());
+    }
+
+    private HibernateException createCantGetQueryException(String tableName, Number givenId) {
+        return new HibernateException("There is no " + tableName + " with given id=" + givenId.toString());
     }
 }
