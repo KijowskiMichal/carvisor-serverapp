@@ -17,11 +17,11 @@
         <property name = "hibernate.connection.password"></property>
 
         <!-- List of XML mapping files -->
-        <mapping class="entities.User" />
-        <mapping class="entities.Car" />
-        <mapping class="entities.Track" />
-        <mapping class="entities.Setting" />
-        <mapping class="entities.TrackRate" />
-        <mapping class="entities.Error" />
+        <mapping class="com.inz.carvisor.entities.User" />
+        <mapping class="com.inz.carvisor.entities.Car" />
+        <mapping class="com.inz.carvisor.entities.Track" />
+        <mapping class="com.inz.carvisor.entities.Setting" />
+        <mapping class="com.inz.carvisor.entities.TrackRate" />
+        <mapping class="com.inz.carvisor.entities.Error" />
     </session-factory>
 </hibernate-configuration>
