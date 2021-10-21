@@ -131,4 +131,13 @@ public class Car {
         this.locationInterval = locationInterval;
     }
 
+    @Override
+    public String toString() {
+        return "Car{" +
+                "licensePlate='" + licensePlate + '\'' +
+                ", brand='" + brand + '\'' +
+                ", model='" + model + '\'' +
+                ", productionYear=" + productionYear +
+                '}';
+    }
 }

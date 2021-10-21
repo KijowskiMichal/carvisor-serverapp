@@ -2,14 +2,14 @@ package com.inz.carvisor.service;
 
 import com.inz.carvisor.constants.SessionAttributeKey;
 import com.inz.carvisor.entities.UserPrivileges;
+import com.inz.carvisor.entities.builders.UserBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-import com.inz.carvisor.entities.builders.UserBuilder;
-
 
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SecurityServiceTest {
 

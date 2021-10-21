@@ -41,9 +41,10 @@ import java.util.*;
 @Service
 public class TrackService {
 
-    private final static String SELECT_ACTIVE_TRACKS = "SELECT t FROM Track t WHERE t.active = true";
+    private final static String SELECT_ACTIVE_TRACKS = "SELECT t FROM Track t WHERE t.isActive = true";
     HibernateRequests hibernateRequests;
     Logger logger;
+
     @Autowired
     UserDaoJdbc userDaoJdbc;
 
@@ -136,7 +137,7 @@ public class TrackService {
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            String getQuery = "SELECT t FROM Track t WHERE t.active = true AND t.car.id = " + ((Car) request.getSession().getAttribute("car")).getId();
+            String getQuery = "SELECT t FROM Track t WHERE t.isActive = true AND t.car.id = " + ((Car) request.getSession().getAttribute("car")).getId();
             Query query = session.createQuery(getQuery);
             Track track = (Track) query.getSingleResult();
             if (track == null) {
@@ -271,7 +272,7 @@ public class TrackService {
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            String getQuery = "SELECT t FROM Track t WHERE t.active = true AND t.car.id = " + ((Car) request.getSession().getAttribute("car")).getId();
+            String getQuery = "SELECT t FROM Track t WHERE t.isActive = true AND t.car.id = " + ((Car) request.getSession().getAttribute("car")).getId();
             Query query = session.createQuery(getQuery);
             Track track = (Track) query.getSingleResult();
             if (track == null) {
@@ -335,109 +336,6 @@ public class TrackService {
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
         } finally {
             if (session != null) session.close();
-        }
-        return responseEntity;
-    }
-
-    public ResponseEntity getTrackDataById(HttpServletRequest request, HttpEntity<String> httpEntity, int trackId) {
-        // authorization
-        if (request.getSession().getAttribute("user") == null) {
-            logger.info("TrackService.getTrackData cannot send data (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-        }
-        Session session = null;
-        Transaction tx = null;
-        ResponseEntity responseEntity;
-
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            String getQuery = "SELECT t FROM TrackRate t WHERE t.track.id = " + trackId;
-            Query query = session.createQuery(getQuery);
-            List<TrackRate> rateList = query.getResultList();
-            JSONArray trackRateJson = new JSONArray();
-            for (TrackRate tr : rateList) {
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.put("gpsY", tr.getLatitude());
-                jsonObject.put("gpsX", tr.getLongitude());
-                jsonObject.put("rpm", tr.getRpm());
-                jsonObject.put("speed", tr.getSpeed());
-                jsonObject.put("throttle", tr.getThrottle());
-                jsonObject.put("time", tr.getTimestamp());
-                trackRateJson.put(jsonObject);
-            }
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(trackRateJson.toString());
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-        } finally {
-            if (session != null) session.close();
-        }
-        return responseEntity;
-    }
-
-    /**
-     * WebMethod that return tracks data list as array within a certain period of time .
-     * <p>
-     *
-     * @param request    Object of HttpServletRequest represents our request.
-     * @param httpEntity Object of HttpEntity represents content of our request.
-     * @return HttpStatus 200, user data as JsonString.
-     */
-    public ResponseEntity getTrackDataList(HttpServletRequest request, HttpEntity<String> httpEntity, String from, String to) //TODO
-    {
-        // authorization
-        if (request.getSession().getAttribute("user") == null) {
-            logger.info("TrackService.getSimplifiedTrackData cannot send data (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
-        }
-        Session session = null;
-        Transaction tx = null;
-        ResponseEntity responseEntity;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("ddMMyyyy");
-            Date dateFrom = simpleDateFormat.parse(from);
-            Date dateTo = simpleDateFormat.parse(to);
-            long dateFromTimeStamp = new Timestamp(dateFrom.getTime()).getTime();
-            long dateToTimeStamp = new Timestamp(dateTo.getTime()).getTime();
-
-            Query query = session.createQuery("SELECT t from Track t WHERE " +
-                    "t.timeStamp >= " + dateFromTimeStamp / 1000
-                    + " AND " +
-                    "t.timeStamp <= " + dateToTimeStamp / 1000);
-
-            List<Track> trackList = query.getResultList();
-            JSONArray jsonArray = new JSONArray();
-            for (Track t : trackList) {
-                JSONObject jo = new JSONObject();
-                jo.put("trackId", t.getId());
-                jo.put("distance", t.getDistanceFromStart());
-                jo.put("carId", t.getCar().getId());
-                jo.put("startedTime", t.getStartTrackTimeStamp());
-                jo.put("endedTime", t.getEndTrackTimeStamp());
-                jo.put("startLocation", t.getStartPosiotion()); //TODO API Reverse Geocoding
-                jo.put("endLocation", t.getEndPosiotion()); //TODO API Reverse Geocoding
-                jo.put("privateStatus", t.getPrivateTrack());
-                jo.put("activeStatus", t.getIsActive());
-                jsonArray.put(jo);
-            }
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonArray.toString());
-        } catch (HibernateException e) {
-            e.printStackTrace();
-            if (tx != null) tx.rollback();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-        } catch (ParseException p) {
-            p.printStackTrace();
-            if (tx != null) tx.rollback();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("wrong date format");
-        } finally {
-            if (session != null) session.close();
-
         }
         return responseEntity;
     }
@@ -685,19 +583,6 @@ public class TrackService {
         return responseEntity;
     }
 
-    //Private methods
-    //=========================
-
-    // Calculate distance between two gps points, return distance in meters
-    private float distFrom(double y1, double x1, double y2, double x2) {
-        double earthRadius = 6371000; //meters
-        double dLat = Math.toRadians(y2 - y1);
-        double dLng = Math.toRadians(x2 - x1);
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(y1)) * Math.cos(Math.toRadians(y2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        return (float) (earthRadius * c);
-    }
-
     /**
      * WebMethod which returns a list of tracks
      * <p>
@@ -795,7 +680,7 @@ public class TrackService {
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 
-    public URL createUrlForGeocoding(String lon, String lat) throws MalformedURLException {
+    private URL createUrlForGeocoding(String lon, String lat) throws MalformedURLException {
         String urlString = "http://open.mapquestapi.com" +
                 "/geocoding/v1" +
                 "/reverse?key=X6gyYLjl2XsAApWachPDkLRHfUA3ZPGI" +
@@ -803,5 +688,14 @@ public class TrackService {
                 "&includeRoadMetadata=true" +
                 "&includeNearestIntersection=true";
         return new URL(urlString);
+    }
+
+    private float distFrom(double y1, double x1, double y2, double x2) {
+        double earthRadiusInMeters = 6371000;
+        double dLat = Math.toRadians(y2 - y1);
+        double dLng = Math.toRadians(x2 - x1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(y1)) * Math.cos(Math.toRadians(y2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return (float) (earthRadiusInMeters * c);
     }
 }

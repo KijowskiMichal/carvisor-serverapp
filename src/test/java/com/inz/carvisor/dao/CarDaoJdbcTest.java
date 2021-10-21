@@ -1,10 +1,10 @@
 package com.inz.carvisor.dao;
 
 import com.inz.carvisor.entities.Car;
+import com.inz.carvisor.entities.builders.CarBuilder;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.otherclasses.Logger;
-import com.inz.carvisor.entities.builders.CarBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;

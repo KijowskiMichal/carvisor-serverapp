@@ -1,6 +1,7 @@
 package com.inz.carvisor.dao;
 
 import com.inz.carvisor.entities.User;
+import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.otherclasses.Logger;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import com.inz.carvisor.entities.builders.UserBuilder;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,6 +1,5 @@
 package com.inz.carvisor.controller;
 
-import com.inz.carvisor.util.RequestBuilder;
 import com.inz.carvisor.constants.SessionAttributeKey;
 import com.inz.carvisor.constants.UserJsonKey;
 import com.inz.carvisor.dao.CarDaoJdbc;
@@ -8,44 +7,39 @@ import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.*;
+import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
-import org.junit.jupiter.api.AfterEach;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
 import com.inz.carvisor.otherclasses.Initializer;
+import com.inz.carvisor.service.PasswordService;
+import com.inz.carvisor.util.RequestBuilder;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import com.inz.carvisor.service.PasswordService;
-import com.inz.carvisor.entities.builders.UserBuilder;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(TrackREST.class)
 @ContextConfiguration(classes = {Initializer.class})
 class UsersRESTTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private HibernateRequests hibernateRequests;
-    @Autowired
-    private UsersREST usersREST;
 
     @Autowired
     UserDaoJdbc userDaoJdbc;
@@ -55,6 +49,12 @@ class UsersRESTTest {
     SettingDaoJdbc settingDaoJdbc;
     @Autowired
     TrackDaoJdbc trackDaoJdbc;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private HibernateRequests hibernateRequests;
+    @Autowired
+    private UsersREST usersREST;
 
     @AfterEach
     void cleanupDatabase() {
@@ -72,7 +72,8 @@ class UsersRESTTest {
         users.forEach(userDaoJdbc::save);
     }
 
-    @Test //todo
+    @Test
+        //todo
     void list() {
         List<User> users = new ArrayList<>();
         addUsers(users);
@@ -86,7 +87,7 @@ class UsersRESTTest {
 
             user = new UserBuilder().setNick("Ala").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("AB").build();
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user",user);
+            sessionattr.put("user", user);
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/list/1/3/K/")
                     .sessionAttrs(sessionattr))
@@ -123,7 +124,7 @@ class UsersRESTTest {
                 .build();
 
         HashMap<String, Object> sessionattr = new HashMap<>();
-        sessionattr.put(SessionAttributeKey.USER_KEY,user);
+        sessionattr.put(SessionAttributeKey.USER_KEY, user);
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/listUserNames/Ala/")
                 .sessionAttrs(sessionattr))
@@ -145,17 +146,17 @@ class UsersRESTTest {
         int userId = user.getId();
 
         JSONObject jsonObject = new JSONObject()
-                .put("firstPassword","string")
-                .put("secondPassword","string");
+                .put("firstPassword", "string")
+                .put("secondPassword", "string");
 
         HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute("user",user);
+        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute("user", user);
 
-        usersREST.changePassword(mockHttpServletRequest,httpEntity);
+        usersREST.changePassword(mockHttpServletRequest, httpEntity);
         Optional<User> user1 = userDaoJdbc.get(userId);
         if (user1.isEmpty()) fail();
-        assertEquals(PasswordService.hashPassword("string"),user1.get().getPassword());
+        assertEquals(PasswordService.hashPassword("string"), user1.get().getPassword());
     }
 
     @Test
@@ -169,15 +170,15 @@ class UsersRESTTest {
         int userId = user.getId();
 
         JSONObject jsonObject = new JSONObject()
-            .put("firstPassword","string")
-            .put("secondPassword","string");
+                .put("firstPassword", "string")
+                .put("secondPassword", "string");
         HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
         MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);
 
-        usersREST.changePasswordById(mockHttpServletRequest,httpEntity, userId);
+        usersREST.changePasswordById(mockHttpServletRequest, httpEntity, userId);
         Optional<User> user1 = userDaoJdbc.get(userId);
         if (user1.isEmpty()) fail();
-        assertEquals(PasswordService.hashPassword("string"),user1.get().getPassword());
+        assertEquals(PasswordService.hashPassword("string"), user1.get().getPassword());
     }
 
     @Test
@@ -192,21 +193,21 @@ class UsersRESTTest {
         int userId = user.getId();
 
         JSONObject inputUserJson = new JSONObject()
-                .put(UserJsonKey.NAME,"Zbigniew Wodecki")
-                .put(UserJsonKey.PHONE_NUMBER,"112");
+                .put(UserJsonKey.NAME, "Zbigniew Wodecki")
+                .put(UserJsonKey.PHONE_NUMBER, "112");
 
         HttpEntity<String> httpEntity = new HttpEntity<>(inputUserJson.toString());
 
         MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);
         ResponseEntity<String> stringResponseEntity = usersREST.changeUserData(mockHttpServletRequest, httpEntity, userId);
-        assertEquals(200,stringResponseEntity.getStatusCodeValue());
+        assertEquals(200, stringResponseEntity.getStatusCodeValue());
 
         Optional<User> wrappedUser = userDaoJdbc.get(userId);
         if (wrappedUser.isEmpty()) fail();
         User zxc = wrappedUser.get();
-        assertEquals("Zbigniew",zxc.getName());
-        assertEquals("Wodecki",zxc.getSurname());
-        assertEquals(112,zxc.getPhoneNumber());
+        assertEquals("Zbigniew", zxc.getName());
+        assertEquals("Wodecki", zxc.getSurname());
+        assertEquals(112, zxc.getPhoneNumber());
     }
 
     @Test
@@ -227,28 +228,28 @@ class UsersRESTTest {
         ResponseEntity<String> userData = usersREST.getUserData(mockHttpServletRequest, null, userId);
 
         JSONObject jsonObject = new JSONObject(userData.getBody());
-        assertEquals(user.getName() + " " + user.getSurname(),jsonObject.get(UserJsonKey.NAME));
-        assertEquals(user.getPhoneNumber(),jsonObject.get(UserJsonKey.PHONE_NUMBER));
-        assertEquals(user.getImage(),jsonObject.get(UserJsonKey.IMAGE));
-        assertEquals("ADMINISTRATOR",jsonObject.get(UserJsonKey.USER_PRIVILEGES));
+        assertEquals(user.getName() + " " + user.getSurname(), jsonObject.get(UserJsonKey.NAME));
+        assertEquals(user.getPhoneNumber(), jsonObject.get(UserJsonKey.PHONE_NUMBER));
+        assertEquals(user.getImage(), jsonObject.get(UserJsonKey.IMAGE));
+        assertEquals("ADMINISTRATOR", jsonObject.get(UserJsonKey.USER_PRIVILEGES));
     }
 
     @Test
     void addUser() {
         JSONObject jsonObject = new JSONObject()
-                .put(UserJsonKey.NAME,"Tomek")
-                .put(UserJsonKey.SURNAME,"Wodecki")
-                .put(UserJsonKey.NICK,"Tomiro")
-                .put(UserJsonKey.PASSWORD,"abcd")
-                .put(UserJsonKey.PHONE_NUMBER,991)
-                .put(UserJsonKey.IMAGE,"my image");
+                .put(UserJsonKey.NAME, "Tomek")
+                .put(UserJsonKey.SURNAME, "Wodecki")
+                .put(UserJsonKey.NICK, "Tomiro")
+                .put(UserJsonKey.PASSWORD, "abcd")
+                .put(UserJsonKey.PHONE_NUMBER, 991)
+                .put(UserJsonKey.IMAGE, "my image");
 
         HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
         MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);
 
-        usersREST.addUser(mockHttpServletRequest,httpEntity);
+        usersREST.addUser(mockHttpServletRequest, httpEntity);
         List<User> all = userDaoJdbc.getAll();
-        assertEquals(1,all.size());
+        assertEquals(1, all.size());
     }
 
     @Test
@@ -262,7 +263,7 @@ class UsersRESTTest {
         userDaoJdbc.save(user);
         MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);
 
-        usersREST.removeUser(mockHttpServletRequest, null,user.getId());
-        assertEquals(0,userDaoJdbc.getAll().size());
+        ResponseEntity<String> stringResponseEntity = usersREST.removeUser(mockHttpServletRequest, null, user.getId());
+        assertEquals(0, userDaoJdbc.getAll().size());
     }
 }

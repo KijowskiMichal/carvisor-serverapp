@@ -42,8 +42,7 @@ public class CarAuthorizationService {
         try {
             cars = hibernateRequests.getTableContent("SELECT c FROM Car c WHERE c.licensePlate = '" + inJSON.get("licensePlate") + "'", Car.class);
         } catch (Exception e) {
-            //e.printStackTrace();
-            cars = new ArrayList<Object>();
+            cars = new ArrayList<>();
         }
         if (cars.size() == 0) {
             logger.info("CarAuthorizationREST.authorize didn't authorize the car");

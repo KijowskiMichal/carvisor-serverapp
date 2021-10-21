@@ -7,31 +7,31 @@ import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.*;
-import com.inz.carvisor.hibernatepackage.HibernateRequests;
-import org.json.JSONObject;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.springframework.http.HttpEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
-import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.entities.builders.CarBuilder;
+import com.inz.carvisor.entities.builders.TrackBuilder;
+import com.inz.carvisor.entities.builders.UserBuilder;
+import com.inz.carvisor.hibernatepackage.HibernateRequests;
+import com.inz.carvisor.otherclasses.Initializer;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.json.JSONObject;
 import org.junit.Assert;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import com.inz.carvisor.entities.builders.TrackBuilder;
-import com.inz.carvisor.entities.builders.UserBuilder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,15 +43,6 @@ import java.util.Objects;
 class TrackRESTTest {
 
     @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private HibernateRequests hibernateRequests;
-
-    @Autowired
-    private TrackREST trackREST;
-
-    @Autowired
     UserDaoJdbc userDaoJdbc;
     @Autowired
     CarDaoJdbc carDaoJdbc;
@@ -59,10 +50,13 @@ class TrackRESTTest {
     SettingDaoJdbc settingDaoJdbc;
     @Autowired
     TrackDaoJdbc trackDaoJdbc;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private HibernateRequests hibernateRequests;
+    @Autowired
+    private TrackREST trackREST;
 
-    //todo problem z usuwaniem przy obecnych kluczach obcych, żeby zreplikować błąd należy zmienić
-    // kolejność operacji w cleanup database tak by
-    // pierwsze wykonało się czyszczenie userów, jak tego nie poprawimy to będą problemy w przyszłości
     @AfterEach
     void cleanupDatabase() {
         trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
@@ -78,27 +72,27 @@ class TrackRESTTest {
         User user = new UserBuilder().setNfcTag("ABB").setUserPrivileges(UserPrivileges.STANDARD_USER).build();
 
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(SessionAttributeKey.USER_KEY,user);
-        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(SessionAttributeKey.CAR_KEY,user);
+        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(SessionAttributeKey.USER_KEY, user);
+        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(SessionAttributeKey.CAR_KEY, user);
 
         carDaoJdbc.save(car);
         userDaoJdbc.save(user);
-        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(SessionAttributeKey.CAR_KEY,car);
+        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(SessionAttributeKey.CAR_KEY, car);
         JSONObject jsonObject = new JSONObject()
-                .put(TrackJsonKey.TIME,165000)
-                .put(TrackJsonKey.PRIVATE,false)
-                .put(TrackJsonKey.GPS_LONGITUDE,15.50F)
-                .put(TrackJsonKey.GPS_LATITUDE,26.35F)
-                .put(TrackJsonKey.NFC_TAG,"ABB");
+                .put(TrackJsonKey.TIME, 165000)
+                .put(TrackJsonKey.PRIVATE, false)
+                .put(TrackJsonKey.GPS_LONGITUDE, 15.50F)
+                .put(TrackJsonKey.GPS_LATITUDE, 26.35F)
+                .put(TrackJsonKey.NFC_TAG, "ABB");
 
-        trackREST.startTrack(mockHttpServletRequest,new HttpEntity<>(jsonObject.toString()));
+        trackREST.startTrack(mockHttpServletRequest, new HttpEntity<>(jsonObject.toString()));
         List<Track> tracks = trackDaoJdbc.getAll();
-        Assertions.assertEquals(1,tracks.size());
+        Assertions.assertEquals(1, tracks.size());
     }
 
-    @Test //todo
-    void updateTrackData()
-    {
+    @Test
+        //todo
+    void updateTrackData() {
         Session session = null;
         Transaction tx = null;
         try {
@@ -134,7 +128,7 @@ class TrackRESTTest {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
-            Assertions.assertTrue(result.getResponse().getStatus()==200);
+            Assertions.assertTrue(result.getResponse().getStatus() == 200);
             tx.commit();
             session.close();
         } catch (HibernateException e) {
@@ -147,9 +141,9 @@ class TrackRESTTest {
         }
     }
 
-    @Test //todo
-    void updateTrack()
-    {
+    @Test
+        //todo
+    void updateTrack() {
         Session session = null;
         Transaction tx = null;
         try {
@@ -190,9 +184,9 @@ class TrackRESTTest {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
-            track = (Track) session.createQuery("SELECT t from Track t WHERE t.id = "+track.getId()).getSingleResult();
-            Assert.assertTrue(result.getResponse().getStatus()==200);
-            Assert.assertTrue(track.getTimeStamp()!=43675465);
+            track = (Track) session.createQuery("SELECT t from Track t WHERE t.id = " + track.getId()).getSingleResult();
+            Assert.assertTrue(result.getResponse().getStatus() == 200);
+            Assert.assertTrue(track.getTimeStamp() != 43675465);
             //finishing
             tx.commit();
             session.close();
@@ -206,9 +200,8 @@ class TrackRESTTest {
         }
     }
 
-    @Test //todo
-    void endOfTrack()
-    {
+    @Test
+    void endOfTrack() {
         Session session = null;
         Transaction tx = null;
         try {
@@ -244,8 +237,8 @@ class TrackRESTTest {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
-            track = (Track) session.createQuery("SELECT t from Track t WHERE t.id = "+track.getId()).getSingleResult();
-            Assert.assertTrue(result.getResponse().getStatus()==200);
+            track = (Track) session.createQuery("SELECT t from Track t WHERE t.id = " + track.getId()).getSingleResult();
+            Assert.assertTrue(result.getResponse().getStatus() == 200);
             Assert.assertTrue(!track.getIsActive());
             //finishing
             tx.commit();

@@ -33,28 +33,12 @@ public class User {
      * Hash SHA256 from user password
      */
     private String password;
-    /**
-     * RBAC value
-     */
     private UserPrivileges userPrivileges;
     @Lob
     private String image;
 
-
     public User() {
         super();
-        init();
-    }
-
-    public User(String nick, String name, String surname, String password, UserPrivileges userPrivileges, String image, int phoneNumber, String nfcTag) {
-        this.nick = nick;
-        this.name = name;
-        this.surname = surname;
-        this.password = password;
-        this.userPrivileges = userPrivileges;
-        this.image = image;
-        this.phoneNumber = phoneNumber;
-        this.nfcTag = nfcTag;
         init();
     }
 
@@ -248,20 +232,11 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "nick='" + nick + '\'' +
+                "id=" + id +
+                ", nick='" + nick + '\'' +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
-                ", phoneNumber=" + phoneNumber +
+                ", userPrivileges=" + userPrivileges +
                 '}';
-    }
-
-    @Deprecated
-    public String asJson() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("image", image);
-        jsonObject.put("name", name + " " + surname);
-        jsonObject.put("telephone", phoneNumber);
-        jsonObject.put("userPrivileges", userPrivileges);
-        return jsonObject.toString();
     }
 }

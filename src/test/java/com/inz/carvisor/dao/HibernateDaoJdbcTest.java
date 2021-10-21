@@ -6,6 +6,8 @@ import com.inz.carvisor.entities.Track;
 import com.inz.carvisor.entities.User;
 import com.inz.carvisor.entities.builders.CarBuilder;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
+import com.inz.carvisor.otherclasses.Initializer;
+import com.inz.carvisor.otherclasses.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -13,22 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-import com.inz.carvisor.otherclasses.Initializer;
-import com.inz.carvisor.otherclasses.Logger;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(CarDaoJdbc.class)
 @ContextConfiguration(classes = {Initializer.class})
 class HibernateDaoJdbcTest {
-
-    private final Logger logger = new Logger();
-
-    @Autowired
-    private HibernateRequests hibernateRequests;
 
     @Autowired
     ErrorDaoJdbc errorDaoJdbc;
@@ -40,6 +35,8 @@ class HibernateDaoJdbcTest {
     SettingDaoJdbc settingDaoJdbc;
     @Autowired
     TrackDaoJdbc trackDaoJdbc;
+    @Autowired
+    private HibernateRequests hibernateRequests;
 
     @AfterEach
     void clearDatabase() {
@@ -54,9 +51,9 @@ class HibernateDaoJdbcTest {
         Car car = new CarBuilder().build();
         carDaoJdbc.save(car);
         int id = car.getId();
-        assertEquals(1,carDaoJdbc.getAll().size());
+        assertEquals(1, carDaoJdbc.getAll().size());
         carDaoJdbc.delete(id);
-        assertEquals(0,carDaoJdbc.getAll().size());
+        assertEquals(0, carDaoJdbc.getAll().size());
     }
 
     @Test
@@ -68,6 +65,6 @@ class HibernateDaoJdbcTest {
                 new CarBuilder().build()
         ).forEach(carDaoJdbc::save);
         List<Car> selectCFromCar = carDaoJdbc.getList("SELECT c FROM Car c");
-        assertEquals(4,selectCFromCar.size());
+        assertEquals(4, selectCFromCar.size());
     }
 }

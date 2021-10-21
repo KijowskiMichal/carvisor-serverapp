@@ -6,12 +6,10 @@ import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.*;
+import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
-import org.junit.jupiter.api.Assertions;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
 import com.inz.carvisor.otherclasses.Initializer;
+import com.inz.carvisor.service.PasswordService;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -19,37 +17,33 @@ import org.hibernate.Transaction;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import com.inz.carvisor.entities.builders.UserBuilder;
-import com.inz.carvisor.service.PasswordService;
 
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(AuthorizationREST.class)
+@WebMvcTest(AuthorizationController.class)
 @ContextConfiguration(classes = {Initializer.class})
-class AuthorizationRESTTest {
+class AuthorizationControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private HibernateRequests hibernateRequests;
-
-    @Autowired
-    AuthorizationREST authorizationREST;
+    AuthorizationController authorizationController;
     @Autowired
     UserDaoJdbc userDaoJdbc;
     @Autowired
@@ -58,6 +52,10 @@ class AuthorizationRESTTest {
     SettingDaoJdbc settingDaoJdbc;
     @Autowired
     TrackDaoJdbc trackDaoJdbc;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private HibernateRequests hibernateRequests;
 
     @AfterEach
     void cleanupDatabase() {
@@ -88,8 +86,8 @@ class AuthorizationRESTTest {
                     .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus()==200);
-            Assert.assertTrue(((User)result.getRequest().getSession().getAttribute("user")).getNick().equals("fsgfgdfsfhdgfh"));
+            Assert.assertTrue(result.getResponse().getStatus() == 200);
+            Assert.assertTrue(((User) result.getRequest().getSession().getAttribute("user")).getNick().equals("fsgfgdfsfhdgfh"));
 
             //check with wrong password
             result = mockMvc.perform(MockMvcRequestBuilders.post("/authorization/authorize")
@@ -98,7 +96,7 @@ class AuthorizationRESTTest {
                     .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus()==406);
+            Assert.assertTrue(result.getResponse().getStatus() == 406);
             Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
 
             tx = session.beginTransaction();
@@ -114,7 +112,7 @@ class AuthorizationRESTTest {
                     .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus()==406);
+            Assert.assertTrue(result.getResponse().getStatus() == 406);
             Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
 
             session.close();
@@ -133,31 +131,30 @@ class AuthorizationRESTTest {
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
         User user = new UserBuilder().setNick("ala").setName("abc").setPassword(PasswordService.hashPassword("password")).build();
 
-        JSONObject jsonObject = new JSONObject().put(AuthorizationJsonKey.LOGIN,"ala").put(AuthorizationJsonKey.PASSWORD,"password");
+        JSONObject jsonObject = new JSONObject().put(AuthorizationJsonKey.LOGIN, "ala").put(AuthorizationJsonKey.PASSWORD, "password");
         HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
 
-        ResponseEntity authorize = authorizationREST.authorize(mockHttpServletRequest, httpEntity);
-        Assertions.assertNotEquals(200,authorize.getStatusCodeValue());
+        ResponseEntity authorize = authorizationController.authorize(mockHttpServletRequest, httpEntity);
+        Assertions.assertNotEquals(200, authorize.getStatusCodeValue());
 
         userDaoJdbc.save(user);
 
-        ResponseEntity authorizeSecond = authorizationREST.authorize(mockHttpServletRequest, httpEntity);
-        Assertions.assertEquals(200,authorizeSecond.getStatusCodeValue());
+        ResponseEntity authorizeSecond = authorizationController.authorize(mockHttpServletRequest, httpEntity);
+        Assertions.assertEquals(200, authorizeSecond.getStatusCodeValue());
     }
 
     @Test
-    void status()
-    {
+    void status() {
         try {
             //check with first user logged
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new UserBuilder().setNick("fsgfgdfsfhdgfh").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("ZXCVA").build()));
+            sessionattr.put("user", new UserBuilder().setNick("fsgfgdfsfhdgfh").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("ZXCVA").build());
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status")
                     .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus()==200);
+            Assert.assertTrue(result.getResponse().getStatus() == 200);
             JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
             Assert.assertTrue(jsonObject.getString("nickname").equals("fsgfgdfsfhdgfh"));
             Assert.assertFalse(jsonObject.getString("nickname").equals("fsgfgdfdgfgfsfhdgfh"));
@@ -166,13 +163,13 @@ class AuthorizationRESTTest {
 
             //check with second user logged
             sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new UserBuilder().setNick("dfsdfdv").setUserPrivileges(UserPrivileges.MODERATOR).setPhoneNumber(0).setNfcTag("ASDZXCV").build()));
+            sessionattr.put("user", new UserBuilder().setNick("dfsdfdv").setUserPrivileges(UserPrivileges.MODERATOR).setPhoneNumber(0).setNfcTag("ASDZXCV").build());
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status")
                     .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus()==200);
+            Assert.assertTrue(result.getResponse().getStatus() == 200);
             jsonObject = new JSONObject(result.getResponse().getContentAsString());
             Assert.assertTrue(jsonObject.getString("nickname").equals("dfsdfdv"));
             assertFalse(jsonObject.getString("nickname").equals("dgdgdf"));
@@ -184,7 +181,7 @@ class AuthorizationRESTTest {
             result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status"))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus()==200);
+            Assert.assertTrue(result.getResponse().getStatus() == 200);
             jsonObject = new JSONObject(result.getResponse().getContentAsString());
             Assert.assertFalse(jsonObject.getBoolean("logged"));
 
@@ -195,42 +192,40 @@ class AuthorizationRESTTest {
     }
 
     @Test
-    void logout()
-    {
-        try
-        {
+    void logout() {
+        try {
             //check with first user logged
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new UserBuilder().setNick("fsgfgdfsfhdgfh")
+            sessionattr.put("user", new UserBuilder().setNick("fsgfgdfsfhdgfh")
                     .setUserPrivileges(UserPrivileges.ADMINISTRATOR)
                     .setPhoneNumber(0)
                     .setNfcTag("ZXCZCX")
-                    .build()));
+                    .build());
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status")
                     .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus()==200);
+            Assert.assertTrue(result.getResponse().getStatus() == 200);
             Assert.assertNotNull(result.getRequest().getSession().getAttribute("user"));
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/logout")
                     .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus()==200);
+            Assert.assertTrue(result.getResponse().getStatus() == 200);
             Assert.assertTrue(result.getResponse().getContentAsString().equals(""));
             Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
 
             //check with second user logged
             sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user", (Object)(new UserBuilder().setNick("fsgfggfggfdgdfsfhdgfh").setUserPrivileges(UserPrivileges.MODERATOR).setPhoneNumber(0).setNfcTag("CVZXCVXZCV").build()));
+            sessionattr.put("user", new UserBuilder().setNick("fsgfggfggfdgdfsfhdgfh").setUserPrivileges(UserPrivileges.MODERATOR).setPhoneNumber(0).setNfcTag("CVZXCVXZCV").build());
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/logout")
                     .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus()==200);
+            Assert.assertTrue(result.getResponse().getStatus() == 200);
             Assert.assertTrue(result.getResponse().getContentAsString().equals(""));
             Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
 
@@ -238,7 +233,7 @@ class AuthorizationRESTTest {
             result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/logout"))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus()==200);
+            Assert.assertTrue(result.getResponse().getStatus() == 200);
             Assert.assertTrue(result.getResponse().getContentAsString().equals(""));
             Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
 

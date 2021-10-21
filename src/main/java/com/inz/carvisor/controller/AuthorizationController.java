@@ -13,11 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/authorization")
-public class AuthorizationREST {
+public class AuthorizationController {
     private final AuthorizationService authorizationService;
 
     @Autowired
-    public AuthorizationREST(AuthorizationService authorizationService) {
+    public AuthorizationController(AuthorizationService authorizationService) {
         this.authorizationService = authorizationService;
     }
 

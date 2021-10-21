@@ -47,4 +47,13 @@ public class Setting {
     public void setValue(Integer value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return "Setting{" +
+                "id=" + id +
+                ", nameOfSetting='" + nameOfSetting + '\'' +
+                ", value=" + value +
+                '}';
+    }
 }

@@ -42,4 +42,14 @@ public class Error {
     public void setValue(long value) {
         this.value = value;
     }
+
+    @Override
+    public String toString() {
+        return "Error{" +
+                "id=" + id +
+                ", type='" + type + '\'' +
+                ", value=" + value +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 }

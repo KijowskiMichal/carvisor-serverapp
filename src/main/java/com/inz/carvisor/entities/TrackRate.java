@@ -115,4 +115,18 @@ public class TrackRate {
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
+
+    @Override
+    public String toString() {
+        return "TrackRate{" +
+                "id=" + id +
+                ", speed=" + speed +
+                ", throttle=" + throttle +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", rpm=" + rpm +
+                ", distance=" + distance +
+                ", timestamp=" + timestamp +
+                '}';
+    }
 }

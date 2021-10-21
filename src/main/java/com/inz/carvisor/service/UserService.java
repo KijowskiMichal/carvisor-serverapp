@@ -415,7 +415,6 @@ public class UserService {
         } finally {
             if (session != null) session.close();
         }
-
         return responseEntity;
     }
 

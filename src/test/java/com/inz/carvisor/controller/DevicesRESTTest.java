@@ -1,34 +1,35 @@
 package com.inz.carvisor.controller;
 
-import com.inz.carvisor.util.RequestBuilder;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.*;
-import com.inz.carvisor.hibernatepackage.HibernateRequests;
-import org.junit.jupiter.api.AfterEach;
-import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockHttpServletRequest;
-import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.entities.builders.CarBuilder;
+import com.inz.carvisor.entities.builders.UserBuilder;
+import com.inz.carvisor.hibernatepackage.HibernateRequests;
+import com.inz.carvisor.otherclasses.Initializer;
+import com.inz.carvisor.util.RequestBuilder;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.Ignore;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import com.inz.carvisor.entities.builders.UserBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,12 +44,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class DevicesRESTTest {
 
     @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private HibernateRequests hibernateRequests;
-
-    @Autowired
     DevicesREST devicesREST;
     @Autowired
     UserDaoJdbc userDaoJdbc;
@@ -58,6 +53,10 @@ class DevicesRESTTest {
     SettingDaoJdbc settingDaoJdbc;
     @Autowired
     TrackDaoJdbc trackDaoJdbc;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private HibernateRequests hibernateRequests;
 
     @AfterEach
     void cleanupDatabase() {
@@ -75,7 +74,7 @@ class DevicesRESTTest {
         devices.forEach(carDaoJdbc::save);
     }
 
-    @Test //todo
+    @Test
     void list() {
         List<Car> devices = new ArrayList<>();
         populate(devices);
@@ -87,15 +86,16 @@ class DevicesRESTTest {
         assertEquals(3, list.size());
     }
 
-    @Test //todo
-    void getDeviceData() throws Exception {
+    @Test
+    @Ignore
+    void getDeviceData() {
         List<Car> devices = new ArrayList<>();
         populate(devices);
 
         //auth
         User user = new UserBuilder().setNick("Ala").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("AB").build();
         HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-        sessionattr.put("user",user);
+        sessionattr.put("user", user);
 
         Session session = null;
         Transaction transaction = null;
@@ -110,9 +110,9 @@ class DevicesRESTTest {
                     .sessionAttrs(sessionattr))
                     .andReturn();
             JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            assertEquals(car.getLicensePlate(),jsonObject.getString("licensePlate"));
-            assertEquals(car.getModel(),jsonObject.getString("model"));
-            assertEquals(car.getBrand(),jsonObject.getString("brand"));
+            assertEquals(car.getLicensePlate(), jsonObject.getString("licensePlate"));
+            assertEquals(car.getModel(), jsonObject.getString("model"));
+            assertEquals(car.getBrand(), jsonObject.getString("brand"));
             assertEquals(200, result.getResponse().getStatus());
             session.close();
         } catch (Exception e) {
@@ -121,7 +121,7 @@ class DevicesRESTTest {
         }
     }
 
-    @Test //todo
+    @Test
     void changeDeviceData() {
         List<Car> devices = new ArrayList<>();
         populate(devices);
@@ -129,7 +129,7 @@ class DevicesRESTTest {
         //auth
         User user = new UserBuilder().setNick("Ala").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("AB").build();
         HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-        sessionattr.put("user",user);
+        sessionattr.put("user", user);
 
         Session session = null;
         Transaction transaction = null;
@@ -166,7 +166,7 @@ class DevicesRESTTest {
             Query newQuery = session.createQuery("SELECT c FROM Car c WHERE c.id=" + carId);
             Car newCar = (Car) newQuery.getSingleResult();
 
-            assertNotEquals(licensePlate,newCar.getLicensePlate());
+            assertNotEquals(licensePlate, newCar.getLicensePlate());
             assertEquals(200, result.getResponse().getStatus());
             transaction.commit();
             session.close();
@@ -176,7 +176,7 @@ class DevicesRESTTest {
         }
     }
 
-    @Test //todo
+    @Test
     void addDevice() {
         Session session = null;
         Transaction tx = null;
@@ -188,7 +188,7 @@ class DevicesRESTTest {
 
             user = new UserBuilder().setNick("Ala").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("AB").build();
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("user",user);
+            sessionattr.put("user", user);
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/devices/addDevice")
                     .sessionAttrs(sessionattr)
@@ -208,12 +208,12 @@ class DevicesRESTTest {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
 
-            assertEquals(201,result.getResponse().getStatus());
+            assertEquals(201, result.getResponse().getStatus());
             Query query1 = session.createQuery("SELECT c FROM Car c");
             List<Car> cars = query1.getResultList();
-            assertEquals(1,cars.size());
+            assertEquals(1, cars.size());
 
-            for (Car car:cars) {
+            for (Car car : cars) {
                 session.delete(car);
             }
             tx.commit();
@@ -237,9 +237,9 @@ class DevicesRESTTest {
         Car secondCar = new CarBuilder().build();
         carDaoJdbc.save(firstCar);
         carDaoJdbc.save(secondCar);
-        assertEquals(2,carDaoJdbc.getAll().size());
+        assertEquals(2, carDaoJdbc.getAll().size());
         MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR);
-        devicesREST.removeDevice(mockHttpServletRequest,firstCar.getId());
-        assertEquals(1,carDaoJdbc.getAll().size());
+        devicesREST.removeDevice(mockHttpServletRequest, firstCar.getId());
+        assertEquals(1, carDaoJdbc.getAll().size());
     }
 }

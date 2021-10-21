@@ -1,6 +1,5 @@
 package com.inz.carvisor.controller;
 
-import com.inz.carvisor.util.RequestBuilder;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
@@ -9,6 +8,9 @@ import com.inz.carvisor.entities.*;
 import com.inz.carvisor.entities.builders.TrackBuilder;
 import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
+import com.inz.carvisor.otherclasses.Initializer;
+import com.inz.carvisor.service.DataService;
+import com.inz.carvisor.util.RequestBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -19,24 +21,15 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import com.inz.carvisor.otherclasses.Initializer;
-import com.inz.carvisor.service.DataService;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(CarDaoJdbc.class)
 @ContextConfiguration(classes = {Initializer.class})
 class EcoPointsRESTTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private HibernateRequests hibernateRequests;
-    @Autowired
-    private EcoPointsREST ecoPointsREST;
 
     @Autowired
     UserDaoJdbc userDaoJdbc;
@@ -46,6 +39,12 @@ class EcoPointsRESTTest {
     SettingDaoJdbc settingDaoJdbc;
     @Autowired
     TrackDaoJdbc trackDaoJdbc;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private HibernateRequests hibernateRequests;
+    @Autowired
+    private EcoPointsREST ecoPointsREST;
 
     @AfterEach
     void cleanupDatabase() {
@@ -73,7 +72,7 @@ class EcoPointsRESTTest {
         ).forEach(trackDaoJdbc::save);
 
         ResponseEntity<String> stringResponseEntity = ecoPointsREST.listUser(mockHttpServletRequest, driver.getId(), "1990-12-04", "2022-12-22");
-        assertEquals(200,stringResponseEntity.getStatusCodeValue());
+        assertEquals(200, stringResponseEntity.getStatusCodeValue());
         System.out.println(stringResponseEntity.getBody());
     }
 }

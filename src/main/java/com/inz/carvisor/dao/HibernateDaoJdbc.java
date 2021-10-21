@@ -97,6 +97,7 @@ public abstract class HibernateDaoJdbc<T> {
             if (transaction != null) transaction.rollback();
             e.printStackTrace();
         } finally {
+
             if (session != null) session.close();
         }
 

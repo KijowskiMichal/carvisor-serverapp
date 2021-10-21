@@ -272,4 +272,15 @@ public class Track {
     public void addMetersToDistance(long meters) {
         distanceFromStart += meters;
     }
+
+    @Override
+    public String toString() {
+        return "Track{" +
+                "id=" + id +
+                ", privateTrack=" + privateTrack +
+                ", isActive=" + isActive +
+                ", startPosiotion='" + startPosiotion + '\'' +
+                ", startTrackTimeStamp=" + startTrackTimeStamp +
+                '}';
+    }
 }
