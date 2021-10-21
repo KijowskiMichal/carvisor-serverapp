@@ -14,4 +14,5 @@ public class UserJsonKey {
     public final static String NFC = "nfc";
     public final static String USER_PRIVILEGES = "userPrivileges";
 
+    public static final String LOGIN = "login";
 }

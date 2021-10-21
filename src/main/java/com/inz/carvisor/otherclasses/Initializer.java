@@ -16,6 +16,8 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 @ComponentScan("com/inz/carvisor/util")
 @ComponentScan("com/inz/carvisor/dao")
 @ComponentScan("com/inz/carvisor/service")
+@ComponentScan("com/inz/carvisor/constants")
+@ComponentScan("com/inz/carvisor/entities")
 public class Initializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override

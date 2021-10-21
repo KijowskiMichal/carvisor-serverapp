@@ -32,6 +32,7 @@ public class UsersREST {
     private static final String FIRST_PASSWORD_KEY = "firstPassword";
     private static final String SECOND_PASSWORD_KEY = "secondPassword";
     private static final String PASSWORD_DOESNT_MATCH = "passwords doesn't match";
+
     @Autowired
     SecurityService securityService;
     @Autowired

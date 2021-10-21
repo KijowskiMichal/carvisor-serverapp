@@ -137,10 +137,13 @@ class AuthorizationControllerTest {
         ResponseEntity authorize = authorizationController.authorize(mockHttpServletRequest, httpEntity);
         Assertions.assertNotEquals(200, authorize.getStatusCodeValue());
 
+        userDaoJdbc.save(new UserBuilder().setNick("tom").setName("tom").setPassword(PasswordService.hashPassword("cba")).build());
+        userDaoJdbc.save(new UserBuilder().setNick("bar").setName("bar").setPassword(PasswordService.hashPassword("abc")).build());
         userDaoJdbc.save(user);
-
         ResponseEntity authorizeSecond = authorizationController.authorize(mockHttpServletRequest, httpEntity);
         Assertions.assertEquals(200, authorizeSecond.getStatusCodeValue());
+
+        authorizationController.status(mockHttpServletRequest);
     }
 
     @Test

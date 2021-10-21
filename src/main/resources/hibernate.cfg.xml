@@ -7,14 +7,9 @@
         <property name = "hibernate.">org.mariadb.jdbc.Driver</property>
         <property name="hibernate.hbm2ddl.auto">create</property>
 
-        <!-- Assume test is the database name -->
-        <!--        <property name = "hibernate.connection.url">jdbc:mariadb://michal.vps.kronmar.net/carvisor?useUnicode=yes&amp;characterEncoding=UTF-8</property>-->
-        <!--        <property name = "hibernate.connection.username">carvisoru</property>-->
-        <!--        <property name = "hibernate.connection.password">EkEyW28W1jXquuC</property>-->
-
-        <property name = "hibernate.connection.url">jdbc:mariadb://localhost/carvisortest?useUnicode=yes&amp;characterEncoding=UTF-8</property>
-        <property name = "hibernate.connection.username">root</property>
-        <property name = "hibernate.connection.password"></property>
+        <property name = "hibernate.connection.url">jdbc:mariadb://michal.vps.kronmar.net/carvisor?useUnicode=yes&amp;characterEncoding=UTF-8</property>
+        <property name = "hibernate.connection.username">carvisoru</property>
+        <property name = "hibernate.connection.password">EkEyW28W1jXquuC</property>
 
         <!-- List of XML mapping files -->
         <mapping class="com.inz.carvisor.entities.User" />
