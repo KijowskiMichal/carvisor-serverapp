@@ -261,8 +261,7 @@ public class UserService {
         }
 
         Optional<User> wrappedUser = userDaoJdbc.get(userID);
-        if (wrappedUser.isEmpty())
-            return DefaultResponse.BAD_REQUEST;
+        if (wrappedUser.isEmpty()) return DefaultResponse.BAD_REQUEST;
         User user = wrappedUser.get();
         JSONObject jsonObject = new JSONObject()
                 .put(UserJsonKey.IMAGE, user.getImage())

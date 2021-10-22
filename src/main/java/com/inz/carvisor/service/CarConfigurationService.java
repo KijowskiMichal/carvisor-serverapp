@@ -61,13 +61,13 @@ public class CarConfigurationService {
             Car car = (Car) query.getSingleResult();
             JSONObject jsonOut = new JSONObject();
             if (car.getSendInterval() == null) {
-                String getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'sendInterval'";
+                String getQueryInner = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'sendInterval'";
                 Query queryInner = session.createQuery(getQueryInner);
                 Setting setting = (Setting) queryInner.getSingleResult();
                 jsonOut.put("sendInterval", setting.getValue());
             } else jsonOut.put("sendInterval", car.getSendInterval());
             if (car.getLocationInterval() == null) {
-                String getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
+                String getQueryInner = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'locationInterval'";
                 Query queryInner = session.createQuery(getQueryInner);
                 Setting setting = (Setting) queryInner.getSingleResult();
                 jsonOut.put("locationInterval", setting.getValue());
@@ -214,9 +214,9 @@ public class CarConfigurationService {
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            String getQuery1 = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'sendInterval'";
-            String getQuery2 = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
-            String getQuery3 = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'historyTimeout'";
+            String getQuery1 = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'sendInterval'";
+            String getQuery2 = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'locationInterval'";
+            String getQuery3 = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'historyTimeout'";
             Query query1 = session.createQuery(getQuery1);
             Query query2 = session.createQuery(getQuery2);
             Query query3 = session.createQuery(getQuery3);
@@ -278,9 +278,9 @@ public class CarConfigurationService {
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
-            String getQuery1 = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'sendInterval'";
-            String getQuery2 = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
-            String getQuery3 = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'historyTimeout'";
+            String getQuery1 = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'sendInterval'";
+            String getQuery2 = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'locationInterval'";
+            String getQuery3 = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'historyTimeout'";
             Query query1 = session.createQuery(getQuery1);
             Query query2 = session.createQuery(getQuery2);
             Query query3 = session.createQuery(getQuery3);
