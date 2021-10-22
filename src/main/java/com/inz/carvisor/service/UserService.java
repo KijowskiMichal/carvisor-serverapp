@@ -107,7 +107,7 @@ public class UserService {
             try {
                 session = hibernateRequests.getSession();
                 tx = session.beginTransaction();
-                Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.active = true AND t.user.id = " + ((User) tmp).getId());
+                Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.isActive = true AND t.user.id = " + ((User) tmp).getId());
                 List<Track> tracks = selectQuery.list();
                 if (tracks.size() > 0) {
                     jsonObject.put("status", "Aktywny");
@@ -117,7 +117,7 @@ public class UserService {
                     jsonObject.put("finishTime", "------");
                     jsonObject.put("licensePlate", tracks.get(0).getCar().getLicensePlate());
                 } else {
-                    selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.active = false AND t.user.id = " + ((User) tmp).getId() + " ORDER BY t.id DESC");
+                    selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.isActive = false AND t.user.id = " + ((User) tmp).getId() + " ORDER BY t.id DESC");
                     selectQuery.setMaxResults(1);
                     tracks = selectQuery.list();
                     if (tracks.size() > 0) {
