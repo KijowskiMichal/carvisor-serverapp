@@ -7,7 +7,7 @@
         <property name = "hibernate.">org.mariadb.jdbc.Driver</property>
         <property name="hibernate.hbm2ddl.auto">create</property>
 
-        <property name = "hibernate.connection.url">jdbc:mariadb://michal.vps.kronmar.net/carvisor?useUnicode=yes&amp;characterEncoding=UTF-8</property>
+        <property name = "hibernate.connection.url">jdbc:mariadb://databases/carvisor?useUnicode=yes&amp;characterEncoding=UTF-8</property>
         <property name = "hibernate.connection.username">carvisoru</property>
         <property name = "hibernate.connection.password">EkEyW28W1jXquuC</property>
 
