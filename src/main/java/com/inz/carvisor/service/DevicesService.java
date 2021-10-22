@@ -218,8 +218,8 @@ public class DevicesService {
             tx = session.beginTransaction();
 
 
-            String getQuery1 = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'sendInterval'";
-            String getQuery2 = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
+            String getQuery1 = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'sendInterval'";
+            String getQuery2 = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'locationInterval'";
             Query query1 = session.createQuery(getQuery1);
             Query query2 = session.createQuery(getQuery2);
             Setting set1 = (Setting) query1.getSingleResult();

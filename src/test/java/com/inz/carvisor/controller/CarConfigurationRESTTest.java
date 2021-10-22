@@ -157,10 +157,10 @@ class CarConfigurationRESTTest {
 
             //starting
 
-            String getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'sendInterval'";
+            String getQueryInner = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'sendInterval'";
             Query queryInner = session.createQuery(getQueryInner);
             Setting sendInterval = (Setting) queryInner.getSingleResult();
-            getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
+            getQueryInner = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'locationInterval'";
             queryInner = session.createQuery(getQueryInner);
             Setting locationInterval = (Setting) queryInner.getSingleResult();
 
@@ -305,13 +305,13 @@ class CarConfigurationRESTTest {
 
             //starting
 
-            String getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'sendInterval'";
+            String getQueryInner = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'sendInterval'";
             Query queryInner = session.createQuery(getQueryInner);
             Setting sendInterval = (Setting) queryInner.getSingleResult();
-            getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
+            getQueryInner = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'locationInterval'";
             queryInner = session.createQuery(getQueryInner);
             Setting locationInterval = (Setting) queryInner.getSingleResult();
-            getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'historyTimeout'";
+            getQueryInner = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'historyTimeout'";
             queryInner = session.createQuery(getQueryInner);
             Setting historyTimeout = (Setting) queryInner.getSingleResult();
 
@@ -369,13 +369,13 @@ class CarConfigurationRESTTest {
 
             //starting
 
-            String getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'sendInterval'";
+            String getQueryInner = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'sendInterval'";
             Query queryInner = session.createQuery(getQueryInner);
             Setting oldSendInterval = (Setting) queryInner.getSingleResult();
-            getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
+            getQueryInner = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'locationInterval'";
             queryInner = session.createQuery(getQueryInner);
             Setting oldLocationInterval = (Setting) queryInner.getSingleResult();
-            getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'historyTimeout'";
+            getQueryInner = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'historyTimeout'";
             queryInner = session.createQuery(getQueryInner);
             Setting oldHistoryTimeout = (Setting) queryInner.getSingleResult();
 
@@ -404,13 +404,13 @@ class CarConfigurationRESTTest {
             tx.commit();
             tx = session.beginTransaction();
 
-            getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'sendInterval'";
+            getQueryInner = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'sendInterval'";
             queryInner = session.createQuery(getQueryInner);
             Setting sendInterval = (Setting) queryInner.getSingleResult();
-            getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'locationInterval'";
+            getQueryInner = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'locationInterval'";
             queryInner = session.createQuery(getQueryInner);
             Setting locationInterval = (Setting) queryInner.getSingleResult();
-            getQueryInner = "SELECT s FROM Settings s WHERE s.nameOfSetting like 'historyTimeout'";
+            getQueryInner = "SELECT s FROM Setting s WHERE s.nameOfSetting like 'historyTimeout'";
             queryInner = session.createQuery(getQueryInner);
             Setting historyTimeout = (Setting) queryInner.getSingleResult();
 
