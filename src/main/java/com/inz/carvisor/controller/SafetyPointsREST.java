@@ -2,7 +2,9 @@ package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.constants.TrackJsonKey;
+import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.Track;
+import com.inz.carvisor.entities.User;
 import com.inz.carvisor.entities.UserPrivileges;
 import com.inz.carvisor.service.DataService;
 import com.inz.carvisor.service.SafetyPointsService;
@@ -26,11 +28,13 @@ import java.util.List;
 public class SafetyPointsREST {
     private final SafetyPointsService safetyPointsService;
     private final SecurityService securityService;
+    private final UserDaoJdbc userDaoJdbc;
 
     @Autowired
-    public SafetyPointsREST(SafetyPointsService safetyPointsService, SecurityService securityService) {
+    public SafetyPointsREST(SafetyPointsService safetyPointsService, SecurityService securityService, UserDaoJdbc userDaoJdbc) {
         this.safetyPointsService = safetyPointsService;
         this.securityService = securityService;
+        this.userDaoJdbc = userDaoJdbc;
     }
 
 
@@ -41,20 +45,23 @@ public class SafetyPointsREST {
 
     @RequestMapping(value = "/getUserDetails/{id}/{dateFrom}/{dateTo}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> listUser(HttpServletRequest request, @PathVariable("id") int userId, @PathVariable("dateFrom") String dateFrom, @PathVariable("dateTo") String dateTo) {
-
         if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             List<Track> tracks = safetyPointsService.listUser(userId, dateFrom, dateTo);
-            return DefaultResponse.ok(parseToJson(tracks));
+            return DefaultResponse.ok(parseToJson(tracks,userId));
         } else {
             return DefaultResponse.UNAUTHORIZED;
         }
     }
 
-    private String parseToJson(List<Track> trackList) {
-        JSONObject mainJson = new JSONObject().put("name", "placeholder");
-        JSONArray listOfDays = new JSONArray();
-        trackList.stream().map(this::trackToJson).forEach(listOfDays::put);
-        return mainJson.put("listOfOffencess", listOfDays).toString();
+
+    private String parseToJson(List<Track> trackList, int userId) {
+        String userName = userDaoJdbc.get(userId).map(User::getName).orElse("");
+        JSONObject mainJson = new JSONObject().put("name", userName);
+
+        JSONArray listOfOffencess = new JSONArray();
+        mainJson.put("listOfOffencess", listOfOffencess);
+
+        return mainJson.toString();
     }
 
     private JSONObject trackToJson(Track track) {

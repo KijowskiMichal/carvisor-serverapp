@@ -620,12 +620,12 @@ public class TrackService {
             Query selectUser = session.createQuery("SELECT u FROM User u WHERE id = " + userID);
             user = (User) selectUser.getSingleResult();
 
-            String countQ = "Select count (t.id) from Track t WHERE t.user = " + userID + " AND t.start > " + (timestampBefore.getTime() / 1000) + " AND t.start < " + (timestampAfter.getTime() / 1000) + " ";
+            String countQ = "Select count (t.id) from Track t WHERE t.user = " + userID + " AND t.startPosition > " + (timestampBefore.getTime() / 1000) + " AND t.startPosition < " + (timestampAfter.getTime() / 1000) + " ";
             Query countQuery = session.createQuery(countQ);
             Long countResults = (Long) countQuery.uniqueResult();
             lastPageNumber = (int) (Math.ceil(countResults / (double) pageSize));
 
-            Query selectQuery = session.createQuery("SELECT t from Track t WHERE t.user = " + userID + " AND t.start > " + (timestampBefore.getTime() / 1000) + " AND t.start < " + (timestampAfter.getTime() / 1000) + " ");
+            Query selectQuery = session.createQuery("SELECT t from Track t WHERE t.user = " + userID + " AND t.startPosition > " + (timestampBefore.getTime() / 1000) + " AND t.startPosition < " + (timestampAfter.getTime() / 1000) + " ");
             selectQuery.setFirstResult((page - 1) * pageSize);
             selectQuery.setMaxResults(pageSize);
             tracks = selectQuery.list();

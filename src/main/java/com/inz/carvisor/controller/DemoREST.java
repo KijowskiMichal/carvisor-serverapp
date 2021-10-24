@@ -1,5 +1,6 @@
 package com.inz.carvisor.controller;
 
+import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
@@ -74,6 +75,8 @@ public class DemoREST {
                 new Setting("locationInterval", 15),
                 new Setting("historyTimeout", 180)
         ).forEach(settingDaoJdbc::save);
-        return new ResponseEntity(HttpStatus.OK);
+
+
+        return DefaultResponse.OK;
     }
 }

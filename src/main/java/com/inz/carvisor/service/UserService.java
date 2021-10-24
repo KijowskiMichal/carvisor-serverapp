@@ -439,6 +439,7 @@ public class UserService {
                 .setNick(jsonObject.getString("nick"))
                 .setPassword(PasswordService.hashPassword(jsonObject.getString(UserJsonKey.PASSWORD)))
                 .setPhoneNumber(jsonObject.getInt(UserJsonKey.PHONE_NUMBER));
+
         if (!jsonObject.getString("image").isEmpty()) {
             userBuilder.setImage(jsonObject.getString("image"));
         }
