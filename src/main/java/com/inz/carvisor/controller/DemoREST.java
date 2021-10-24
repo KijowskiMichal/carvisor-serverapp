@@ -5,6 +5,7 @@ import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
+import com.inz.carvisor.entities.Car;
 import com.inz.carvisor.entities.Setting;
 import com.inz.carvisor.entities.UserPrivileges;
 import com.inz.carvisor.entities.builders.CarBuilder;
@@ -58,17 +59,7 @@ public class DemoREST {
                 new UserBuilder().setNick("user10").setName("Agnieszka").setSurname("Wasilewska").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage("https://cdn4.iconfinder.com/data/icons/people-avatar-filled-outline/64/girl_ginger_curly__people_woman_teenager_avatar-256.png").setPhoneNumber(34255342).setNfcTag("CDA").build()
         ).forEach(userDaoJdbc::save);
 
-        List.of(
-                new CarBuilder().setLicensePlate("DWL5636").setBrand("Ford").setModel("Focus").setProductionDate(1990).setImage("https://cdn3.iconfinder.com/data/icons/airport-scenes/64/transfer_confirmation-256.png").setPassword(DigestUtils.sha256Hex("safdsdsf")).build(),
-                new CarBuilder().setLicensePlate("EPI6395").setBrand("Renault").setModel("Laguna").setProductionDate(1993).setImage("https://cdn4.iconfinder.com/data/icons/city-life/500/traffic-256.png").setPassword(DigestUtils.sha256Hex("dfsdfds")).build(),
-                new CarBuilder().setLicensePlate("WA42613").setBrand("BMW").setModel("X6").setProductionDate(1993).setImage("https://cdn0.iconfinder.com/data/icons/kameleon-free-pack-rounded/110/Old-Car-2-256.png").setPassword(DigestUtils.sha256Hex("dfsdfds")).build(),
-                new CarBuilder().setLicensePlate("CW02838").setBrand("Kia").setModel("Picanto").setProductionDate(1993).setImage("https://cdn1.iconfinder.com/data/icons/family-life-flat/340/travel_car_summer_vacation_trip_road_drive_vehicle_journey_adventure_holiday-256.png").setPassword(DigestUtils.sha256Hex("dfsdfds")).build(),
-                new CarBuilder().setLicensePlate("FZA5527").setBrand("Audi").setModel("A4").setProductionDate(1993).setImage("https://cdn2.iconfinder.com/data/icons/outdoors-people-scenes/64/roadtrip-256.png").setPassword(DigestUtils.sha256Hex("dfsdfds")).build(),
-                new CarBuilder().setLicensePlate("GKW0134").setBrand("Ford").setModel("Fiesta").setProductionDate(1993).setImage("https://cdn0.iconfinder.com/data/icons/videographer-filmmaker-and-cameraman/339/filming-005-256.png").setPassword(DigestUtils.sha256Hex("dfsdfds")).build(),
-                new CarBuilder().setLicensePlate("WL85883").setBrand("Opel").setModel("Corsa").setProductionDate(1993).setImage("https://www.bmw-frankcars.pl/www/media/mediapool/homepage_bmw5_limusine_lci2020.jpg").setPassword(DigestUtils.sha256Hex("dfsdfds")).build(),
-                new CarBuilder().setLicensePlate("EWE1751").setBrand("Volkswagen").setModel("Passat").setProductionDate(1993).setImage("https://cdn3.iconfinder.com/data/icons/transportation-road/112/33-transportation-road_vintage-car-8-256.png").setPassword(DigestUtils.sha256Hex("dfsdfds")).build(),
-                new CarBuilder().setLicensePlate("NEB1632").setBrand("Hyundai").setModel("I20").setProductionDate(1993).setImage("https://cdn3.iconfinder.com/data/icons/man-daily-routine-people/221/routine-002-512.png").setPassword(DigestUtils.sha256Hex("dfsdfds")).build()
-        ).forEach(carDaoJdbc::save);
+        getCarList().forEach(carDaoJdbc::save);
 
         List.of(
                 new Setting("sendInterval", 15),
@@ -78,5 +69,91 @@ public class DemoREST {
 
 
         return DefaultResponse.OK;
+    }
+
+    public List<Car> getCarList() {
+        return List.of(
+                new CarBuilder()
+                        .setLicensePlate("DWL5636")
+                        .setBrand("Ford")
+                        .setModel("Focus")
+                        .setProductionDate(1990)
+                        .setImage("https://cdn3.iconfinder.com/data/icons/airport-scenes/64/transfer_confirmation-256.png")
+                        .setPassword(DigestUtils.sha256Hex("safdsdsf"))
+                        .setTank(50)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("EPI6395")
+                        .setBrand("Renault")
+                        .setModel("Laguna")
+                        .setProductionDate(1993)
+                        .setImage("https://cdn4.iconfinder.com/data/icons/city-life/500/traffic-256.png")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("WA42613")
+                        .setBrand("BMW")
+                        .setModel("X6")
+                        .setProductionDate(1993)
+                        .setImage("https://cdn0.iconfinder.com/data/icons/kameleon-free-pack-rounded/110/Old-Car-2-256.png")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("CW02838")
+                        .setBrand("Kia")
+                        .setModel("Picanto")
+                        .setProductionDate(1993)
+                        .setImage("https://cdn1.iconfinder.com/data/icons/family-life-flat/340/travel_car_summer_vacation_trip_road_drive_vehicle_journey_adventure_holiday-256.png")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("FZA5527")
+                        .setBrand("Audi")
+                        .setModel("A4")
+                        .setProductionDate(1993)
+                        .setImage("https://cdn2.iconfinder.com/data/icons/outdoors-people-scenes/64/roadtrip-256.png")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("GKW0134")
+                        .setBrand("Ford")
+                        .setModel("Fiesta")
+                        .setProductionDate(1993)
+                        .setImage("https://cdn0.iconfinder.com/data/icons/videographer-filmmaker-and-cameraman/339/filming-005-256.png")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("WL85883")
+                        .setBrand("Opel")
+                        .setModel("Corsa")
+                        .setProductionDate(1993)
+                        .setImage("https://www.bmw-frankcars.pl/www/media/mediapool/homepage_bmw5_limusine_lci2020.jpg")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("EWE1751")
+                        .setBrand("Volkswagen")
+                        .setModel("Passat")
+                        .setProductionDate(1993)
+                        .setImage("https://cdn3.iconfinder.com/data/icons/transportation-road/112/33-transportation-road_vintage-car-8-256.png")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("NEB1632")
+                        .setBrand("Hyundai")
+                        .setModel("I20")
+                        .setProductionDate(1993)
+                        .setImage("https://cdn3.iconfinder.com/data/icons/man-daily-routine-people/221/routine-002-512.png")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .build()
+        );
     }
 }

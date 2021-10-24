@@ -29,8 +29,6 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -90,7 +88,6 @@ public class TrackService {
             tx = session.beginTransaction();
             Car car = (Car) request.getSession().getAttribute("car");
             //check if car has started track
-            //todo naprawa tego bo wypierdala, nie wiem czemu, tego nie ruszałem :/
             Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.car.id=" + car.getId() + " and t.isActive=1");
             if (selectQuery.uniqueResult() != null) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Car with id=" + car.getId() + " have started track");
@@ -101,7 +98,7 @@ public class TrackService {
             track.setCar(car);
             track.setIsActive(true);
             track.setPrivateTrack(isPrivateTrack);
-            track.setTimeStamp(startTime);
+            track.setTimestamp(startTime);
             track.setStartTrackTimeStamp(startTime);
             track.setStartPosiotion(gpsLatitude + ";" + gpsLongitude);
             track.setEndPosiotion(gpsLatitude + ";" + gpsLongitude);
@@ -218,7 +215,7 @@ public class TrackService {
                     track.addTrackRate(trackRate);
                     EcoPointsCalculator.calculateEcoPoints(track);
                 }
-                track.setTimeStamp(trackRate.getTimestamp());
+                track.setTimestamp(trackRate.getTimestamp());
                 session.update(track);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
                 logger.log(Level.INFO, "Track: " + track.getId() + " updated");
@@ -280,7 +277,7 @@ public class TrackService {
             } else {
                 Date date = new Date();
                 long time = date.getTime();
-                track.setTimeStamp(time);
+                track.setTimestamp(time);
                 session.update(track);
                 responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
             }
@@ -315,7 +312,7 @@ public class TrackService {
             Date date = new Date();
             long time = date.getTime() / 1000;
             for (Track track : tracks) {
-                if (track.getTimeStamp() < (time - 15)) {
+                if (track.getTimestamp() < (time - 15)) {
                     track.getUser().addTrackToEcoPointScore(track);
                     track.getUser().setTracksNumber(track.getUser().getTracksNumber() + 1);
                     track.getUser().setDistanceTravelled(track.getUser().getDistanceTravelled() + track.getDistanceFromStart());

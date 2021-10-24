@@ -186,7 +186,7 @@ class TrackRESTTest {
 
             track = (Track) session.createQuery("SELECT t from Track t WHERE t.id = " + track.getId()).getSingleResult();
             Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertTrue(track.getTimeStamp() != 43675465);
+            Assert.assertTrue(track.getTimestamp() != 43675465);
             //finishing
             tx.commit();
             session.close();

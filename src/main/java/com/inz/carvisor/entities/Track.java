@@ -38,7 +38,7 @@ public class Track {
     /**
      * timeStamp of last update
      */
-    long timeStamp;
+    long timestamp;
     long startTrackTimeStamp;
     long endTrackTimeStamp;
     long distanceFromStart;
@@ -64,12 +64,12 @@ public class Track {
      */
     int safetyNegativeSamples;
 
-    public Track(Car car, User user, int numberOfparameter, Boolean privateTrack, long timeStamp, String startPosiotion) {
+    public Track(Car car, User user, int numberOfparameter, Boolean privateTrack, long timestamp, String startPosiotion) {
         this.car = car;
         this.user = user;
         this.numberOfparameter = numberOfparameter;
         this.privateTrack = privateTrack;
-        this.timeStamp = timeStamp;
+        this.timestamp = timestamp;
         this.startPosiotion = startPosiotion;
         this.endPosiotion = "";
         this.startTrackTimeStamp = new Date().getTime();
@@ -208,12 +208,12 @@ public class Track {
         this.endPosiotion = endPosiotion;
     }
 
-    public long getTimeStamp() {
-        return timeStamp;
+    public long getTimestamp() {
+        return timestamp;
     }
 
-    public void setTimeStamp(long timeStamp) {
-        this.timeStamp = timeStamp;
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public long getStartTrackTimeStamp() {

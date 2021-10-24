@@ -60,7 +60,7 @@ public class TrackBuilder {
         track.setUser(this.user);
         track.setNumberOfparameter(this.numberOfparameter);
         track.setPrivateTrack(this.privateTrack);
-        track.setTimeStamp(this.timeStamp);
+        track.setTimestamp(this.timeStamp);
         track.setStartPosiotion(this.startPosiotion);
 
         track.setDistanceFromStart(this.distance);

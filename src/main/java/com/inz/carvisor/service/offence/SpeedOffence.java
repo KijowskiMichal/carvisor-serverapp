@@ -30,6 +30,7 @@ public class SpeedOffence extends OffenceStrategy {
                 .setLocation(getLocation(trackRate))
                 .setValue(currentSpeed - speedLimit)
                 .build();
+
         return Optional.of(offence);
     }
 
