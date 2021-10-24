@@ -81,6 +81,7 @@ public class DemoREST {
                         .setImage("https://cdn3.iconfinder.com/data/icons/airport-scenes/64/transfer_confirmation-256.png")
                         .setPassword(DigestUtils.sha256Hex("safdsdsf"))
                         .setTank(50)
+                        .setFuelNorm(7D)
                         .build(),
                 new CarBuilder()
                         .setLicensePlate("EPI6395")
@@ -90,6 +91,7 @@ public class DemoREST {
                         .setImage("https://cdn4.iconfinder.com/data/icons/city-life/500/traffic-256.png")
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
+                        .setFuelNorm(7D)
                         .build(),
                 new CarBuilder()
                         .setLicensePlate("WA42613")
@@ -99,6 +101,7 @@ public class DemoREST {
                         .setImage("https://cdn0.iconfinder.com/data/icons/kameleon-free-pack-rounded/110/Old-Car-2-256.png")
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
+                        .setFuelNorm(7D)
                         .build(),
                 new CarBuilder()
                         .setLicensePlate("CW02838")
@@ -108,6 +111,7 @@ public class DemoREST {
                         .setImage("https://cdn1.iconfinder.com/data/icons/family-life-flat/340/travel_car_summer_vacation_trip_road_drive_vehicle_journey_adventure_holiday-256.png")
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
+                        .setFuelNorm(7D)
                         .build(),
                 new CarBuilder()
                         .setLicensePlate("FZA5527")
@@ -117,6 +121,7 @@ public class DemoREST {
                         .setImage("https://cdn2.iconfinder.com/data/icons/outdoors-people-scenes/64/roadtrip-256.png")
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
+                        .setFuelNorm(7D)
                         .build(),
                 new CarBuilder()
                         .setLicensePlate("GKW0134")
@@ -126,6 +131,7 @@ public class DemoREST {
                         .setImage("https://cdn0.iconfinder.com/data/icons/videographer-filmmaker-and-cameraman/339/filming-005-256.png")
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
+                        .setFuelNorm(7D)
                         .build(),
                 new CarBuilder()
                         .setLicensePlate("WL85883")
@@ -135,6 +141,7 @@ public class DemoREST {
                         .setImage("https://www.bmw-frankcars.pl/www/media/mediapool/homepage_bmw5_limusine_lci2020.jpg")
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
+                        .setFuelNorm(7D)
                         .build(),
                 new CarBuilder()
                         .setLicensePlate("EWE1751")
@@ -144,6 +151,7 @@ public class DemoREST {
                         .setImage("https://cdn3.iconfinder.com/data/icons/transportation-road/112/33-transportation-road_vintage-car-8-256.png")
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
+                        .setFuelNorm(7D)
                         .build(),
                 new CarBuilder()
                         .setLicensePlate("NEB1632")
@@ -153,6 +161,7 @@ public class DemoREST {
                         .setImage("https://cdn3.iconfinder.com/data/icons/man-daily-routine-people/221/routine-002-512.png")
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
+                        .setFuelNorm(7D)
                         .build()
         );
     }
