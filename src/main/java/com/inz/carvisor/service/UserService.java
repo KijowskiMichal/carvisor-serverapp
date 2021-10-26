@@ -298,7 +298,7 @@ public class UserService {
             int telephone;
             try {
                 name = inJSON.getString("name");
-                telephone = Integer.parseInt(inJSON.getString("telephone"));
+                telephone = Integer.parseInt(inJSON.getString(UserJsonKey.PHONE_NUMBER));
             } catch (JSONException jsonException) {
                 return DefaultResponse.BAD_REQUEST;
             }
