@@ -207,6 +207,7 @@ public class DevicesService {
                         .setModel(inJSON.getString("model"))
                         .setEngine(inJSON.getString("engine"))
                         .setFuelType(inJSON.getString("fuel"))
+                        .setProductionDate(inJSON.getInt("yearOfProduction"))
                         .setFuelNorm(Double.parseDouble(inJSON.getString("norm")))
                         .setTank(Integer.parseInt(inJSON.getString("tank")))
                         .setPassword(DigestUtils.sha256Hex(String.valueOf(inJSON.get("password"))));
@@ -330,6 +331,7 @@ public class DevicesService {
             String engine;
             String fuelType;
             int tank;
+            int yearOfProduction;
             double norm;
             try {
                 licensePlate = inJSON.getString("licensePlate");
@@ -337,6 +339,7 @@ public class DevicesService {
                 model = inJSON.getString("model");
                 engine = inJSON.getString("engine");
                 fuelType = inJSON.getString("fuel");
+                yearOfProduction = inJSON.getInt("yearOfProduction");
                 tank = Integer.parseInt(inJSON.getString("tank"));
                 norm = Double.parseDouble(inJSON.getString("norm"));
             } catch (JSONException jsonException) {
@@ -357,6 +360,7 @@ public class DevicesService {
             car.setFuelType(fuelType);
             car.setTank(tank);
             car.setFuelNorm(norm);
+            car.setProductionYear(yearOfProduction);
             session.update(car);
             tx.commit();
             responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
