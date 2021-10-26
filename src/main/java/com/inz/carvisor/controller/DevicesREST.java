@@ -43,7 +43,7 @@ public class DevicesREST {
         return devicesService.getDeviceData(request, httpEntity, id);
     }
 
-    @RequestMapping(value = "/devices/removeDevice/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    @RequestMapping(value = "/devices/removeDevice/{id}", method = RequestMethod.DELETE)
     public ResponseEntity removeDevice(HttpServletRequest request, @PathVariable("id") int id) {
         if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return DefaultResponse.UNAUTHORIZED;
