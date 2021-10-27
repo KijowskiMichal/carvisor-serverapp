@@ -1,6 +1,6 @@
 package com.inz.carvisor.dao;
 
-import com.inz.carvisor.entities.Error;
+import com.inz.carvisor.entities.model.Error;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

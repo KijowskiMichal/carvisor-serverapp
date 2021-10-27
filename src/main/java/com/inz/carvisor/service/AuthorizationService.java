@@ -2,8 +2,7 @@ package com.inz.carvisor.service;
 
 
 import com.inz.carvisor.constants.AuthorizationJsonKey;
-import com.inz.carvisor.constants.UserJsonKey;
-import com.inz.carvisor.entities.User;
+import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Logger;

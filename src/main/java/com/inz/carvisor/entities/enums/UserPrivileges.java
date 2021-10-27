@@ -1,4 +1,4 @@
-package com.inz.carvisor.entities;
+package com.inz.carvisor.entities.enums;
 
 public enum UserPrivileges {
     STANDARD_USER(100),

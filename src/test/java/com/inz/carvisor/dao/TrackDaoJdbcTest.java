@@ -1,7 +1,7 @@
 package com.inz.carvisor.dao;
 
-import com.inz.carvisor.entities.Track;
-import com.inz.carvisor.entities.User;
+import com.inz.carvisor.entities.model.Track;
+import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.entities.builders.TrackBuilder;
 import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;

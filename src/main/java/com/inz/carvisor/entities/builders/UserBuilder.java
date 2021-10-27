@@ -1,7 +1,7 @@
 package com.inz.carvisor.entities.builders;
 
-import com.inz.carvisor.entities.User;
-import com.inz.carvisor.entities.UserPrivileges;
+import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.entities.enums.UserPrivileges;
 
 public class UserBuilder {
     private final int samples = 0;

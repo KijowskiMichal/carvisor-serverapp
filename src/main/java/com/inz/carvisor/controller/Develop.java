@@ -2,10 +2,9 @@ package com.inz.carvisor.controller;
 
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.SettingDaoJdbc;
-import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
-import com.inz.carvisor.entities.Setting;
-import com.inz.carvisor.entities.UserPrivileges;
+import com.inz.carvisor.entities.model.Setting;
+import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.builders.CarBuilder;
 import com.inz.carvisor.entities.builders.UserBuilder;
 import org.apache.commons.codec.digest.DigestUtils;

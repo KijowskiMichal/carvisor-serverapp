@@ -1,7 +1,7 @@
 package com.inz.carvisor.service;
 
-import com.inz.carvisor.entities.Car;
-import com.inz.carvisor.entities.Setting;
+import com.inz.carvisor.entities.model.Car;
+import com.inz.carvisor.entities.model.Setting;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;

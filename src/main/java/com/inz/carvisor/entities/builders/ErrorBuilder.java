@@ -1,6 +1,6 @@
 package com.inz.carvisor.entities.builders;
 
-import com.inz.carvisor.entities.Error;
+import com.inz.carvisor.entities.model.Error;
 
 public class ErrorBuilder {
     private String type;

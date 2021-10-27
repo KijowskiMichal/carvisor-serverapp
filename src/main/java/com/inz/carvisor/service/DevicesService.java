@@ -1,8 +1,12 @@
 package com.inz.carvisor.service;
 
 import com.inz.carvisor.dao.CarDaoJdbc;
-import com.inz.carvisor.entities.*;
 import com.inz.carvisor.entities.builders.CarBuilder;
+import com.inz.carvisor.entities.enums.UserPrivileges;
+import com.inz.carvisor.entities.model.Car;
+import com.inz.carvisor.entities.model.Setting;
+import com.inz.carvisor.entities.model.Track;
+import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.util.jsonparser.CarJsonParser;
 import org.apache.commons.codec.digest.DigestUtils;

@@ -1,6 +1,6 @@
-package com.inz.carvisor.entities;
+package com.inz.carvisor.entities.model;
 
-import org.json.JSONObject;
+import com.inz.carvisor.entities.enums.UserPrivileges;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

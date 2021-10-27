@@ -1,6 +1,6 @@
 package com.inz.carvisor.dao;
 
-import com.inz.carvisor.entities.User;
+import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

@@ -1,6 +1,6 @@
 package com.inz.carvisor.util.jsonparser;
 
-import com.inz.carvisor.entities.Car;
+import com.inz.carvisor.entities.model.Car;
 import org.json.JSONObject;
 
 public class CarJsonParser {

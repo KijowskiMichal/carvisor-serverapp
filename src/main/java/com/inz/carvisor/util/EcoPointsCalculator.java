@@ -1,7 +1,7 @@
 package com.inz.carvisor.util;
 
-import com.inz.carvisor.entities.Track;
-import com.inz.carvisor.entities.TrackRate;
+import com.inz.carvisor.entities.model.Track;
+import com.inz.carvisor.entities.model.TrackRate;
 
 import java.util.List;
 

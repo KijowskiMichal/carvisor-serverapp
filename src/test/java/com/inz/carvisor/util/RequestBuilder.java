@@ -1,7 +1,7 @@
 package com.inz.carvisor.util;
 
-import com.inz.carvisor.entities.User;
-import com.inz.carvisor.entities.UserPrivileges;
+import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.builders.UserBuilder;
 import org.springframework.mock.web.MockHttpServletRequest;
 

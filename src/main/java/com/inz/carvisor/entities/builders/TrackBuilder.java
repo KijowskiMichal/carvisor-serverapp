@@ -1,8 +1,8 @@
 package com.inz.carvisor.entities.builders;
 
-import com.inz.carvisor.entities.Car;
-import com.inz.carvisor.entities.Track;
-import com.inz.carvisor.entities.User;
+import com.inz.carvisor.entities.model.Car;
+import com.inz.carvisor.entities.model.Track;
+import com.inz.carvisor.entities.model.User;
 
 import java.util.Date;
 

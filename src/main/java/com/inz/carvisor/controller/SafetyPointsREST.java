@@ -1,12 +1,11 @@
 package com.inz.carvisor.controller;
 
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
-import com.inz.carvisor.constants.TrackJsonKey;
 import com.inz.carvisor.dao.UserDaoJdbc;
-import com.inz.carvisor.entities.Track;
-import com.inz.carvisor.entities.User;
-import com.inz.carvisor.entities.UserPrivileges;
-import com.inz.carvisor.service.DataService;
+import com.inz.carvisor.entities.model.Offence;
+import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.service.SafetyPointsService;
 import com.inz.carvisor.service.SecurityService;
 import org.json.JSONArray;
@@ -46,32 +45,31 @@ public class SafetyPointsREST {
     @RequestMapping(value = "/getUserDetails/{id}/{dateFrom}/{dateTo}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> listUser(HttpServletRequest request, @PathVariable("id") int userId, @PathVariable("dateFrom") String dateFrom, @PathVariable("dateTo") String dateTo) {
         if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
-            List<Track> tracks = safetyPointsService.listUser(userId, dateFrom, dateTo);
-            return DefaultResponse.ok(parseToJson(tracks,userId));
+            List<Offence> offences = safetyPointsService.listUser(userId, dateFrom, dateTo);
+            return DefaultResponse.ok(parseToJson(offences,userId));
         } else {
-            return DefaultResponse.UNAUTHORIZED;
+            return DefaultResponse.UNAUTHORIZED_JSON;
         }
     }
 
 
-    private String parseToJson(List<Track> trackList, int userId) {
-        String userName = userDaoJdbc.get(userId).map(User::getName).orElse("");
-        JSONObject mainJson = new JSONObject().put("name", userName);
+    private String parseToJson(List<Offence> offenceList, int userId) {
 
         JSONArray listOfOffencess = new JSONArray();
-        mainJson.put("listOfOffencess", listOfOffencess);
+        offenceList.stream().map(this::toJson).forEach(listOfOffencess::put);
 
+        String userName = userDaoJdbc.get(userId).map(user -> user.getName() + " " + user.getSurname()).orElse("");
+        JSONObject mainJson = new JSONObject().put("name", userName);
+        mainJson.put(AttributeKey.Offence.LIST_OF_OFFENCES, listOfOffencess);
         return mainJson.toString();
     }
 
-    private JSONObject trackToJson(Track track) {
+    private JSONObject toJson(Offence offence) {
         return new JSONObject()
-                .put(TrackJsonKey.DATE, DataService.timeStampToDate(track.getStartTrackTimeStamp()))
-                .put(TrackJsonKey.AMOUNT_OF_TRACK, track.getAmountOfSamples())
-                .put(TrackJsonKey.ECO_POINTS, track.getEcoPointsScore())
-                .put(TrackJsonKey.COMBUSTION, track.getCombustion())
-                .put(TrackJsonKey.SPEED, track.getAverageSpeed())
-                .put(TrackJsonKey.REVOLUTION, track.getAverageRevolutionsPerMinute())
-                .put(TrackJsonKey.DISTANCE, track.getDistanceFromStart());
+                .put(AttributeKey.Offence.TIME, offence.getTimeStamp())
+                .put(AttributeKey.Offence.IMPORTANT, offence.getOffenceType().isImportant())
+                .put(AttributeKey.Offence.TYPE, offence.getOffenceType().getType())
+                .put(AttributeKey.Offence.VALUE, offence.getValue())
+                .put(AttributeKey.Offence.LOCATION, offence.getLocation());
     }
 }

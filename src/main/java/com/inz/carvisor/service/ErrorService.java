@@ -1,7 +1,7 @@
 package com.inz.carvisor.service;
 
 import com.inz.carvisor.dao.ErrorDaoJdbc;
-import com.inz.carvisor.entities.Error;
+import com.inz.carvisor.entities.model.Error;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

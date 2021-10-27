@@ -1,8 +1,8 @@
 package com.inz.carvisor.service.offence;
 
-import com.inz.carvisor.entities.Offence;
-import com.inz.carvisor.entities.OffenceType;
-import com.inz.carvisor.entities.TrackRate;
+import com.inz.carvisor.entities.model.Offence;
+import com.inz.carvisor.entities.enums.OffenceType;
+import com.inz.carvisor.entities.model.TrackRate;
 import com.inz.carvisor.entities.builders.OffenceBuilder;
 
 import java.time.Instant;
@@ -16,7 +16,6 @@ public class SpeedOffence extends OffenceStrategy {
     @Override
     public Optional<Offence> createOffenceIfExists(TrackRate trackRate) {
         long timestamp = trackRate.getTimestamp();
-        LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), TimeZone.getDefault().toZoneId());
 
         int speedLimit = getSpeedLimit();
         int currentSpeed = trackRate.getSpeed();
@@ -24,9 +23,8 @@ public class SpeedOffence extends OffenceStrategy {
         if (speedLimit<currentSpeed) return Optional.empty();
 
         Offence offence = new OffenceBuilder()
-                .setLocalDateTime(localDateTime)
+                .setLocalDateTime(timestamp)
                 .setOffenceType(OffenceType.SPEEDING)
-                .setIsImportant(OffenceType.SPEEDING.isImportant())
                 .setLocation(getLocation(trackRate))
                 .setValue(currentSpeed - speedLimit)
                 .build();

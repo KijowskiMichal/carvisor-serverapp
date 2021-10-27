@@ -1,7 +1,7 @@
 package com.inz.carvisor.service;
 
-import com.inz.carvisor.dao.OffenceJdbc;
-import com.inz.carvisor.entities.TrackRate;
+import com.inz.carvisor.dao.OffenceDaoJdbc;
+import com.inz.carvisor.entities.model.TrackRate;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.service.offence.OffenceStrategy;
 import org.apache.logging.log4j.Logger;
@@ -17,14 +17,14 @@ public class OffenceService {
 
     HibernateRequests hibernateRequests;
     Logger logger;
-    OffenceJdbc offenceJdbc;
+    OffenceDaoJdbc offenceDaoJdbc;
     OffenceStrategy offenceStrategy;
 
     @Autowired
-    public OffenceService(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger, OffenceJdbc offenceJdbc) {
+    public OffenceService(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger, OffenceDaoJdbc offenceDaoJdbc) {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
-        this.offenceJdbc = offenceJdbc;
+        this.offenceDaoJdbc = offenceDaoJdbc;
     }
 
     public void checkForOffences(Collection<TrackRate> trackRates) {

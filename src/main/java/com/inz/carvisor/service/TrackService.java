@@ -1,8 +1,13 @@
 package com.inz.carvisor.service;
 
 import com.inz.carvisor.dao.UserDaoJdbc;
-import com.inz.carvisor.entities.*;
 import com.inz.carvisor.entities.builders.TrackBuilder;
+import com.inz.carvisor.entities.enums.ObdCommandTable;
+import com.inz.carvisor.entities.enums.UserPrivileges;
+import com.inz.carvisor.entities.model.Car;
+import com.inz.carvisor.entities.model.Track;
+import com.inz.carvisor.entities.model.TrackRate;
+import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.util.EcoPointsCalculator;
 import org.apache.logging.log4j.Level;

@@ -1,6 +1,6 @@
 package com.inz.carvisor.service;
 
-import com.inz.carvisor.entities.Car;
+import com.inz.carvisor.entities.model.Car;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Logger;

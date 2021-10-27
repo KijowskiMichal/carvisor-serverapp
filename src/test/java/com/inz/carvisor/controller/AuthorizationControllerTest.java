@@ -5,11 +5,15 @@ import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
-import com.inz.carvisor.entities.*;
 import com.inz.carvisor.entities.builders.UserBuilder;
+import com.inz.carvisor.entities.enums.UserPrivileges;
+import com.inz.carvisor.entities.model.Car;
+import com.inz.carvisor.entities.model.Setting;
+import com.inz.carvisor.entities.model.Track;
+import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
-import com.inz.carvisor.service.PasswordService;
+import com.inz.carvisor.util.PasswordManipulatior;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -129,7 +133,7 @@ class AuthorizationControllerTest {
     @Test
     void authorizez() {
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-        User user = new UserBuilder().setNick("ala").setName("abc").setPassword(PasswordService.hashPassword("password")).build();
+        User user = new UserBuilder().setNick("ala").setName("abc").setPassword(PasswordManipulatior.hashPassword("password")).build();
 
         JSONObject jsonObject = new JSONObject().put(AuthorizationJsonKey.LOGIN, "ala").put(AuthorizationJsonKey.PASSWORD, "password");
         HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
@@ -137,8 +141,8 @@ class AuthorizationControllerTest {
         ResponseEntity authorize = authorizationController.authorize(mockHttpServletRequest, httpEntity);
         Assertions.assertNotEquals(200, authorize.getStatusCodeValue());
 
-        userDaoJdbc.save(new UserBuilder().setNick("tom").setName("tom").setPassword(PasswordService.hashPassword("cba")).build());
-        userDaoJdbc.save(new UserBuilder().setNick("bar").setName("bar").setPassword(PasswordService.hashPassword("abc")).build());
+        userDaoJdbc.save(new UserBuilder().setNick("tom").setName("tom").setPassword(PasswordManipulatior.hashPassword("cba")).build());
+        userDaoJdbc.save(new UserBuilder().setNick("bar").setName("bar").setPassword(PasswordManipulatior.hashPassword("abc")).build());
         userDaoJdbc.save(user);
         ResponseEntity authorizeSecond = authorizationController.authorize(mockHttpServletRequest, httpEntity);
         Assertions.assertEquals(200, authorizeSecond.getStatusCodeValue());

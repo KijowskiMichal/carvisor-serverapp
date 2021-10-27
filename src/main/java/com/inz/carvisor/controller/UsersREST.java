@@ -3,9 +3,9 @@ package com.inz.carvisor.controller;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.inz.carvisor.constants.DefaultResponse;
-import com.inz.carvisor.entities.User;
-import com.inz.carvisor.entities.UserPrivileges;
-import com.inz.carvisor.service.PasswordService;
+import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.entities.enums.UserPrivileges;
+import com.inz.carvisor.util.PasswordManipulatior;
 import com.inz.carvisor.service.SecurityService;
 import com.inz.carvisor.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,8 +59,8 @@ public class UsersREST {
         Optional<User> user;
         if (!httpEntity.hasBody()) return DefaultResponse.EMPTY_BODY;
         JsonObject body = jsonParser.parse(Objects.requireNonNull(httpEntity.getBody())).getAsJsonObject();
-        String firstPasswordHashed = PasswordService.hashPassword(body.get(FIRST_PASSWORD_KEY).getAsString());
-        String secondPasswordHashed = PasswordService.hashPassword(body.get(SECOND_PASSWORD_KEY).getAsString());
+        String firstPasswordHashed = PasswordManipulatior.hashPassword(body.get(FIRST_PASSWORD_KEY).getAsString());
+        String secondPasswordHashed = PasswordManipulatior.hashPassword(body.get(SECOND_PASSWORD_KEY).getAsString());
 
         if (!firstPasswordHashed.equals(secondPasswordHashed)) {
             return DefaultResponse.badBody(PASSWORD_DOESNT_MATCH);

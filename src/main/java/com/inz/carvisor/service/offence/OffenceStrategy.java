@@ -1,9 +1,8 @@
 package com.inz.carvisor.service.offence;
 
-import com.inz.carvisor.dao.OffenceJdbc;
-import com.inz.carvisor.entities.Offence;
-import com.inz.carvisor.entities.Track;
-import com.inz.carvisor.entities.TrackRate;
+import com.inz.carvisor.dao.OffenceDaoJdbc;
+import com.inz.carvisor.entities.model.Offence;
+import com.inz.carvisor.entities.model.TrackRate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,7 @@ import java.util.Optional;
 public abstract class OffenceStrategy {
 
     @Autowired
-    OffenceJdbc offenceJdbc;
+    OffenceDaoJdbc offenceDaoJdbc;
 
     public List<OffenceStrategy> getAllStrategies() {
         return List.of(
@@ -23,7 +22,7 @@ public abstract class OffenceStrategy {
     }
 
     private void saveOffence(Offence offence) {
-        offenceJdbc.save(offence);
+        offenceDaoJdbc.save(offence);
     }
 
     abstract Optional<Offence> createOffenceIfExists(TrackRate trackRate);

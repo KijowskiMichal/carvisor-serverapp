@@ -1,16 +1,25 @@
 package com.inz.carvisor.service;
 
 import com.inz.carvisor.constants.SessionAttributeKey;
-import com.inz.carvisor.entities.UserPrivileges;
+import com.inz.carvisor.dao.UserDaoJdbc;
+import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.builders.UserBuilder;
+import com.inz.carvisor.otherclasses.Initializer;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@RunWith(SpringRunner.class)
+@WebMvcTest(UserDaoJdbc.class)
+@ContextConfiguration(classes = {Initializer.class})
 class SecurityServiceTest {
 
     SecurityService securityService = new SecurityService();

@@ -2,10 +2,11 @@ package com.inz.carvisor.service;
 
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
-import com.inz.carvisor.entities.Track;
-import com.inz.carvisor.entities.User;
-import com.inz.carvisor.entities.UserPrivileges;
+import com.inz.carvisor.entities.model.Track;
+import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
+import com.inz.carvisor.util.DataManipulator;
 import com.inz.carvisor.util.jsonparser.UserJsonParser;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -143,8 +144,8 @@ public class EcoPointsService {
 
     //todo
     public List<Track> listUser(int userId, String dateFrom, String dateTo) {
-        Timestamp fromTimeStamp = DataService.dateBeginningTimestamp(dateFrom);
-        Timestamp endTimestamp = DataService.dateEndTimestamp(dateFrom);
+        Timestamp fromTimeStamp = DataManipulator.dateBeginningTimestamp(dateFrom);
+        Timestamp endTimestamp = DataManipulator.dateEndTimestamp(dateFrom);
         String selectQuery = "SELECT t from Track t " +
                 "WHERE " +
                 "t.user = " + userId + " AND " +

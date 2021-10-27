@@ -1,6 +1,4 @@
-package com.inz.carvisor.service;
-
-import org.springframework.stereotype.Service;
+package com.inz.carvisor.util;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -10,8 +8,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Service
-public class DataService {
+
+public class DataManipulator {
 
     public static final DateTimeFormatter standardDataFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     public static final DateTimeFormatter formatWithMinutes = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
@@ -24,6 +22,15 @@ public class DataService {
     public static Timestamp dateEndTimestamp(String date) {
         ZonedDateTime before = LocalDate.parse(date, standardDataFormatter).atStartOfDay(ZoneId.systemDefault());
         return Timestamp.valueOf(before.toLocalDateTime());
+    }
+
+
+    public static long parseToTimeStamp(LocalDateTime localDateTime) {
+        return Timestamp.valueOf(localDateTime).getTime();
+    }
+
+    public static long parseToTimeStamp(String date) {
+        return Timestamp.valueOf(LocalDateTime.parse(date)).getTime();
     }
 
     public static String timeStampToDate(long startTrackTimeStamp) {

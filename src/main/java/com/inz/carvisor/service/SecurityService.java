@@ -1,7 +1,7 @@
 package com.inz.carvisor.service;
 
-import com.inz.carvisor.entities.User;
-import com.inz.carvisor.entities.UserPrivileges;
+import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.entities.enums.UserPrivileges;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;

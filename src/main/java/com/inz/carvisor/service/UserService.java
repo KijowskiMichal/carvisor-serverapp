@@ -3,11 +3,12 @@ package com.inz.carvisor.service;
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.constants.UserJsonKey;
 import com.inz.carvisor.dao.UserDaoJdbc;
-import com.inz.carvisor.entities.Track;
-import com.inz.carvisor.entities.User;
-import com.inz.carvisor.entities.UserPrivileges;
+import com.inz.carvisor.entities.model.Track;
+import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
+import com.inz.carvisor.util.PasswordManipulatior;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
@@ -437,7 +438,7 @@ public class UserService {
                 .setName(jsonObject.getString("name"))
                 .setSurname(jsonObject.getString("surname"))
                 .setNick(jsonObject.getString("nick"))
-                .setPassword(PasswordService.hashPassword(jsonObject.getString(UserJsonKey.PASSWORD)))
+                .setPassword(PasswordManipulatior.hashPassword(jsonObject.getString(UserJsonKey.PASSWORD)))
                 .setPhoneNumber(jsonObject.getInt(UserJsonKey.PHONE_NUMBER));
 
         if (!jsonObject.getString("image").isEmpty()) {

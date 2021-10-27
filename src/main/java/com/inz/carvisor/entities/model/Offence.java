@@ -1,8 +1,11 @@
-package com.inz.carvisor.entities;
+package com.inz.carvisor.entities.model;
+
+import com.inz.carvisor.entities.enums.OffenceType;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,37 +14,45 @@ public class Offence {
     @Id
     @GeneratedValue
     int id;
-    LocalDateTime localDateTime;
-    boolean isImportant;
+    long timeStamp;
     OffenceType offenceType;
+    @OneToOne
+    User user;
     int value;
     String location;
 
     public Offence() {
     }
 
-    public Offence(LocalDateTime localDateTime, boolean isImportant, OffenceType offenceType, int value, String location) {
-        this.localDateTime = localDateTime;
-        this.isImportant = isImportant;
+    public Offence(long timeStamp, OffenceType offenceType, int value, String location) {
+        this.timeStamp = timeStamp;
         this.offenceType = offenceType;
         this.value = value;
         this.location = location;
     }
 
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
+    public int getId() {
+        return id;
     }
 
-    public void setLocalDateTime(LocalDateTime localDateTime) {
-        this.localDateTime = localDateTime;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public boolean isImportant() {
-        return isImportant;
+    public long getTimeStamp() {
+        return timeStamp;
     }
 
-    public void setImportant(boolean important) {
-        isImportant = important;
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public OffenceType getOffenceType() {

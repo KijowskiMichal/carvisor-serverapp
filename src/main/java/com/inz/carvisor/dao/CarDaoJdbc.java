@@ -1,6 +1,6 @@
 package com.inz.carvisor.dao;
 
-import com.inz.carvisor.entities.Car;
+import com.inz.carvisor.entities.model.Car;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

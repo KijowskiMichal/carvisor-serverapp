@@ -6,11 +6,15 @@ import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
-import com.inz.carvisor.entities.*;
 import com.inz.carvisor.entities.builders.UserBuilder;
+import com.inz.carvisor.entities.enums.UserPrivileges;
+import com.inz.carvisor.entities.model.Car;
+import com.inz.carvisor.entities.model.Setting;
+import com.inz.carvisor.entities.model.Track;
+import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
-import com.inz.carvisor.service.PasswordService;
+import com.inz.carvisor.util.PasswordManipulatior;
 import com.inz.carvisor.util.RequestBuilder;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -156,7 +160,7 @@ class UsersRESTTest {
         usersREST.changePassword(mockHttpServletRequest, httpEntity);
         Optional<User> user1 = userDaoJdbc.get(userId);
         if (user1.isEmpty()) fail();
-        assertEquals(PasswordService.hashPassword("string"), user1.get().getPassword());
+        assertEquals(PasswordManipulatior.hashPassword("string"), user1.get().getPassword());
     }
 
     @Test
@@ -178,7 +182,7 @@ class UsersRESTTest {
         usersREST.changePasswordById(mockHttpServletRequest, httpEntity, userId);
         Optional<User> user1 = userDaoJdbc.get(userId);
         if (user1.isEmpty()) fail();
-        assertEquals(PasswordService.hashPassword("string"), user1.get().getPassword());
+        assertEquals(PasswordManipulatior.hashPassword("string"), user1.get().getPassword());
     }
 
     @Test

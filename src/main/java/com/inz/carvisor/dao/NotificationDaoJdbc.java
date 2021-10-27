@@ -1,7 +1,6 @@
 package com.inz.carvisor.dao;
 
-import com.inz.carvisor.entities.Notification;
-import com.inz.carvisor.entities.User;
+import com.inz.carvisor.entities.model.Notification;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -21,9 +20,7 @@ public class NotificationDaoJdbc extends HibernateDaoJdbc<Notification> {
         return "Notification";
     }
 
-    public List<Notification> getNotDisplayedNotifications(int userId) {
-        User user = new User();
-        String s = "SELECT n FROM " + getTableName() + " WHERE n.user.id = " + userId + " AND n.displayed = false";
-         return getList(s);
+    public List<Notification> getNotDisplayed(Number userId) {
+        return getList("SELECT n FROM Notification n WHERE n.user.id = " + userId + " and displayed = false");
     }
 }

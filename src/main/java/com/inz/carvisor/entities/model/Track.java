@@ -1,4 +1,4 @@
-package com.inz.carvisor.entities;
+package com.inz.carvisor.entities.model;
 
 import org.hibernate.annotations.Type;
 
@@ -53,7 +53,6 @@ public class Track {
     /**
      * throttle
      */
-    //TODO change name to something smarter - average throttle "preasure", this should be byte?
     long averageThrottle;
     /**
      * Safety samples

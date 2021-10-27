@@ -1,8 +1,6 @@
 package com.inz.carvisor.util.jsonparser;
 
-import com.inz.carvisor.entities.User;
-import com.inz.carvisor.entities.builders.UserBuilder;
-import org.apache.commons.codec.digest.DigestUtils;
+import com.inz.carvisor.entities.model.User;
 import org.json.JSONObject;
 
 public class UserJsonParser {

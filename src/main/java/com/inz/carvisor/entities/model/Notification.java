@@ -1,9 +1,8 @@
-package com.inz.carvisor.entities;
+package com.inz.carvisor.entities.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.inz.carvisor.entities.enums.NotificationType;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,7 +14,9 @@ public class Notification {
     private boolean displayed;
     private String value;
     private LocalDateTime localDateTime;
+    @OneToOne
     private User user;
+    private NotificationType notificationType;
 
     public Notification() {
     }
@@ -65,5 +66,17 @@ public class Notification {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public NotificationType getNotificationType() {
+        return notificationType;
+    }
+
+    public void setNotificationType(NotificationType notificationType) {
+        this.notificationType = notificationType;
+    }
+
+    public void display() {
+        this.displayed = true;
     }
 }

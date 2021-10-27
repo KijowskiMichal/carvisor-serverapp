@@ -1,13 +1,12 @@
 package com.inz.carvisor.dao;
 
-import com.inz.carvisor.entities.Car;
-import com.inz.carvisor.entities.Setting;
-import com.inz.carvisor.entities.Track;
-import com.inz.carvisor.entities.User;
+import com.inz.carvisor.entities.model.Car;
+import com.inz.carvisor.entities.model.Setting;
+import com.inz.carvisor.entities.model.Track;
+import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.entities.builders.CarBuilder;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
-import com.inz.carvisor.otherclasses.Logger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;

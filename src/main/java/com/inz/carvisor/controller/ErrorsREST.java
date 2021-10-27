@@ -2,8 +2,8 @@ package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.constants.ErrorJsonKey;
-import com.inz.carvisor.entities.Error;
-import com.inz.carvisor.entities.UserPrivileges;
+import com.inz.carvisor.entities.model.Error;
+import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.builders.ErrorBuilder;
 import com.inz.carvisor.service.ErrorService;
 import com.inz.carvisor.service.SecurityService;

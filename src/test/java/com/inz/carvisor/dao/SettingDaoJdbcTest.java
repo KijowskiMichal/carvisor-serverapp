@@ -1,6 +1,6 @@
 package com.inz.carvisor.dao;
 
-import com.inz.carvisor.entities.Setting;
+import com.inz.carvisor.entities.model.Setting;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.otherclasses.Logger;
@@ -24,6 +24,7 @@ import java.util.Optional;
 class SettingDaoJdbcTest {
 
     private final Logger logger = new Logger();
+
     @Autowired
     private HibernateRequests hibernateRequests;
 

@@ -1,6 +1,6 @@
 package com.inz.carvisor.entities.builders;
 
-import com.inz.carvisor.entities.Car;
+import com.inz.carvisor.entities.model.Car;
 
 public class CarBuilder {
     private String licensePlate = null;

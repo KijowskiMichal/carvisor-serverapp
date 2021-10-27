@@ -1,9 +1,11 @@
 package com.inz.carvisor.service;
 
-import com.inz.carvisor.entities.Track;
-import com.inz.carvisor.entities.User;
-import com.inz.carvisor.entities.UserPrivileges;
+import com.inz.carvisor.dao.OffenceDaoJdbc;
+import com.inz.carvisor.entities.model.Offence;
+import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
+import com.inz.carvisor.util.DataManipulator;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,11 +30,14 @@ public class SafetyPointsService {
 
     HibernateRequests hibernateRequests;
     Logger logger;
+    OffenceDaoJdbc offenceDaoJdbc;
 
     @Autowired
-    public SafetyPointsService(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger) {
+    public SafetyPointsService(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger,
+                               OffenceDaoJdbc offenceDaoJdbc) {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
+        this.offenceDaoJdbc = offenceDaoJdbc;
     }
 
 
@@ -103,14 +109,14 @@ public class SafetyPointsService {
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 
-    public List<Track> listUser(int userId, String dateFrom, String dateTo) {
-        Timestamp fromTimeStamp = DataService.dateBeginningTimestamp(dateFrom);
-        Timestamp endTimestamp = DataService.dateEndTimestamp(dateFrom);
-        String selectQuery = "SELECT t from Track t " +
+    public List<Offence> listUser(int userId, String dateFrom, String dateTo) {
+        long a = DataManipulator.parseToTimeStamp(dateFrom);
+        long b = DataManipulator.parseToTimeStamp(dateTo);
+        String selectQuery = "SELECT o from Offence o " +
                 "WHERE " +
-                "t.user = " + userId + " AND " +
-                "t.endTrackTimeStamp > " + (endTimestamp.getTime() / 1000) + " AND " +
-                "t.startTrackTimeStamp < " + (fromTimeStamp.getTime() / 1000) + " ";
-        return new ArrayList<>(); //todo :(
+                "o.user.id = " + userId + " AND " +
+                "o.timeStamp > " + a / 1000 + " AND " +
+                "o.timeStamp < " + b / 1000 + " ";
+        return offenceDaoJdbc.getList(selectQuery);
     }
 }

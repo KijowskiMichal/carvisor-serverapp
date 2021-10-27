@@ -1,6 +1,6 @@
 package com.inz.carvisor.dao;
 
-import com.inz.carvisor.entities.Track;
+import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

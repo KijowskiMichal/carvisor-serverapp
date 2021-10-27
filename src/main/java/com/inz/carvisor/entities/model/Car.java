@@ -1,4 +1,4 @@
-package com.inz.carvisor.entities;
+package com.inz.carvisor.entities.model;
 
 import javax.persistence.*;
 

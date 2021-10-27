@@ -1,9 +1,8 @@
 package com.inz.carvisor.service;
 
 import com.inz.carvisor.dao.UserDaoJdbc;
-import com.inz.carvisor.entities.model.Offence;
-import com.inz.carvisor.entities.builders.OffenceBuilder;
 import com.inz.carvisor.otherclasses.Initializer;
+import com.inz.carvisor.util.DataManipulator;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,10 +14,12 @@ import java.time.LocalDateTime;
 @RunWith(SpringRunner.class)
 @WebMvcTest(UserDaoJdbc.class)
 @ContextConfiguration(classes = {Initializer.class})
-class OffenceStrategyServiceTest {
+class DataManipulatorTest {
 
     @Test
-    void test() {
+    void formatWithMinutes() {
         LocalDateTime localDateTime = LocalDateTime.now();
+        String s = DataManipulator.formatWithMinutes(localDateTime);
+        System.out.println(s);
     }
 }

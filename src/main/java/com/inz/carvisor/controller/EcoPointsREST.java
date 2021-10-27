@@ -2,9 +2,9 @@ package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.constants.TrackJsonKey;
-import com.inz.carvisor.entities.Track;
-import com.inz.carvisor.entities.UserPrivileges;
-import com.inz.carvisor.service.DataService;
+import com.inz.carvisor.entities.model.Track;
+import com.inz.carvisor.entities.enums.UserPrivileges;
+import com.inz.carvisor.util.DataManipulator;
 import com.inz.carvisor.service.EcoPointsService;
 import com.inz.carvisor.service.SecurityService;
 import org.json.JSONArray;
@@ -59,7 +59,7 @@ public class EcoPointsREST {
 
     private JSONObject trackToJson(Track track) {
         return new JSONObject()
-                .put(TrackJsonKey.DATE, DataService.timeStampToDate(track.getStartTrackTimeStamp()))
+                .put(TrackJsonKey.DATE, DataManipulator.timeStampToDate(track.getStartTrackTimeStamp()))
                 .put(TrackJsonKey.AMOUNT_OF_TRACK, track.getAmountOfSamples())
                 .put(TrackJsonKey.ECO_POINTS, track.getEcoPointsScore())
                 .put(TrackJsonKey.COMBUSTION, track.getCombustion())

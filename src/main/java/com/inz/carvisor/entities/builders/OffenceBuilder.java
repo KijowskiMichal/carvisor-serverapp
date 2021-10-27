@@ -1,24 +1,25 @@
 package com.inz.carvisor.entities.builders;
 
-import com.inz.carvisor.entities.Offence;
-import com.inz.carvisor.entities.OffenceType;
+import com.inz.carvisor.entities.model.Offence;
+import com.inz.carvisor.entities.enums.OffenceType;
+import com.inz.carvisor.entities.model.User;
 
 import java.time.LocalDateTime;
 
 public class OffenceBuilder {
-    private LocalDateTime localDateTime;
-    private boolean isImportant;
+    private long timestamp;
     private OffenceType offenceType;
     private int value;
     private String location;
+    private User user;
 
-    public OffenceBuilder setLocalDateTime(LocalDateTime localDateTime) {
-        this.localDateTime = localDateTime;
+    public OffenceBuilder setUser(User user) {
+        this.user = user;
         return this;
     }
 
-    public OffenceBuilder setIsImportant(boolean isImportant) {
-        this.isImportant = isImportant;
+    public OffenceBuilder setLocalDateTime(long timestamp) {
+        this.timestamp = timestamp;
         return this;
     }
 
@@ -39,10 +40,10 @@ public class OffenceBuilder {
 
     public Offence build() {
         Offence offence = new Offence();
-        offence.setImportant(isImportant);
         offence.setOffenceType(offenceType);
+        offence.setUser(user);
         offence.setValue(value);
-        offence.setLocalDateTime(localDateTime);
+        offence.setTimeStamp(timestamp);
         offence.setLocation(location);
         return offence;
     }
