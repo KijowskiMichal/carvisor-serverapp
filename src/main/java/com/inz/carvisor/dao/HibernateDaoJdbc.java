@@ -105,6 +105,48 @@ public abstract class HibernateDaoJdbc<T> {
         else return listOfObjects;
     }
 
+    public List<T> getList(String query, int page, int pageSize) {
+        Session session = null;
+        Transaction transaction = null;
+        List<T> listOfObjects = null;
+        try {
+            session = hibernateRequests.getSession();
+            transaction = session.beginTransaction();
+            listOfObjects = (List<T>) session
+                    .createQuery(query)
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
+        if (listOfObjects == null) return new ArrayList<>();
+        else return listOfObjects;
+    }
+
+    public int checkMaxPage(String query, int pageSize) {
+        Session session = null;
+        Transaction transaction = null;
+        List<T> listOfObjects = null;
+        try {
+            session = hibernateRequests.getSession();
+            transaction = session.beginTransaction();
+            listOfObjects = session.createQuery(query).getResultList();
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
+        if (listOfObjects == null) return 0;
+        else return (int) (Math.ceil(listOfObjects.size() / (double) pageSize));
+    }
+
     public Optional<T> delete(Number id) {
         Session session = null;
         Transaction transaction = null;

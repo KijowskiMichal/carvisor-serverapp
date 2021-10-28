@@ -8,6 +8,7 @@ import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.util.RequestBuilder;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,7 +22,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
+import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(TrackREST.class)
@@ -63,11 +66,11 @@ class NotificationRESTTest {
         User user = new UserBuilder().setUserPrivileges(UserPrivileges.STANDARD_USER).build();
         userDaoJdbc.save(user);
         List.of(
-                new Notification(false,"one", LocalDateTime.now(),user),
-                new Notification(false,"two", LocalDateTime.now(),user),
-                new Notification(false,"three", LocalDateTime.now(),user),
-                new Notification(true,"four", LocalDateTime.now(),user),
-                new Notification(false,"five", LocalDateTime.now(),user)
+                new Notification(false,"one", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
+                new Notification(false,"two", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
+                new Notification(false,"three", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
+                new Notification(true,"four", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
+                new Notification(false,"five", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user)
         ).forEach(notificationDaoJdbc::save);
 
         MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(user);
@@ -77,6 +80,30 @@ class NotificationRESTTest {
         String body = notDisplayedNotifications.getBody();
         JSONArray notifications = new JSONArray(body);
         Assertions.assertEquals(4,notifications.length());
+    }
 
+    @Test
+    void getNotification() {
+        User user = new UserBuilder().setUserPrivileges(UserPrivileges.MODERATOR).build();
+        userDaoJdbc.save(user);
+        List.of(
+                new Notification(false, UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
+                new Notification(false,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
+                new Notification(false,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
+                new Notification(true,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
+                new Notification(true,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
+                new Notification(true,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
+                new Notification(true,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
+                new Notification(true,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
+                new Notification(true,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
+                new Notification(false,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user)
+        ).forEach(notificationDaoJdbc::save);
+
+        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(user);
+        ResponseEntity<String> notification = notificationREST.getNotification(mockHttpServletRequest, null,10,20000000000000L,1,5);
+
+        Assertions.assertEquals(200,notification.getStatusCodeValue());
+        String body = notification.getBody();
+        JSONObject jsonObject = new JSONObject(body);
     }
 }

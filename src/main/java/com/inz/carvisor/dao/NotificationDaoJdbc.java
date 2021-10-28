@@ -2,9 +2,16 @@ package com.inz.carvisor.dao;
 
 import com.inz.carvisor.entities.model.Notification;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -22,5 +29,22 @@ public class NotificationDaoJdbc extends HibernateDaoJdbc<Notification> {
 
     public List<Notification> getNotDisplayed(Number userId) {
         return getList("SELECT n FROM Notification n WHERE n.user.id = " + userId + " and displayed = false");
+    }
+
+    public int getMaxPageSize(long dateFromTimestamp, long dateToTimestamp, int page, int pageSize) {
+        String selectQuery = "SELECT o from Notification o " +
+                "WHERE " +
+                "o.timeStamp > " + dateFromTimestamp / 1000 + " AND " +
+                "o.timeStamp < " + dateToTimestamp / 1000 + " ";
+        return this.checkMaxPage(selectQuery,pageSize);
+    }
+
+    //todo generyczne stronnicowanie
+    public List<Notification> getNotifications(long dateFromTimestamp, long dateToTimestamp, int page, int pageSize) {
+        String selectQuery = "SELECT o from Notification o " +
+                "WHERE " +
+                "o.timeStamp > " + dateFromTimestamp / 1000 + " AND " +
+                "o.timeStamp < " + dateToTimestamp / 1000 + " ";
+        return this.getList(selectQuery,page,pageSize);
     }
 }

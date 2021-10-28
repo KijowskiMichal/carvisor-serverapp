@@ -13,7 +13,7 @@ public class Notification {
     private int id;
     private boolean displayed;
     private String value;
-    private LocalDateTime localDateTime;
+    private long timeStamp;
     @OneToOne
     private User user;
     private NotificationType notificationType;
@@ -21,10 +21,10 @@ public class Notification {
     public Notification() {
     }
 
-    public Notification(boolean displayed, String value, LocalDateTime localDateTime, User user) {
+    public Notification(boolean displayed, String value, long timeStamp, User user) {
         this.displayed = displayed;
         this.value = value;
-        this.localDateTime = localDateTime;
+        this.timeStamp = timeStamp;
         this.user = user;
     }
 
@@ -52,12 +52,12 @@ public class Notification {
         this.value = value;
     }
 
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
+    public long getTimeStamp() {
+        return timeStamp;
     }
 
-    public void setLocalDateTime(LocalDateTime localDateTime) {
-        this.localDateTime = localDateTime;
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public User getUser() {

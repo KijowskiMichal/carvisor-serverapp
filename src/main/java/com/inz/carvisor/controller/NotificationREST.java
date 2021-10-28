@@ -3,6 +3,7 @@ package com.inz.carvisor.controller;
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.constants.NotificationJsonKey;
 import com.inz.carvisor.constants.SessionAttributeKey;
+import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Notification;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.service.NotificationService;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,25 +36,56 @@ public class NotificationREST {
         this.securityService = securityService;
     }
 
-    @RequestMapping(value = "/notification/newNotifications", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
+    @RequestMapping(value = "/newNotifications", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
     public ResponseEntity<String> getNotDisplayedNotifications(HttpServletRequest request, HttpEntity<String> httpEntity) {
         User user = (User) request.getSession().getAttribute(SessionAttributeKey.USER_KEY);
         List<Notification> notifications = notificationService.displayNotification(user.getId());
-        return DefaultResponse.ok(toJsonArray(notifications).toString()); //todo corner cases
-        //todo tests
+        return DefaultResponse.ok(toSimpleJsonArray(notifications).toString());
     }
 
-    public JSONArray toJsonArray(List<Notification> notificationList) {
+    @RequestMapping(value = "/getNotification/{dateFrom}/{dateTo}/{page}/{pagesize}", produces = MediaType.APPLICATION_JSON_VALUE,method = RequestMethod.GET)
+    public ResponseEntity<String> getNotification(
+            HttpServletRequest request, HttpEntity<String> httpEntity,
+            @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
+            @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) {
+
+        if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+            List<Notification> notifications = notificationService
+                    .getNotifications(dateFromTimestamp, dateToTimestamp, page ,pagesize);
+            int maxPage = notificationService.getMaxPage(dateFromTimestamp, dateToTimestamp, page, pagesize);
+
+            JSONArray jsonArray = toAdvancedJsonArray(notifications);
+            JSONObject jsonObject = new JSONObject().put("page",page).put("pageMax",maxPage).put("listOfNotification",jsonArray);
+            return DefaultResponse.ok(jsonObject.toString());
+        } else {
+            return DefaultResponse.UNAUTHORIZED_JSON;
+        }
+    }
+
+    public JSONArray toSimpleJsonArray(List<Notification> notificationList) {
         JSONArray jsonArray = new JSONArray();
-        notificationList.stream().map(this::toJsonObject).forEach(jsonArray::put);
+        notificationList.stream().map(this::toSimpleJsonObject).forEach(jsonArray::put);
         return jsonArray;
     }
 
-    public JSONObject toJsonObject(Notification notification) {
+    public JSONObject toSimpleJsonObject(Notification notification) {
         return new JSONObject()
                 .put(NotificationJsonKey.TYPE_KEY,notification.getNotificationType())
                 .put(NotificationJsonKey.VALUE_KEY,notification.getValue())
-                .put(NotificationJsonKey.DATE_KEY,notification.getLocalDateTime());
+                .put(NotificationJsonKey.DATE_KEY,notification.getTimeStamp());
+    }
+
+    public JSONArray toAdvancedJsonArray(List<Notification> notificationList) {
+        JSONArray jsonArray = new JSONArray();
+        notificationList.stream().map(this::toAdvancedJsonObject).forEach(jsonArray::put);
+        return jsonArray;
+    }
+
+    public JSONObject toAdvancedJsonObject(Notification notification) {
+        return new JSONObject()
+                .put(NotificationJsonKey.TYPE_KEY,notification.getNotificationType())
+                .put(NotificationJsonKey.VALUE_KEY,notification.getValue())
+                .put(NotificationJsonKey.DATE_KEY,notification.getTimeStamp());
     }
 
 }

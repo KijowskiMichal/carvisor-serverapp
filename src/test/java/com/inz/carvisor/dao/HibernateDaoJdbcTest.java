@@ -7,6 +7,7 @@ import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.entities.builders.CarBuilder;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
+import org.apache.commons.lang3.Range;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -65,5 +66,23 @@ class HibernateDaoJdbcTest {
         ).forEach(carDaoJdbc::save);
         List<Car> selectCFromCar = carDaoJdbc.getList("SELECT c FROM Car c");
         assertEquals(4, selectCFromCar.size());
+    }
+
+    @Test
+    void getPaged() {
+        for (int i=0;i<300;i++) {
+            carDaoJdbc.save(new CarBuilder().build());
+        }
+        List<Car> all = carDaoJdbc.getAll();
+        assertEquals(300,all.size());
+
+        List<Car> pagedCarList = carDaoJdbc.getList("SELECT c FROM Car c", 2, 50);
+        assertEquals(50,pagedCarList.size());
+
+        int maxPossiblePage = carDaoJdbc.checkMaxPage("SELECT c FROM Car c",50);
+        assertEquals(6, maxPossiblePage);
+        carDaoJdbc.save(new CarBuilder().build());
+        maxPossiblePage = carDaoJdbc.checkMaxPage("SELECT c FROM Car c",50);
+        assertEquals(7, maxPossiblePage);
     }
 }

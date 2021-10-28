@@ -30,4 +30,12 @@ public class NotificationService {
         notDisplayed.forEach(notificationDaoJdbc::update);
         return notDisplayed;
     }
+
+    public List<Notification> getNotifications(long dateFromTimestamp, long dateToTimestamp, int page, int pagesize) {
+        return notificationDaoJdbc.getNotifications(dateFromTimestamp, dateToTimestamp, page, pagesize);
+    }
+
+    public int getMaxPage(long dateFromTimestamp, long dateToTimestamp, int page, int pagesize) {
+        return notificationDaoJdbc.getMaxPageSize(dateFromTimestamp,dateToTimestamp,page,pagesize);
+    }
 }
