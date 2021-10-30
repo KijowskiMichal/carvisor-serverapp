@@ -12,11 +12,13 @@
         <property name = "hibernate.connection.password">EkEyW28W1jXquuC</property>
 
         <!-- List of XML mapping files -->
-        <mapping class="com.inz.carvisor.entities.User" />
-        <mapping class="com.inz.carvisor.entities.Car" />
-        <mapping class="com.inz.carvisor.entities.Track" />
-        <mapping class="com.inz.carvisor.entities.Setting" />
-        <mapping class="com.inz.carvisor.entities.TrackRate" />
-        <mapping class="com.inz.carvisor.entities.Error" />
+        <mapping class="com.inz.carvisor.entities.model.User" />
+        <mapping class="com.inz.carvisor.entities.model.Car" />
+        <mapping class="com.inz.carvisor.entities.model.Track" />
+        <mapping class="com.inz.carvisor.entities.model.Setting" />
+        <mapping class="com.inz.carvisor.entities.model.TrackRate" />
+        <mapping class="com.inz.carvisor.entities.model.Error" />
+        <mapping class="com.inz.carvisor.entities.model.Offence" />
+        <mapping class="com.inz.carvisor.entities.model.Notification" />
     </session-factory>
 </hibernate-configuration>
