@@ -3,6 +3,7 @@ package com.inz.carvisor.entities.model;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -63,6 +64,13 @@ public class Track {
      */
     int safetyNegativeSamples;
 
+    @OneToMany
+    List<Offence> offences;
+
+    public Track() {
+        super();
+    }
+
     public Track(Car car, User user, int numberOfparameter, Boolean privateTrack, long timestamp, String startPosiotion) {
         this.car = car;
         this.user = user;
@@ -80,11 +88,6 @@ public class Track {
         this.combustion = 0;
         this.averageSpeed = 0;
         this.averageRevolutionsPerMinute = 0;
-    }
-
-
-    public Track() {
-        super();
     }
 
     public int getAmountOfSafetySamples() {
@@ -261,6 +264,14 @@ public class Track {
 
     public void setEcoPointsScore(float ecoPointsScore) {
         this.ecoPointsScore = ecoPointsScore;
+    }
+
+    public List<Offence> getOffences() {
+        return offences;
+    }
+
+    public void setOffences(List<Offence> offences) {
+        this.offences = offences;
     }
 
     public void addTrackRate(TrackRate trackRate) {

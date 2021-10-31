@@ -12,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 public class DataManipulator {
 
     public static final DateTimeFormatter standardDataFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    public static final DateTimeFormatter formatWithMinutes = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public static Timestamp dateBeginningTimestamp(String date) {
         ZonedDateTime before = LocalDate.parse(date, standardDataFormatter).atStartOfDay(ZoneId.systemDefault());
@@ -22,11 +21,6 @@ public class DataManipulator {
     public static Timestamp dateEndTimestamp(String date) {
         ZonedDateTime before = LocalDate.parse(date, standardDataFormatter).atStartOfDay(ZoneId.systemDefault());
         return Timestamp.valueOf(before.toLocalDateTime());
-    }
-
-
-    public static long parseToTimeStamp(LocalDateTime localDateTime) {
-        return Timestamp.valueOf(localDateTime).getTime();
     }
 
     public static long parseToTimeStamp(String date) {

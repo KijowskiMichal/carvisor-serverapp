@@ -1,10 +1,13 @@
 package com.inz.carvisor.entities.builders;
 
 import com.inz.carvisor.entities.model.Car;
+import com.inz.carvisor.entities.model.Offence;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class TrackBuilder {
     //def values
@@ -17,6 +20,8 @@ public class TrackBuilder {
     private final double combustion = 0;
     private final int speed = 0;
     private final long revolutions = 0;
+    private List<Offence> offences = new ArrayList<>();
+
     private Car car = null;
     private User user = null;
     private int numberOfparameter = 0;
@@ -71,6 +76,7 @@ public class TrackBuilder {
         track.setAverageSpeed(this.speed);
         track.setAverageRevolutionsPerMinute(this.revolutions);
         track.setStartTrackTimeStamp(this.start);
+        track.setOffences(this.offences);
 
         return track;
     }

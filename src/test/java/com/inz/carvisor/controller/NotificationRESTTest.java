@@ -1,7 +1,11 @@
 package com.inz.carvisor.controller;
 
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.dao.*;
+import com.inz.carvisor.entities.builders.CarBuilder;
+import com.inz.carvisor.entities.builders.NotificationBuilder;
 import com.inz.carvisor.entities.builders.UserBuilder;
+import com.inz.carvisor.entities.enums.NotificationType;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.*;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
@@ -21,6 +25,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.swing.text.Style;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -56,8 +61,8 @@ class NotificationRESTTest {
     void cleanupDatabase() {
         trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
         settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
-        carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
         notificationDaoJdbc.getAll().stream().map(Notification::getId).forEach(notificationDaoJdbc::delete);
+        carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
         userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
     }
 
@@ -66,11 +71,14 @@ class NotificationRESTTest {
         User user = new UserBuilder().setUserPrivileges(UserPrivileges.STANDARD_USER).build();
         userDaoJdbc.save(user);
         List.of(
-                new Notification(false,"one", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
-                new Notification(false,"two", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
-                new Notification(false,"three", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
-                new Notification(true,"four", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
-                new Notification(false,"five", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user)
+                new NotificationBuilder().setDisplayed(false).setUser(user).build(),
+                new NotificationBuilder().setDisplayed(false).setUser(user).build(),
+                new NotificationBuilder().setDisplayed(false).setUser(user).build(),
+                new NotificationBuilder().setDisplayed(false).setUser(user).build(),
+                new NotificationBuilder().setDisplayed(true).setUser(user).build(),
+                new NotificationBuilder().setDisplayed(true).setUser(user).build(),
+                new NotificationBuilder().setDisplayed(true).setUser(user).build(),
+                new NotificationBuilder().setDisplayed(true).setUser(user).build()
         ).forEach(notificationDaoJdbc::save);
 
         MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(user);
@@ -86,24 +94,28 @@ class NotificationRESTTest {
     void getNotification() {
         User user = new UserBuilder().setUserPrivileges(UserPrivileges.MODERATOR).build();
         userDaoJdbc.save(user);
+        Car car = new CarBuilder().setLicensePlate("ABCD").build();
+        carDaoJdbc.save(car);
+
+        long firstTime = LocalDateTime.now().minusDays(30).toEpochSecond(ZoneOffset.UTC);
+        long secondTime = LocalDateTime.now().minusDays(20).toEpochSecond(ZoneOffset.UTC);
+        long thirdTime = LocalDateTime.now().minusDays(10).toEpochSecond(ZoneOffset.UTC);
+
+        long dateFromTimestamp = LocalDateTime.now().minusDays(25).toEpochSecond(ZoneOffset.UTC);
+        long dateToTimestamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
         List.of(
-                new Notification(false, UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
-                new Notification(false,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
-                new Notification(false,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
-                new Notification(true,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
-                new Notification(true,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
-                new Notification(true,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
-                new Notification(true,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
-                new Notification(true,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
-                new Notification(true,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user),
-                new Notification(false,UUID.randomUUID().toString(), LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),user)
+                new NotificationBuilder().setUser(user).setCar(car).setNotificationType(NotificationType.SPEEDING).setValue(20).setTimeStamp(firstTime).build(),
+                new NotificationBuilder().setUser(user).setCar(car).setNotificationType(NotificationType.SPEEDING).setValue(20).setTimeStamp(secondTime).build(),
+                new NotificationBuilder().setUser(user).setCar(car).setNotificationType(NotificationType.SPEEDING).setValue(20).setTimeStamp(thirdTime).build()
         ).forEach(notificationDaoJdbc::save);
 
         MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(user);
-        ResponseEntity<String> notification = notificationREST.getNotification(mockHttpServletRequest, null,10,20000000000000L,1,5);
+        ResponseEntity<String> notification = notificationREST.getNotification(mockHttpServletRequest, null,dateFromTimestamp,dateToTimestamp,1,5);
 
         Assertions.assertEquals(200,notification.getStatusCodeValue());
         String body = notification.getBody();
         JSONObject jsonObject = new JSONObject(body);
+        JSONArray jsonArray = jsonObject.getJSONArray(AttributeKey.Notification.LIST_OF_NOTIFICATIONS);
+        Assertions.assertEquals(2,jsonArray.length());
     }
 }

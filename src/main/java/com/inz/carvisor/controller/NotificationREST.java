@@ -1,5 +1,6 @@
 package com.inz.carvisor.controller;
 
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.constants.NotificationJsonKey;
 import com.inz.carvisor.constants.SessionAttributeKey;
@@ -83,9 +84,14 @@ public class NotificationREST {
 
     public JSONObject toAdvancedJsonObject(Notification notification) {
         return new JSONObject()
-                .put(NotificationJsonKey.TYPE_KEY,notification.getNotificationType())
-                .put(NotificationJsonKey.VALUE_KEY,notification.getValue())
-                .put(NotificationJsonKey.DATE_KEY,notification.getTimeStamp());
+                .put(AttributeKey.Notification.TYPE,notification.getNotificationType())
+                .put(AttributeKey.Notification.VALUE,notification.getValue())
+                .put(AttributeKey.Notification.DATE,notification.getTimeStamp())//todo PODSUMOWANIE jaki typ daty 2021-12-05 czy timestamp;
+                .put(AttributeKey.Notification.LOCATION,notification.getLocation())
+                .put(AttributeKey.Notification.USER_ID,notification.getUser().getId())
+                .put(AttributeKey.Notification.DEVICE_ID,notification.getCar().getId())
+                .put(AttributeKey.Notification.USER_NAME,notification.getUser().getName())
+                .put(AttributeKey.Notification.DEVICE_LICENSE_PLATE,notification.getCar().getLicensePlate());
     }
 
 }
