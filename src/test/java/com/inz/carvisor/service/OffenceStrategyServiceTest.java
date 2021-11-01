@@ -1,8 +1,6 @@
 package com.inz.carvisor.service;
 
 import com.inz.carvisor.dao.UserDaoJdbc;
-import com.inz.carvisor.entities.model.Offence;
-import com.inz.carvisor.entities.builders.OffenceBuilder;
 import com.inz.carvisor.otherclasses.Initializer;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -17,8 +15,8 @@ import java.time.LocalDateTime;
 @ContextConfiguration(classes = {Initializer.class})
 class OffenceStrategyServiceTest {
 
-    @Test
-    void test() {
-        LocalDateTime localDateTime = LocalDateTime.now();
-    }
+  @Test
+  void test() {
+    LocalDateTime localDateTime = LocalDateTime.now();
+  }
 }

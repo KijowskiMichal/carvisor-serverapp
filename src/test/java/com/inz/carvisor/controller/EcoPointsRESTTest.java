@@ -35,48 +35,48 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration(classes = {Initializer.class})
 class EcoPointsRESTTest {
 
-    @Autowired
-    UserDaoJdbc userDaoJdbc;
-    @Autowired
-    CarDaoJdbc carDaoJdbc;
-    @Autowired
-    SettingDaoJdbc settingDaoJdbc;
-    @Autowired
-    TrackDaoJdbc trackDaoJdbc;
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private HibernateRequests hibernateRequests;
-    @Autowired
-    private EcoPointsREST ecoPointsREST;
+  @Autowired
+  UserDaoJdbc userDaoJdbc;
+  @Autowired
+  CarDaoJdbc carDaoJdbc;
+  @Autowired
+  SettingDaoJdbc settingDaoJdbc;
+  @Autowired
+  TrackDaoJdbc trackDaoJdbc;
+  @Autowired
+  private MockMvc mockMvc;
+  @Autowired
+  private HibernateRequests hibernateRequests;
+  @Autowired
+  private EcoPointsREST ecoPointsREST;
 
-    @AfterEach
-    void cleanupDatabase() {
-        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
-        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
-        carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
-        settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
-    }
+  @AfterEach
+  void cleanupDatabase() {
+    trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
+    userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
+    carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
+    settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
+  }
 
-    @Test
-    void listUser() {
-        User driver = new UserBuilder()
-                .setName("Tom")
-                .setNick("Kierowca")
-                .setUserPrivileges(UserPrivileges.STANDARD_USER)
-                .build();
-        userDaoJdbc.save(driver);
-        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR);
+  @Test
+  void listUser() {
+    User driver = new UserBuilder()
+            .setName("Tom")
+            .setNick("Kierowca")
+            .setUserPrivileges(UserPrivileges.STANDARD_USER)
+            .build();
+    userDaoJdbc.save(driver);
+    MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR);
 
-        List.of(
-                new TrackBuilder().setTimeStamp(DataManipulator.dateBeginningTimestamp("1991-04-02").getTime()).setUser(driver).build(),
-                new TrackBuilder().setTimeStamp(DataManipulator.dateBeginningTimestamp("2020-04-02").getTime()).setUser(driver).build(),
-                new TrackBuilder().setTimeStamp(DataManipulator.dateBeginningTimestamp("1981-04-02").getTime()).setUser(driver).build(),
-                new TrackBuilder().setTimeStamp(DataManipulator.dateBeginningTimestamp("2023-04-02").getTime()).setUser(driver).build()
-        ).forEach(trackDaoJdbc::save);
+    List.of(
+            new TrackBuilder().setTimeStamp(DataManipulator.dateBeginningTimestamp("1991-04-02").getTime()).setUser(driver).build(),
+            new TrackBuilder().setTimeStamp(DataManipulator.dateBeginningTimestamp("2020-04-02").getTime()).setUser(driver).build(),
+            new TrackBuilder().setTimeStamp(DataManipulator.dateBeginningTimestamp("1981-04-02").getTime()).setUser(driver).build(),
+            new TrackBuilder().setTimeStamp(DataManipulator.dateBeginningTimestamp("2023-04-02").getTime()).setUser(driver).build()
+    ).forEach(trackDaoJdbc::save);
 
-        ResponseEntity<String> stringResponseEntity = ecoPointsREST.listUser(mockHttpServletRequest, driver.getId(), "1990-12-04", "2022-12-22");
-        assertEquals(200, stringResponseEntity.getStatusCodeValue());
-        System.out.println(stringResponseEntity.getBody());
-    }
+    ResponseEntity<String> stringResponseEntity = ecoPointsREST.listUser(mockHttpServletRequest, driver.getId(), "1990-12-04", "2022-12-22");
+    assertEquals(200, stringResponseEntity.getStatusCodeValue());
+    System.out.println(stringResponseEntity.getBody());
+  }
 }

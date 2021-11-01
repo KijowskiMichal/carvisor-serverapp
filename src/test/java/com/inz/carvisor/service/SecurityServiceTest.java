@@ -1,9 +1,9 @@
 package com.inz.carvisor.service;
 
-import com.inz.carvisor.constants.SessionAttributeKey;
+import com.inz.carvisor.constants.Key;
 import com.inz.carvisor.dao.UserDaoJdbc;
-import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.builders.UserBuilder;
+import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.otherclasses.Initializer;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -22,48 +22,48 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ContextConfiguration(classes = {Initializer.class})
 class SecurityServiceTest {
 
-    SecurityService securityService = new SecurityService();
+  SecurityService securityService = new SecurityService();
 
-    @Test
-    void shouldReturnTrueWhenStandardUserAreAuthorized() {
-        MockHttpServletRequest requestFromStandardUser = buildRequestWithUser(UserPrivileges.STANDARD_USER);
-        assertTrue(securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, requestFromStandardUser));
-    }
+  @Test
+  void shouldReturnTrueWhenStandardUserAreAuthorized() {
+    MockHttpServletRequest requestFromStandardUser = buildRequestWithUser(UserPrivileges.STANDARD_USER);
+    assertTrue(securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, requestFromStandardUser));
+  }
 
-    @Test
-    void shouldReturnFalseWhenStandardUserAreNotAuthorized() {
-        MockHttpServletRequest requestFromStandardUser = buildRequestWithUser(UserPrivileges.STANDARD_USER);
-        assertFalse(securityService.securityProtocolPassed(UserPrivileges.MODERATOR, requestFromStandardUser));
-        assertFalse(securityService.securityProtocolPassed(UserPrivileges.ADMINISTRATOR, requestFromStandardUser));
-    }
+  @Test
+  void shouldReturnFalseWhenStandardUserAreNotAuthorized() {
+    MockHttpServletRequest requestFromStandardUser = buildRequestWithUser(UserPrivileges.STANDARD_USER);
+    assertFalse(securityService.securityProtocolPassed(UserPrivileges.MODERATOR, requestFromStandardUser));
+    assertFalse(securityService.securityProtocolPassed(UserPrivileges.ADMINISTRATOR, requestFromStandardUser));
+  }
 
-    @Test
-    void shouldReturnTrueWhenModeratorAreAuthorized() {
-        MockHttpServletRequest requestFromStandardUser = buildRequestWithUser(UserPrivileges.MODERATOR);
-        assertTrue(securityService.securityProtocolPassed(UserPrivileges.MODERATOR, requestFromStandardUser));
-        assertTrue(securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, requestFromStandardUser));
-    }
+  @Test
+  void shouldReturnTrueWhenModeratorAreAuthorized() {
+    MockHttpServletRequest requestFromStandardUser = buildRequestWithUser(UserPrivileges.MODERATOR);
+    assertTrue(securityService.securityProtocolPassed(UserPrivileges.MODERATOR, requestFromStandardUser));
+    assertTrue(securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, requestFromStandardUser));
+  }
 
-    @Test
-    void shouldReturnFalseWhenModeratorAreNotAuthorized() {
-        MockHttpServletRequest requestFromStandardUser = buildRequestWithUser(UserPrivileges.STANDARD_USER);
-        assertFalse(securityService.securityProtocolPassed(UserPrivileges.ADMINISTRATOR, requestFromStandardUser));
-    }
+  @Test
+  void shouldReturnFalseWhenModeratorAreNotAuthorized() {
+    MockHttpServletRequest requestFromStandardUser = buildRequestWithUser(UserPrivileges.STANDARD_USER);
+    assertFalse(securityService.securityProtocolPassed(UserPrivileges.ADMINISTRATOR, requestFromStandardUser));
+  }
 
-    @Test
-    void shouldReturnTrueWhenAdminIsAuthorized() {
-        MockHttpServletRequest requestFromStandardUser = buildRequestWithUser(UserPrivileges.ADMINISTRATOR);
-        assertTrue(securityService.securityProtocolPassed(UserPrivileges.ADMINISTRATOR, requestFromStandardUser));
-        assertTrue(securityService.securityProtocolPassed(UserPrivileges.MODERATOR, requestFromStandardUser));
-        assertTrue(securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, requestFromStandardUser));
-    }
+  @Test
+  void shouldReturnTrueWhenAdminIsAuthorized() {
+    MockHttpServletRequest requestFromStandardUser = buildRequestWithUser(UserPrivileges.ADMINISTRATOR);
+    assertTrue(securityService.securityProtocolPassed(UserPrivileges.ADMINISTRATOR, requestFromStandardUser));
+    assertTrue(securityService.securityProtocolPassed(UserPrivileges.MODERATOR, requestFromStandardUser));
+    assertTrue(securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, requestFromStandardUser));
+  }
 
-    public MockHttpServletRequest buildRequestWithUser(UserPrivileges userPrivileges) {
-        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(
-                SessionAttributeKey.USER_KEY,
-                new UserBuilder().setUserPrivileges(userPrivileges).build()
-        );
-        return mockHttpServletRequest;
-    }
+  public MockHttpServletRequest buildRequestWithUser(UserPrivileges userPrivileges) {
+    MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+    Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(
+            Key.USER,
+            new UserBuilder().setUserPrivileges(userPrivileges).build()
+    );
+    return mockHttpServletRequest;
+  }
 }

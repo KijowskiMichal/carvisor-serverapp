@@ -16,14 +16,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ContextConfiguration(classes = {Initializer.class})
 class ErrorDaoJdbcTest {
 
-    private final Logger logger = new Logger();
-    @Autowired
-    private HibernateRequests hibernateRequests;
+  private final Logger logger = new Logger();
+  @Autowired
+  private HibernateRequests hibernateRequests;
 
-    @AfterEach
-    void clearDatabase() {
-        CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
-        carDaoJdbc.getAll().stream().mapToInt(Car::getId).forEach(carDaoJdbc::delete);
-    }
+  @AfterEach
+  void clearDatabase() {
+    CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
+    carDaoJdbc.getAll().stream().mapToInt(Car::getId).forEach(carDaoJdbc::delete);
+  }
 
 }

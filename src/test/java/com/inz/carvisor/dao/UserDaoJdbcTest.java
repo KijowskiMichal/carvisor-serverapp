@@ -1,7 +1,7 @@
 package com.inz.carvisor.dao;
 
-import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.entities.builders.UserBuilder;
+import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.otherclasses.Logger;
@@ -24,70 +24,70 @@ import java.util.Optional;
 @ContextConfiguration(classes = {Initializer.class})
 class UserDaoJdbcTest {
 
-    private final Logger logger = new Logger();
-    @Autowired
-    private HibernateRequests hibernateRequests;
+  private final Logger logger = new Logger();
+  @Autowired
+  private HibernateRequests hibernateRequests;
 
-    @AfterEach
-    void clearDatabase() {
-        UserDaoJdbc userDaoJdbc = new UserDaoJdbc(hibernateRequests, logger);
-        userDaoJdbc.getAll().stream().mapToInt(User::getId).forEach(userDaoJdbc::delete);
-    }
+  @AfterEach
+  void clearDatabase() {
+    UserDaoJdbc userDaoJdbc = new UserDaoJdbc(hibernateRequests, logger);
+    userDaoJdbc.getAll().stream().mapToInt(User::getId).forEach(userDaoJdbc::delete);
+  }
 
-    @Test
-    void create() {
-        UserDaoJdbc userDaoJdbc = new UserDaoJdbc(hibernateRequests, logger);
-        User user = new UserBuilder().build();
-        userDaoJdbc.save(user);
-        Optional<User> wrappedUser = userDaoJdbc.get(user.getId());
-        if (wrappedUser.isEmpty())
-            Assertions.fail();
-        User unwrappedUser = wrappedUser.get();
-        Assertions.assertEquals(user.getId(), unwrappedUser.getId());
-    }
+  @Test
+  void create() {
+    UserDaoJdbc userDaoJdbc = new UserDaoJdbc(hibernateRequests, logger);
+    User user = new UserBuilder().build();
+    userDaoJdbc.save(user);
+    Optional<User> wrappedUser = userDaoJdbc.get(user.getId());
+    if (wrappedUser.isEmpty())
+      Assertions.fail();
+    User unwrappedUser = wrappedUser.get();
+    Assertions.assertEquals(user.getId(), unwrappedUser.getId());
+  }
 
-    @Test
-    void get() {
-        UserDaoJdbc userDaoJdbc = new UserDaoJdbc(hibernateRequests, logger);
-        User user = new UserBuilder().build();
-        userDaoJdbc.save(user);
+  @Test
+  void get() {
+    UserDaoJdbc userDaoJdbc = new UserDaoJdbc(hibernateRequests, logger);
+    User user = new UserBuilder().build();
+    userDaoJdbc.save(user);
 
-        Optional<User> user1 = userDaoJdbc.get(user.getId());
-        if (user1.isEmpty())
-            Assertions.fail();
-        User user2 = user1.get();
-        Assertions.assertEquals(user.getId(), user2.getId());
-    }
+    Optional<User> user1 = userDaoJdbc.get(user.getId());
+    if (user1.isEmpty())
+      Assertions.fail();
+    User user2 = user1.get();
+    Assertions.assertEquals(user.getId(), user2.getId());
+  }
 
-    @Test
-    void getAll() {
-        UserDaoJdbc userDaoJdbc = new UserDaoJdbc(hibernateRequests, logger);
-        List<User> all = userDaoJdbc.getAll();
-        List<User> users = Arrays.asList(
-                new UserBuilder().build(),
-                new UserBuilder().build(),
-                new UserBuilder().build()
-        );
-        int expectedCarsAmount = all.size() + users.size();
-        users.forEach(userDaoJdbc::save);
+  @Test
+  void getAll() {
+    UserDaoJdbc userDaoJdbc = new UserDaoJdbc(hibernateRequests, logger);
+    List<User> all = userDaoJdbc.getAll();
+    List<User> users = Arrays.asList(
+            new UserBuilder().build(),
+            new UserBuilder().build(),
+            new UserBuilder().build()
+    );
+    int expectedCarsAmount = all.size() + users.size();
+    users.forEach(userDaoJdbc::save);
 
-        int actualSize = userDaoJdbc.getAll().size();
-        Assertions.assertEquals(expectedCarsAmount, actualSize);
-    }
+    int actualSize = userDaoJdbc.getAll().size();
+    Assertions.assertEquals(expectedCarsAmount, actualSize);
+  }
 
-    @Test
-    void delete() {
-        UserDaoJdbc userDaoJdbc = new UserDaoJdbc(hibernateRequests, logger);
-        User user = new UserBuilder().build();
-        userDaoJdbc.save(user);
+  @Test
+  void delete() {
+    UserDaoJdbc userDaoJdbc = new UserDaoJdbc(hibernateRequests, logger);
+    User user = new UserBuilder().build();
+    userDaoJdbc.save(user);
 
-        Optional<User> wrappedUser = userDaoJdbc.get(user.getId());
-        if (wrappedUser.isEmpty())
-            Assertions.fail();
+    Optional<User> wrappedUser = userDaoJdbc.get(user.getId());
+    if (wrappedUser.isEmpty())
+      Assertions.fail();
 
-        userDaoJdbc.delete(user.getId());
-        wrappedUser = userDaoJdbc.get(user.getId());
-        if (wrappedUser.isPresent())
-            Assertions.fail();
-    }
+    userDaoJdbc.delete(user.getId());
+    wrappedUser = userDaoJdbc.get(user.getId());
+    if (wrappedUser.isPresent())
+      Assertions.fail();
+  }
 }

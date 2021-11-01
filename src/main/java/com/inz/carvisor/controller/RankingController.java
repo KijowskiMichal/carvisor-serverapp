@@ -2,7 +2,7 @@ package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
-import com.inz.carvisor.constants.SessionAttributeKey;
+import com.inz.carvisor.constants.Key;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.model.Offence;
@@ -43,7 +43,7 @@ public class RankingController {
           HttpServletRequest request, HttpEntity<String> httpEntity,
           @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
           @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) { //todo dlaczego page size dla jednego usera?
-    User userToCheck = (User) request.getSession().getAttribute(SessionAttributeKey.USER_KEY);
+    User userToCheck = (User) request.getSession().getAttribute(Key.USER);
     float ecoPointsAvg = userToCheck.getEcoPointsAvg();
     float safetyRanking = 4;
 

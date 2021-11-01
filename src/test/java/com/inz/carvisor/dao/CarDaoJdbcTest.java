@@ -1,7 +1,7 @@
 package com.inz.carvisor.dao;
 
-import com.inz.carvisor.entities.model.Car;
 import com.inz.carvisor.entities.builders.CarBuilder;
+import com.inz.carvisor.entities.model.Car;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.otherclasses.Logger;
@@ -21,72 +21,72 @@ import java.util.Optional;
 @ContextConfiguration(classes = {Initializer.class})
 public class CarDaoJdbcTest {
 
-    private final Logger logger = new Logger();
-    @Autowired
-    private HibernateRequests hibernateRequests;
+  private final Logger logger = new Logger();
+  @Autowired
+  private HibernateRequests hibernateRequests;
 
-    @AfterEach
-    void clearDatabase() {
-        CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
-        carDaoJdbc.getAll().stream().mapToInt(Car::getId).forEach(carDaoJdbc::delete);
-    }
+  @AfterEach
+  void clearDatabase() {
+    CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
+    carDaoJdbc.getAll().stream().mapToInt(Car::getId).forEach(carDaoJdbc::delete);
+  }
 
-    @Test
-    void get() {
-        CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
-        Car carToSave = new CarBuilder()
-                .setLicensePlate("ABCD")
-                .setBrand("Skoda")
-                .setModel("Fabia")
-                .setPassword(DigestUtils.sha256Hex("ABCD"))
-                .build();
-        carDaoJdbc.save(carToSave);
+  @Test
+  void get() {
+    CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
+    Car carToSave = new CarBuilder()
+            .setLicensePlate("ABCD")
+            .setBrand("Skoda")
+            .setModel("Fabia")
+            .setPassword(DigestUtils.sha256Hex("ABCD"))
+            .build();
+    carDaoJdbc.save(carToSave);
 
-        Optional<Car> carFromDatabaseWrapped = carDaoJdbc.get(carToSave.getId());
+    Optional<Car> carFromDatabaseWrapped = carDaoJdbc.get(carToSave.getId());
 
-        if (carFromDatabaseWrapped.isEmpty()) Assertions.fail();
+    if (carFromDatabaseWrapped.isEmpty()) Assertions.fail();
 
-        Car carFromDatabaseUnwrapped = carFromDatabaseWrapped.get();
-        Assertions.assertEquals(carToSave.getLicensePlate(), carFromDatabaseUnwrapped.getLicensePlate());
-        Assertions.assertEquals(carToSave.getBrand(), carFromDatabaseUnwrapped.getBrand());
-        Assertions.assertEquals(carToSave.getModel(), carFromDatabaseUnwrapped.getModel());
-    }
+    Car carFromDatabaseUnwrapped = carFromDatabaseWrapped.get();
+    Assertions.assertEquals(carToSave.getLicensePlate(), carFromDatabaseUnwrapped.getLicensePlate());
+    Assertions.assertEquals(carToSave.getBrand(), carFromDatabaseUnwrapped.getBrand());
+    Assertions.assertEquals(carToSave.getModel(), carFromDatabaseUnwrapped.getModel());
+  }
 
-    @Test
-    void getAll() {
-        CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
-        List<Car> all = carDaoJdbc.getAll();
-        List<Car> cars = Arrays.asList(
-                new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setPassword(DigestUtils.sha256Hex("ABCD")).build(),
-                new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setPassword(DigestUtils.sha256Hex("ABCD")).build(),
-                new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setPassword(DigestUtils.sha256Hex("ABCD")).build()
-        );
+  @Test
+  void getAll() {
+    CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
+    List<Car> all = carDaoJdbc.getAll();
+    List<Car> cars = Arrays.asList(
+            new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setPassword(DigestUtils.sha256Hex("ABCD")).build(),
+            new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setPassword(DigestUtils.sha256Hex("ABCD")).build(),
+            new CarBuilder().setLicensePlate("ABCD").setBrand("Skoda").setModel("Fabia").setPassword(DigestUtils.sha256Hex("ABCD")).build()
+    );
 
-        int expectedCarsAmount = all.size() + cars.size();
-        cars.forEach(carDaoJdbc::save);
-        int actualSize = carDaoJdbc.getAll().size();
-        Assertions.assertEquals(expectedCarsAmount, actualSize);
-    }
+    int expectedCarsAmount = all.size() + cars.size();
+    cars.forEach(carDaoJdbc::save);
+    int actualSize = carDaoJdbc.getAll().size();
+    Assertions.assertEquals(expectedCarsAmount, actualSize);
+  }
 
-    @Test
-    void delete() {
-        CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
-        Car car1 = new CarBuilder()
-                .setLicensePlate("ABCD")
-                .setBrand("Skoda")
-                .setModel("Fabia")
-                .setPassword(DigestUtils.sha256Hex("ABCD"))
-                .build();
+  @Test
+  void delete() {
+    CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
+    Car car1 = new CarBuilder()
+            .setLicensePlate("ABCD")
+            .setBrand("Skoda")
+            .setModel("Fabia")
+            .setPassword(DigestUtils.sha256Hex("ABCD"))
+            .build();
 
-        carDaoJdbc.save(car1);
+    carDaoJdbc.save(car1);
 
-        Optional<Car> wrappedCar2 = carDaoJdbc.get(car1.getId());
-        if (wrappedCar2.isEmpty())
-            Assertions.fail();
+    Optional<Car> wrappedCar2 = carDaoJdbc.get(car1.getId());
+    if (wrappedCar2.isEmpty())
+      Assertions.fail();
 
-        carDaoJdbc.delete(car1.getId());
-        wrappedCar2 = carDaoJdbc.get(car1.getId());
-        if (wrappedCar2.isPresent())
-            Assertions.fail();
-    }
+    carDaoJdbc.delete(car1.getId());
+    wrappedCar2 = carDaoJdbc.get(car1.getId());
+    if (wrappedCar2.isPresent())
+      Assertions.fail();
+  }
 }

@@ -2,7 +2,7 @@ package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
-import com.inz.carvisor.constants.SessionAttributeKey;
+import com.inz.carvisor.constants.Key;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Notification;
 import com.inz.carvisor.entities.model.User;
@@ -38,7 +38,7 @@ public class NotificationREST {
 
   @RequestMapping(value = "/newNotifications", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
   public ResponseEntity<String> getNotDisplayedNotifications(HttpServletRequest request, HttpEntity<String> httpEntity) {
-    User user = (User) request.getSession().getAttribute(SessionAttributeKey.USER_KEY);
+    User user = (User) request.getSession().getAttribute(Key.USER);
     List<Notification> notifications = notificationService.displayNotification(user.getId());
     return DefaultResponse.ok(toSimpleJsonArray(notifications).toString());
   }

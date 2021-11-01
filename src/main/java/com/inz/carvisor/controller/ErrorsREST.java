@@ -2,7 +2,7 @@ package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
-import com.inz.carvisor.constants.UtilKey;
+import com.inz.carvisor.constants.Key;
 import com.inz.carvisor.entities.builders.ErrorBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Error;
@@ -81,8 +81,8 @@ public class ErrorsREST {
     int maxPageUserErrors = errorService.getMaxPageAllErrors(dateFromTimestamp, dateToTimestamp, page, pagesize);
     List<Error> userErrors = errorService.getAllErrors(dateFromTimestamp, dateToTimestamp, page, pagesize);
     return DefaultResponse.ok(new JSONObject()
-            .put(UtilKey.PAGE, page)
-            .put(UtilKey.PAGE_MAX, maxPageUserErrors)
+            .put(Key.PAGE, page)
+            .put(Key.PAGE_MAX, maxPageUserErrors)
             .put(AttributeKey.Notification.LIST_OF_NOTIFICATIONS, toJSONArray(userErrors))
             .toString());
   }
@@ -93,8 +93,8 @@ public class ErrorsREST {
     int maxPageUserErrors = errorService.getMaxPageUserErrors(user, dateFromTimestamp, dateToTimestamp, page, pagesize);
     List<Error> userErrors = errorService.getUserErrors(user, dateFromTimestamp, dateToTimestamp, page, pagesize);
     return DefaultResponse.ok(new JSONObject()
-            .put(UtilKey.PAGE, page)
-            .put(UtilKey.PAGE_MAX, maxPageUserErrors)
+            .put(Key.PAGE, page)
+            .put(Key.PAGE_MAX, maxPageUserErrors)
             .put(AttributeKey.Notification.LIST_OF_NOTIFICATIONS, toJSONArray(userErrors))
             .toString());
   }

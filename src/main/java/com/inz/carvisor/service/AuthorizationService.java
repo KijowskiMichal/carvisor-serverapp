@@ -1,7 +1,6 @@
 package com.inz.carvisor.service;
 
-
-import com.inz.carvisor.constants.AuthorizationJsonKey;
+import com.inz.carvisor.constants.Key;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -45,7 +44,7 @@ public class AuthorizationService {
     JSONObject inJSON = new JSONObject(httpEntity.getBody());
     List<Object> users;
     try {
-      users = hibernateRequests.getTableContent("SELECT a FROM User a WHERE a.nick = '" + inJSON.get(AuthorizationJsonKey.LOGIN) + "'", User.class);
+      users = hibernateRequests.getTableContent("SELECT a FROM User a WHERE a.nick = '" + inJSON.get(Key.LOGIN) + "'", User.class);
     } catch (Exception e) {
       users = new ArrayList<>();
     }
