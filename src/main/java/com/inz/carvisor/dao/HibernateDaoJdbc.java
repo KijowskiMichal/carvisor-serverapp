@@ -20,172 +20,172 @@ import java.util.Optional;
  */
 @Repository
 public abstract class HibernateDaoJdbc<T> {
-    HibernateRequests hibernateRequests;
-    Logger logger;
+  HibernateRequests hibernateRequests;
+  Logger logger;
 
-    @Autowired
-    public HibernateDaoJdbc(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger) {
-        this.hibernateRequests = hibernateRequests;
-        this.logger = logger.getLOG();
+  @Autowired
+  public HibernateDaoJdbc(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger) {
+    this.hibernateRequests = hibernateRequests;
+    this.logger = logger.getLOG();
+  }
+
+  public Optional<T> save(T t) {
+    Session session = null;
+    Transaction tx = null;
+    Optional<T> savedObject = Optional.empty();
+    try {
+      session = hibernateRequests.getSession();
+      tx = session.beginTransaction();
+      session.save(t);
+      tx.commit();
+      savedObject = Optional.of(t);
+    } catch (HibernateException e) {
+      if (tx != null) tx.rollback();
+      e.printStackTrace();
+    } finally {
+      if (session != null) session.close();
+    }
+    return savedObject;
+  }
+
+  public Optional<T> update(T t) {
+    Transaction tx = null;
+    Session session = null;
+    try {
+      session = hibernateRequests.getSession();
+      tx = session.beginTransaction();
+      session.update(t);
+      tx.commit();
+    } catch (HibernateException e) {
+      if (tx != null) tx.rollback();
+      e.printStackTrace();
+    }
+    return Optional.of(t);
+  }
+
+  @SuppressWarnings("unchecked")
+  public Optional<T> getObject(String stringQuery) {
+    Session session = null;
+    Transaction tx = null;
+    T t = null;
+    try {
+      session = hibernateRequests.getSession();
+      tx = session.beginTransaction();
+      Query<String> query = session.createQuery(stringQuery);
+      t = (T) query.getResultList().stream().findFirst().orElse(null);
+      tx.commit();
+    } catch (HibernateException e) {
+      if (tx != null) tx.rollback();
+      e.printStackTrace();
+    } finally {
+      if (session != null) session.close();
+    }
+    return Optional.ofNullable(t);
+  }
+
+  @SuppressWarnings("unchecked")
+  public List<T> getList(String query) {
+    Session session = null;
+    Transaction transaction = null;
+    List<T> listOfObjects = null;
+    try {
+      session = hibernateRequests.getSession();
+      transaction = session.beginTransaction();
+      listOfObjects = session.createQuery(query).getResultList();
+      transaction.commit();
+    } catch (HibernateException e) {
+      if (transaction != null) transaction.rollback();
+      e.printStackTrace();
+    } finally {
+
+      if (session != null) session.close();
     }
 
-    public Optional<T> save(T t) {
-        Session session = null;
-        Transaction tx = null;
-        Optional<T> savedObject = Optional.empty();
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            session.save(t);
-            tx.commit();
-            savedObject = Optional.of(t);
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
-        return savedObject;
+    if (listOfObjects == null) return new ArrayList<>();
+    else return listOfObjects;
+  }
+
+  public List<T> getList(String query, int page, int pageSize) {
+    Session session = null;
+    Transaction transaction = null;
+    List<T> listOfObjects = null;
+    try {
+      session = hibernateRequests.getSession();
+      transaction = session.beginTransaction();
+      listOfObjects = (List<T>) session
+              .createQuery(query)
+              .setFirstResult((page - 1) * pageSize)
+              .setMaxResults(pageSize)
+              .getResultList();
+      transaction.commit();
+    } catch (HibernateException e) {
+      if (transaction != null) transaction.rollback();
+      e.printStackTrace();
+    } finally {
+      if (session != null) session.close();
     }
+    if (listOfObjects == null) return new ArrayList<>();
+    else return listOfObjects;
+  }
 
-    public Optional<T> update(T t) {
-        Transaction tx = null;
-        Session session = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            session.update(t);
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        }
-        return Optional.of(t);
+  public int checkMaxPage(String query, int pageSize) {
+    Session session = null;
+    Transaction transaction = null;
+    List<T> listOfObjects = null;
+    try {
+      session = hibernateRequests.getSession();
+      transaction = session.beginTransaction();
+      listOfObjects = session.createQuery(query).getResultList();
+      transaction.commit();
+    } catch (HibernateException e) {
+      if (transaction != null) transaction.rollback();
+      e.printStackTrace();
+    } finally {
+      if (session != null) session.close();
     }
+    if (listOfObjects == null) return 0;
+    else return (int) (Math.ceil(listOfObjects.size() / (double) pageSize));
+  }
 
-    @SuppressWarnings("unchecked")
-    public Optional<T> getObject(String stringQuery) {
-        Session session = null;
-        Transaction tx = null;
-        T t = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            Query<String> query = session.createQuery(stringQuery);
-            t = (T) query.getResultList().stream().findFirst().orElse(null);
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
-        return Optional.ofNullable(t);
+  public Optional<T> delete(Number id) {
+    Session session = null;
+    Transaction transaction = null;
+    Optional<T> object = Optional.empty();
+    try {
+      session = hibernateRequests.getSession();
+      transaction = session.beginTransaction();
+      object = get(id);
+      if (object.isEmpty()) throw createThereIsNoSuchElementException(getTableName(), id);
+      session.delete(object.get());
+      transaction.commit();
+    } catch (HibernateException hibernateException) {
+      if (transaction != null) transaction.rollback();
+      hibernateException.printStackTrace();
+    } finally {
+      if (session != null) session.close();
     }
+    return object;
+  }
 
-    @SuppressWarnings("unchecked")
-    public List<T> getList(String query) {
-        Session session = null;
-        Transaction transaction = null;
-        List<T> listOfObjects = null;
-        try {
-            session = hibernateRequests.getSession();
-            transaction = session.beginTransaction();
-            listOfObjects = session.createQuery(query).getResultList();
-            transaction.commit();
-        } catch (HibernateException e) {
-            if (transaction != null) transaction.rollback();
-            e.printStackTrace();
-        } finally {
+  public Optional<T> get(Number id) {
+    return getObject(createSelectGetById(id));
+  }
 
-            if (session != null) session.close();
-        }
+  public List<T> getAll() {
+    return getList(createSelectGetAll());
+  }
 
-        if (listOfObjects == null) return new ArrayList<>();
-        else return listOfObjects;
-    }
+  protected abstract String getTableName();
 
-    public List<T> getList(String query, int page, int pageSize) {
-        Session session = null;
-        Transaction transaction = null;
-        List<T> listOfObjects = null;
-        try {
-            session = hibernateRequests.getSession();
-            transaction = session.beginTransaction();
-            listOfObjects = (List<T>) session
-                    .createQuery(query)
-                    .setFirstResult((page - 1) * pageSize)
-                    .setMaxResults(pageSize)
-                    .getResultList();
-            transaction.commit();
-        } catch (HibernateException e) {
-            if (transaction != null) transaction.rollback();
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
-        if (listOfObjects == null) return new ArrayList<>();
-        else return listOfObjects;
-    }
+  protected final String createSelectGetById(Number number) {
+    return "SELECT x FROM " + getTableName() + " x " + "WHERE x.id=" + number;
+  }
 
-    public int checkMaxPage(String query, int pageSize) {
-        Session session = null;
-        Transaction transaction = null;
-        List<T> listOfObjects = null;
-        try {
-            session = hibernateRequests.getSession();
-            transaction = session.beginTransaction();
-            listOfObjects = session.createQuery(query).getResultList();
-            transaction.commit();
-        } catch (HibernateException e) {
-            if (transaction != null) transaction.rollback();
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
-        if (listOfObjects == null) return 0;
-        else return (int) (Math.ceil(listOfObjects.size() / (double) pageSize));
-    }
+  protected final String createSelectGetAll() {
+    return "SELECT x FROM " + getTableName() + " x ";
+  }
 
-    public Optional<T> delete(Number id) {
-        Session session = null;
-        Transaction transaction = null;
-        Optional<T> object = Optional.empty();
-        try {
-            session = hibernateRequests.getSession();
-            transaction = session.beginTransaction();
-            object = get(id);
-            if (object.isEmpty()) throw createThereIsNoSuchElementException(getTableName(), id);
-            session.delete(object.get());
-            transaction.commit();
-        } catch (HibernateException hibernateException) {
-            if (transaction != null) transaction.rollback();
-            hibernateException.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
-        return object;
-    }
-
-    public Optional<T> get(Number id) {
-        return getObject(createSelectGetById(id));
-    }
-
-    public List<T> getAll() {
-        return getList(createSelectGetAll());
-    }
-
-    protected abstract String getTableName();
-
-    protected final String createSelectGetById(Number number) {
-        return "SELECT x FROM " + getTableName() + " x " + "WHERE x.id=" + number;
-    }
-
-    protected final String createSelectGetAll() {
-        return "SELECT x FROM " + getTableName() + " x ";
-    }
-
-    private HibernateException createThereIsNoSuchElementException(String tableName, Number givenId) {
-        return new HibernateException("There is no " + tableName + " with given id=" + givenId.toString());
-    }
+  private HibernateException createThereIsNoSuchElementException(String tableName, Number givenId) {
+    return new HibernateException("There is no " + tableName + " with given id=" + givenId.toString());
+  }
 }

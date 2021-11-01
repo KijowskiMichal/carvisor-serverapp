@@ -7,49 +7,49 @@ import javax.persistence.Id;
 @Entity
 public class Error {
 
-    @Id
-    @GeneratedValue
-    int id;
+  @Id
+  @GeneratedValue
+  int id;
 
-    private String type;
-    private long value;
-    private long timestamp;
+  private String type;
+  private long value;
+  private long timestamp;
 
-    public Error() {
-    }
+  public Error() {
+  }
 
-    public Error(String type, long value) {
-        this.type = type;
-        this.value = value;
-    }
+  public Error(String type, long value) {
+    this.type = type;
+    this.value = value;
+  }
 
-    public int getId() {
-        return id;
-    }
+  public int getId() {
+    return id;
+  }
 
-    public String getType() {
-        return type;
-    }
+  public String getType() {
+    return type;
+  }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+  public void setType(String type) {
+    this.type = type;
+  }
 
-    public long getValue() {
-        return value;
-    }
+  public long getValue() {
+    return value;
+  }
 
-    public void setValue(long value) {
-        this.value = value;
-    }
+  public void setValue(long value) {
+    this.value = value;
+  }
 
-    @Override
-    public String toString() {
-        return "Error{" +
-                "id=" + id +
-                ", type='" + type + '\'' +
-                ", value=" + value +
-                ", timestamp=" + timestamp +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "Error{" +
+            "id=" + id +
+            ", type='" + type + '\'' +
+            ", value=" + value +
+            ", timestamp=" + timestamp +
+            '}';
+  }
 }

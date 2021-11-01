@@ -12,18 +12,18 @@ import java.util.Optional;
 @Service
 public abstract class OffenceStrategy {
 
-    @Autowired
-    OffenceDaoJdbc offenceDaoJdbc;
+  @Autowired
+  OffenceDaoJdbc offenceDaoJdbc;
 
-    public List<OffenceStrategy> getAllStrategies() {
-        return List.of(
-                new SpeedOffence()
-        );
-    }
+  public List<OffenceStrategy> getAllStrategies() {
+    return List.of(
+            new SpeedOffence()
+    );
+  }
 
-    private void saveOffence(Offence offence) {
-        offenceDaoJdbc.save(offence);
-    }
+  private void saveOffence(Offence offence) {
+    offenceDaoJdbc.save(offence);
+  }
 
-    abstract Optional<Offence> createOffenceIfExists(TrackRate trackRate);
+  abstract Optional<Offence> createOffenceIfExists(TrackRate trackRate);
 }

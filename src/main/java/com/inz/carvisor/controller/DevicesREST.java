@@ -1,8 +1,8 @@
 package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.DefaultResponse;
-import com.inz.carvisor.entities.model.Car;
 import com.inz.carvisor.entities.enums.UserPrivileges;
+import com.inz.carvisor.entities.model.Car;
 import com.inz.carvisor.service.DevicesService;
 import com.inz.carvisor.service.SecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,53 +24,53 @@ import java.util.Optional;
 @RequestMapping("/devices")
 public class DevicesREST {
 
-    private final DevicesService devicesService;
-    private final SecurityService securityService;
+  private final DevicesService devicesService;
+  private final SecurityService securityService;
 
-    @Autowired
-    public DevicesREST(DevicesService devicesService, SecurityService securityService) {
-        this.devicesService = devicesService;
-        this.securityService = securityService;
+  @Autowired
+  public DevicesREST(DevicesService devicesService, SecurityService securityService) {
+    this.devicesService = devicesService;
+    this.securityService = securityService;
+  }
+
+  @RequestMapping(value = "/list/{page}/{pageSize}/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+  public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pageSize") int pageSize, @PathVariable("regex") String regex) {
+    return devicesService.list(request, page, pageSize, regex);
+  }
+
+  @RequestMapping(value = "/getDeviceData/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+  public ResponseEntity getDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int id) {
+    return devicesService.getDeviceData(request, httpEntity, id);
+  }
+
+  @RequestMapping(value = "/devices/removeDevice/{id}", method = RequestMethod.DELETE)
+  public ResponseEntity removeDevice(HttpServletRequest request, @PathVariable("id") int id) {
+    if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
+      return DefaultResponse.UNAUTHORIZED;
     }
 
-    @RequestMapping(value = "/list/{page}/{pageSize}/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pageSize") int pageSize, @PathVariable("regex") String regex) {
-        return devicesService.list(request, page, pageSize, regex);
-    }
+    Optional<Car> car = devicesService.removeDevice(id);
+    if (car.isPresent()) return DefaultResponse.OK;
+    else return DefaultResponse.BAD_REQUEST;
+  }
 
-    @RequestMapping(value = "/getDeviceData/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public ResponseEntity getDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int id) {
-        return devicesService.getDeviceData(request, httpEntity, id);
-    }
+  @RequestMapping(value = "/changeDeviceData/{id}/", method = RequestMethod.POST)
+  public ResponseEntity changeDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int id) {
+    return devicesService.changeDeviceData(request, httpEntity, id);
+  }
 
-    @RequestMapping(value = "/devices/removeDevice/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity removeDevice(HttpServletRequest request, @PathVariable("id") int id) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
-            return DefaultResponse.UNAUTHORIZED;
-        }
+  @RequestMapping(value = "/changeDeviceImage/{id}/", method = RequestMethod.POST)
+  public ResponseEntity changeDeviceImage(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int id) {
+    return devicesService.changeDeviceImage(request, httpEntity, id);
+  }
 
-        Optional<Car> car = devicesService.removeDevice(id);
-        if (car.isPresent()) return DefaultResponse.OK;
-        else return DefaultResponse.BAD_REQUEST;
-    }
+  @RequestMapping(value = "/addDevice", method = RequestMethod.POST)
+  public ResponseEntity addDevice(HttpServletRequest request, HttpEntity<String> httpEntity) {
+    return devicesService.addDevice(request, httpEntity);
+  }
 
-    @RequestMapping(value = "/changeDeviceData/{id}/", method = RequestMethod.POST)
-    public ResponseEntity changeDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int id) {
-        return devicesService.changeDeviceData(request, httpEntity, id);
-    }
-
-    @RequestMapping(value = "/changeDeviceImage/{id}/", method = RequestMethod.POST)
-    public ResponseEntity changeDeviceImage(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int id) {
-        return devicesService.changeDeviceImage(request, httpEntity, id);
-    }
-
-    @RequestMapping(value = "/addDevice", method = RequestMethod.POST)
-    public ResponseEntity addDevice(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        return devicesService.addDevice(request, httpEntity);
-    }
-
-    @RequestMapping(value = "/listDevicesNames/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public ResponseEntity<String> listDevicesNames(HttpServletRequest request, @PathVariable("regex") String regex) {
-        return devicesService.listDevicesNames(request, regex);
-    }
+  @RequestMapping(value = "/listDevicesNames/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+  public ResponseEntity<String> listDevicesNames(HttpServletRequest request, @PathVariable("regex") String regex) {
+    return devicesService.listDevicesNames(request, regex);
+  }
 }

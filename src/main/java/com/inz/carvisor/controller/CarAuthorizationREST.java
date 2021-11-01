@@ -14,25 +14,25 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/carAuthorization")
 public class CarAuthorizationREST {
-    private final CarAuthorizationService carAuthorizationService;
+  private final CarAuthorizationService carAuthorizationService;
 
-    @Autowired
-    public CarAuthorizationREST(CarAuthorizationService carAuthorizationService) {
-        this.carAuthorizationService = carAuthorizationService;
-    }
+  @Autowired
+  public CarAuthorizationREST(CarAuthorizationService carAuthorizationService) {
+    this.carAuthorizationService = carAuthorizationService;
+  }
 
-    @RequestMapping(value = "/authorize", method = RequestMethod.POST)
-    public ResponseEntity authorize(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        return carAuthorizationService.authorize(request, httpEntity);
-    }
+  @RequestMapping(value = "/authorize", method = RequestMethod.POST)
+  public ResponseEntity authorize(HttpServletRequest request, HttpEntity<String> httpEntity) {
+    return carAuthorizationService.authorize(request, httpEntity);
+  }
 
-    @RequestMapping(value = "/status", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public ResponseEntity<String> status(HttpServletRequest request) {
-        return carAuthorizationService.status(request);
-    }
+  @RequestMapping(value = "/status", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+  public ResponseEntity<String> status(HttpServletRequest request) {
+    return carAuthorizationService.status(request);
+  }
 
-    @RequestMapping(value = "/logout", method = RequestMethod.GET)
-    public ResponseEntity logout(HttpServletRequest request) {
-        return carAuthorizationService.logout(request);
-    }
+  @RequestMapping(value = "/logout", method = RequestMethod.GET)
+  public ResponseEntity logout(HttpServletRequest request) {
+    return carAuthorizationService.logout(request);
+  }
 }

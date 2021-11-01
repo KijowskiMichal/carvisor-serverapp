@@ -3,9 +3,9 @@ package com.inz.carvisor.controller;
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.constants.UtilKey;
-import com.inz.carvisor.entities.model.Error;
-import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.builders.ErrorBuilder;
+import com.inz.carvisor.entities.enums.UserPrivileges;
+import com.inz.carvisor.entities.model.Error;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.service.ErrorService;
 import com.inz.carvisor.service.SecurityService;
@@ -13,7 +13,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpRange;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,84 +31,84 @@ import java.util.Optional;
 @RequestMapping("/errors")
 public class ErrorsREST {
 
-    private final ErrorService errorService;
-    private final SecurityService securityService;
+  private final ErrorService errorService;
+  private final SecurityService securityService;
 
-    @Autowired
-    public ErrorsREST(ErrorService errorService, SecurityService securityService) {
-        this.errorService = errorService;
-        this.securityService = securityService;
+  @Autowired
+  public ErrorsREST(ErrorService errorService, SecurityService securityService) {
+    this.errorService = errorService;
+    this.securityService = securityService;
+  }
+
+  @RequestMapping(value = "/addError", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+  public ResponseEntity<String> addError(HttpServletRequest request, HttpEntity<String> httpEntity) {
+    if (!securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, request)) {
+      return DefaultResponse.UNAUTHORIZED;
+    } else if (!httpEntity.hasBody()) {
+      return DefaultResponse.EMPTY_BODY;
     }
 
-    @RequestMapping(value = "/addError", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public ResponseEntity<String> addError(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, request)) {
-            return DefaultResponse.UNAUTHORIZED;
-        } else if (!httpEntity.hasBody()) {
-            return DefaultResponse.EMPTY_BODY;
-        }
+    Error error = deserializeError(new JSONObject(httpEntity.getBody()));
+    Optional<Error> wrappedError = errorService.addError(error);
+    if (wrappedError.isPresent()) return DefaultResponse.OK;
+    else return DefaultResponse.BAD_REQUEST;
+  }
 
-        Error error = deserializeError(new JSONObject(httpEntity.getBody()));
-        Optional<Error> wrappedError = errorService.addError(error);
-        if (wrappedError.isPresent()) return DefaultResponse.OK;
-        else return DefaultResponse.BAD_REQUEST;
+  @RequestMapping(value = "/getErrors", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+  public ResponseEntity<String> getErrors(
+          HttpServletRequest request, HttpEntity<String> httpEntity,
+          @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
+          @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) {
+
+    if (securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, request)) {
+      return DefaultResponse.UNAUTHORIZED;
+    } else if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
+      return DefaultResponse.EMPTY_BODY;
+    } else {
+      return DefaultResponse.UNAUTHORIZED_JSON;
     }
+  }
 
-    @RequestMapping(value = "/getErrors", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public ResponseEntity<String> getErrors(
-            HttpServletRequest request, HttpEntity<String> httpEntity,
-            @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
-            @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) {
+  private Error deserializeError(JSONObject jsonObject) {
+    return new ErrorBuilder()
+            .setType(jsonObject.getString(AttributeKey.Error.TYPE))
+            .setValue(jsonObject.getInt(AttributeKey.Error.VALUE))
+            .build();
+  }
 
-        if (securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, request)) {
-            return DefaultResponse.UNAUTHORIZED;
-        } else if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
-            return DefaultResponse.EMPTY_BODY;
-        } else {
-            return DefaultResponse.UNAUTHORIZED_JSON;
-        }
-    }
+  private ResponseEntity<String> getAllErrors(long dateFromTimestamp, long dateToTimestamp,
+                                              int page, int pagesize) {
+    int maxPageUserErrors = errorService.getMaxPageAllErrors(dateFromTimestamp, dateToTimestamp, page, pagesize);
+    List<Error> userErrors = errorService.getAllErrors(dateFromTimestamp, dateToTimestamp, page, pagesize);
+    return DefaultResponse.ok(new JSONObject()
+            .put(UtilKey.PAGE, page)
+            .put(UtilKey.PAGE_MAX, maxPageUserErrors)
+            .put(AttributeKey.Notification.LIST_OF_NOTIFICATIONS, toJSONArray(userErrors))
+            .toString());
+  }
 
-    private Error deserializeError(JSONObject jsonObject) {
-        return new ErrorBuilder()
-                .setType(jsonObject.getString(AttributeKey.Error.TYPE))
-                .setValue(jsonObject.getInt(AttributeKey.Error.VALUE))
-                .build();
-    }
+  private ResponseEntity<String> getUserErrors(User user,
+                                               long dateFromTimestamp, long dateToTimestamp,
+                                               int page, int pagesize) {
+    int maxPageUserErrors = errorService.getMaxPageUserErrors(user, dateFromTimestamp, dateToTimestamp, page, pagesize);
+    List<Error> userErrors = errorService.getUserErrors(user, dateFromTimestamp, dateToTimestamp, page, pagesize);
+    return DefaultResponse.ok(new JSONObject()
+            .put(UtilKey.PAGE, page)
+            .put(UtilKey.PAGE_MAX, maxPageUserErrors)
+            .put(AttributeKey.Notification.LIST_OF_NOTIFICATIONS, toJSONArray(userErrors))
+            .toString());
+  }
 
-    private ResponseEntity<String> getAllErrors(long dateFromTimestamp, long dateToTimestamp,
-                                                int page, int pagesize) {
-        int maxPageUserErrors = errorService.getMaxPageAllErrors(dateFromTimestamp, dateToTimestamp, page, pagesize);
-        List<Error> userErrors = errorService.getAllErrors(dateFromTimestamp, dateToTimestamp, page, pagesize);
-        return DefaultResponse.ok(new JSONObject()
-                .put(UtilKey.PAGE,page)
-                .put(UtilKey.PAGE_MAX,maxPageUserErrors)
-                .put(AttributeKey.Notification.LIST_OF_NOTIFICATIONS,toJSONArray(userErrors))
-                .toString());
-    }
+  private JSONArray toJSONArray(List<Error> errors) {
+    JSONArray jsonArray = new JSONArray();
+    errors.forEach(error -> jsonArray.put(toJsonObject(error)));
+    return jsonArray;
+  }
 
-    private ResponseEntity<String> getUserErrors(User user,
-                                                 long dateFromTimestamp, long dateToTimestamp,
-                                                 int page, int pagesize) {
-        int maxPageUserErrors = errorService.getMaxPageUserErrors(user, dateFromTimestamp, dateToTimestamp, page, pagesize);
-        List<Error> userErrors = errorService.getUserErrors(user, dateFromTimestamp, dateToTimestamp, page, pagesize);
-        return DefaultResponse.ok(new JSONObject()
-                .put(UtilKey.PAGE,page)
-                .put(UtilKey.PAGE_MAX,maxPageUserErrors)
-                .put(AttributeKey.Notification.LIST_OF_NOTIFICATIONS,toJSONArray(userErrors))
-                .toString());
-    }
-
-    private JSONArray toJSONArray(List<Error> errors) {
-        JSONArray jsonArray = new JSONArray();
-        errors.forEach(error -> jsonArray.put(toJsonObject(error)));
-        return jsonArray;
-    }
-
-    private JSONObject toJsonObject(Error error) {
-        //todo zwrotka do omówienia, reszta działa tylko to jest problemem
-        //https://app.swaggerhub.com/apis/CarVisor6/API/1.0.0#/default/get_errors_getErrors__dateFrom___dateTo___page___pagesize_
-        return new JSONObject()
-                .put(AttributeKey.Notification.TYPE,error.getType());
-    }
+  private JSONObject toJsonObject(Error error) {
+    //todo zwrotka do omówienia, reszta działa tylko to jest problemem
+    //https://app.swaggerhub.com/apis/CarVisor6/API/1.0.0#/default/get_errors_getErrors__dateFrom___dateTo___page___pagesize_
+    return new JSONObject()
+            .put(AttributeKey.Notification.TYPE, error.getType());
+  }
 }

@@ -11,13 +11,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CarDaoJdbc extends HibernateDaoJdbc<Car> {
 
-    @Autowired
-    public CarDaoJdbc(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger) {
-        super(hibernateRequests, logger);
-    }
+  @Autowired
+  public CarDaoJdbc(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger) {
+    super(hibernateRequests, logger);
+  }
 
-    @Override
-    protected String getTableName() {
-        return "Car";
-    }
+  @Override
+  protected String getTableName() {
+    return "Car";
+  }
 }
