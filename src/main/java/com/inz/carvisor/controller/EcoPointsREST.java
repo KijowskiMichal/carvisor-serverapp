@@ -1,7 +1,7 @@
 package com.inz.carvisor.controller;
 
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
-import com.inz.carvisor.constants.TrackJsonKey;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.util.DataManipulator;
@@ -59,12 +59,12 @@ public class EcoPointsREST {
 
     private JSONObject trackToJson(Track track) {
         return new JSONObject()
-                .put(TrackJsonKey.DATE, DataManipulator.timeStampToDate(track.getStartTrackTimeStamp()))
-                .put(TrackJsonKey.AMOUNT_OF_TRACK, track.getAmountOfSamples())
-                .put(TrackJsonKey.ECO_POINTS, track.getEcoPointsScore())
-                .put(TrackJsonKey.COMBUSTION, track.getCombustion())
-                .put(TrackJsonKey.SPEED, track.getAverageSpeed())
-                .put(TrackJsonKey.REVOLUTION, track.getAverageRevolutionsPerMinute())
-                .put(TrackJsonKey.DISTANCE, track.getDistanceFromStart());
+                .put(AttributeKey.Track.DATE, DataManipulator.timeStampToDate(track.getStartTrackTimeStamp()))
+                .put(AttributeKey.Track.AMOUNT_OF_TRACK, track.getAmountOfSamples())
+                .put(AttributeKey.Track.ECO_POINTS, track.getEcoPointsScore())
+                .put(AttributeKey.Track.COMBUSTION, track.getCombustion())
+                .put(AttributeKey.Track.SPEED, track.getAverageSpeed())
+                .put(AttributeKey.Track.REVOLUTION, track.getAverageRevolutionsPerMinute())
+                .put(AttributeKey.Track.DISTANCE, track.getDistanceFromStart());
     }
 }

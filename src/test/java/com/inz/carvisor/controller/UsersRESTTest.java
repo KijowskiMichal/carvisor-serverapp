@@ -1,7 +1,7 @@
 package com.inz.carvisor.controller;
 
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.SessionAttributeKey;
-import com.inz.carvisor.constants.UserJsonKey;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
@@ -197,8 +197,8 @@ class UsersRESTTest {
         int userId = user.getId();
 
         JSONObject inputUserJson = new JSONObject()
-                .put(UserJsonKey.NAME, "Zbigniew Wodecki")
-                .put(UserJsonKey.PHONE_NUMBER, "112");
+                .put(AttributeKey.User.NAME, "Zbigniew Wodecki")
+                .put(AttributeKey.User.PHONE_NUMBER, "112");
 
         HttpEntity<String> httpEntity = new HttpEntity<>(inputUserJson.toString());
 
@@ -232,21 +232,21 @@ class UsersRESTTest {
         ResponseEntity<String> userData = usersREST.getUserData(mockHttpServletRequest, null, userId);
 
         JSONObject jsonObject = new JSONObject(userData.getBody());
-        assertEquals(user.getName() + " " + user.getSurname(), jsonObject.get(UserJsonKey.NAME));
-        assertEquals(user.getPhoneNumber(), jsonObject.get(UserJsonKey.PHONE_NUMBER));
-        assertEquals(user.getImage(), jsonObject.get(UserJsonKey.IMAGE));
-        assertEquals("ADMINISTRATOR", jsonObject.get(UserJsonKey.USER_PRIVILEGES));
+        assertEquals(user.getName() + " " + user.getSurname(), jsonObject.get(AttributeKey.User.NAME));
+        assertEquals(user.getPhoneNumber(), jsonObject.get(AttributeKey.User.PHONE_NUMBER));
+        assertEquals(user.getImage(), jsonObject.get(AttributeKey.User.IMAGE));
+        assertEquals("ADMINISTRATOR", jsonObject.get(AttributeKey.User.USER_PRIVILEGES));
     }
 
     @Test
     void addUser() {
         JSONObject jsonObject = new JSONObject()
-                .put(UserJsonKey.NAME, "Tomek")
-                .put(UserJsonKey.SURNAME, "Wodecki")
-                .put(UserJsonKey.NICK, "Tomiro")
-                .put(UserJsonKey.PASSWORD, "abcd")
-                .put(UserJsonKey.PHONE_NUMBER, 991)
-                .put(UserJsonKey.IMAGE, "my image");
+                .put(AttributeKey.User.NAME, "Tomek")
+                .put(AttributeKey.User.SURNAME, "Wodecki")
+                .put(AttributeKey.User.NICK, "Tomiro")
+                .put(AttributeKey.User.PASSWORD, "abcd")
+                .put(AttributeKey.User.PHONE_NUMBER, 991)
+                .put(AttributeKey.User.IMAGE, "my image");
 
         HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
         MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);

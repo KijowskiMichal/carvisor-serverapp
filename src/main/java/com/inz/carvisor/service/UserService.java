@@ -1,7 +1,7 @@
 package com.inz.carvisor.service;
 
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
-import com.inz.carvisor.constants.UserJsonKey;
 import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
@@ -265,10 +265,10 @@ public class UserService {
         if (wrappedUser.isEmpty()) return DefaultResponse.BAD_REQUEST;
         User user = wrappedUser.get();
         JSONObject jsonObject = new JSONObject()
-                .put(UserJsonKey.IMAGE, user.getImage())
-                .put(UserJsonKey.NAME, user.getName() + " " + user.getSurname())
-                .put(UserJsonKey.PHONE_NUMBER, user.getPhoneNumber())
-                .put(UserJsonKey.USER_PRIVILEGES, user.getUserPrivileges());
+                .put(AttributeKey.User.IMAGE, user.getImage())
+                .put(AttributeKey.User.NAME, user.getName() + " " + user.getSurname())
+                .put(AttributeKey.User.PHONE_NUMBER, user.getPhoneNumber())
+                .put(AttributeKey.User.USER_PRIVILEGES, user.getUserPrivileges());
         return DefaultResponse.ok(jsonObject.toString());
     }
 
@@ -299,7 +299,7 @@ public class UserService {
             int telephone;
             try {
                 name = inJSON.getString("name");
-                telephone = Integer.parseInt(inJSON.getString(UserJsonKey.PHONE_NUMBER));
+                telephone = Integer.parseInt(inJSON.getString(AttributeKey.User.PHONE_NUMBER));
             } catch (JSONException jsonException) {
                 return DefaultResponse.BAD_REQUEST;
             }
@@ -438,8 +438,8 @@ public class UserService {
                 .setName(jsonObject.getString("name"))
                 .setSurname(jsonObject.getString("surname"))
                 .setNick(jsonObject.getString("nick"))
-                .setPassword(PasswordManipulatior.hashPassword(jsonObject.getString(UserJsonKey.PASSWORD)))
-                .setPhoneNumber(jsonObject.getInt(UserJsonKey.PHONE_NUMBER));
+                .setPassword(PasswordManipulatior.hashPassword(jsonObject.getString(AttributeKey.User.PASSWORD)))
+                .setPhoneNumber(jsonObject.getInt(AttributeKey.User.PHONE_NUMBER));
 
         if (!jsonObject.getString("image").isEmpty()) {
             userBuilder.setImage(jsonObject.getString("image"));

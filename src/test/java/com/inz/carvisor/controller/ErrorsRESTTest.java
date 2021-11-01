@@ -1,6 +1,6 @@
 package com.inz.carvisor.controller;
 
-import com.inz.carvisor.constants.ErrorJsonKey;
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.dao.*;
 import com.inz.carvisor.entities.model.*;
 import com.inz.carvisor.entities.enums.UserPrivileges;
@@ -55,7 +55,7 @@ class ErrorsRESTTest {
     @Test
     void addError() {
         MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.STANDARD_USER);
-        JSONObject jsonObject = new JSONObject().put(ErrorJsonKey.VALUE, 10).put(ErrorJsonKey.TYPE, "custom type");
+        JSONObject jsonObject = new JSONObject().put(AttributeKey.Error.VALUE, 10).put(AttributeKey.Error.TYPE, "custom type");
         HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
 
         Assertions.assertEquals(0, errorDaoJdbc.getAll().size());

@@ -178,11 +178,11 @@ public abstract class HibernateDaoJdbc<T> {
     protected abstract String getTableName();
 
     protected final String createSelectGetById(Number number) {
-        return "SELECT t FROM " + getTableName() + " t " + "WHERE t.id=" + number;
+        return "SELECT x FROM " + getTableName() + " x " + "WHERE x.id=" + number;
     }
 
     protected final String createSelectGetAll() {
-        return "SELECT t FROM " + getTableName() + " t ";
+        return "SELECT x FROM " + getTableName() + " x ";
     }
 
     private HibernateException createThereIsNoSuchElementException(String tableName, Number givenId) {

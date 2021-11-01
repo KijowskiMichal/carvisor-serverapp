@@ -2,7 +2,6 @@ package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
-import com.inz.carvisor.constants.NotificationJsonKey;
 import com.inz.carvisor.constants.SessionAttributeKey;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Notification;
@@ -71,9 +70,9 @@ public class NotificationREST {
 
     public JSONObject toSimpleJsonObject(Notification notification) {
         return new JSONObject()
-                .put(NotificationJsonKey.TYPE_KEY,notification.getNotificationType())
-                .put(NotificationJsonKey.VALUE_KEY,notification.getValue())
-                .put(NotificationJsonKey.DATE_KEY,notification.getTimeStamp());
+                .put(AttributeKey.Notification.TYPE,notification.getNotificationType())
+                .put(AttributeKey.Notification.VALUE,notification.getValue())
+                .put(AttributeKey.Notification.DATE,notification.getTimeStamp());
     }
 
     public JSONArray toAdvancedJsonArray(List<Notification> notificationList) {

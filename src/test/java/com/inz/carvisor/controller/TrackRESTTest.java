@@ -1,7 +1,7 @@
 package com.inz.carvisor.controller;
 
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.SessionAttributeKey;
-import com.inz.carvisor.constants.TrackJsonKey;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
@@ -83,11 +83,11 @@ class TrackRESTTest {
         userDaoJdbc.save(user);
         Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(SessionAttributeKey.CAR_KEY, car);
         JSONObject jsonObject = new JSONObject()
-                .put(TrackJsonKey.TIME, 165000)
-                .put(TrackJsonKey.PRIVATE, false)
-                .put(TrackJsonKey.GPS_LONGITUDE, 15.50F)
-                .put(TrackJsonKey.GPS_LATITUDE, 26.35F)
-                .put(TrackJsonKey.NFC_TAG, "ABB");
+                .put(AttributeKey.Track.TIME, 165000)
+                .put(AttributeKey.Track.PRIVATE, false)
+                .put(AttributeKey.Track.GPS_LONGITUDE, 15.50F)
+                .put(AttributeKey.Track.GPS_LATITUDE, 26.35F)
+                .put(AttributeKey.Track.NFC_TAG, "ABB");
 
         trackREST.startTrack(mockHttpServletRequest, new HttpEntity<>(jsonObject.toString()));
         List<Track> tracks = trackDaoJdbc.getAll();
