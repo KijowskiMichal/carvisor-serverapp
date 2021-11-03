@@ -47,7 +47,7 @@ public class SafetyPointsREST {
       List<Offence> offences = safetyPointsService.listUser(userId, dateFrom, dateTo);
       return DefaultResponse.ok(parseToJson(offences, userId));
     } else {
-      return DefaultResponse.UNAUTHORIZED_JSON;
+      return DefaultResponse.UNAUTHORIZED;
     }
   }
 

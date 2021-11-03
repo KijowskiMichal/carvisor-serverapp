@@ -350,8 +350,7 @@ public class TrackService {
    * @param httpEntity Object of HttpEntity represents content of our request.
    * @return HttpStatus 200, user data as JsonString.
    */
-  public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID, String date) //TODO
-  {
+  public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID, String date) {
     // authorization
     if (request.getSession().getAttribute("user") == null) {
       logger.info("TrackService.getTrackData cannot send data (session not found)");
@@ -474,7 +473,7 @@ public class TrackService {
    * @param httpEntity Object of HttpEntity represents content of our request.
    * @return HttpStatus 200, track data as JsonString.
    */
-  public ResponseEntity getTrackDataForDevice(HttpServletRequest request, HttpEntity<String> httpEntity, int userID, String date) //TODO
+  public ResponseEntity getTrackDataForDevice(HttpServletRequest request, HttpEntity<String> httpEntity, int userID, String date)
   {
     // authorization
     if (request.getSession().getAttribute("user") == null) {

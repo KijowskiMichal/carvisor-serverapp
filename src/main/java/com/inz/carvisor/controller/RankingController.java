@@ -42,15 +42,19 @@ public class RankingController {
   public ResponseEntity getUserSummary(
           HttpServletRequest request, HttpEntity<String> httpEntity,
           @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
-          @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) { //todo dlaczego page size dla jednego usera?
+          @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) {
+    //todo DO OMÓWIENIA
+    /*
+      stronnicowana lista tras usera
+     */
     User userToCheck = (User) request.getSession().getAttribute(Key.USER);
     float ecoPointsAvg = userToCheck.getEcoPointsAvg();
     float safetyRanking = 4;
 
     List<User> allUsers = userDaoJdbc.getAll();
     long safetyRankingPosition = allUsers.stream().filter(user -> user.getEcoPointsAvg() > ecoPointsAvg).count();
-    //todo do implementacji
-    return DefaultResponse.UNAUTHORIZED_JSON;
+    //todo WIP
+    return DefaultResponse.UNAUTHORIZED;
   }
 
   private int getEcoPointsRankingPosition(User userToCheck, List<User> allUsers) {
@@ -68,7 +72,7 @@ public class RankingController {
   private JSONObject toJson(User user, int safetyRankingPosition, int ecoRankingPosition) {
     return new JSONObject()
             .put(AttributeKey.User.NAME, user.getName() + " " + user.getSurname())
-            .put(AttributeKey.User.SAFETY_POINTS, 3) //todo replace after implementation
+            .put(AttributeKey.User.SAFETY_POINTS, 3) //todo replace after implementation with user.getSafetyPoints()
             .put(AttributeKey.User.ECO_POINTS, user.getEcoPointsAvg())
             .put(AttributeKey.User.SAFETY_RANKING_POSITION, safetyRankingPosition)
             .put(AttributeKey.User.ECO_RANKING_POSITION, ecoRankingPosition)
@@ -99,7 +103,10 @@ public class RankingController {
 
   private JSONObject toJson(Track track) {
     return new JSONObject()
-            .put(AttributeKey.Track.DATE, track.getTimestamp()) //todo format daty?
+            .put(AttributeKey.Track.DATE, track.getTimestamp()) //todo format daty = long timestamp
+            /*
+              format daty
+             */
             .put(AttributeKey.Track.LOCATION_FROM, track.getStartPosiotion())
             .put(AttributeKey.Track.LOCATION_TO, track.getEndPosiotion())
             .put(AttributeKey.Track.SAFETY_POINTS, 0)

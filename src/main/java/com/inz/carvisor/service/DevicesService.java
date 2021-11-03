@@ -104,7 +104,7 @@ public class DevicesService {
         LocalDateTime before = LocalDateTime.ofInstant(Instant.ofEpochMilli(now.getTime()), TimeZone.getDefault().toZoneId()).with(LocalTime.MIN);
         Timestamp timestampBefore = Timestamp.valueOf(before);
         LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochMilli(now.getTime()), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
-        Timestamp timestampAfter = Timestamp.valueOf(after);
+        Timestamp timestampAfter = Timestamp.valueOf(after); //todo wielka refaktoryzacja na sekundy
         Query countQ = session.createQuery("Select sum (t.distance) from TrackRate t WHERE t.timestamp > " + timestampBefore.getTime() / 1000 + " AND  t.timestamp < " + timestampAfter.getTime() / 1000 + " AND t.track.car.id = " + ((Car) tmp).getId());
         Long lonk = (Long) countQ.getSingleResult();
         jsonObject.put("distance", String.valueOf(lonk == null ? 0 : lonk));
@@ -236,7 +236,7 @@ public class DevicesService {
       logger.log(Level.INFO, "Device id: " + car.getId() + " licence plate: " + car.getLicensePlate() + " | successfully saved to database.");
       responseEntity = ResponseEntity.status(HttpStatus.CREATED).body("");
     } catch (HibernateException e) {
-      if (tx != null) tx.rollback();//TODO
+      if (tx != null) tx.rollback();
       logger.log(Level.ERROR, "Hibernate Exception: " + e);
       e.printStackTrace();
       responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
@@ -282,8 +282,7 @@ public class DevicesService {
               .put("engine", car.getEngine())
               .put("fuel", car.getFuelType())
               .put("tank", car.getTank())
-              .put("norm", car.getFuelNorm())
-              .put("a", "a"); //todo
+              .put("norm", car.getFuelNorm());
 
 
       try {

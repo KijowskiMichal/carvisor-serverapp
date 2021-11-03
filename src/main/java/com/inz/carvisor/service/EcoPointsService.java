@@ -142,7 +142,7 @@ public class EcoPointsService {
     return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
   }
 
-  //todo
+  //todo need heavy testing
   public List<Track> listUser(int userId, String dateFrom, String dateTo) {
     Timestamp fromTimeStamp = DataManipulator.dateBeginningTimestamp(dateFrom);
     Timestamp endTimestamp = DataManipulator.dateEndTimestamp(dateFrom);

@@ -77,7 +77,6 @@ class UsersRESTTest {
   }
 
   @Test
-    //todo
   void list() {
     List<User> users = new ArrayList<>();
     addUsers(users);

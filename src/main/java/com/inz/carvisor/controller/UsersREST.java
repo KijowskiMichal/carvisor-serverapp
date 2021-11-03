@@ -98,7 +98,7 @@ public class UsersREST {
     return userService.addUser(request, httpEntity);
   }
 
-  @RequestMapping(value = "/removeUser/{id}", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/removeUser/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
   public ResponseEntity<String> removeUser(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID) {
     Optional<User> deletedUser;
     if (securityService.securityProtocolPassed(UserPrivileges.ADMINISTRATOR, request)) {

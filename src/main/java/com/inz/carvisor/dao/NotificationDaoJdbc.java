@@ -32,7 +32,6 @@ public class NotificationDaoJdbc extends HibernateDaoJdbc<Notification> {
     return this.checkMaxPage(selectQuery, pageSize);
   }
 
-  //todo generyczne stronnicowanie
   public List<Notification> getNotifications(long fromTimeStampEpochSeconds, long toTimeStampEpochSeconds, int page, int pageSize) {
     String selectQuery = "SELECT o from Notification o " +
             "WHERE " +

@@ -336,7 +336,7 @@ public class UserService {
    * @param request    Object of HttpServletRequest represents our request.
    * @param httpEntity Object of HttpEntity represents content of our request.
    * @return HttpStatus 200.
-   */ //TODO TEST
+   */ //todo need heavy testing
   public ResponseEntity update(HttpServletRequest request, HttpEntity<String> httpEntity, int userID) {
     //authorization
     if (request.getSession().getAttribute("user") == null) {

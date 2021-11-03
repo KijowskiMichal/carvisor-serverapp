@@ -8,35 +8,34 @@ public class DefaultResponse {
 
   public static final ResponseEntity<String> UNAUTHORIZED = ResponseEntity
           .status(HttpStatus.UNAUTHORIZED)
-          .body(error("Unauthorized"));
-
-  public static final ResponseEntity<String> UNAUTHORIZED_JSON = ResponseEntity
-          .status(HttpStatus.UNAUTHORIZED)
-          .body(error("Unauthorized"));
+          .body(jsonMessage("Unauthorized"));
 
   public static final ResponseEntity<String> BAD_REQUEST = ResponseEntity
           .status(HttpStatus.BAD_REQUEST)
-          .body(error("bad request"));
+          .body(jsonMessage("bad request"));
 
   public static final ResponseEntity<String> OK = ResponseEntity
           .status(HttpStatus.OK)
-          .body("everything went great");
+          .body(jsonMessage("everything went great"));
 
   public static final ResponseEntity<String> EMPTY_BODY = ResponseEntity
           .status(HttpStatus.BAD_REQUEST)
-          .body(error("empty body"));
+          .body(jsonMessage("empty body"));
 
+  public static ResponseEntity<String> custom(HttpStatus httpStatus, String message) {
+    return ResponseEntity.status(httpStatus).body(jsonMessage(message));
+  }
 
   public static ResponseEntity<String> badBody(String responseBody) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(jsonMessage(responseBody));
   }
 
   public static ResponseEntity<String> ok(String responseBody) {
-    return ResponseEntity.status(HttpStatus.OK).body(responseBody);
+    return ResponseEntity.status(HttpStatus.OK).body(jsonMessage(responseBody));
   }
 
-  public static String error(String msg) {
-    return new JSONObject().put("errorMessage:", msg).toString();
+  public static String jsonMessage(String msg) {
+    return new JSONObject().put("message:", msg).toString();
   }
 
 }

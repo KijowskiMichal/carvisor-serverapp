@@ -58,7 +58,7 @@ public class NotificationREST {
       JSONObject jsonObject = new JSONObject().put("page", page).put("pageMax", maxPage).put("listOfNotification", jsonArray);
       return DefaultResponse.ok(jsonObject.toString());
     } else {
-      return DefaultResponse.UNAUTHORIZED_JSON;
+      return DefaultResponse.UNAUTHORIZED;
     }
   }
 
@@ -85,7 +85,11 @@ public class NotificationREST {
     return new JSONObject()
             .put(AttributeKey.Notification.TYPE, notification.getNotificationType())
             .put(AttributeKey.Notification.VALUE, notification.getValue())
-            .put(AttributeKey.Notification.DATE, notification.getTimeStamp())//todo PODSUMOWANIE jaki typ daty 2021-12-05 czy timestamp;
+            .put(AttributeKey.Notification.DATE, notification.getTimeStamp())//todo DO OMÓWIENIA wysyłane longiem;
+            /*
+              1234123
+              jaki typ daty? W dokumentacji nie zmienione
+             */
             .put(AttributeKey.Notification.LOCATION, notification.getLocation())
             .put(AttributeKey.Notification.USER_ID, notification.getUser().getId())
             .put(AttributeKey.Notification.DEVICE_ID, notification.getCar().getId())

@@ -41,7 +41,7 @@ import java.util.HashMap;
 @Ignore
 class CarConfigurationRESTTest {
 
-  //todo przepisać test coś jest z nim nie tak
+  //todo rewrite this test
 
   @Autowired
   UserDaoJdbc userDaoJdbc;
@@ -229,7 +229,6 @@ class CarConfigurationRESTTest {
   }
 
   @Test
-    //todo
   void changeConfiguration() {
     Session session = null;
     Transaction tx = null;

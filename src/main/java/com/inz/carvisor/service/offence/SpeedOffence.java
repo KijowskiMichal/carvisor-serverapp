@@ -30,12 +30,11 @@ public class SpeedOffence extends OffenceStrategy {
   }
 
   private int getSpeedLimit() {
-    //TODO check if track in this location has more speed limit than
+    //TODO WIP - get speed limit
     return 12;
   }
 
   private String getLocation(TrackRate trackRate) {
-    //todo testThis
     Double latitude = trackRate.getLatitude();
     Double longitude = trackRate.getLongitude();
     return latitude.toString() + longitude.toString();

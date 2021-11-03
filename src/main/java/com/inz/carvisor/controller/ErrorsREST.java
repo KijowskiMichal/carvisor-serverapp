@@ -65,7 +65,7 @@ public class ErrorsREST {
     } else if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
       return DefaultResponse.EMPTY_BODY;
     } else {
-      return DefaultResponse.UNAUTHORIZED_JSON;
+      return DefaultResponse.UNAUTHORIZED;
     }
   }
 
@@ -106,8 +106,38 @@ public class ErrorsREST {
   }
 
   private JSONObject toJsonObject(Error error) {
-    //todo zwrotka do omówienia, reszta działa tylko to jest problemem
-    //https://app.swaggerhub.com/apis/CarVisor6/API/1.0.0#/default/get_errors_getErrors__dateFrom___dateTo___page___pagesize_
+    //todo - dodać do update Track Data
+    /*
+      dostarczane podczas update track data pod obd
+      obd : {
+        listaBłędów: [{value:"KOD błędu do dekodowania"},{}]
+      }
+      timestamp:123451523
+     */
+    /*
+       link do dokumentacji: https://app.swaggerhub.com/apis/CarVisor6/API/1.0.0#/default/get_errors_getErrors__dateFrom___dateTo___page___pagesize_
+       link do dodawania errorów: https://app.swaggerhub.com/apis/CarVisor6/API/1.0.0#/default/post_errors_addErrors
+       [
+          {
+            "type": "string",
+            "timestamp": 0,
+            "value": 0
+          }
+       ]
+       duża dysproporcja (skąd mam wziąć dane? sam wygenerować?)
+
+       {
+        "type": "string", - ok
+        "value": 0, - ok
+        "date": "string", - format daty?
+        "location": "string", - skąd?
+        "userID": 0,  - domyślam się aczkolwiek rozwiązanie ma wady [Marcin]
+        "deviceID": 0,  -  sounds complicated af [Marcin]
+        "userName": "string",  -  //może Marcin (otwarta dyskusja)
+        "deviceLicensePlate": "string" -  //może Marcin (otwarta dyskusja)
+        }
+     */
+    //
     return new JSONObject()
             .put(AttributeKey.Notification.TYPE, error.getType());
   }
