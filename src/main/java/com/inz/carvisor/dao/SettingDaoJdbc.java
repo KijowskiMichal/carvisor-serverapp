@@ -11,13 +11,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class SettingDaoJdbc extends HibernateDaoJdbc<Setting> {
 
-  @Autowired
-  public SettingDaoJdbc(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger) {
-    super(hibernateRequests, logger);
-  }
+    @Autowired
+    public SettingDaoJdbc(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger) {
+        super(hibernateRequests, logger);
+    }
 
-  @Override
-  protected String getTableName() {
-    return "Setting";
-  }
+    @Override
+    protected String getTableName() {
+        return "Setting";
+    }
 }

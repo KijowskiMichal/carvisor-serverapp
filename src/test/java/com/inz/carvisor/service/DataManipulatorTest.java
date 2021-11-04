@@ -16,10 +16,10 @@ import java.time.LocalDateTime;
 @ContextConfiguration(classes = {Initializer.class})
 class DataManipulatorTest {
 
-  @Test
-  void formatWithMinutes() {
-    LocalDateTime localDateTime = LocalDateTime.now();
-    String s = DataManipulator.formatWithMinutes(localDateTime);
-    System.out.println(s);
-  }
+    @Test
+    void formatWithMinutes() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String s = DataManipulator.formatWithMinutes(localDateTime);
+        System.out.println(s);
+    }
 }

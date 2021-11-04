@@ -10,33 +10,33 @@ import java.util.Optional;
 
 public class SpeedOffence extends OffenceStrategy {
 
-  @Override
-  public Optional<Offence> createOffenceIfExists(TrackRate trackRate) {
-    long timestamp = trackRate.getTimestamp();
+    @Override
+    public Optional<Offence> createOffenceIfExists(TrackRate trackRate) {
+        long timestamp = trackRate.getTimestamp();
 
-    int speedLimit = getSpeedLimit();
-    int currentSpeed = trackRate.getSpeed();
+        int speedLimit = getSpeedLimit();
+        int currentSpeed = trackRate.getSpeed();
 
-    if (speedLimit < currentSpeed) return Optional.empty();
+        if (speedLimit < currentSpeed) return Optional.empty();
 
-    Offence offence = new OffenceBuilder()
-            .setLocalDateTime(timestamp)
-            .setOffenceType(OffenceType.SPEEDING)
-            .setLocation(getLocation(trackRate))
-            .setValue(currentSpeed - speedLimit)
-            .build();
+        Offence offence = new OffenceBuilder()
+                .setLocalDateTime(timestamp)
+                .setOffenceType(OffenceType.SPEEDING)
+                .setLocation(getLocation(trackRate))
+                .setValue(currentSpeed - speedLimit)
+                .build();
 
-    return Optional.of(offence);
-  }
+        return Optional.of(offence);
+    }
 
-  private int getSpeedLimit() {
-    //TODO WIP - get speed limit
-    return 12;
-  }
+    private int getSpeedLimit() {
+        //TODO WIP - get speed limit
+        return 12;
+    }
 
-  private String getLocation(TrackRate trackRate) {
-    Double latitude = trackRate.getLatitude();
-    Double longitude = trackRate.getLongitude();
-    return latitude.toString() + longitude.toString();
-  }
+    private String getLocation(TrackRate trackRate) {
+        Double latitude = trackRate.getLatitude();
+        Double longitude = trackRate.getLongitude();
+        return latitude.toString() + longitude.toString();
+    }
 }

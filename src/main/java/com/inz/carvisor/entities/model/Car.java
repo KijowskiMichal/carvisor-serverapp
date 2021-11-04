@@ -6,138 +6,138 @@ import javax.persistence.*;
 @Entity
 public class Car {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
-  private int id;
-  private String licensePlate;
-  private String password;
-  private String brand;
-  private String model;
-  private String engine;
-  private Integer tank;
-  private String fuelType;
-  private Double fuelNorm;
-  private Integer productionYear;
-  @Lob
-  private String image;
-  private Integer sendInterval;
-  private Integer locationInterval;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+    private String licensePlate;
+    private String password;
+    private String brand;
+    private String model;
+    private String engine;
+    private Integer tank;
+    private String fuelType;
+    private Double fuelNorm;
+    private Integer productionYear;
+    @Lob
+    private String image;
+    private Integer sendInterval;
+    private Integer locationInterval;
 
-  public Car() {
-    super();
-  }
+    public Car() {
+        super();
+    }
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-  public String getLicensePlate() {
-    return licensePlate;
-  }
+    public String getLicensePlate() {
+        return licensePlate;
+    }
 
-  public void setLicensePlate(String licensePlate) {
-    this.licensePlate = licensePlate;
-  }
+    public void setLicensePlate(String licensePlate) {
+        this.licensePlate = licensePlate;
+    }
 
-  public String getBrand() {
-    return brand;
-  }
+    public String getBrand() {
+        return brand;
+    }
 
-  public void setBrand(String brand) {
-    this.brand = brand;
-  }
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
 
-  public String getModel() {
-    return model;
-  }
+    public String getModel() {
+        return model;
+    }
 
-  public void setModel(String model) {
-    this.model = model;
-  }
+    public void setModel(String model) {
+        this.model = model;
+    }
 
-  public Integer getProductionYear() {
-    return productionYear;
-  }
+    public Integer getProductionYear() {
+        return productionYear;
+    }
 
-  public void setProductionYear(Integer productionYear) {
-    this.productionYear = productionYear;
-  }
+    public void setProductionYear(Integer productionYear) {
+        this.productionYear = productionYear;
+    }
 
-  public String getImage() {
-    return image;
-  }
+    public String getImage() {
+        return image;
+    }
 
-  public void setImage(String image) {
-    this.image = image;
-  }
+    public void setImage(String image) {
+        this.image = image;
+    }
 
-  public String getPassword() {
-    return password;
-  }
+    public String getPassword() {
+        return password;
+    }
 
-  public void setPassword(String password) {
-    this.password = password;
-  }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-  public String getEngine() {
-    return engine;
-  }
+    public String getEngine() {
+        return engine;
+    }
 
-  public void setEngine(String engine) {
-    this.engine = engine;
-  }
+    public void setEngine(String engine) {
+        this.engine = engine;
+    }
 
-  public int getTank() {
-    return tank;
-  }
+    public int getTank() {
+        return tank;
+    }
 
-  public void setTank(Integer tank) {
-    this.tank = tank;
-  }
+    public void setTank(Integer tank) {
+        this.tank = tank;
+    }
 
-  public String getFuelType() {
-    return fuelType;
-  }
+    public String getFuelType() {
+        return fuelType;
+    }
 
-  public void setFuelType(String fuelType) {
-    this.fuelType = fuelType;
-  }
+    public void setFuelType(String fuelType) {
+        this.fuelType = fuelType;
+    }
 
-  public double getFuelNorm() {
-    return fuelNorm;
-  }
+    public double getFuelNorm() {
+        return fuelNorm;
+    }
 
-  public void setFuelNorm(Double fuelNorm) {
-    this.fuelNorm = fuelNorm;
-  }
+    public void setFuelNorm(Double fuelNorm) {
+        this.fuelNorm = fuelNorm;
+    }
 
-  public Integer getSendInterval() {
-    return sendInterval;
-  }
+    public Integer getSendInterval() {
+        return sendInterval;
+    }
 
-  public void setSendInterval(Integer sendInterval) {
-    this.sendInterval = sendInterval;
-  }
+    public void setSendInterval(Integer sendInterval) {
+        this.sendInterval = sendInterval;
+    }
 
-  public Integer getLocationInterval() {
-    return locationInterval;
-  }
+    public Integer getLocationInterval() {
+        return locationInterval;
+    }
 
-  public void setLocationInterval(Integer locationInterval) {
-    this.locationInterval = locationInterval;
-  }
+    public void setLocationInterval(Integer locationInterval) {
+        this.locationInterval = locationInterval;
+    }
 
-  @Override
-  public String toString() {
-    return "Car{" +
-            "licensePlate='" + licensePlate + '\'' +
-            ", brand='" + brand + '\'' +
-            ", model='" + model + '\'' +
-            ", productionYear=" + productionYear +
-            '}';
-  }
+    @Override
+    public String toString() {
+        return "Car{" +
+                "licensePlate='" + licensePlate + '\'' +
+                ", brand='" + brand + '\'' +
+                ", model='" + model + '\'' +
+                ", productionYear=" + productionYear +
+                '}';
+    }
 }

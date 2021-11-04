@@ -27,74 +27,74 @@ import java.util.List;
 public class NotificationREST {
 
 
-  private final NotificationService notificationService;
-  private final SecurityService securityService;
+    private final NotificationService notificationService;
+    private final SecurityService securityService;
 
-  @Autowired
-  public NotificationREST(NotificationService notificationService, SecurityService securityService) {
-    this.notificationService = notificationService;
-    this.securityService = securityService;
-  }
-
-  @RequestMapping(value = "/newNotifications", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-  public ResponseEntity<String> getNotDisplayedNotifications(HttpServletRequest request, HttpEntity<String> httpEntity) {
-    User user = (User) request.getSession().getAttribute(Key.USER);
-    List<Notification> notifications = notificationService.displayNotification(user.getId());
-    return DefaultResponse.ok(toSimpleJsonArray(notifications).toString());
-  }
-
-  @RequestMapping(value = "/getNotification/{dateFrom}/{dateTo}/{page}/{pagesize}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-  public ResponseEntity<String> getNotification(
-          HttpServletRequest request, HttpEntity<String> httpEntity,
-          @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
-          @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) {
-
-    if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
-      List<Notification> notifications = notificationService
-              .getNotifications(dateFromTimestamp, dateToTimestamp, page, pagesize);
-      int maxPage = notificationService.getMaxPage(dateFromTimestamp, dateToTimestamp, page, pagesize);
-
-      JSONArray jsonArray = toAdvancedJsonArray(notifications);
-      JSONObject jsonObject = new JSONObject().put("page", page).put("pageMax", maxPage).put("listOfNotification", jsonArray);
-      return DefaultResponse.ok(jsonObject.toString());
-    } else {
-      return DefaultResponse.UNAUTHORIZED;
+    @Autowired
+    public NotificationREST(NotificationService notificationService, SecurityService securityService) {
+        this.notificationService = notificationService;
+        this.securityService = securityService;
     }
-  }
 
-  public JSONArray toSimpleJsonArray(List<Notification> notificationList) {
-    JSONArray jsonArray = new JSONArray();
-    notificationList.stream().map(this::toSimpleJsonObject).forEach(jsonArray::put);
-    return jsonArray;
-  }
+    @RequestMapping(value = "/newNotifications", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity<String> getNotDisplayedNotifications(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        User user = (User) request.getSession().getAttribute(Key.USER);
+        List<Notification> notifications = notificationService.displayNotification(user.getId());
+        return DefaultResponse.ok(toSimpleJsonArray(notifications).toString());
+    }
 
-  public JSONObject toSimpleJsonObject(Notification notification) {
-    return new JSONObject()
-            .put(AttributeKey.Notification.TYPE, notification.getNotificationType())
-            .put(AttributeKey.Notification.VALUE, notification.getValue())
-            .put(AttributeKey.Notification.DATE, notification.getTimeStamp());
-  }
+    @RequestMapping(value = "/getNotification/{dateFrom}/{dateTo}/{page}/{pagesize}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity<String> getNotification(
+            HttpServletRequest request, HttpEntity<String> httpEntity,
+            @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
+            @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) {
 
-  public JSONArray toAdvancedJsonArray(List<Notification> notificationList) {
-    JSONArray jsonArray = new JSONArray();
-    notificationList.stream().map(this::toAdvancedJsonObject).forEach(jsonArray::put);
-    return jsonArray;
-  }
+        if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
+            List<Notification> notifications = notificationService
+                    .getNotifications(dateFromTimestamp, dateToTimestamp, page, pagesize);
+            int maxPage = notificationService.getMaxPage(dateFromTimestamp, dateToTimestamp, page, pagesize);
 
-  public JSONObject toAdvancedJsonObject(Notification notification) {
-    return new JSONObject()
-            .put(AttributeKey.Notification.TYPE, notification.getNotificationType())
-            .put(AttributeKey.Notification.VALUE, notification.getValue())
-            .put(AttributeKey.Notification.DATE, notification.getTimeStamp())//todo DO OMÓWIENIA wysyłane longiem;
-            /*
-              1234123
-              jaki typ daty? W dokumentacji nie zmienione
-             */
-            .put(AttributeKey.Notification.LOCATION, notification.getLocation())
-            .put(AttributeKey.Notification.USER_ID, notification.getUser().getId())
-            .put(AttributeKey.Notification.DEVICE_ID, notification.getCar().getId())
-            .put(AttributeKey.Notification.USER_NAME, notification.getUser().getName())
-            .put(AttributeKey.Notification.DEVICE_LICENSE_PLATE, notification.getCar().getLicensePlate());
-  }
+            JSONArray jsonArray = toAdvancedJsonArray(notifications);
+            JSONObject jsonObject = new JSONObject().put("page", page).put("pageMax", maxPage).put("listOfNotification", jsonArray);
+            return DefaultResponse.ok(jsonObject.toString());
+        } else {
+            return DefaultResponse.UNAUTHORIZED;
+        }
+    }
+
+    public JSONArray toSimpleJsonArray(List<Notification> notificationList) {
+        JSONArray jsonArray = new JSONArray();
+        notificationList.stream().map(this::toSimpleJsonObject).forEach(jsonArray::put);
+        return jsonArray;
+    }
+
+    public JSONObject toSimpleJsonObject(Notification notification) {
+        return new JSONObject()
+                .put(AttributeKey.Notification.TYPE, notification.getNotificationType())
+                .put(AttributeKey.Notification.VALUE, notification.getValue())
+                .put(AttributeKey.Notification.DATE, notification.getTimeStamp());
+    }
+
+    public JSONArray toAdvancedJsonArray(List<Notification> notificationList) {
+        JSONArray jsonArray = new JSONArray();
+        notificationList.stream().map(this::toAdvancedJsonObject).forEach(jsonArray::put);
+        return jsonArray;
+    }
+
+    public JSONObject toAdvancedJsonObject(Notification notification) {
+        return new JSONObject()
+                .put(AttributeKey.Notification.TYPE, notification.getNotificationType())
+                .put(AttributeKey.Notification.VALUE, notification.getValue())
+                .put(AttributeKey.Notification.DATE, notification.getTimeStamp())//todo DO OMÓWIENIA wysyłane longiem;
+                /*
+                  1234123
+                  jaki typ daty? W dokumentacji nie zmienione
+                 */
+                .put(AttributeKey.Notification.LOCATION, notification.getLocation())
+                .put(AttributeKey.Notification.USER_ID, notification.getUser().getId())
+                .put(AttributeKey.Notification.DEVICE_ID, notification.getCar().getId())
+                .put(AttributeKey.Notification.USER_NAME, notification.getUser().getName())
+                .put(AttributeKey.Notification.DEVICE_LICENSE_PLATE, notification.getCar().getLicensePlate());
+    }
 
 }

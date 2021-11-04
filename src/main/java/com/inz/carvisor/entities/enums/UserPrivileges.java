@@ -1,17 +1,17 @@
 package com.inz.carvisor.entities.enums;
 
 public enum UserPrivileges {
-  STANDARD_USER(100),
-  MODERATOR(200),
-  ADMINISTRATOR(300);
+    STANDARD_USER(100),
+    MODERATOR(200),
+    ADMINISTRATOR(300);
 
-  int level;
+    int level;
 
-  UserPrivileges(int level) {
-    this.level = level;
-  }
+    UserPrivileges(int level) {
+        this.level = level;
+    }
 
-  public int getLevel() {
-    return level;
-  }
+    public int getLevel() {
+        return level;
+    }
 }

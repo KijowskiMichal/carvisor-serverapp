@@ -24,64 +24,64 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ContextConfiguration(classes = {Initializer.class})
 class HibernateDaoJdbcTest {
 
-  @Autowired
-  ErrorDaoJdbc errorDaoJdbc;
-  @Autowired
-  UserDaoJdbc userDaoJdbc;
-  @Autowired
-  CarDaoJdbc carDaoJdbc;
-  @Autowired
-  SettingDaoJdbc settingDaoJdbc;
-  @Autowired
-  TrackDaoJdbc trackDaoJdbc;
-  @Autowired
-  private HibernateRequests hibernateRequests;
+    @Autowired
+    ErrorDaoJdbc errorDaoJdbc;
+    @Autowired
+    UserDaoJdbc userDaoJdbc;
+    @Autowired
+    CarDaoJdbc carDaoJdbc;
+    @Autowired
+    SettingDaoJdbc settingDaoJdbc;
+    @Autowired
+    TrackDaoJdbc trackDaoJdbc;
+    @Autowired
+    private HibernateRequests hibernateRequests;
 
-  @AfterEach
-  void clearDatabase() {
-    userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
-    settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
-    trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
-    carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
-  }
-
-  @Test
-  void delete() {
-    Car car = new CarBuilder().build();
-    carDaoJdbc.save(car);
-    int id = car.getId();
-    assertEquals(1, carDaoJdbc.getAll().size());
-    carDaoJdbc.delete(id);
-    assertEquals(0, carDaoJdbc.getAll().size());
-  }
-
-  @Test
-  void getList() {
-    List.of(
-            new CarBuilder().build(),
-            new CarBuilder().build(),
-            new CarBuilder().build(),
-            new CarBuilder().build()
-    ).forEach(carDaoJdbc::save);
-    List<Car> selectCFromCar = carDaoJdbc.getList("SELECT c FROM Car c");
-    assertEquals(4, selectCFromCar.size());
-  }
-
-  @Test
-  void getPaged() {
-    for (int i = 0; i < 300; i++) {
-      carDaoJdbc.save(new CarBuilder().build());
+    @AfterEach
+    void clearDatabase() {
+        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
+        settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
+        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
+        carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
     }
-    List<Car> all = carDaoJdbc.getAll();
-    assertEquals(300, all.size());
 
-    List<Car> pagedCarList = carDaoJdbc.getList("SELECT c FROM Car c", 2, 50);
-    assertEquals(50, pagedCarList.size());
+    @Test
+    void delete() {
+        Car car = new CarBuilder().build();
+        carDaoJdbc.save(car);
+        int id = car.getId();
+        assertEquals(1, carDaoJdbc.getAll().size());
+        carDaoJdbc.delete(id);
+        assertEquals(0, carDaoJdbc.getAll().size());
+    }
 
-    int maxPossiblePage = carDaoJdbc.checkMaxPage("SELECT c FROM Car c", 50);
-    assertEquals(6, maxPossiblePage);
-    carDaoJdbc.save(new CarBuilder().build());
-    maxPossiblePage = carDaoJdbc.checkMaxPage("SELECT c FROM Car c", 50);
-    assertEquals(7, maxPossiblePage);
-  }
+    @Test
+    void getList() {
+        List.of(
+                new CarBuilder().build(),
+                new CarBuilder().build(),
+                new CarBuilder().build(),
+                new CarBuilder().build()
+        ).forEach(carDaoJdbc::save);
+        List<Car> selectCFromCar = carDaoJdbc.getList("SELECT c FROM Car c");
+        assertEquals(4, selectCFromCar.size());
+    }
+
+    @Test
+    void getPaged() {
+        for (int i = 0; i < 300; i++) {
+            carDaoJdbc.save(new CarBuilder().build());
+        }
+        List<Car> all = carDaoJdbc.getAll();
+        assertEquals(300, all.size());
+
+        List<Car> pagedCarList = carDaoJdbc.getList("SELECT c FROM Car c", 2, 50);
+        assertEquals(50, pagedCarList.size());
+
+        int maxPossiblePage = carDaoJdbc.checkMaxPage("SELECT c FROM Car c", 50);
+        assertEquals(6, maxPossiblePage);
+        carDaoJdbc.save(new CarBuilder().build());
+        maxPossiblePage = carDaoJdbc.checkMaxPage("SELECT c FROM Car c", 50);
+        assertEquals(7, maxPossiblePage);
+    }
 }

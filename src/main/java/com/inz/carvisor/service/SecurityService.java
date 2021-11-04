@@ -9,10 +9,10 @@ import javax.servlet.http.HttpServletRequest;
 @Service
 public class SecurityService {
 
-  private static final String userAttribute = "user";
+    private static final String userAttribute = "user";
 
-  public boolean securityProtocolPassed(UserPrivileges requiredUserPrivilege, HttpServletRequest request) {
-    User user = (User) request.getSession().getAttribute(userAttribute);
-    return requiredUserPrivilege.getLevel() <= user.getUserPrivileges().getLevel();
-  }
+    public boolean securityProtocolPassed(UserPrivileges requiredUserPrivilege, HttpServletRequest request) {
+        User user = (User) request.getSession().getAttribute(userAttribute);
+        return requiredUserPrivilege.getLevel() <= user.getUserPrivileges().getLevel();
+    }
 }

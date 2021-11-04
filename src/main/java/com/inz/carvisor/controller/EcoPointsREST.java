@@ -24,47 +24,47 @@ import java.util.List;
 @RestController
 @RequestMapping("/ecoPoints")
 public class EcoPointsREST {
-  private final EcoPointsService ecoPointsService;
-  private final SecurityService securityService;
+    private final EcoPointsService ecoPointsService;
+    private final SecurityService securityService;
 
-  @Autowired
-  public EcoPointsREST(EcoPointsService ecoPointsService, SecurityService securityService) {
-    this.ecoPointsService = ecoPointsService;
-    this.securityService = securityService;
-  }
-
-
-  @RequestMapping(value = "/list/{page}/{pagesize}/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-  public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("regex") String regex) {
-    return ecoPointsService.list(request, page, pageSize, regex);
-  }
-
-  @RequestMapping(value = "/getUserDetails/{id}/{dateFrom}/{dateTo}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-  public ResponseEntity<String> listUser(HttpServletRequest request, @PathVariable("id") int userId, @PathVariable("dateFrom") String dateFrom, @PathVariable("dateTo") String dateTo) {
-
-    if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
-      List<Track> tracks = ecoPointsService.listUser(userId, dateFrom, dateTo);
-      return DefaultResponse.ok(parseToJson(tracks));
-    } else {
-      return DefaultResponse.UNAUTHORIZED;
+    @Autowired
+    public EcoPointsREST(EcoPointsService ecoPointsService, SecurityService securityService) {
+        this.ecoPointsService = ecoPointsService;
+        this.securityService = securityService;
     }
-  }
 
-  private String parseToJson(List<Track> trackList) {
-    JSONObject mainJson = new JSONObject().put("name", "placeholder");
-    JSONArray listOfDays = new JSONArray();
-    trackList.stream().map(this::trackToJson).forEach(listOfDays::put);
-    return mainJson.put("listOfDays", listOfDays).toString();
-  }
 
-  private JSONObject trackToJson(Track track) {
-    return new JSONObject()
-            .put(AttributeKey.Track.DATE, DataManipulator.timeStampToDate(track.getStartTrackTimeStamp()))
-            .put(AttributeKey.Track.AMOUNT_OF_TRACK, track.getAmountOfSamples())
-            .put(AttributeKey.Track.ECO_POINTS, track.getEcoPointsScore())
-            .put(AttributeKey.Track.COMBUSTION, track.getCombustion())
-            .put(AttributeKey.Track.SPEED, track.getAverageSpeed())
-            .put(AttributeKey.Track.REVOLUTION, track.getAverageRevolutionsPerMinute())
-            .put(AttributeKey.Track.DISTANCE, track.getDistanceFromStart());
-  }
+    @RequestMapping(value = "/list/{page}/{pagesize}/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("regex") String regex) {
+        return ecoPointsService.list(request, page, pageSize, regex);
+    }
+
+    @RequestMapping(value = "/getUserDetails/{id}/{dateFrom}/{dateTo}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity<String> listUser(HttpServletRequest request, @PathVariable("id") int userId, @PathVariable("dateFrom") String dateFrom, @PathVariable("dateTo") String dateTo) {
+
+        if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
+            List<Track> tracks = ecoPointsService.listUser(userId, dateFrom, dateTo);
+            return DefaultResponse.ok(parseToJson(tracks));
+        } else {
+            return DefaultResponse.UNAUTHORIZED;
+        }
+    }
+
+    private String parseToJson(List<Track> trackList) {
+        JSONObject mainJson = new JSONObject().put("name", "placeholder");
+        JSONArray listOfDays = new JSONArray();
+        trackList.stream().map(this::trackToJson).forEach(listOfDays::put);
+        return mainJson.put("listOfDays", listOfDays).toString();
+    }
+
+    private JSONObject trackToJson(Track track) {
+        return new JSONObject()
+                .put(AttributeKey.Track.DATE, DataManipulator.timeStampToDate(track.getStartTrackTimeStamp()))
+                .put(AttributeKey.Track.AMOUNT_OF_TRACK, track.getAmountOfSamples())
+                .put(AttributeKey.Track.ECO_POINTS, track.getEcoPointsScore())
+                .put(AttributeKey.Track.COMBUSTION, track.getCombustion())
+                .put(AttributeKey.Track.SPEED, track.getAverageSpeed())
+                .put(AttributeKey.Track.REVOLUTION, track.getAverageRevolutionsPerMinute())
+                .put(AttributeKey.Track.DISTANCE, track.getDistanceFromStart());
+    }
 }

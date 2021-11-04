@@ -10,71 +10,71 @@ import javax.persistence.OneToOne;
 @Entity
 public class Offence {
 
-  @Id
-  @GeneratedValue
-  int id;
-  long timeStamp;
-  OffenceType offenceType;
-  @OneToOne
-  User user;
-  int value;
-  String location;
+    @Id
+    @GeneratedValue
+    int id;
+    long timeStamp;
+    OffenceType offenceType;
+    @OneToOne
+    User user;
+    int value;
+    String location;
 
-  public Offence() {
-  }
+    public Offence() {
+    }
 
-  public Offence(long timeStamp, OffenceType offenceType, int value, String location) {
-    this.timeStamp = timeStamp;
-    this.offenceType = offenceType;
-    this.value = value;
-    this.location = location;
-  }
+    public Offence(long timeStamp, OffenceType offenceType, int value, String location) {
+        this.timeStamp = timeStamp;
+        this.offenceType = offenceType;
+        this.value = value;
+        this.location = location;
+    }
 
-  public int getId() {
-    return id;
-  }
+    public int getId() {
+        return id;
+    }
 
-  public void setId(int id) {
-    this.id = id;
-  }
+    public void setId(int id) {
+        this.id = id;
+    }
 
-  public long getTimeStamp() {
-    return timeStamp;
-  }
+    public long getTimeStamp() {
+        return timeStamp;
+    }
 
-  public void setTimeStamp(long timeStamp) {
-    this.timeStamp = timeStamp;
-  }
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 
-  public User getUser() {
-    return user;
-  }
+    public User getUser() {
+        return user;
+    }
 
-  public void setUser(User user) {
-    this.user = user;
-  }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-  public OffenceType getOffenceType() {
-    return offenceType;
-  }
+    public OffenceType getOffenceType() {
+        return offenceType;
+    }
 
-  public void setOffenceType(OffenceType offenceType) {
-    this.offenceType = offenceType;
-  }
+    public void setOffenceType(OffenceType offenceType) {
+        this.offenceType = offenceType;
+    }
 
-  public int getValue() {
-    return value;
-  }
+    public int getValue() {
+        return value;
+    }
 
-  public void setValue(int value) {
-    this.value = value;
-  }
+    public void setValue(int value) {
+        this.value = value;
+    }
 
-  public String getLocation() {
-    return location;
-  }
+    public String getLocation() {
+        return location;
+    }
 
-  public void setLocation(String location) {
-    this.location = location;
-  }
+    public void setLocation(String location) {
+        this.location = location;
+    }
 }

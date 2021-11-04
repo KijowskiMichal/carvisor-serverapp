@@ -7,41 +7,41 @@ import java.util.List;
 
 public class EcoPointsCalculator {
 
-  public static void calculateEcoPoints(Track track) {
-    int eco = 10;
-    List<TrackRate> listOfTrackRates = track.getListOfTrackRates();
-    int size = listOfTrackRates.size();
-    track.setAverageRevolutionsPerMinute(listOfTrackRates.stream().mapToInt(TrackRate::getRpm).sum() / size);
-    track.setAverageSpeed(listOfTrackRates.stream().mapToInt(TrackRate::getSpeed).sum() / size);
-    track.setAverageThrottle(listOfTrackRates.stream().mapToInt(TrackRate::getThrottle).sum() / size);
+    public static void calculateEcoPoints(Track track) {
+        int eco = 10;
+        List<TrackRate> listOfTrackRates = track.getListOfTrackRates();
+        int size = listOfTrackRates.size();
+        track.setAverageRevolutionsPerMinute(listOfTrackRates.stream().mapToInt(TrackRate::getRpm).sum() / size);
+        track.setAverageSpeed(listOfTrackRates.stream().mapToInt(TrackRate::getSpeed).sum() / size);
+        track.setAverageThrottle(listOfTrackRates.stream().mapToInt(TrackRate::getThrottle).sum() / size);
 
-    int averageSpeed = track.getAverageSpeed();
-    if (averageSpeed > 140) {
-      eco -= 4;
-    } else if (averageSpeed > 120) {
-      eco -= 2;
-    } else if (averageSpeed > 100) {
-      eco -= 1;
+        int averageSpeed = track.getAverageSpeed();
+        if (averageSpeed > 140) {
+            eco -= 4;
+        } else if (averageSpeed > 120) {
+            eco -= 2;
+        } else if (averageSpeed > 100) {
+            eco -= 1;
+        }
+
+        long averageRevolutions = track.getAverageRevolutionsPerMinute();
+        if (averageRevolutions > 3000) {
+            eco -= 4;
+        } else if (averageRevolutions > 2500) {
+            eco -= 2;
+        } else if (averageRevolutions > 2300) {
+            eco -= 1;
+        }
+
+        long averageThrottle = track.getAverageThrottle();
+        if (averageThrottle > 80) {
+            eco -= 4;
+        } else if (averageThrottle > 70) {
+            eco -= 2;
+        } else if (averageThrottle > 60) {
+            eco -= 1;
+        }
+
+        track.setEcoPointsScore(Math.max(eco, 0F) / 2.0F);
     }
-
-    long averageRevolutions = track.getAverageRevolutionsPerMinute();
-    if (averageRevolutions > 3000) {
-      eco -= 4;
-    } else if (averageRevolutions > 2500) {
-      eco -= 2;
-    } else if (averageRevolutions > 2300) {
-      eco -= 1;
-    }
-
-    long averageThrottle = track.getAverageThrottle();
-    if (averageThrottle > 80) {
-      eco -= 4;
-    } else if (averageThrottle > 70) {
-      eco -= 2;
-    } else if (averageThrottle > 60) {
-      eco -= 1;
-    }
-
-    track.setEcoPointsScore(Math.max(eco, 0F) / 2.0F);
-  }
 }

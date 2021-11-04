@@ -27,87 +27,87 @@ import java.util.stream.Collectors;
 @ContextConfiguration(classes = {Initializer.class})
 class TrackDaoJdbcTest {
 
-  private final Logger logger = new Logger();
-  @Autowired
-  TrackDaoJdbc trackDaoJdbc;
-  @Autowired
-  UserDaoJdbc userDaoJdbc;
-  @Autowired
-  private HibernateRequests hibernateRequests;
+    private final Logger logger = new Logger();
+    @Autowired
+    TrackDaoJdbc trackDaoJdbc;
+    @Autowired
+    UserDaoJdbc userDaoJdbc;
+    @Autowired
+    private HibernateRequests hibernateRequests;
 
-  @AfterEach
-  void clearDatabase() {
-    TrackDaoJdbc trackDaoJdbc = new TrackDaoJdbc(hibernateRequests, logger);
-    trackDaoJdbc.getAll().stream().mapToInt(Track::getId).forEach(trackDaoJdbc::delete);
-  }
+    @AfterEach
+    void clearDatabase() {
+        TrackDaoJdbc trackDaoJdbc = new TrackDaoJdbc(hibernateRequests, logger);
+        trackDaoJdbc.getAll().stream().mapToInt(Track::getId).forEach(trackDaoJdbc::delete);
+    }
 
-  @Test
-  void create() {
-    Track track = new TrackBuilder().build();
-    trackDaoJdbc.save(track);
-    Optional<Track> wrappedTrack = trackDaoJdbc.get(track.getId());
-    if (wrappedTrack.isEmpty())
-      Assertions.fail();
-    Track unwrappedTrack = wrappedTrack.get();
-    Assertions.assertEquals(track.getId(), unwrappedTrack.getId());
-  }
+    @Test
+    void create() {
+        Track track = new TrackBuilder().build();
+        trackDaoJdbc.save(track);
+        Optional<Track> wrappedTrack = trackDaoJdbc.get(track.getId());
+        if (wrappedTrack.isEmpty())
+            Assertions.fail();
+        Track unwrappedTrack = wrappedTrack.get();
+        Assertions.assertEquals(track.getId(), unwrappedTrack.getId());
+    }
 
-  @Test
-  void get() {
-    Track track = new TrackBuilder().build();
-    trackDaoJdbc.save(track);
-    Optional<Track> wrappedTrack = trackDaoJdbc.get(track.getId());
-    if (wrappedTrack.isEmpty())
-      Assertions.fail();
-    Track unwrappedTrack = wrappedTrack.get();
-    Assertions.assertEquals(track.getId(), unwrappedTrack.getId());
-  }
+    @Test
+    void get() {
+        Track track = new TrackBuilder().build();
+        trackDaoJdbc.save(track);
+        Optional<Track> wrappedTrack = trackDaoJdbc.get(track.getId());
+        if (wrappedTrack.isEmpty())
+            Assertions.fail();
+        Track unwrappedTrack = wrappedTrack.get();
+        Assertions.assertEquals(track.getId(), unwrappedTrack.getId());
+    }
 
-  @Test
-  void getAll() {
-    List<Track> all = trackDaoJdbc.getAll();
-    List<Track> tracks = Arrays.asList(
-            new TrackBuilder().build(),
-            new TrackBuilder().build(),
-            new TrackBuilder().build()
-    );
-    int expectedAmount = all.size() + tracks.size();
-    tracks.forEach(trackDaoJdbc::save);
+    @Test
+    void getAll() {
+        List<Track> all = trackDaoJdbc.getAll();
+        List<Track> tracks = Arrays.asList(
+                new TrackBuilder().build(),
+                new TrackBuilder().build(),
+                new TrackBuilder().build()
+        );
+        int expectedAmount = all.size() + tracks.size();
+        tracks.forEach(trackDaoJdbc::save);
 
-    int actualSize = trackDaoJdbc.getAll().size();
-    Assertions.assertEquals(expectedAmount, actualSize);
-  }
+        int actualSize = trackDaoJdbc.getAll().size();
+        Assertions.assertEquals(expectedAmount, actualSize);
+    }
 
-  @Test
-  void getUserTrack() {
-    User user = new UserBuilder().setName("Ala").build();
-    List<Track> tracks = Arrays.asList(
-            new TrackBuilder().setUser(user).build(),
-            new TrackBuilder().setUser(user).build(),
-            new TrackBuilder().setUser(user).build()
-    );
-    userDaoJdbc.save(user);
-    tracks.forEach(trackDaoJdbc::save);
-    List<Track> userTracks = trackDaoJdbc.getUserTracks(user.getId());
+    @Test
+    void getUserTrack() {
+        User user = new UserBuilder().setName("Ala").build();
+        List<Track> tracks = Arrays.asList(
+                new TrackBuilder().setUser(user).build(),
+                new TrackBuilder().setUser(user).build(),
+                new TrackBuilder().setUser(user).build()
+        );
+        userDaoJdbc.save(user);
+        tracks.forEach(trackDaoJdbc::save);
+        List<Track> userTracks = trackDaoJdbc.getUserTracks(user.getId());
 
-    Set<Integer> idsOld = tracks.stream().map(Track::getId).collect(Collectors.toSet());
-    Set<Integer> idsNew = userTracks.stream().map(Track::getId).collect(Collectors.toSet());
-    Assertions.assertEquals(idsOld, idsNew);
-  }
+        Set<Integer> idsOld = tracks.stream().map(Track::getId).collect(Collectors.toSet());
+        Set<Integer> idsNew = userTracks.stream().map(Track::getId).collect(Collectors.toSet());
+        Assertions.assertEquals(idsOld, idsNew);
+    }
 
-  @Test
-  void delete() {
-    TrackDaoJdbc trackDaoJdbc = new TrackDaoJdbc(hibernateRequests, logger);
-    Track track = new TrackBuilder().build();
-    trackDaoJdbc.save(track);
+    @Test
+    void delete() {
+        TrackDaoJdbc trackDaoJdbc = new TrackDaoJdbc(hibernateRequests, logger);
+        Track track = new TrackBuilder().build();
+        trackDaoJdbc.save(track);
 
-    Optional<Track> wrappedSetting = trackDaoJdbc.get(track.getId());
-    if (wrappedSetting.isEmpty())
-      Assertions.fail();
+        Optional<Track> wrappedSetting = trackDaoJdbc.get(track.getId());
+        if (wrappedSetting.isEmpty())
+            Assertions.fail();
 
-    trackDaoJdbc.delete(track.getId());
-    wrappedSetting = trackDaoJdbc.get(track.getId());
-    if (wrappedSetting.isPresent())
-      Assertions.fail();
-  }
+        trackDaoJdbc.delete(track.getId());
+        wrappedSetting = trackDaoJdbc.get(track.getId());
+        if (wrappedSetting.isPresent())
+            Assertions.fail();
+    }
 }

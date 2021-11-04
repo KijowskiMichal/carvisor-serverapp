@@ -31,80 +31,80 @@ import java.util.List;
 @ContextConfiguration(classes = {Initializer.class})
 class SafetyPointsRESTTest {
 
-  @Autowired
-  UserDaoJdbc userDaoJdbc;
-  @Autowired
-  CarDaoJdbc carDaoJdbc;
-  @Autowired
-  SettingDaoJdbc settingDaoJdbc;
-  @Autowired
-  TrackDaoJdbc trackDaoJdbc;
-  @Autowired
-  NotificationDaoJdbc notificationDaoJdbc;
-  @Autowired
-  OffenceDaoJdbc offenceDaoJdbc;
+    @Autowired
+    UserDaoJdbc userDaoJdbc;
+    @Autowired
+    CarDaoJdbc carDaoJdbc;
+    @Autowired
+    SettingDaoJdbc settingDaoJdbc;
+    @Autowired
+    TrackDaoJdbc trackDaoJdbc;
+    @Autowired
+    NotificationDaoJdbc notificationDaoJdbc;
+    @Autowired
+    OffenceDaoJdbc offenceDaoJdbc;
 
-  @Autowired
-  private MockMvc mockMvc;
-  @Autowired
-  private HibernateRequests hibernateRequests;
-  @Autowired
-  private TrackREST trackREST;
-  @Autowired
-  private SafetyPointsREST safetyPointsREST;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private HibernateRequests hibernateRequests;
+    @Autowired
+    private TrackREST trackREST;
+    @Autowired
+    private SafetyPointsREST safetyPointsREST;
 
 
-  @AfterEach
-  void cleanupDatabase() {
-    trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
-    settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
-    carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
-    notificationDaoJdbc.getAll().stream().map(Notification::getId).forEach(notificationDaoJdbc::delete);
-    offenceDaoJdbc.getAll().stream().map(Offence::getId).forEach(offenceDaoJdbc::delete);
-    userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
-  }
+    @AfterEach
+    void cleanupDatabase() {
+        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
+        settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
+        carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
+        notificationDaoJdbc.getAll().stream().map(Notification::getId).forEach(notificationDaoJdbc::delete);
+        offenceDaoJdbc.getAll().stream().map(Offence::getId).forEach(offenceDaoJdbc::delete);
+        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
+    }
 
-  @Test
-  void listUser() {
-    User user = new UserBuilder().setName("Tomek").setSurname("Waliczewski").setUserPrivileges(UserPrivileges.STANDARD_USER).build();
-    userDaoJdbc.save(user);
-    int id = user.getId();
-    List.of(
-            new OffenceBuilder()
-                    .setLocalDateTime(LocalDateTime.of(2017, 12, 3, 12, 30).toEpochSecond(ZoneOffset.UTC))
-                    .setOffenceType(OffenceType.SPEEDING)
-                    .setValue(200)
-                    .setUser(user)
-                    .build(),
-            new OffenceBuilder()
-                    .setLocalDateTime(LocalDateTime.of(2020, 12, 3, 12, 30).toEpochSecond(ZoneOffset.UTC))
-                    .setOffenceType(OffenceType.SPEEDING)
-                    .setValue(150)
-                    .setUser(user)
-                    .build(),
-            new OffenceBuilder()
-                    .setLocalDateTime(LocalDateTime.of(2018, 12, 3, 12, 30).toEpochSecond(ZoneOffset.UTC))
-                    .setOffenceType(OffenceType.SPEEDING)
-                    .setValue(220)
-                    .setUser(user)
-                    .build(),
-            new OffenceBuilder()
-                    .setLocalDateTime(LocalDateTime.of(2015, 12, 3, 12, 30).toEpochSecond(ZoneOffset.UTC))
-                    .setOffenceType(OffenceType.SPEEDING)
-                    .setValue(185)
-                    .setUser(user)
-                    .build()
-    ).forEach(offenceDaoJdbc::save);
+    @Test
+    void listUser() {
+        User user = new UserBuilder().setName("Tomek").setSurname("Waliczewski").setUserPrivileges(UserPrivileges.STANDARD_USER).build();
+        userDaoJdbc.save(user);
+        int id = user.getId();
+        List.of(
+                new OffenceBuilder()
+                        .setLocalDateTime(LocalDateTime.of(2017, 12, 3, 12, 30).toEpochSecond(ZoneOffset.UTC))
+                        .setOffenceType(OffenceType.SPEEDING)
+                        .setValue(200)
+                        .setUser(user)
+                        .build(),
+                new OffenceBuilder()
+                        .setLocalDateTime(LocalDateTime.of(2020, 12, 3, 12, 30).toEpochSecond(ZoneOffset.UTC))
+                        .setOffenceType(OffenceType.SPEEDING)
+                        .setValue(150)
+                        .setUser(user)
+                        .build(),
+                new OffenceBuilder()
+                        .setLocalDateTime(LocalDateTime.of(2018, 12, 3, 12, 30).toEpochSecond(ZoneOffset.UTC))
+                        .setOffenceType(OffenceType.SPEEDING)
+                        .setValue(220)
+                        .setUser(user)
+                        .build(),
+                new OffenceBuilder()
+                        .setLocalDateTime(LocalDateTime.of(2015, 12, 3, 12, 30).toEpochSecond(ZoneOffset.UTC))
+                        .setOffenceType(OffenceType.SPEEDING)
+                        .setValue(185)
+                        .setUser(user)
+                        .build()
+        ).forEach(offenceDaoJdbc::save);
 
-    String dateFrom = "2017-01-23T14:51";
-    String dateTo = "2019-10-23T14:51";
+        String dateFrom = "2017-01-23T14:51";
+        String dateTo = "2019-10-23T14:51";
 
-    MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);
-    ResponseEntity<String> response = safetyPointsREST.listUser(mockHttpServletRequest, id, dateFrom, dateTo);
+        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);
+        ResponseEntity<String> response = safetyPointsREST.listUser(mockHttpServletRequest, id, dateFrom, dateTo);
 
-    Assertions.assertEquals(200, response.getStatusCodeValue());
-    String body = response.getBody();
-    JSONObject notifications = new JSONObject(body);
-    System.out.println(notifications);
-  }
+        Assertions.assertEquals(200, response.getStatusCodeValue());
+        String body = response.getBody();
+        JSONObject notifications = new JSONObject(body);
+        System.out.println(notifications);
+    }
 }

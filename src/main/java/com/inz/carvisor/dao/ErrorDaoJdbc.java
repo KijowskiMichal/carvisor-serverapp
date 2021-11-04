@@ -12,13 +12,13 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class ErrorDaoJdbc extends HibernateDaoJdbc<Error> {
 
-  @Autowired
-  public ErrorDaoJdbc(HibernateRequests hibernateRequests, Logger logger) {
-    super(hibernateRequests, logger);
-  }
+    @Autowired
+    public ErrorDaoJdbc(HibernateRequests hibernateRequests, Logger logger) {
+        super(hibernateRequests, logger);
+    }
 
-  @Override
-  protected String getTableName() {
-    return "Error";
-  }
+    @Override
+    protected String getTableName() {
+        return "Error";
+    }
 }

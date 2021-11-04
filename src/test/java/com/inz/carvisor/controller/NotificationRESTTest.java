@@ -34,86 +34,86 @@ import java.util.List;
 @ContextConfiguration(classes = {Initializer.class})
 class NotificationRESTTest {
 
-  @Autowired
-  UserDaoJdbc userDaoJdbc;
-  @Autowired
-  CarDaoJdbc carDaoJdbc;
-  @Autowired
-  SettingDaoJdbc settingDaoJdbc;
-  @Autowired
-  TrackDaoJdbc trackDaoJdbc;
-  @Autowired
-  NotificationDaoJdbc notificationDaoJdbc;
+    @Autowired
+    UserDaoJdbc userDaoJdbc;
+    @Autowired
+    CarDaoJdbc carDaoJdbc;
+    @Autowired
+    SettingDaoJdbc settingDaoJdbc;
+    @Autowired
+    TrackDaoJdbc trackDaoJdbc;
+    @Autowired
+    NotificationDaoJdbc notificationDaoJdbc;
 
-  @Autowired
-  private MockMvc mockMvc;
-  @Autowired
-  private HibernateRequests hibernateRequests;
-  @Autowired
-  private TrackREST trackREST;
-  @Autowired
-  private NotificationREST notificationREST;
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private HibernateRequests hibernateRequests;
+    @Autowired
+    private TrackREST trackREST;
+    @Autowired
+    private NotificationREST notificationREST;
 
 
-  @AfterEach
-  void cleanupDatabase() {
-    trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
-    settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
-    notificationDaoJdbc.getAll().stream().map(Notification::getId).forEach(notificationDaoJdbc::delete);
-    carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
-    userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
-  }
+    @AfterEach
+    void cleanupDatabase() {
+        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
+        settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
+        notificationDaoJdbc.getAll().stream().map(Notification::getId).forEach(notificationDaoJdbc::delete);
+        carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
+        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
+    }
 
-  @Test
-  void getNotDisplayedNotifications() {
-    User user = new UserBuilder().setUserPrivileges(UserPrivileges.STANDARD_USER).build();
-    userDaoJdbc.save(user);
-    List.of(
-            new NotificationBuilder().setDisplayed(false).setUser(user).build(),
-            new NotificationBuilder().setDisplayed(false).setUser(user).build(),
-            new NotificationBuilder().setDisplayed(false).setUser(user).build(),
-            new NotificationBuilder().setDisplayed(false).setUser(user).build(),
-            new NotificationBuilder().setDisplayed(true).setUser(user).build(),
-            new NotificationBuilder().setDisplayed(true).setUser(user).build(),
-            new NotificationBuilder().setDisplayed(true).setUser(user).build(),
-            new NotificationBuilder().setDisplayed(true).setUser(user).build()
-    ).forEach(notificationDaoJdbc::save);
+    @Test
+    void getNotDisplayedNotifications() {
+        User user = new UserBuilder().setUserPrivileges(UserPrivileges.STANDARD_USER).build();
+        userDaoJdbc.save(user);
+        List.of(
+                new NotificationBuilder().setDisplayed(false).setUser(user).build(),
+                new NotificationBuilder().setDisplayed(false).setUser(user).build(),
+                new NotificationBuilder().setDisplayed(false).setUser(user).build(),
+                new NotificationBuilder().setDisplayed(false).setUser(user).build(),
+                new NotificationBuilder().setDisplayed(true).setUser(user).build(),
+                new NotificationBuilder().setDisplayed(true).setUser(user).build(),
+                new NotificationBuilder().setDisplayed(true).setUser(user).build(),
+                new NotificationBuilder().setDisplayed(true).setUser(user).build()
+        ).forEach(notificationDaoJdbc::save);
 
-    MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(user);
-    ResponseEntity<String> notDisplayedNotifications = notificationREST.getNotDisplayedNotifications(mockHttpServletRequest, null);
+        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(user);
+        ResponseEntity<String> notDisplayedNotifications = notificationREST.getNotDisplayedNotifications(mockHttpServletRequest, null);
 
-    Assertions.assertEquals(200, notDisplayedNotifications.getStatusCodeValue());
-    String body = notDisplayedNotifications.getBody();
-    JSONArray notifications = new JSONArray(body);
-    Assertions.assertEquals(4, notifications.length());
-  }
+        Assertions.assertEquals(200, notDisplayedNotifications.getStatusCodeValue());
+        String body = notDisplayedNotifications.getBody();
+        JSONArray notifications = new JSONArray(body);
+        Assertions.assertEquals(4, notifications.length());
+    }
 
-  @Test
-  void getNotification() {
-    User user = new UserBuilder().setUserPrivileges(UserPrivileges.MODERATOR).build();
-    userDaoJdbc.save(user);
-    Car car = new CarBuilder().setLicensePlate("ABCD").build();
-    carDaoJdbc.save(car);
+    @Test
+    void getNotification() {
+        User user = new UserBuilder().setUserPrivileges(UserPrivileges.MODERATOR).build();
+        userDaoJdbc.save(user);
+        Car car = new CarBuilder().setLicensePlate("ABCD").build();
+        carDaoJdbc.save(car);
 
-    long firstTime = LocalDateTime.now().minusDays(30).toEpochSecond(ZoneOffset.UTC);
-    long secondTime = LocalDateTime.now().minusDays(20).toEpochSecond(ZoneOffset.UTC);
-    long thirdTime = LocalDateTime.now().minusDays(10).toEpochSecond(ZoneOffset.UTC);
+        long firstTime = LocalDateTime.now().minusDays(30).toEpochSecond(ZoneOffset.UTC);
+        long secondTime = LocalDateTime.now().minusDays(20).toEpochSecond(ZoneOffset.UTC);
+        long thirdTime = LocalDateTime.now().minusDays(10).toEpochSecond(ZoneOffset.UTC);
 
-    long dateFromTimestamp = LocalDateTime.now().minusDays(25).toEpochSecond(ZoneOffset.UTC);
-    long dateToTimestamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
-    List.of(
-            new NotificationBuilder().setUser(user).setCar(car).setNotificationType(NotificationType.SPEEDING).setValue(20).setTimeStamp(firstTime).build(),
-            new NotificationBuilder().setUser(user).setCar(car).setNotificationType(NotificationType.SPEEDING).setValue(20).setTimeStamp(secondTime).build(),
-            new NotificationBuilder().setUser(user).setCar(car).setNotificationType(NotificationType.SPEEDING).setValue(20).setTimeStamp(thirdTime).build()
-    ).forEach(notificationDaoJdbc::save);
+        long dateFromTimestamp = LocalDateTime.now().minusDays(25).toEpochSecond(ZoneOffset.UTC);
+        long dateToTimestamp = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
+        List.of(
+                new NotificationBuilder().setUser(user).setCar(car).setNotificationType(NotificationType.SPEEDING).setValue(20).setTimeStamp(firstTime).build(),
+                new NotificationBuilder().setUser(user).setCar(car).setNotificationType(NotificationType.SPEEDING).setValue(20).setTimeStamp(secondTime).build(),
+                new NotificationBuilder().setUser(user).setCar(car).setNotificationType(NotificationType.SPEEDING).setValue(20).setTimeStamp(thirdTime).build()
+        ).forEach(notificationDaoJdbc::save);
 
-    MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(user);
-    ResponseEntity<String> notification = notificationREST.getNotification(mockHttpServletRequest, null, dateFromTimestamp, dateToTimestamp, 1, 5);
+        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(user);
+        ResponseEntity<String> notification = notificationREST.getNotification(mockHttpServletRequest, null, dateFromTimestamp, dateToTimestamp, 1, 5);
 
-    Assertions.assertEquals(200, notification.getStatusCodeValue());
-    String body = notification.getBody();
-    JSONObject jsonObject = new JSONObject(body);
-    JSONArray jsonArray = jsonObject.getJSONArray(AttributeKey.Notification.LIST_OF_NOTIFICATIONS);
-    Assertions.assertEquals(2, jsonArray.length());
-  }
+        Assertions.assertEquals(200, notification.getStatusCodeValue());
+        String body = notification.getBody();
+        JSONObject jsonObject = new JSONObject(body);
+        JSONArray jsonArray = jsonObject.getJSONArray(AttributeKey.Notification.LIST_OF_NOTIFICATIONS);
+        Assertions.assertEquals(2, jsonArray.length());
+    }
 }

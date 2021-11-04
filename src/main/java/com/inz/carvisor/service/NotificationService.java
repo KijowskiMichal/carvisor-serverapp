@@ -12,30 +12,30 @@ import java.util.List;
 @Service
 public class NotificationService {
 
-  NotificationDaoJdbc notificationDaoJdbc;
-  HibernateRequests hibernateRequests;
-  Logger logger;
+    NotificationDaoJdbc notificationDaoJdbc;
+    HibernateRequests hibernateRequests;
+    Logger logger;
 
-  @Autowired
-  public NotificationService(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger,
-                             NotificationDaoJdbc notificationDaoJdbc) {
-    this.hibernateRequests = hibernateRequests;
-    this.logger = logger.getLOG();
-    this.notificationDaoJdbc = notificationDaoJdbc;
-  }
+    @Autowired
+    public NotificationService(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger,
+                               NotificationDaoJdbc notificationDaoJdbc) {
+        this.hibernateRequests = hibernateRequests;
+        this.logger = logger.getLOG();
+        this.notificationDaoJdbc = notificationDaoJdbc;
+    }
 
-  public List<Notification> displayNotification(int userId) {
-    List<Notification> notDisplayed = notificationDaoJdbc.getNotDisplayed(userId);
-    notDisplayed.forEach(Notification::display);
-    notDisplayed.forEach(notificationDaoJdbc::update);
-    return notDisplayed;
-  }
+    public List<Notification> displayNotification(int userId) {
+        List<Notification> notDisplayed = notificationDaoJdbc.getNotDisplayed(userId);
+        notDisplayed.forEach(Notification::display);
+        notDisplayed.forEach(notificationDaoJdbc::update);
+        return notDisplayed;
+    }
 
-  public List<Notification> getNotifications(long dateFromTimestamp, long dateToTimestamp, int page, int pagesize) {
-    return notificationDaoJdbc.getNotifications(dateFromTimestamp, dateToTimestamp, page, pagesize);
-  }
+    public List<Notification> getNotifications(long dateFromTimestamp, long dateToTimestamp, int page, int pagesize) {
+        return notificationDaoJdbc.getNotifications(dateFromTimestamp, dateToTimestamp, page, pagesize);
+    }
 
-  public int getMaxPage(long dateFromTimestamp, long dateToTimestamp, int page, int pagesize) {
-    return notificationDaoJdbc.getMaxPageSize(dateFromTimestamp, dateToTimestamp, page, pagesize);
-  }
+    public int getMaxPage(long dateFromTimestamp, long dateToTimestamp, int page, int pagesize) {
+        return notificationDaoJdbc.getMaxPageSize(dateFromTimestamp, dateToTimestamp, page, pagesize);
+    }
 }

@@ -14,24 +14,24 @@ import java.util.Collection;
 @Service
 public class OffenceService {
 
-  HibernateRequests hibernateRequests;
-  Logger logger;
-  OffenceDaoJdbc offenceDaoJdbc;
-  OffenceStrategy offenceStrategy;
+    HibernateRequests hibernateRequests;
+    Logger logger;
+    OffenceDaoJdbc offenceDaoJdbc;
+    OffenceStrategy offenceStrategy;
 
-  @Autowired
-  public OffenceService(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger, OffenceDaoJdbc offenceDaoJdbc) {
-    this.hibernateRequests = hibernateRequests;
-    this.logger = logger.getLOG();
-    this.offenceDaoJdbc = offenceDaoJdbc;
-  }
+    @Autowired
+    public OffenceService(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger, OffenceDaoJdbc offenceDaoJdbc) {
+        this.hibernateRequests = hibernateRequests;
+        this.logger = logger.getLOG();
+        this.offenceDaoJdbc = offenceDaoJdbc;
+    }
 
-  public void checkForOffences(Collection<TrackRate> trackRates) {
-    trackRates.forEach(this::checkForOffences);
-  }
+    public void checkForOffences(Collection<TrackRate> trackRates) {
+        trackRates.forEach(this::checkForOffences);
+    }
 
-  private void checkForOffences(TrackRate trackRates) {
-    //
-  }
+    private void checkForOffences(TrackRate trackRates) {
+        //
+    }
 
 }

@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 @ContextConfiguration(classes = {Initializer.class})
 class OffenceStrategyServiceTest {
 
-  @Test
-  void test() {
-    LocalDateTime localDateTime = LocalDateTime.now();
-  }
+    @Test
+    void test() {
+        LocalDateTime localDateTime = LocalDateTime.now();
+    }
 }
