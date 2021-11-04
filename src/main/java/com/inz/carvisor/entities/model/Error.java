@@ -14,6 +14,12 @@ public class Error {
     private String type;
     private long value;
     private long timestamp;
+    private String location;
+    private long userId;
+    private long deviceId;
+    private String userName;
+    private String deviceLicensePlate;
+    private long date;
 
     public Error() {
     }
@@ -25,6 +31,10 @@ public class Error {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getType() {
@@ -41,6 +51,62 @@ public class Error {
 
     public void setValue(long value) {
         this.value = value;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public long getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(long deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getDeviceLicensePlate() {
+        return deviceLicensePlate;
+    }
+
+    public void setDeviceLicensePlate(String deviceLicensePlate) {
+        this.deviceLicensePlate = deviceLicensePlate;
+    }
+
+    public long getDate() {
+        return date;
+    }
+
+    public void setDate(long date) {
+        this.date = date;
     }
 
     @Override

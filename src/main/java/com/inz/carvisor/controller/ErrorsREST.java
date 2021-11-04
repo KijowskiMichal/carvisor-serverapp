@@ -3,6 +3,7 @@ package com.inz.carvisor.controller;
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.constants.Key;
+import com.inz.carvisor.constants.SessionAttributeKey;
 import com.inz.carvisor.entities.builders.ErrorBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Error;
@@ -60,10 +61,11 @@ public class ErrorsREST {
             @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
             @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) {
 
-        if (securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, request)) {
-            return DefaultResponse.UNAUTHORIZED;
-        } else if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
-            return DefaultResponse.EMPTY_BODY;
+        if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
+            return getAllErrors(dateFromTimestamp,dateToTimestamp,page,pagesize);
+        } else if (securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, request)) {
+            User user = (User) request.getSession().getAttribute(SessionAttributeKey.USER_KEY);
+            return getUserErrors(user,dateFromTimestamp,dateToTimestamp,page,pagesize);
         } else {
             return DefaultResponse.UNAUTHORIZED;
         }
@@ -106,39 +108,13 @@ public class ErrorsREST {
     }
 
     private JSONObject toJsonObject(Error error) {
-        //todo - dodać do update Track Data
-    /*
-      dostarczane podczas update track data pod obd
-      obd : {
-        listaBłędów: [{value:"KOD błędu do dekodowania"},{}]
-      }
-      timestamp:123451523
-     */
-    /*
-       link do dokumentacji: https://app.swaggerhub.com/apis/CarVisor6/API/1.0.0#/default/get_errors_getErrors__dateFrom___dateTo___page___pagesize_
-       link do dodawania errorów: https://app.swaggerhub.com/apis/CarVisor6/API/1.0.0#/default/post_errors_addErrors
-       [
-          {
-            "type": "string",
-            "timestamp": 0,
-            "value": 0
-          }
-       ]
-       duża dysproporcja (skąd mam wziąć dane? sam wygenerować?)
-
-       {
-        "type": "string", - ok
-        "value": 0, - ok
-        "date": "string", - format daty?
-        "location": "string", - skąd?
-        "userID": 0,  - domyślam się aczkolwiek rozwiązanie ma wady [Marcin]
-        "deviceID": 0,  -  sounds complicated af [Marcin]
-        "userName": "string",  -  //może Marcin (otwarta dyskusja)
-        "deviceLicensePlate": "string" -  //może Marcin (otwarta dyskusja)
-        }
-     */
-        //
         return new JSONObject()
-                .put(AttributeKey.Notification.TYPE, error.getType());
+                .put(AttributeKey.Notification.TYPE, error.getType())
+                .put(AttributeKey.Notification.VALUE, error.getValue())
+                .put(AttributeKey.Notification.DATE, error.getDate())
+                .put(AttributeKey.Notification.LOCATION, error.getValue())
+                .put(AttributeKey.Notification.USER_ID, error.getValue())
+                .put(AttributeKey.Notification.USER_NAME, error.getValue())
+                .put(AttributeKey.Notification.DEVICE_LICENSE_PLATE, error.getValue());
     }
 }
