@@ -156,6 +156,7 @@ class DevicesRESTTest {
                             "  \"engine\": \"string\",\n" +
                             "  \"fuel\": \"string\",\n" +
                             "  \"tank\": \"123\",\n" +
+                            "  \"yearOfProduction\": \"2013\",\n" +
                             "  \"norm\": \"123\"\n" +
                             "}")
                     .contentType(MediaType.APPLICATION_JSON)
@@ -203,6 +204,7 @@ class DevicesRESTTest {
                             "  \"engine\": \"string\",\n" +
                             "  \"fuel\": \"string\",\n" +
                             "  \"tank\": \"123\",\n" +
+                            "  \"yearOfProduction\": \"2013\",\n" +
                             "  \"norm\": \"123\",\n" +
                             "  \"password\": \"password\"\n" +
                             "}"))

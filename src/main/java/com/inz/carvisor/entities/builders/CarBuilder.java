@@ -2,7 +2,7 @@ package com.inz.carvisor.entities.builders;
 
 import com.inz.carvisor.entities.model.Car;
 
-public class CarBuilder {
+public class CarBuilder { //todo prowizorka z tymi domyślnymi wartościami
     private String licensePlate = null;
     private String brand = null;
     private String model = null;
@@ -10,9 +10,9 @@ public class CarBuilder {
     private String image = null;
     private String password = null;
     private String engine = null;
-    private Integer tank = null;
+    private Integer tank = 50;
     private String fuelType = null;
-    private Double fuelNorm = null;
+    private Double fuelNorm = 5.0;
     private Integer sendInterval = null;
     private Integer locationInterval = null;
 

@@ -31,7 +31,7 @@ public class DefaultResponse {
     }
 
     public static ResponseEntity<String> ok(String responseBody) {
-        return ResponseEntity.status(HttpStatus.OK).body(jsonMessage(responseBody));
+        return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
     public static String jsonMessage(String msg) {
