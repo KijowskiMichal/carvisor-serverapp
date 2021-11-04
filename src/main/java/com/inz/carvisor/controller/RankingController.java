@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/ranking")
@@ -39,22 +40,24 @@ public class RankingController {
     }
 
     @RequestMapping(value = "/getUserSummary/{dateFrom}/{dateTo}/{page}/{pagesize}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
-    public ResponseEntity getUserSummary(
+    public ResponseEntity<String> getUserSummary(
             HttpServletRequest request, HttpEntity<String> httpEntity,
             @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
             @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) {
-        //todo DO OMÓWIENIA
-    /*
-      stronnicowana lista tras usera
-     */
         User userToCheck = (User) request.getSession().getAttribute(Key.USER);
-        float ecoPointsAvg = userToCheck.getEcoPointsAvg();
-        float safetyRanking = 4;
-
         List<User> allUsers = userDaoJdbc.getAll();
-        long safetyRankingPosition = allUsers.stream().filter(user -> user.getEcoPointsAvg() > ecoPointsAvg).count();
-        //todo WIP
-        return DefaultResponse.UNAUTHORIZED;
+
+        int safetyPointsRankingPosition = getSafetyPointsRankingPosition(userToCheck, allUsers);
+        int ecoPointsRankingPosition = getEcoPointsRankingPosition(userToCheck, allUsers);
+        List<Track> getUserTracks = trackDaoJdbc
+                .getUserTracks(userToCheck.getId())
+                .stream()
+                .filter(track -> track.getStartTrackTimeStamp() > dateFromTimestamp)
+                .filter(track -> track.getStartTrackTimeStamp() < dateToTimestamp)
+                .collect(Collectors.toList());//todo bad solution
+
+        JSONObject jsonObject = toJson(userToCheck, safetyPointsRankingPosition, ecoPointsRankingPosition, getUserTracks);
+        return DefaultResponse.ok(jsonObject.toString());
     }
 
     private int getEcoPointsRankingPosition(User userToCheck, List<User> allUsers) {
@@ -66,23 +69,22 @@ public class RankingController {
     }
 
     private int getSafetyPointsRankingPosition(User userToCheck, List<User> allUsers) {
-        return 1; //todo WIP
+        return 1; //todo placeholder
     }
 
-    private JSONObject toJson(User user, int safetyRankingPosition, int ecoRankingPosition) {
+    private JSONObject toJson(User user, int safetyRankingPosition, int ecoRankingPosition,List<Track> userTrack) {
         return new JSONObject()
                 .put(AttributeKey.User.NAME, user.getName() + " " + user.getSurname())
-                .put(AttributeKey.User.SAFETY_POINTS, 3) //todo replace after implementation with user.getSafetyPoints()
+                .put(AttributeKey.User.SAFETY_POINTS, 3) //todo placeholder
                 .put(AttributeKey.User.ECO_POINTS, user.getEcoPointsAvg())
                 .put(AttributeKey.User.SAFETY_RANKING_POSITION, safetyRankingPosition)
                 .put(AttributeKey.User.ECO_RANKING_POSITION, ecoRankingPosition)
-                .put(AttributeKey.Track.LIST_OF_TRACKS, getTracks(user));
+                .put(AttributeKey.Track.LIST_OF_TRACKS, toJson(userTrack));
     }
 
-    private JSONArray getTracks(User user) {
-        List<Track> userTracks = trackDaoJdbc.getUserTracks(user.getId());
+    private JSONArray toJson(List<Track> trackList) {
         JSONArray tracks = new JSONArray();
-        userTracks.forEach(track -> tracks.put(toJson(track)));
+        trackList.forEach(track -> tracks.put(toJson(track)));
         return tracks;
     }
 
@@ -103,10 +105,7 @@ public class RankingController {
 
     private JSONObject toJson(Track track) {
         return new JSONObject()
-                .put(AttributeKey.Track.DATE, track.getTimestamp()) //todo format daty = long timestamp
-                /*
-                  format daty
-                 */
+                .put(AttributeKey.Track.DATE, track.getTimestamp())
                 .put(AttributeKey.Track.LOCATION_FROM, track.getStartPosiotion())
                 .put(AttributeKey.Track.LOCATION_TO, track.getEndPosiotion())
                 .put(AttributeKey.Track.SAFETY_POINTS, 0)
