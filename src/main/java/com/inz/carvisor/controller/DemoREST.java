@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -28,7 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/demo")
 public class DemoREST {
-    public static final String DEF_IMAGE = "iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAAAAXNSR0IArs4c6QAHOqFJREFUeNrs4V2SbVuSHe";
+    public static final String DEF_IMAGE = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAAAAXNSR0IArs4c6QAHOqFJREFUeNrs4V2SbVuSHe";
     UserDaoJdbc userDaoJdbc;
     CarDaoJdbc carDaoJdbc;
     SettingDaoJdbc settingDaoJdbc;
@@ -171,7 +172,8 @@ public class DemoREST {
     }
 
     public String extractBase64Picture(int pictureNumber) {
-        File file = new File("src/main/resources/demophotos/" + pictureNumber);
+        URL url = this.getClass().getClassLoader().getResource("/demophotos");
+        File file = new File(url.getPath() + "/" + pictureNumber);
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(file))) {
             return bufferedReader.readLine();
         } catch (Exception e) {
