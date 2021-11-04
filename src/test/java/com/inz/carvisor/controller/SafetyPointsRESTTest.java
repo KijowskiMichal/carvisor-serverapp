@@ -96,8 +96,8 @@ class SafetyPointsRESTTest {
                         .build()
         ).forEach(offenceDaoJdbc::save);
 
-        String dateFrom = "2017-01-23T14:51";
-        String dateTo = "2019-10-23T14:51";
+        long dateFrom = 1485178661;
+        long dateTo = 1571834261;
 
         MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);
         ResponseEntity<String> response = safetyPointsREST.listUser(mockHttpServletRequest, id, dateFrom, dateTo);

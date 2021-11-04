@@ -6,7 +6,6 @@ import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.service.EcoPointsService;
 import com.inz.carvisor.service.SecurityService;
-import com.inz.carvisor.util.DataManipulator;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +39,7 @@ public class EcoPointsREST {
     }
 
     @RequestMapping(value = "/getUserDetails/{id}/{dateFrom}/{dateTo}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public ResponseEntity<String> listUser(HttpServletRequest request, @PathVariable("id") int userId, @PathVariable("dateFrom") String dateFrom, @PathVariable("dateTo") String dateTo) {
-
+    public ResponseEntity<String> listUser(HttpServletRequest request, @PathVariable("id") int userId, @PathVariable("dateFrom") long dateFrom, @PathVariable("dateTo") long dateTo) {
         if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             List<Track> tracks = ecoPointsService.listUser(userId, dateFrom, dateTo);
             return DefaultResponse.ok(parseToJson(tracks));
@@ -59,7 +57,7 @@ public class EcoPointsREST {
 
     private JSONObject trackToJson(Track track) {
         return new JSONObject()
-                .put(AttributeKey.Track.DATE, DataManipulator.timeStampToDate(track.getStartTrackTimeStamp()))
+                .put(AttributeKey.Track.DATE, track.getStartTrackTimeStamp())
                 .put(AttributeKey.Track.AMOUNT_OF_TRACK, track.getAmountOfSamples())
                 .put(AttributeKey.Track.ECO_POINTS, track.getEcoPointsScore())
                 .put(AttributeKey.Track.COMBUSTION, track.getCombustion())

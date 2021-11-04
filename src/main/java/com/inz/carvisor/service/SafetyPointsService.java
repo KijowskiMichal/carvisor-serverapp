@@ -5,7 +5,6 @@ import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Offence;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
-import com.inz.carvisor.util.DataManipulator;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -107,14 +106,12 @@ public class SafetyPointsService {
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 
-    public List<Offence> listUser(int userId, String dateFrom, String dateTo) {
-        long a = DataManipulator.parseToTimeStamp(dateFrom);
-        long b = DataManipulator.parseToTimeStamp(dateTo);
+    public List<Offence> listUser(int userId, long dateFrom, long dateTo) {
         String selectQuery = "SELECT o from Offence o " +
                 "WHERE " +
                 "o.user.id = " + userId + " AND " +
-                "o.timeStamp > " + a + " AND " +
-                "o.timeStamp < " + b + " ";
+                "o.timeStamp > " + dateFrom + " AND " +
+                "o.timeStamp < " + dateTo + " ";
         return offenceDaoJdbc.getList(selectQuery);
     }
 }

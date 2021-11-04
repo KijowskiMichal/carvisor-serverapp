@@ -13,7 +13,6 @@ import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
-import com.inz.carvisor.util.DataManipulator;
 import com.inz.carvisor.util.RequestBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -69,13 +68,15 @@ class EcoPointsRESTTest {
         MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR);
 
         List.of(
-                new TrackBuilder().setTimeStamp(DataManipulator.dateBeginningTimestamp("1991-04-02").getTime()).setUser(driver).build(),
-                new TrackBuilder().setTimeStamp(DataManipulator.dateBeginningTimestamp("2020-04-02").getTime()).setUser(driver).build(),
-                new TrackBuilder().setTimeStamp(DataManipulator.dateBeginningTimestamp("1981-04-02").getTime()).setUser(driver).build(),
-                new TrackBuilder().setTimeStamp(DataManipulator.dateBeginningTimestamp("2023-04-02").getTime()).setUser(driver).build()
+                //dzielenie na pół musi zostać
+                new TrackBuilder().setStartTrackTimeStamp(670603061).setUser(driver).build(),
+                new TrackBuilder().setStartTrackTimeStamp(1585838261).setUser(driver).build(),
+                new TrackBuilder().setStartTrackTimeStamp(355070261).setUser(driver).build(),
+                new TrackBuilder().setStartTrackTimeStamp(1680446261).setUser(driver).build()
         ).forEach(trackDaoJdbc::save);
 
-        ResponseEntity<String> stringResponseEntity = ecoPointsREST.listUser(mockHttpServletRequest, driver.getId(), "1990-12-04", "2022-12-22");
+        ResponseEntity<String> stringResponseEntity = ecoPointsREST.listUser(mockHttpServletRequest, driver.getId(),
+                670003061,1598382610);
         assertEquals(200, stringResponseEntity.getStatusCodeValue());
         System.out.println(stringResponseEntity.getBody());
     }

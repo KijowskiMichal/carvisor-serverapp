@@ -42,7 +42,7 @@ public class SafetyPointsREST {
     }
 
     @RequestMapping(value = "/getUserDetails/{id}/{dateFrom}/{dateTo}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public ResponseEntity<String> listUser(HttpServletRequest request, @PathVariable("id") int userId, @PathVariable("dateFrom") String dateFrom, @PathVariable("dateTo") String dateTo) {
+    public ResponseEntity<String> listUser(HttpServletRequest request, @PathVariable("id") int userId, @PathVariable("dateFrom") long dateFrom, @PathVariable("dateTo") long dateTo) {
         if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             List<Offence> offences = safetyPointsService.listUser(userId, dateFrom, dateTo);
             return DefaultResponse.ok(parseToJson(offences, userId));

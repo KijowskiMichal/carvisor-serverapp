@@ -29,6 +29,19 @@ public class TrackBuilder {
     private long timeStamp = 0;
     private String startPosiotion;
 
+    private long startTrackTimeStamp;
+    private long endTrackTimeStamp;
+
+    public TrackBuilder setStartTrackTimeStamp(long startTrackTimeStamp) {
+        this.startTrackTimeStamp = startTrackTimeStamp;
+        return this;
+    }
+
+    public TrackBuilder setEndTrackTimeStamp(long endTrackTimeStamp) {
+        this.endTrackTimeStamp = endTrackTimeStamp;
+        return this;
+    }
+
     public TrackBuilder setCar(Car car) {
         this.car = car;
         return this;
@@ -77,6 +90,9 @@ public class TrackBuilder {
         track.setAverageRevolutionsPerMinute(this.revolutions);
         track.setStartTrackTimeStamp(this.start);
         track.setOffences(this.offences);
+
+        track.setStartTrackTimeStamp(this.startTrackTimeStamp);
+        track.setEndTrackTimeStamp(this.endTrackTimeStamp);
 
         return track;
     }

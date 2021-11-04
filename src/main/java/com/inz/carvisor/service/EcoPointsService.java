@@ -6,7 +6,6 @@ import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
-import com.inz.carvisor.util.DataManipulator;
 import com.inz.carvisor.util.jsonparser.UserJsonParser;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -22,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,14 +141,12 @@ public class EcoPointsService {
     }
 
     //todo need heavy testing
-    public List<Track> listUser(int userId, String dateFrom, String dateTo) {
-        Timestamp fromTimeStamp = DataManipulator.dateBeginningTimestamp(dateFrom);
-        Timestamp endTimestamp = DataManipulator.dateEndTimestamp(dateFrom);
+    public List<Track> listUser(int userId, long dateFrom, long dateTo) {
         String selectQuery = "SELECT t from Track t " +
                 "WHERE " +
                 "t.user = " + userId + " AND " +
-                "t.endTrackTimeStamp > " + endTimestamp.getTime() + " AND " +
-                "t.startTrackTimeStamp < " + fromTimeStamp.getTime() + " ";
+                "t.startTrackTimeStamp < " + dateTo + " AND " +
+                "t.startTrackTimeStamp > " + dateFrom + " ";
         return trackDaoJdbc.getList(selectQuery);
     }
 }
