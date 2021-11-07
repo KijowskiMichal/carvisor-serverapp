@@ -21,6 +21,7 @@ public class RequestBuilder {
     public static MockHttpServletRequest mockHttpServletRequest(User user) {
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
         Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(USER_KEY, user);
+
         return mockHttpServletRequest;
     }
 }
