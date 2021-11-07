@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.Utilities;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,13 +29,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/ranking")
 public class RankingController {
 
-    private final SecurityService securityService;
     private final TrackDaoJdbc trackDaoJdbc;
     private final UserDaoJdbc userDaoJdbc;
 
     @Autowired
-    public RankingController(SecurityService securityService, TrackDaoJdbc trackDaoJdbc, UserDaoJdbc userDaoJdbc) {
-        this.securityService = securityService;
+    public RankingController(TrackDaoJdbc trackDaoJdbc, UserDaoJdbc userDaoJdbc) {
         this.trackDaoJdbc = trackDaoJdbc;
         this.userDaoJdbc = userDaoJdbc;
     }
@@ -55,8 +54,12 @@ public class RankingController {
                 .filter(track -> track.getStartTrackTimeStamp() > dateFromTimestamp)
                 .filter(track -> track.getStartTrackTimeStamp() < dateToTimestamp)
                 .collect(Collectors.toList());//todo bad solution
-
-        JSONObject jsonObject = toJson(userToCheck, safetyPointsRankingPosition, ecoPointsRankingPosition, getUserTracks);
+        //todo this is even worse
+        int maxPage = getUserTracks.size() / pagesize + 1;
+        List<Track> tracksListed = getUserTracks.subList(pagesize * page - 1, pagesize * page + pagesize);
+        JSONObject jsonObject = toJson(userToCheck, safetyPointsRankingPosition, ecoPointsRankingPosition, tracksListed);
+        jsonObject.put(Key.PAGE,page);
+        jsonObject.put(Key.PAGE_MAX,maxPage);
         return DefaultResponse.ok(jsonObject.toString());
     }
 
