@@ -1,40 +1,28 @@
 package com.inz.carvisor.entities.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Entity
 public class TrackRate {
 
     @Id
     @GeneratedValue
-    int id;
-    @ManyToOne
-    Track track;
-    Short speed;
-    /**
-     * throttle in %
-     */
-    Byte throttle;
-    Double latitude;
-    Double longitude;
-    Short rpm;
-    /**
-     * meters since start
-     */
-    long distance;
-    /**
-     * timestamp of this rate
-     */
-    long timestamp;
+    private long id;
+
+    private long trackId;
+    private Short speed;
+    private Byte throttle;
+    private Double latitude;
+    private Double longitude;
+    private Short rpm;
+    private long distance;
+    private long timestamp;
 
     public TrackRate() {
     }
 
-    public TrackRate(Track track, Short speed, Byte throttle, Double latitude, Double longitude, Short rpm, long distance, long timestamp) {
-        this.track = track;
+    public TrackRate(long track, Short speed, Byte throttle, Double latitude, Double longitude, Short rpm, long distance, long timestamp) {
+        this.trackId = trackId;
         this.speed = speed;
         this.throttle = throttle;
         this.longitude = longitude;
@@ -44,7 +32,7 @@ public class TrackRate {
         this.timestamp = timestamp;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -52,12 +40,12 @@ public class TrackRate {
         this.id = id;
     }
 
-    public Track getTrack() {
-        return track;
+    public long getTrackId() {
+        return trackId;
     }
 
-    public void setTrack(Track track) {
-        this.track = track;
+    public void setTrack(long trackId) {
+        this.trackId = trackId;
     }
 
     public Short getSpeed() {

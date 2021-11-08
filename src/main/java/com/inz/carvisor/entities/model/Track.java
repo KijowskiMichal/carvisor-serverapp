@@ -12,59 +12,41 @@ public class Track {
 
     @Id
     @GeneratedValue
-    int id;
-    @ManyToOne
-    Car car;
-    @ManyToOne
-    User user;
-    @OneToMany
-    List<TrackRate> listOfTrackRates;
-    /**
-     * number of parameter IoT send to server
-     */
-    int numberOfparameter;
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    Boolean privateTrack;
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    Boolean isActive;
-    /**
-     * Start track position - y and x coordinates separated with ;
-     */
-    String startPosiotion;
-    /**
-     * End track position - y and x coordinates separated with ;
-     */
-    String endPosiotion;
-    /**
-     * timeStamp of last update
-     */
-    long timestamp;
-    long startTrackTimeStamp;
-    long endTrackTimeStamp;
-    long distanceFromStart;
-    float ecoPointsScore;
-    int amountOfSamples;
-    /**
-     * combustion
-     */
-    double combustion;
-    int averageSpeed;
-    long averageRevolutionsPerMinute;
-    /**
-     * throttle
-     */
-    long averageThrottle;
-    /**
-     * Safety samples
-     */
-    int amountOfSafetySamples;
-    /**
-     * Safety negative samples
-     */
-    int safetyNegativeSamples;
+    private int id;
+
+    @OneToOne
+    private Car car;
+
+    @OneToOne
+    private User user;
+
+    @OneToMany (fetch = FetchType.EAGER)
+    private List<TrackRate> listOfTrackRates;
 
     @OneToMany
     List<Offence> offences;
+
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private Boolean privateTrack;
+
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private Boolean isActive;
+
+    private int numberOfparameter;
+    private String startPosiotion;
+    private String endPosiotion;
+    private long timestamp;
+    private long startTrackTimeStamp;
+    private long endTrackTimeStamp;
+    private long distanceFromStart;
+    private float ecoPointsScore;
+    private int amountOfSamples;
+    private double combustion;
+    private int averageSpeed;
+    private long averageRevolutionsPerMinute;
+    private long averageThrottle;
+    private int amountOfSafetySamples;
+    private int safetyNegativeSamples;
 
     public Track() {
         super();

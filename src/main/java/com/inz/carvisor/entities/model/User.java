@@ -2,40 +2,37 @@ package com.inz.carvisor.entities.model;
 
 import com.inz.carvisor.entities.enums.UserPrivileges;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Lob;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class User {
-    int phoneNumber;
-    String nfcTag;
-    float ecoPointsAvg;
-    float combustionAVG;
-    int speedAVG;
-    int tracksNumber;
-    int revolutionsAVG;
-    long distanceTravelled;
-    int samples;
-    int samplesNumber;
-    int throttle;
-    int safetySamples;
-    int safetyNegativeSamples;
 
     @Id
     @GeneratedValue
     private int id;
+
+    @Lob
+    private String image;
+
     private String nick;
     private String name;
     private String surname;
-    /**
-     * Hash SHA256 from user password
-     */
     private String password;
     private UserPrivileges userPrivileges;
-    @Lob
-    private String image;
+    private int phoneNumber;
+    private String nfcTag;
+    private float ecoPointsAvg;
+    private float combustionAVG;
+    private int speedAVG;
+    private int tracksNumber;
+    private int revolutionsAVG;
+    private long distanceTravelled;
+    private int samples;
+    private int samplesNumber;
+    private int throttle;
+    private int safetySamples;
+    private int safetyNegativeSamples;
 
     public User() {
         super();
@@ -226,7 +223,7 @@ public class User {
         this.revolutionsAVG = (int) (o * this.revolutionsAVG + n * track.getAverageRevolutionsPerMinute());
         this.speedAVG = (int) (o * this.speedAVG + n * track.getAverageSpeed());
         this.throttle = (int) (o * this.throttle + n * track.getAverageThrottle());
-        this.distanceTravelled += track.distanceFromStart;
+        this.distanceTravelled += track.getDistanceFromStart();
     }
 
     @Override

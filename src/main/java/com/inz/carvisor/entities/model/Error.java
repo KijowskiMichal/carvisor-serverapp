@@ -1,22 +1,24 @@
 package com.inz.carvisor.entities.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Error {
 
     @Id
     @GeneratedValue
-    int id;
+    private int id;
+
+    @ManyToOne
+    private User user;
+
+    @ManyToOne
+    private Car car;
 
     private String type;
     private long value;
     private long timestamp;
     private String location;
-    private long userId;
-    private long deviceId;
     private String userName;
     private String deviceLicensePlate;
     private long date;
@@ -69,20 +71,20 @@ public class Error {
         this.location = location;
     }
 
-    public long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
-    public long getDeviceId() {
-        return deviceId;
+    public Car getCar() {
+        return car;
     }
 
-    public void setDeviceId(long deviceId) {
-        this.deviceId = deviceId;
+    public void setCar(Car car) {
+        this.car = car;
     }
 
     public String getUserName() {

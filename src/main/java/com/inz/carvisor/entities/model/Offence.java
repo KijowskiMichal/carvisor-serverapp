@@ -2,23 +2,22 @@ package com.inz.carvisor.entities.model;
 
 import com.inz.carvisor.entities.enums.OffenceType;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 public class Offence {
 
     @Id
     @GeneratedValue
-    int id;
-    long timeStamp;
-    OffenceType offenceType;
-    @OneToOne
-    User user;
-    int value;
-    String location;
+    private int id;
+
+    @ManyToOne
+    private User user;
+
+    private long timeStamp;
+    private OffenceType offenceType;
+    private int value;
+    private String location;
 
     public Offence() {
     }
