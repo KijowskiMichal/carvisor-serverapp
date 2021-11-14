@@ -173,7 +173,7 @@ public class DemoREST {
 
     public String extractBase64Picture(int pictureNumber, String directoryName) {
         try {
-            InputStream demoPhotosStream = this.getClass().getClassLoader().getResourceAsStream("/" + directoryName);
+            InputStream demoPhotosStream = this.getClass().getClassLoader().getResourceAsStream("/" + directoryName + "/" + pictureNumber);
             assert demoPhotosStream != null;
             return new String(demoPhotosStream.readAllBytes());
         } catch (IOException ioException) {
