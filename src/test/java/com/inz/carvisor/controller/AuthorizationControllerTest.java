@@ -85,9 +85,9 @@ class AuthorizationControllerTest {
 
             //check with correct credentials
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/authorization/authorize")
-                    .content("{\"login\": \"fsgfgdfsfhdgfh\",\"password\": \"dsgdsgdfsg\"}")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+                            .content("{\"login\": \"fsgfgdfsfhdgfh\",\"password\": \"dsgdsgdfsg\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
@@ -95,9 +95,9 @@ class AuthorizationControllerTest {
 
             //check with wrong password
             result = mockMvc.perform(MockMvcRequestBuilders.post("/authorization/authorize")
-                    .content("{\"login\": \"fsgfgdfsfhdgfh\",\"password\": \"dsgdsgujutrgdfsg\"}")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+                            .content("{\"login\": \"fsgfgdfsfhdgfh\",\"password\": \"dsgdsgujutrgdfsg\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 406);
@@ -111,9 +111,9 @@ class AuthorizationControllerTest {
 
             //user does not exist
             result = mockMvc.perform(MockMvcRequestBuilders.post("/authorization/authorize")
-                    .content("{\"login\": \"fsgfgdfsfhdgfh\",\"password\": \"dsgdsgujutrgdfsg\"}")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+                            .content("{\"login\": \"fsgfgdfsfhdgfh\",\"password\": \"dsgdsgujutrgdfsg\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 406);
@@ -158,7 +158,7 @@ class AuthorizationControllerTest {
             sessionattr.put("user", new UserBuilder().setNick("fsgfgdfsfhdgfh").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("ZXCVA").build());
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
@@ -173,7 +173,7 @@ class AuthorizationControllerTest {
             sessionattr.put("user", new UserBuilder().setNick("dfsdfdv").setUserPrivileges(UserPrivileges.MODERATOR).setPhoneNumber(0).setNfcTag("ASDZXCV").build());
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
@@ -210,14 +210,14 @@ class AuthorizationControllerTest {
                     .build());
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
             Assert.assertNotNull(result.getRequest().getSession().getAttribute("user"));
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/logout")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
@@ -229,7 +229,7 @@ class AuthorizationControllerTest {
             sessionattr.put("user", new UserBuilder().setNick("fsgfggfggfdgdfsfhdgfh").setUserPrivileges(UserPrivileges.MODERATOR).setPhoneNumber(0).setNfcTag("CVZXCVXZCV").build());
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/logout")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);

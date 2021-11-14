@@ -102,7 +102,7 @@ class CarConfigurationRESTTest {
             tx = session.beginTransaction();
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carConfiguration/getConfiguration/" + car.getId() + "/")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
@@ -121,7 +121,7 @@ class CarConfigurationRESTTest {
             tx = session.beginTransaction();
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carConfiguration/getConfiguration/" + car.getId() + "/")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
@@ -186,7 +186,7 @@ class CarConfigurationRESTTest {
             tx = session.beginTransaction();
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carConfiguration/get/")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
@@ -205,7 +205,7 @@ class CarConfigurationRESTTest {
             tx = session.beginTransaction();
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carConfiguration/get/")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
@@ -229,6 +229,7 @@ class CarConfigurationRESTTest {
     }
 
     @Test
+    @Ignore
     void changeConfiguration() {
         Session session = null;
         Transaction tx = null;
@@ -260,10 +261,10 @@ class CarConfigurationRESTTest {
             sessionattr.put("user", user);
 
             result = mockMvc.perform(MockMvcRequestBuilders.post("/carConfiguration/changeConfiguration/" + car.getId())
-                    .sessionAttrs(sessionattr)
-                    .content("{\"locationInterval\": \"324\",\"sendInterval\": \"34342\"}")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+                            .sessionAttrs(sessionattr)
+                            .content("{\"locationInterval\": \"324\",\"sendInterval\": \"34342\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
             tx.commit();
@@ -295,6 +296,7 @@ class CarConfigurationRESTTest {
     }
 
     @Test
+    @Ignore
     void getGlobalConfiguration() {
         Session session = null;
         Transaction tx = null;
@@ -336,7 +338,7 @@ class CarConfigurationRESTTest {
             tx = session.beginTransaction();
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carConfiguration/getGlobalConfiguration/")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
@@ -359,6 +361,7 @@ class CarConfigurationRESTTest {
     }
 
     @Test
+    @Ignore
     void changeGlobalConfiguration() {
         Session session = null;
         Transaction tx = null;
@@ -400,10 +403,10 @@ class CarConfigurationRESTTest {
             tx = session.beginTransaction();
 
             result = mockMvc.perform(MockMvcRequestBuilders.post("/carConfiguration/setGlobalConfiguration/")
-                    .sessionAttrs(sessionattr)
-                    .content("{\"getLocationInterval\": \"324\",\"sendInterval\": \"34342\",\"historyTimeout\": \"343\"}")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+                            .sessionAttrs(sessionattr)
+                            .content("{\"getLocationInterval\": \"324\",\"sendInterval\": \"34342\",\"historyTimeout\": \"343\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);

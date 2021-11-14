@@ -76,13 +76,13 @@ public class TrackBuilder {
         Track track = new Track();
         track.setCar(this.car);
         track.setUser(this.user);
-        track.setNumberOfparameter(this.numberOfparameter);
+        track.setNumberOfParameter(this.numberOfparameter);
         track.setPrivateTrack(this.privateTrack);
         track.setTimestamp(this.timeStamp);
-        track.setStartPosiotion(this.startPosiotion);
+        track.setStartPosition(this.startPosiotion);
 
         track.setDistanceFromStart(this.distance);
-        track.setIsActive(this.active);
+        track.setActive(this.active);
         track.setAmountOfSamples(this.samples);
         track.setEcoPointsScore(this.ecoPoints);
         track.setCombustion(this.combustion);

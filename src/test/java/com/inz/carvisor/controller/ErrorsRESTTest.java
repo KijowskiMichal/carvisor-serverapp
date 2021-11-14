@@ -45,11 +45,11 @@ class ErrorsRESTTest {
 
     @AfterEach
     void cleanupDatabase() {
-        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
+        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
         settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
         carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
-        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
         errorDaoJdbc.getAll().stream().map(Error::getId).forEach(errorDaoJdbc::delete);
+        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
     }
 
     @Test

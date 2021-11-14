@@ -38,6 +38,12 @@ public class DevicesREST {
         return devicesService.list(request, page, pageSize, regex);
     }
 
+    @RequestMapping(value = "/listFixed/{page}/{pageSize}/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity<String> listFixed(HttpServletRequest request, @PathVariable("page") int page,
+                                            @PathVariable("pageSize") int pageSize, @PathVariable("regex") String regex) {
+        return devicesService.listFixed(request, page, pageSize, regex);
+    }
+
     @RequestMapping(value = "/getDeviceData/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity getDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int id) {
         return devicesService.getDeviceData(request, httpEntity, id);

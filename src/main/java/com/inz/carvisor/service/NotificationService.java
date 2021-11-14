@@ -32,10 +32,10 @@ public class NotificationService {
     }
 
     public List<Notification> getNotifications(long dateFromTimestamp, long dateToTimestamp, int page, int pagesize) {
-        return notificationDaoJdbc.getNotifications(dateFromTimestamp, dateToTimestamp, page, pagesize);
+        return notificationDaoJdbc.getList(dateFromTimestamp, dateToTimestamp, page, pagesize);
     }
 
-    public int getMaxPage(long dateFromTimestamp, long dateToTimestamp, int page, int pagesize) {
-        return notificationDaoJdbc.getMaxPageSize(dateFromTimestamp, dateToTimestamp, page, pagesize);
+    public int getMaxPage(long dateFromTimestamp, long dateToTimestamp, int pagesize) {
+        return notificationDaoJdbc.getMaxPageSize(dateFromTimestamp, dateToTimestamp, pagesize);
     }
 }

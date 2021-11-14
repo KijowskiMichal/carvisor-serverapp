@@ -9,6 +9,10 @@ public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
+    @Lob
+    private String image;
+
     private String licensePlate;
     private String password;
     private String brand;
@@ -18,13 +22,10 @@ public class Car {
     private String fuelType;
     private Double fuelNorm;
     private Integer productionYear;
-    @Lob
-    private String image;
     private Integer sendInterval;
     private Integer locationInterval;
 
     public Car() {
-        super();
     }
 
     public int getId() {

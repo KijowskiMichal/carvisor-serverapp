@@ -10,13 +10,12 @@ public class Setting {
 
     @Id
     @GeneratedValue
-    int id;
+    private int id;
 
-    String nameOfSetting;
-    Integer value;
+    private String nameOfSetting;
+    private Integer value;
 
     public Setting() {
-        super();
     }
 
     public Setting(String nameOfSetting, Integer value) {

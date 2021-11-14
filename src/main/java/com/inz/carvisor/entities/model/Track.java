@@ -3,146 +3,47 @@ package com.inz.carvisor.entities.model;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.Date;
 import java.util.List;
 
 
 @Entity
 public class Track {
 
-    @Id
-    @GeneratedValue
-    int id;
-    @ManyToOne
-    Car car;
-    @ManyToOne
-    User user;
-    @OneToMany
-    List<TrackRate> listOfTrackRates;
-    /**
-     * number of parameter IoT send to server
-     */
-    int numberOfparameter;
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    Boolean privateTrack;
-    @Type(type = "org.hibernate.type.NumericBooleanType")
-    Boolean isActive;
-    /**
-     * Start track position - y and x coordinates separated with ;
-     */
-    String startPosiotion;
-    /**
-     * End track position - y and x coordinates separated with ;
-     */
-    String endPosiotion;
-    /**
-     * timeStamp of last update
-     */
-    long timestamp;
-    long startTrackTimeStamp;
-    long endTrackTimeStamp;
-    long distanceFromStart;
-    float ecoPointsScore;
-    int amountOfSamples;
-    /**
-     * combustion
-     */
-    double combustion;
-    int averageSpeed;
-    long averageRevolutionsPerMinute;
-    /**
-     * throttle
-     */
-    long averageThrottle;
-    /**
-     * Safety samples
-     */
-    int amountOfSafetySamples;
-    /**
-     * Safety negative samples
-     */
-    int safetyNegativeSamples;
-
     @OneToMany
     List<Offence> offences;
+    @Id
+    @GeneratedValue
+    private int id;
+    @OneToOne
+    private Car car;
+    @OneToOne
+    private User user;
+    @OneToMany(fetch = FetchType.EAGER)
+    private List<TrackRate> listOfTrackRates;
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private Boolean privateTrack;
+
+    @Type(type = "org.hibernate.type.NumericBooleanType")
+    private Boolean isActive;
+
+    private int numberOfParameter;
+    private String startPosition;
+    private String endPosition;
+    private long timestamp;
+    private long startTrackTimeStamp;
+    private long endTrackTimeStamp;
+    private long distanceFromStart;
+    private float ecoPointsScore;
+    private int amountOfSamples;
+    private double combustion;
+    private int averageSpeed;
+    private long averageRevolutionsPerMinute;
+    private long averageThrottle;
+    private int amountOfSafetySamples;
+    private int safetyNegativeSamples;
 
     public Track() {
         super();
-    }
-
-    public Track(Car car, User user, int numberOfparameter, Boolean privateTrack, long timestamp, String startPosiotion) {
-        this.car = car;
-        this.user = user;
-        this.numberOfparameter = numberOfparameter;
-        this.privateTrack = privateTrack;
-        this.timestamp = timestamp;
-        this.startPosiotion = startPosiotion;
-        this.endPosiotion = "";
-        this.startTrackTimeStamp = new Date().getTime();
-        this.endTrackTimeStamp = 0;
-        this.isActive = true;
-        this.distanceFromStart = 0;
-        this.amountOfSamples = 0;
-        this.ecoPointsScore = 0;
-        this.combustion = 0;
-        this.averageSpeed = 0;
-        this.averageRevolutionsPerMinute = 0;
-    }
-
-    public int getAmountOfSafetySamples() {
-        return amountOfSafetySamples;
-    }
-
-    public void setAmountOfSafetySamples(int amountOfSafetySamples) {
-        this.amountOfSafetySamples = amountOfSafetySamples;
-    }
-
-    public int getSafetyNegativeSamples() {
-        return safetyNegativeSamples;
-    }
-
-    public void setSafetyNegativeSamples(int safetyNegativeSamples) {
-        this.safetyNegativeSamples = safetyNegativeSamples;
-    }
-
-    public long getAverageThrottle() {
-        return averageThrottle;
-    }
-
-    public void setAverageThrottle(long averageThrottle) {
-        this.averageThrottle = averageThrottle;
-    }
-
-    public double getCombustion() {
-        return combustion;
-    }
-
-    public void setCombustion(double combustion) {
-        this.combustion = combustion;
-    }
-
-    public int getAverageSpeed() {
-        return averageSpeed;
-    }
-
-    public void setAverageSpeed(int averageSpeed) {
-        this.averageSpeed = averageSpeed;
-    }
-
-    public long getAverageRevolutionsPerMinute() {
-        return averageRevolutionsPerMinute;
-    }
-
-    public void setAverageRevolutionsPerMinute(long averageRevolutionsPerMinute) {
-        this.averageRevolutionsPerMinute = averageRevolutionsPerMinute;
-    }
-
-    public int getAmountOfSamples() {
-        return amountOfSamples;
-    }
-
-    public void setAmountOfSamples(int amountOfSamples) {
-        this.amountOfSamples = amountOfSamples;
     }
 
     public int getId() {
@@ -177,36 +78,52 @@ public class Track {
         this.listOfTrackRates = listOfTrackRates;
     }
 
-    public int getNumberOfparameter() {
-        return numberOfparameter;
+    public List<Offence> getOffences() {
+        return offences;
     }
 
-    public void setNumberOfparameter(int numberOfparameter) {
-        this.numberOfparameter = numberOfparameter;
+    public void setOffences(List<Offence> offences) {
+        this.offences = offences;
     }
 
-    public Boolean isPrivateTrack() {
+    public Boolean getPrivateTrack() {
         return privateTrack;
     }
 
-    public Boolean isActive() {
+    public void setPrivateTrack(Boolean privateTrack) {
+        this.privateTrack = privateTrack;
+    }
+
+    public Boolean getActive() {
         return isActive;
     }
 
-    public String getStartPosiotion() {
-        return startPosiotion;
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 
-    public void setStartPosiotion(String startPosiotion) {
-        this.startPosiotion = startPosiotion;
+    public int getNumberOfParameter() {
+        return numberOfParameter;
     }
 
-    public String getEndPosiotion() {
-        return endPosiotion;
+    public void setNumberOfParameter(int numberOfParameter) {
+        this.numberOfParameter = numberOfParameter;
     }
 
-    public void setEndPosiotion(String endPosiotion) {
-        this.endPosiotion = endPosiotion;
+    public String getStartPosition() {
+        return startPosition;
+    }
+
+    public void setStartPosition(String startPosition) {
+        this.startPosition = startPosition;
+    }
+
+    public String getEndPosition() {
+        return endPosition;
+    }
+
+    public void setEndPosition(String endPosition) {
+        this.endPosition = endPosition;
     }
 
     public long getTimestamp() {
@@ -233,22 +150,6 @@ public class Track {
         this.endTrackTimeStamp = endTrackTimeStamp;
     }
 
-    public Boolean getPrivateTrack() {
-        return privateTrack;
-    }
-
-    public void setPrivateTrack(Boolean privateTrack) {
-        this.privateTrack = privateTrack;
-    }
-
-    public Boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
-
     public long getDistanceFromStart() {
         return distanceFromStart;
     }
@@ -265,12 +166,60 @@ public class Track {
         this.ecoPointsScore = ecoPointsScore;
     }
 
-    public List<Offence> getOffences() {
-        return offences;
+    public int getAmountOfSamples() {
+        return amountOfSamples;
     }
 
-    public void setOffences(List<Offence> offences) {
-        this.offences = offences;
+    public void setAmountOfSamples(int amountOfSamples) {
+        this.amountOfSamples = amountOfSamples;
+    }
+
+    public double getCombustion() {
+        return combustion;
+    }
+
+    public void setCombustion(double combustion) {
+        this.combustion = combustion;
+    }
+
+    public int getAverageSpeed() {
+        return averageSpeed;
+    }
+
+    public void setAverageSpeed(int averageSpeed) {
+        this.averageSpeed = averageSpeed;
+    }
+
+    public long getAverageRevolutionsPerMinute() {
+        return averageRevolutionsPerMinute;
+    }
+
+    public void setAverageRevolutionsPerMinute(long averageRevolutionsPerMinute) {
+        this.averageRevolutionsPerMinute = averageRevolutionsPerMinute;
+    }
+
+    public long getAverageThrottle() {
+        return averageThrottle;
+    }
+
+    public void setAverageThrottle(long averageThrottle) {
+        this.averageThrottle = averageThrottle;
+    }
+
+    public int getAmountOfSafetySamples() {
+        return amountOfSafetySamples;
+    }
+
+    public void setAmountOfSafetySamples(int amountOfSafetySamples) {
+        this.amountOfSafetySamples = amountOfSafetySamples;
+    }
+
+    public int getSafetyNegativeSamples() {
+        return safetyNegativeSamples;
+    }
+
+    public void setSafetyNegativeSamples(int safetyNegativeSamples) {
+        this.safetyNegativeSamples = safetyNegativeSamples;
     }
 
     public void addTrackRate(TrackRate trackRate) {
@@ -288,7 +237,7 @@ public class Track {
                 "id=" + id +
                 ", privateTrack=" + privateTrack +
                 ", isActive=" + isActive +
-                ", startPosiotion='" + startPosiotion + '\'' +
+                ", startPosiotion='" + startPosition + '\'' +
                 ", startTrackTimeStamp=" + startTrackTimeStamp +
                 '}';
     }

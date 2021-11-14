@@ -1,5 +1,6 @@
 package com.inz.carvisor.service;
 
+import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.entities.builders.CarBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
@@ -59,7 +60,7 @@ public class DevicesService {
      * @param regex    Part of name or surname we want to display
      * @return Returns the contents of the page that contains a list of devices in the JSON format.
      */
-    public ResponseEntity<String> list(HttpServletRequest request, int page, int pageSize, String regex) {
+    public ResponseEntity<String> list(HttpServletRequest request, int page, int pageSize, String regex) { //todo, do przepisania
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("DevicesREST.list cannot list device's (session not found)");
@@ -432,4 +433,10 @@ public class DevicesService {
     public Optional<Car> removeDevice(int id) {
         return carDaoJdbc.delete(id);
     }
+
+    public ResponseEntity<String> listFixed(HttpServletRequest request, int page, int pageSize, String regex) {
+        //todo, zadanie na kiedy indziej
+        return DefaultResponse.OK;
+    }
 }
+

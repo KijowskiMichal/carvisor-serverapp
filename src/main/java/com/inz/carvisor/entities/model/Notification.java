@@ -10,15 +10,17 @@ public class Notification {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
+    @ManyToOne
+    private Car car;
+
+    @ManyToOne
+    private User user;
+
     private boolean displayed;
     private int value;
     private long timeStamp;
-    @OneToOne
-    private User user;
     private NotificationType notificationType;
-
-    @OneToOne
-    private Car car;
     private String location;
 
     public Notification() {

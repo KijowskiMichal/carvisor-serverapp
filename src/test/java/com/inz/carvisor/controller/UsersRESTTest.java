@@ -93,7 +93,7 @@ class UsersRESTTest {
             sessionattr.put("user", user);
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/list/1/3/K/")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
             JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
             JSONArray jsonArray = new JSONArray(jsonObject.get("listOfUsers").toString());
@@ -130,7 +130,7 @@ class UsersRESTTest {
         sessionattr.put(Key.USER, user);
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/listUserNames/Ala/")
-                .sessionAttrs(sessionattr))
+                        .sessionAttrs(sessionattr))
                 .andReturn();
         JSONArray jsonArray = new JSONArray(result.getResponse().getContentAsString());
         List<Object> list = jsonArray.toList();

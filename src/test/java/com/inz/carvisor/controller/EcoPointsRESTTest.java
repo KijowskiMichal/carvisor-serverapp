@@ -51,10 +51,10 @@ class EcoPointsRESTTest {
 
     @AfterEach
     void cleanupDatabase() {
-        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
-        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
         carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
         settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
+        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
+        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
     }
 
     @Test
@@ -68,7 +68,6 @@ class EcoPointsRESTTest {
         MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR);
 
         List.of(
-                //dzielenie na pół musi zostać
                 new TrackBuilder().setStartTrackTimeStamp(670603061).setUser(driver).build(),
                 new TrackBuilder().setStartTrackTimeStamp(1585838261).setUser(driver).build(),
                 new TrackBuilder().setStartTrackTimeStamp(355070261).setUser(driver).build(),
@@ -76,7 +75,7 @@ class EcoPointsRESTTest {
         ).forEach(trackDaoJdbc::save);
 
         ResponseEntity<String> stringResponseEntity = ecoPointsREST.listUser(mockHttpServletRequest, driver.getId(),
-                670003061,1598382610);
+                670003061, 1598382610);
         assertEquals(200, stringResponseEntity.getStatusCodeValue());
         System.out.println(stringResponseEntity.getBody());
     }
