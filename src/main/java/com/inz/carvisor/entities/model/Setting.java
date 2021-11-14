@@ -16,7 +16,6 @@ public class Setting {
     private Integer value;
 
     public Setting() {
-        super();
     }
 
     public Setting(String nameOfSetting, Integer value) {

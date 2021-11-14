@@ -1,19 +1,28 @@
 package com.inz.carvisor.widetest;
 
 import com.inz.carvisor.controller.TrackREST;
-import com.inz.carvisor.dao.*;
+import com.inz.carvisor.dao.CarDaoJdbc;
+import com.inz.carvisor.dao.TrackDaoJdbc;
+import com.inz.carvisor.dao.TrackRateDaoJdbc;
+import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.builders.CarBuilder;
 import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
-import com.inz.carvisor.entities.model.*;
+import com.inz.carvisor.entities.model.Car;
+import com.inz.carvisor.entities.model.Track;
+import com.inz.carvisor.entities.model.TrackRate;
+import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.service.TrackService;
-import com.inz.carvisor.util.RequestBuilder;
 import com.inz.carvisor.util.FileDataGetter;
+import com.inz.carvisor.util.RequestBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONObject;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpEntity;
@@ -66,12 +75,12 @@ public class TrackRatesTest {
     @Test
     void allTrackRatesShouldBeSaved() {
         HttpServletRequest httpServletRequest = RequestBuilder.mockHttpServletRequest(mockUserFromDatabase(), mockCarFromDatabase());
-        trackService.startTrack(httpServletRequest,new HttpEntity<>(startTrackString));
+        trackService.startTrack(httpServletRequest, new HttpEntity<>(startTrackString));
 
-        trackService.updateTrackData(httpServletRequest,new HttpEntity<>(trackRatesString));
+        trackService.updateTrackData(httpServletRequest, new HttpEntity<>(trackRatesString));
         List<TrackRate> listOfTrackRates = trackDaoJdbc.getAll().get(0).getListOfTrackRates();
 
-        Assertions.assertEquals(1,trackDaoJdbc.getAll().size());
+        Assertions.assertEquals(1, trackDaoJdbc.getAll().size());
         Assertions.assertEquals(trackRatesJson.keySet().size(), listOfTrackRates.size());
     }
 

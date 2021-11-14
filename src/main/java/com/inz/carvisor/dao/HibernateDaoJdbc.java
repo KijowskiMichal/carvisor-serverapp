@@ -20,6 +20,7 @@ import java.util.Optional;
  */
 @Repository
 public abstract class HibernateDaoJdbc<T> {
+
     HibernateRequests hibernateRequests;
     Logger logger;
 
@@ -28,6 +29,8 @@ public abstract class HibernateDaoJdbc<T> {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
     }
+
+    protected abstract String getTableName();
 
     public Optional<T> save(T t) {
         Session session = null;
@@ -49,8 +52,8 @@ public abstract class HibernateDaoJdbc<T> {
     }
 
     public Optional<T> update(T t) {
-        Transaction tx = null;
         Session session = null;
+        Transaction tx = null;
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
@@ -58,7 +61,10 @@ public abstract class HibernateDaoJdbc<T> {
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
+            if (session != null) session.close();
             e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
         }
         return Optional.of(t);
     }
@@ -105,6 +111,7 @@ public abstract class HibernateDaoJdbc<T> {
         else return listOfObjects;
     }
 
+    @SuppressWarnings("unchecked")
     public List<T> getList(String query, int page, int pageSize) {
         Session session = null;
         Transaction transaction = null;
@@ -128,6 +135,11 @@ public abstract class HibernateDaoJdbc<T> {
         else return listOfObjects;
     }
 
+    public List<T> getList(long fromTimeStampEpochSeconds, long toTimeStampEpochSeconds, int page, int pageSize) {
+        return getList(createSelectByTimeStamp(fromTimeStampEpochSeconds, toTimeStampEpochSeconds), page, pageSize);
+    }
+
+    @SuppressWarnings("unchecked")
     public int checkMaxPage(String query, int pageSize) {
         Session session = null;
         Transaction transaction = null;
@@ -175,7 +187,9 @@ public abstract class HibernateDaoJdbc<T> {
         return getList(createSelectGetAll());
     }
 
-    protected abstract String getTableName();
+    public int getMaxPageSize(long fromTimeStampEpochSeconds, long toTimeStampEpochSeconds, int pageSize) {
+        return checkMaxPage(createSelectByTimeStamp(fromTimeStampEpochSeconds, toTimeStampEpochSeconds), pageSize);
+    }
 
     protected final String createSelectGetById(Number number) {
         return "SELECT x FROM " + getTableName() + " x " + "WHERE x.id=" + number;
@@ -183,6 +197,13 @@ public abstract class HibernateDaoJdbc<T> {
 
     protected final String createSelectGetAll() {
         return "SELECT x FROM " + getTableName() + " x ";
+    }
+
+    protected final String createSelectByTimeStamp(long fromTimeStampEpochSeconds, long toTimeStampEpochSeconds) {
+        return "SELECT x from " + getTableName() + " x " +
+                "WHERE " +
+                "x.timeStamp > " + fromTimeStampEpochSeconds + " AND " +
+                "x.timeStamp < " + toTimeStampEpochSeconds + " ";
     }
 
     private HibernateException createThereIsNoSuchElementException(String tableName, Number givenId) {

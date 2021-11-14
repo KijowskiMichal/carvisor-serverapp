@@ -24,14 +24,6 @@ public class NotificationDaoJdbc extends HibernateDaoJdbc<Notification> {
         return getList("SELECT n FROM Notification n WHERE n.user.id = " + userId + " and displayed = false");
     }
 
-    public int getMaxPageSize(long fromTimeStampEpochSeconds, long toTimeStampEpochSeconds, int page, int pageSize) {
-        String selectQuery = "SELECT o from Notification o " +
-                "WHERE " +
-                "o.timeStamp > " + fromTimeStampEpochSeconds + " AND " +
-                "o.timeStamp < " + toTimeStampEpochSeconds + " ";
-        return this.checkMaxPage(selectQuery, pageSize);
-    }
-
     public List<Notification> getNotifications(long fromTimeStampEpochSeconds, long toTimeStampEpochSeconds, int page, int pageSize) {
         String selectQuery = "SELECT o from Notification o " +
                 "WHERE " +

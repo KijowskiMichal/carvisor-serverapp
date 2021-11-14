@@ -2,8 +2,10 @@ package com.inz.carvisor.entities.model;
 
 import com.inz.carvisor.entities.enums.UserPrivileges;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Lob;
 
 @Entity
 public class User {
@@ -35,7 +37,6 @@ public class User {
     private int safetyNegativeSamples;
 
     public User() {
-        super();
         init();
     }
 

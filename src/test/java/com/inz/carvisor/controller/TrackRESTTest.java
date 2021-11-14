@@ -125,10 +125,10 @@ class TrackRESTTest {
             sessionattr.put("car", car);
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/track/updateTrackData/")
-                    .sessionAttrs(sessionattr)
-                    .content("{\"1622548178\": {\"obd\": {\"12\": 920.0, \"13\": 64.0, \"17\": 100.0}, \"gps_pos\": {\"longitude\": 16.91677, \"latitude\": 52.45726}}}")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+                            .sessionAttrs(sessionattr)
+                            .content("{\"1622548178\": {\"obd\": {\"12\": 920.0, \"13\": 64.0, \"17\": 100.0}, \"gps_pos\": {\"longitude\": 16.91677, \"latitude\": 52.45726}}}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
             tx.commit();
@@ -181,9 +181,9 @@ class TrackRESTTest {
             sessionattr.put("car", car);
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/track/updateTrack/")
-                    .sessionAttrs(sessionattr)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+                            .sessionAttrs(sessionattr)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
             tx.commit();
@@ -246,7 +246,7 @@ class TrackRESTTest {
 
             track = (Track) session.createQuery("SELECT t from Track t WHERE t.id = " + track.getId()).getSingleResult();
             Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertTrue(!track.getIsActive());
+            Assert.assertTrue(!track.getActive());
             //finishing
             tx.commit();
             session.close();

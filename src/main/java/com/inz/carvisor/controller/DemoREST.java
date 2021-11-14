@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -51,16 +52,16 @@ public class DemoREST {
     @RequestMapping(value = "/addAll", method = RequestMethod.GET)
     public ResponseEntity addAll() {
         List.of(
-                new UserBuilder().setNick("admin").setName("Jaźn").setSurname("Kowalski").setPassword(DigestUtils.sha256Hex("absx")).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(extractBase64Picture(1,USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12443134).setNfcTag("AAA").build(),
-                new UserBuilder().setNick("zenek").setName("Zenon").setSurname("Kolodziej").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(2,USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12378456).setNfcTag("AAB").build(),
-                new UserBuilder().setNick("user3").setName("Maciej").setSurname("Jakubowski").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(3,USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12354316).setNfcTag("AAC").build(),
-                new UserBuilder().setNick("user4").setName("Janina").setSurname("Zakrzewska").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(4,USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(23455342).setNfcTag("ABB").build(),
-                new UserBuilder().setNick("user5").setName("Piotr").setSurname("Blaszczyk").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(5,USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(132213).setNfcTag("ACC").build(),
-                new UserBuilder().setNick("user6").setName("Marian").setSurname("Ostrowski").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(6,USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12341).setNfcTag("BBA").build(),
-                new UserBuilder().setNick("user7").setName("Kamil").setSurname("Cieaslak").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(7,USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(123451).setNfcTag("BCA").build(),
-                new UserBuilder().setNick("user8").setName("Aleksander").setSurname("Zielizxski").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(8,USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(21344312).setNfcTag("ACA").build(),
-                new UserBuilder().setNick("user9").setName("Jakub").setSurname("Szymczak").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(9,USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(43656543).setNfcTag("CCC").build(),
-                new UserBuilder().setNick("user10").setName("Agnieszka").setSurname("Wasilewska").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(10,USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(34255342).setNfcTag("CDA").build()
+                new UserBuilder().setNick("admin").setName("Jaźn").setSurname("Kowalski").setPassword(DigestUtils.sha256Hex("absx")).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(extractBase64Picture(1, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12443134).setNfcTag("AAA").build(),
+                new UserBuilder().setNick("zenek").setName("Zenon").setSurname("Kolodziej").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(2, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12378456).setNfcTag("AAB").build(),
+                new UserBuilder().setNick("user3").setName("Maciej").setSurname("Jakubowski").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(3, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12354316).setNfcTag("AAC").build(),
+                new UserBuilder().setNick("user4").setName("Janina").setSurname("Zakrzewska").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(4, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(23455342).setNfcTag("ABB").build(),
+                new UserBuilder().setNick("user5").setName("Piotr").setSurname("Blaszczyk").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(5, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(132213).setNfcTag("ACC").build(),
+                new UserBuilder().setNick("user6").setName("Marian").setSurname("Ostrowski").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(6, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12341).setNfcTag("BBA").build(),
+                new UserBuilder().setNick("user7").setName("Kamil").setSurname("Cieaslak").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(7, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(123451).setNfcTag("BCA").build(),
+                new UserBuilder().setNick("user8").setName("Aleksander").setSurname("Zielizxski").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(8, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(21344312).setNfcTag("ACA").build(),
+                new UserBuilder().setNick("user9").setName("Jakub").setSurname("Szymczak").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(9, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(43656543).setNfcTag("CCC").build(),
+                new UserBuilder().setNick("user10").setName("Agnieszka").setSurname("Wasilewska").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(10, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(34255342).setNfcTag("CDA").build()
         ).forEach(userDaoJdbc::save);
 
         getCarList().forEach(carDaoJdbc::save);
@@ -82,7 +83,7 @@ public class DemoREST {
                         .setBrand("Ford")
                         .setModel("Focus")
                         .setProductionDate(1990)
-                        .setImage(extractBase64Picture(1,CAR_PHOTOS_DIRECTORY_NAME))
+                        .setImage(extractBase64Picture(1, CAR_PHOTOS_DIRECTORY_NAME))
                         .setPassword(DigestUtils.sha256Hex("safdsdsf"))
                         .setTank(50)
                         .setFuelNorm(7D)
@@ -92,7 +93,7 @@ public class DemoREST {
                         .setBrand("Renault")
                         .setModel("Laguna")
                         .setProductionDate(1993)
-                        .setImage(extractBase64Picture(2,CAR_PHOTOS_DIRECTORY_NAME))
+                        .setImage(extractBase64Picture(2, CAR_PHOTOS_DIRECTORY_NAME))
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
                         .setFuelNorm(7D)
@@ -102,7 +103,7 @@ public class DemoREST {
                         .setBrand("BMW")
                         .setModel("X6")
                         .setProductionDate(1993)
-                        .setImage(extractBase64Picture(3,CAR_PHOTOS_DIRECTORY_NAME))
+                        .setImage(extractBase64Picture(3, CAR_PHOTOS_DIRECTORY_NAME))
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
                         .setFuelNorm(7D)
@@ -112,7 +113,7 @@ public class DemoREST {
                         .setBrand("Kia")
                         .setModel("Picanto")
                         .setProductionDate(1993)
-                        .setImage(extractBase64Picture(4,CAR_PHOTOS_DIRECTORY_NAME))
+                        .setImage(extractBase64Picture(4, CAR_PHOTOS_DIRECTORY_NAME))
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
                         .setFuelNorm(7D)
@@ -122,7 +123,7 @@ public class DemoREST {
                         .setBrand("Audi")
                         .setModel("A4")
                         .setProductionDate(1993)
-                        .setImage(extractBase64Picture(5,CAR_PHOTOS_DIRECTORY_NAME))
+                        .setImage(extractBase64Picture(5, CAR_PHOTOS_DIRECTORY_NAME))
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
                         .setFuelNorm(7D)
@@ -132,7 +133,7 @@ public class DemoREST {
                         .setBrand("Ford")
                         .setModel("Fiesta")
                         .setProductionDate(1993)
-                        .setImage(extractBase64Picture(6,CAR_PHOTOS_DIRECTORY_NAME))
+                        .setImage(extractBase64Picture(6, CAR_PHOTOS_DIRECTORY_NAME))
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
                         .setFuelNorm(7D)
@@ -142,7 +143,7 @@ public class DemoREST {
                         .setBrand("Opel")
                         .setModel("Corsa")
                         .setProductionDate(1993)
-                        .setImage(extractBase64Picture(7,CAR_PHOTOS_DIRECTORY_NAME))
+                        .setImage(extractBase64Picture(7, CAR_PHOTOS_DIRECTORY_NAME))
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
                         .setFuelNorm(7D)
@@ -152,7 +153,7 @@ public class DemoREST {
                         .setBrand("Volkswagen")
                         .setModel("Passat")
                         .setProductionDate(1993)
-                        .setImage(extractBase64Picture(8,CAR_PHOTOS_DIRECTORY_NAME))
+                        .setImage(extractBase64Picture(8, CAR_PHOTOS_DIRECTORY_NAME))
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
                         .setFuelNorm(7D)
@@ -162,7 +163,7 @@ public class DemoREST {
                         .setBrand("Hyundai")
                         .setModel("I20")
                         .setProductionDate(1993)
-                        .setImage(extractBase64Picture(9,CAR_PHOTOS_DIRECTORY_NAME))
+                        .setImage(extractBase64Picture(9, CAR_PHOTOS_DIRECTORY_NAME))
                         .setPassword(DigestUtils.sha256Hex("dfsdfds"))
                         .setTank(50)
                         .setFuelNorm(7D)
@@ -172,7 +173,7 @@ public class DemoREST {
 
     public String extractBase64Picture(int pictureNumber, String directoryName) {
         try {
-            InputStream demoPhotosStream = this.getClass().getClassLoader().getResourceAsStream("/"+directoryName);
+            InputStream demoPhotosStream = this.getClass().getClassLoader().getResourceAsStream("/" + directoryName);
             assert demoPhotosStream != null;
             return new String(demoPhotosStream.readAllBytes());
         } catch (IOException ioException) {

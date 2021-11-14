@@ -62,10 +62,10 @@ public class ErrorsREST {
             @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) {
 
         if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
-            return getAllErrors(dateFromTimestamp,dateToTimestamp,page,pagesize);
+            return getAllErrors(dateFromTimestamp, dateToTimestamp, page, pagesize);
         } else if (securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, request)) {
             User user = (User) request.getSession().getAttribute(SessionAttributeKey.USER_KEY);
-            return getUserErrors(user,dateFromTimestamp,dateToTimestamp,page,pagesize);
+            return getUserErrors(user, dateFromTimestamp, dateToTimestamp, page, pagesize);
         } else {
             return DefaultResponse.UNAUTHORIZED;
         }

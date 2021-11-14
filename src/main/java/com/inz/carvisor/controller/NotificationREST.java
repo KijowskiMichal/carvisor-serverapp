@@ -47,15 +47,17 @@ public class NotificationREST {
     public ResponseEntity<String> getNotification(
             HttpServletRequest request, HttpEntity<String> httpEntity,
             @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
-            @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) {
+            @PathVariable("page") int page, @PathVariable("pagesize") int pageSize) {
 
         if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             List<Notification> notifications = notificationService
-                    .getNotifications(dateFromTimestamp, dateToTimestamp, page, pagesize);
-            int maxPage = notificationService.getMaxPage(dateFromTimestamp, dateToTimestamp, page, pagesize);
+                    .getNotifications(dateFromTimestamp, dateToTimestamp, page, pageSize);
 
-            JSONArray jsonArray = toAdvancedJsonArray(notifications);
-            JSONObject jsonObject = new JSONObject().put("page", page).put("pageMax", maxPage).put("listOfNotification", jsonArray);
+            JSONObject jsonObject = new JSONObject()
+                    .put(Key.PAGE, page)
+                    .put(Key.PAGE_MAX, notificationService.getMaxPage(dateFromTimestamp, dateToTimestamp, pageSize))
+                    .put(AttributeKey.Notification.LIST_OF_NOTIFICATIONS, toAdvancedJsonArray(notifications));
+
             return DefaultResponse.ok(jsonObject.toString());
         } else {
             return DefaultResponse.UNAUTHORIZED;
@@ -85,11 +87,7 @@ public class NotificationREST {
         return new JSONObject()
                 .put(AttributeKey.Notification.TYPE, notification.getNotificationType())
                 .put(AttributeKey.Notification.VALUE, notification.getValue())
-                .put(AttributeKey.Notification.DATE, notification.getTimeStamp())//todo DO OMÓWIENIA wysyłane longiem;
-                /*
-                  1234123
-                  jaki typ daty? W dokumentacji nie zmienione
-                 */
+                .put(AttributeKey.Notification.DATE, notification.getTimeStamp())
                 .put(AttributeKey.Notification.LOCATION, notification.getLocation())
                 .put(AttributeKey.Notification.USER_ID, notification.getUser().getId())
                 .put(AttributeKey.Notification.DEVICE_ID, notification.getCar().getId())

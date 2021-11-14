@@ -74,9 +74,9 @@ class CarAuthorizationControllerTest {
 
             //check with correct credentials
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/carAuthorization/authorize")
-                    .content("{\"licensePlate\": \"fghfdhfdhf\",\"password\": \"dsgsdg\"}")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+                            .content("{\"licensePlate\": \"fghfdhfdhf\",\"password\": \"dsgsdg\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
@@ -84,9 +84,9 @@ class CarAuthorizationControllerTest {
 
             //check with wrong password
             result = mockMvc.perform(MockMvcRequestBuilders.post("/carAuthorization/authorize")
-                    .content("{\"licensePlate\": \"fghfdhfdhf\",\"password\": \"dsgdsgujutrgdfsg\"}")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+                            .content("{\"licensePlate\": \"fghfdhfdhf\",\"password\": \"dsgdsgujutrgdfsg\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 406);
@@ -100,9 +100,9 @@ class CarAuthorizationControllerTest {
 
             //car does not exist
             result = mockMvc.perform(MockMvcRequestBuilders.post("/carAuthorization/authorize")
-                    .content("{\"licensePlate\": \"dsgdsgbfd\",\"password\": \"dsgdsgujutrgdfsg\"}")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+                            .content("{\"licensePlate\": \"dsgdsgbfd\",\"password\": \"dsgdsgujutrgdfsg\"}")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 406);
@@ -127,7 +127,7 @@ class CarAuthorizationControllerTest {
             sessionattr.put("car", new CarBuilder().setLicensePlate("fghfdhfdhf").build());
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
@@ -141,7 +141,7 @@ class CarAuthorizationControllerTest {
             sessionattr.put("car", new CarBuilder().setLicensePlate("ttrutrtt").build());
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
@@ -172,14 +172,14 @@ class CarAuthorizationControllerTest {
             sessionattr.put("car", new CarBuilder().setLicensePlate("fghfdhfdhf").build());
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
             Assert.assertNotNull(result.getRequest().getSession().getAttribute("car"));
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/logout")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
@@ -191,7 +191,7 @@ class CarAuthorizationControllerTest {
             sessionattr.put("user", new CarBuilder().setLicensePlate("fgdfdf").build());
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/logout")
-                    .sessionAttrs(sessionattr))
+                            .sessionAttrs(sessionattr))
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);

@@ -2,7 +2,10 @@ package com.inz.carvisor.entities.model;
 
 import com.inz.carvisor.entities.enums.OffenceType;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Offence {

@@ -75,7 +75,7 @@ class EcoPointsRESTTest {
         ).forEach(trackDaoJdbc::save);
 
         ResponseEntity<String> stringResponseEntity = ecoPointsREST.listUser(mockHttpServletRequest, driver.getId(),
-                670003061,1598382610);
+                670003061, 1598382610);
         assertEquals(200, stringResponseEntity.getStatusCodeValue());
         System.out.println(stringResponseEntity.getBody());
     }

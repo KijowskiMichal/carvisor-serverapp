@@ -8,7 +8,6 @@ import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.model.Offence;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
-import com.inz.carvisor.service.SecurityService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.text.Utilities;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,8 +56,8 @@ public class RankingController {
         int maxPage = getUserTracks.size() / pagesize + 1;
         List<Track> tracksListed = getUserTracks.subList(pagesize * page - 1, pagesize * page + pagesize);
         JSONObject jsonObject = toJson(userToCheck, safetyPointsRankingPosition, ecoPointsRankingPosition, tracksListed);
-        jsonObject.put(Key.PAGE,page);
-        jsonObject.put(Key.PAGE_MAX,maxPage);
+        jsonObject.put(Key.PAGE, page);
+        jsonObject.put(Key.PAGE_MAX, maxPage);
         return DefaultResponse.ok(jsonObject.toString());
     }
 
@@ -75,7 +73,7 @@ public class RankingController {
         return 1; //todo placeholder
     }
 
-    private JSONObject toJson(User user, int safetyRankingPosition, int ecoRankingPosition,List<Track> userTrack) {
+    private JSONObject toJson(User user, int safetyRankingPosition, int ecoRankingPosition, List<Track> userTrack) {
         return new JSONObject()
                 .put(AttributeKey.User.NAME, user.getName() + " " + user.getSurname())
                 .put(AttributeKey.User.SAFETY_POINTS, 3) //todo placeholder
@@ -109,8 +107,8 @@ public class RankingController {
     private JSONObject toJson(Track track) {
         return new JSONObject()
                 .put(AttributeKey.Track.DATE, track.getTimestamp())
-                .put(AttributeKey.Track.LOCATION_FROM, track.getStartPosiotion())
-                .put(AttributeKey.Track.LOCATION_TO, track.getEndPosiotion())
+                .put(AttributeKey.Track.LOCATION_FROM, track.getStartPosition())
+                .put(AttributeKey.Track.LOCATION_TO, track.getEndPosition())
                 .put(AttributeKey.Track.SAFETY_POINTS, 0)
                 .put(AttributeKey.Track.ECO_POINTS, track.getEcoPointsScore())
                 .put(AttributeKey.Track.LIST_OF_OFFENCES, toJSONArray(track.getOffences()));

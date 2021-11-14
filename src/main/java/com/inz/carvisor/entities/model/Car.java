@@ -26,7 +26,6 @@ public class Car {
     private Integer locationInterval;
 
     public Car() {
-        super();
     }
 
     public int getId() {

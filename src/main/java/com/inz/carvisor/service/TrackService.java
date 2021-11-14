@@ -101,12 +101,12 @@ public class TrackService {
             Track track = new TrackBuilder().build();
             track.setUser(user);
             track.setCar(car);
-            track.setIsActive(true);
+            track.setActive(true);
             track.setPrivateTrack(isPrivateTrack);
             track.setTimestamp(startTime);
             track.setStartTrackTimeStamp(startTime);
-            track.setStartPosiotion(gpsLatitude + ";" + gpsLongitude);
-            track.setEndPosiotion(gpsLatitude + ";" + gpsLongitude);
+            track.setStartPosition(gpsLatitude + ";" + gpsLongitude);
+            track.setEndPosition(gpsLatitude + ";" + gpsLongitude);
             track.setListOfTrackRates(new ArrayList<>());
             session.save(track);
             tx.commit();
@@ -183,7 +183,7 @@ public class TrackService {
                     long distance = 0;
                     //calculate distance
                     if (longitude != null && latitude != null) {
-                        String[] trackEndPosition = track.getEndPosiotion().split(";");
+                        String[] trackEndPosition = track.getEndPosition().split(";");
                         float y1 = Float.parseFloat(trackEndPosition[0]);
                         float x1 = Float.parseFloat(trackEndPosition[1]);
                         distance = (long) distFrom(y1, x1, latitude, longitude);
@@ -214,7 +214,7 @@ public class TrackService {
                         //end safety points calculated
                     }
                     track.addMetersToDistance(distance);
-                    track.setEndPosiotion(latitude + ";" + longitude);
+                    track.setEndPosition(latitude + ";" + longitude);
                     trackRate = new TrackRate(track.getId(), speed, throttle, latitude, longitude, rpm, distance, keyTimestamp);
                     session.save(trackRate);
                     track.addTrackRate(trackRate);
@@ -324,7 +324,7 @@ public class TrackService {
                     track.getUser().setSamples(track.getUser().getSamples() + track.getAmountOfSamples());
                     track.getUser().setSafetyNegativeSamples(track.getUser().getSafetyNegativeSamples() + track.getSafetyNegativeSamples());
                     track.getUser().setSafetySamples(track.getUser().getSafetySamples() + track.getAmountOfSafetySamples());
-                    track.setIsActive(false);
+                    track.setActive(false);
                     track.setEndTrackTimeStamp(time - 8);
                     track.getUser().addTrackToEcoPointScore(track);
                     session.update(track);
@@ -642,8 +642,8 @@ public class TrackService {
         for (Object tmp : tracks) {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("id", ((Track) tmp).getId());
-            jsonObject.put("from", ((Track) tmp).getStartPosiotion());
-            jsonObject.put("to", ((Track) tmp).getEndPosiotion());
+            jsonObject.put("from", ((Track) tmp).getStartPosition());
+            jsonObject.put("to", ((Track) tmp).getEndPosition());
             jsonObject.put("start", ((Track) tmp).getStartTrackTimeStamp());
             jsonObject.put("end", ((Track) tmp).getEndTrackTimeStamp());
             jsonObject.put("distance", ((Track) tmp).getDistanceFromStart());
