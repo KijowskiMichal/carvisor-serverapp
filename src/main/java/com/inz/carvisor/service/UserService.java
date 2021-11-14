@@ -112,23 +112,19 @@ public class UserService {
                 List<Track> tracks = selectQuery.list();
                 if (tracks.size() > 0) {
                     jsonObject.put("status", "Aktywny");
-                    SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-                    Date date = new Date(tracks.get(0).getStartTrackTimeStamp() * 1000);
-                    jsonObject.put("startTime", format.format(date));
-                    jsonObject.put("finishTime", "------");
+                    jsonObject.put("startTime", tracks.get(0).getStartTrackTimeStamp());
+                    jsonObject.put("finishTime", "null");
                     jsonObject.put("licensePlate", tracks.get(0).getCar().getLicensePlate());
                 } else {
                     selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.isActive = false AND t.user.id = " + ((User) tmp).getId() + " ORDER BY t.id DESC");
                     selectQuery.setMaxResults(1);
                     tracks = selectQuery.list();
                     if (tracks.size() > 0) {
-                        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yy HH:mm");
-                        Date date = new Date(tracks.get(0).getEndTrackTimeStamp() * 1000);
-                        jsonObject.put("finishTime", format.format(date));
-                    } else jsonObject.put("finishTime", "------");
+                        jsonObject.put("finishTime", tracks.get(0).getEndTrackTimeStamp());
+                    } else jsonObject.put("finishTime", "null");
                     jsonObject.put("status", "Nieaktywny");
-                    jsonObject.put("startTime", "------");
-                    jsonObject.put("licensePlate", "------");
+                    jsonObject.put("startTime", "null");
+                    jsonObject.put("licensePlate", "null");
                 }
                 Date now = new Date();
                 LocalDateTime before = LocalDateTime.ofInstant(Instant.ofEpochMilli(now.getTime()), TimeZone.getDefault().toZoneId()).with(LocalTime.MIN);

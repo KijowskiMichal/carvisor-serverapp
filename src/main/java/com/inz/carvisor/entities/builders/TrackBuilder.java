@@ -83,7 +83,10 @@ public class TrackBuilder {
 
         track.setDistanceFromStart(this.distance);
         track.setActive(this.active);
+
         track.setAmountOfSamples(this.samples);
+        track.setAmountOfSafetySamples(this.samples);
+        track.setSafetyNegativeSamples(this.samples);
         track.setEcoPointsScore(this.ecoPoints);
         track.setCombustion(this.combustion);
         track.setAverageSpeed(this.speed);
