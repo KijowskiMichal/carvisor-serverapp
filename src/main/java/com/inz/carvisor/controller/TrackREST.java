@@ -45,8 +45,8 @@ public class TrackREST {
     }
 
     @RequestMapping(value = "/getTrackData/{id}/{date}/", method = RequestMethod.GET)
-    public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID, @PathVariable("date") String date) {
-        return trackService.getTrackData(request, httpEntity, userID, date);
+    public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID, @PathVariable("date") long dateTimeStamp) {
+        return trackService.getTrackData(request, httpEntity, userID, dateTimeStamp);
     }
 
     @RequestMapping(value = "/getTrackDataForDevice/{id}/{date}/", method = RequestMethod.GET)

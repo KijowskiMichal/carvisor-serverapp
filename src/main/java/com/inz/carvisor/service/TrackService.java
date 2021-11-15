@@ -186,7 +186,7 @@ public class TrackService {
                         String[] trackEndPosition = track.getEndPosition().split(";");
                         float y1 = Float.parseFloat(trackEndPosition[0]);
                         float x1 = Float.parseFloat(trackEndPosition[1]);
-                        distance = (long) distFrom(y1, x1, latitude, longitude);
+                        distance = (long) calculateDistanceBetweenPoints(y1, x1, latitude, longitude);
                         //start safety points calculated
                         URL url = new URL("https://route.ls.hereapi.com/routing/7.2/calculateroute.json?jsonAttributes=1&waypoint0=" + latitude + "," + longitude + "&waypoint1=" + latitude + "," + longitude + "&routeattributes=sh%2Clg&legattributes=li&linkattributes=nl%2Cfc&mode=fastest%3Bcar%3Btraffic%3Aenabled&apiKey=EV06iVKQPJMrzRh1CIplbrUc00D-WxwoMDJM2wmZf5M");
                         String json = "";
@@ -350,7 +350,7 @@ public class TrackService {
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200, user data as JsonString.
      */
-    public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID, String date) {
+    public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID, long dateTimeStamp) {//
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("TrackService.getTrackData cannot send data (session not found)");
@@ -367,12 +367,10 @@ public class TrackService {
             JSONArray points = new JSONArray();
             JSONArray startPoints = new JSONArray();
             JSONArray endPoints = new JSONArray();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            ZonedDateTime before = LocalDate.parse(date, formatter).atStartOfDay(ZoneId.systemDefault());
-            Timestamp timestampBefore = Timestamp.valueOf(before.toLocalDateTime());
-            ZonedDateTime after = before.with(LocalTime.MAX);
-            Timestamp timestampAfter = Timestamp.valueOf(after.toLocalDateTime());
-            Query query = session.createQuery("Select t from TrackRate t WHERE t.timestamp > " + timestampBefore.getTime() + " AND  t.timestamp < " + timestampAfter.getTime() + " AND t.track.user.id = " + userID + " ORDER BY t.id ASC");
+
+            long endOfDay = dateTimeStamp - 86400; //todo cała metoda do przepisania
+
+            Query query = session.createQuery("Select t from TrackRate t WHERE t.timestamp > " + dateTimeStamp + " AND  t.timestamp < " + endOfDay + " AND t.track.user.id = " + userID + " ORDER BY t.id ASC");
             List<TrackRate> trackRates = query.getResultList();
             boolean first = true;
             HashSet<Long> tracksID = new HashSet<>();
@@ -690,7 +688,7 @@ public class TrackService {
         return new URL(urlString);
     }
 
-    private float distFrom(double y1, double x1, double y2, double x2) {
+    private float calculateDistanceBetweenPoints(double y1, double x1, double y2, double x2) {
         double earthRadiusInMeters = 6371000;
         double dLat = Math.toRadians(y2 - y1);
         double dLng = Math.toRadians(x2 - x1);
