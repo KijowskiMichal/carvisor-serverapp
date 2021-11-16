@@ -28,4 +28,8 @@ public class CalendarService {
     public Optional<Event> add(Event event) {
         return calendarDaoJdbc.save(event);
     }
+
+    public Optional<Event> getEvent(long id) {
+        return calendarDaoJdbc.get(id);
+    }
 }

@@ -7,11 +7,13 @@ import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Event;
 import com.inz.carvisor.service.CalendarService;
 import com.inz.carvisor.service.SecurityService;
+import com.inz.carvisor.util.jsonparser.EventJsonParser;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,24 +39,34 @@ public class CalendarController {
         if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
             return DefaultResponse.UNAUTHORIZED;
         }
-
         JSONObject jsonObject = new JSONObject(httpEntity.getBody());
-        Event event = new EventBuilder()
-                .setStartTimestamp(jsonObject.getLong(AttributeKey.Calendar.START_TIMESTAMP))
-                .setEndTimestamp(jsonObject.getLong(AttributeKey.Calendar.END_TIMESTAMP))
-                .setTitle(jsonObject.getString(AttributeKey.Calendar.TITLE))
-                .setDescription(jsonObject.getString(AttributeKey.Calendar.DESCRIPTION))
-                .setType(jsonObject.getString(AttributeKey.Calendar.TYPE))
-                .setDeviceId(jsonObject.getLong(AttributeKey.Calendar.DEVICE_ID))
-                .setDraggable(jsonObject.getBoolean(AttributeKey.Calendar.DRAGGABLE))
-                .setRemind(jsonObject.getBoolean(AttributeKey.Calendar.REMIND))
-                .build();
-
+        Event event = EventJsonParser.parse(jsonObject);
         Optional<Event> add = calendarService.add(event);
         if (add.isPresent()) {
             return DefaultResponse.OK;
         } else {
             return DefaultResponse.UNAUTHORIZED;
         }
+    }
+
+    @RequestMapping(value = "/getEvent/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    public ResponseEntity<String> getEvent(HttpServletRequest request, HttpEntity<String> httpEntity,
+                                           @PathVariable("id") long id) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+            return DefaultResponse.UNAUTHORIZED;
+        }
+        calendarService.getEvent(id);
+        Optional<Event> eventOptional = calendarService.getEvent(id);
+        if (eventOptional.isEmpty()) {
+            return DefaultResponse.BAD_REQUEST;
+        }
+
+        try {
+            JSONObject jsonObject = EventJsonParser.parse(eventOptional.get());
+            return DefaultResponse.ok(jsonObject.toString());
+        } catch (Exception e) {
+            return DefaultResponse.BAD_REQUEST;
+        }
+
     }
 }

@@ -54,7 +54,33 @@ class CalendarControllerTest {
 
     @Test
     void add() {
-        JSONObject jsonObject = new JSONObject()
+        JSONObject jsonObject = mockJSONObject();
+        HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
+        assertEquals(0L, calendarDaoJdbc.getAll().size());
+        ResponseEntity<String> responseEntity = calendarController.add(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), httpEntity);
+        assertEquals(200,responseEntity.getStatusCodeValue());
+        assertEquals(1L, calendarDaoJdbc.getAll().size());
+    }
+
+    @Test
+    void getEvent() {
+        JSONObject jsonObject = mockJSONObject();
+        HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
+        assertEquals(0L, calendarDaoJdbc.getAll().size());
+        ResponseEntity<String> addResponseEntity = calendarController.add(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), httpEntity);
+        assertEquals(200,addResponseEntity.getStatusCodeValue());
+        assertEquals(1L, calendarDaoJdbc.getAll().size());
+
+        long id = calendarDaoJdbc.getAll().get(0).getId();
+        ResponseEntity<String> getResponseEntity = calendarController.getEvent(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), httpEntity,id);
+        assertEquals(200,getResponseEntity.getStatusCodeValue());
+        String eventFromGetResponseEntity = getResponseEntity.getBody();
+        JSONObject event = new JSONObject(eventFromGetResponseEntity);
+        assertEquals("string",event.getString(AttributeKey.Calendar.TITLE));
+    }
+
+    private JSONObject mockJSONObject() {
+        return new JSONObject()
                 .put(AttributeKey.Calendar.START_TIMESTAMP,10)
                 .put(AttributeKey.Calendar.END_TIMESTAMP,10)
                 .put(AttributeKey.Calendar.TITLE,"string")
@@ -63,11 +89,5 @@ class CalendarControllerTest {
                 .put(AttributeKey.Calendar.DEVICE_ID,1)
                 .put(AttributeKey.Calendar.DRAGGABLE,true)
                 .put(AttributeKey.Calendar.REMIND,false);
-
-        HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
-        assertEquals(0L, calendarDaoJdbc.getAll().size());
-        ResponseEntity<String> responseEntity = calendarController.add(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), httpEntity);
-        assertEquals(200,responseEntity.getStatusCodeValue());
-        assertEquals(1L, calendarDaoJdbc.getAll().size());
     }
 }
