@@ -51,13 +51,13 @@ public class TrackREST {
 
     @RequestMapping(value = "/getTrackDataForDevice/{id}/{date}/", method = RequestMethod.GET)
     public ResponseEntity getTrackDataForDevice(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID, @PathVariable("date") long date) {
-        return trackService.getTrackDataForDevice(request, httpEntity, userID, date);
+        return trackService.getTrackDataForDevice(request, httpEntity, userID, date * 1000);
     }
 
     @RequestMapping(value = "/list/{id}/{page}/{pagesize}/{dateFrom}/{dateTo}/", method = RequestMethod.GET)
     public ResponseEntity list(HttpServletRequest request, HttpEntity<String> httpEntity,
                                @PathVariable("id") int userID, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("dateFrom") long dateFrom, @PathVariable("dateTo") long dateTo) {
-        return trackService.list(request, userID, page, pageSize, dateFrom, dateTo);
+        return trackService.list(request, userID, page, pageSize, dateFrom * 1000, dateTo * 1000);
     }
 
     @RequestMapping(value = "/reverseGeocoding/{lon}/{lat}/", method = RequestMethod.GET)
