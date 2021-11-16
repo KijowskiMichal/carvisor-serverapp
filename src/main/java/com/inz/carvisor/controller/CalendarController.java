@@ -10,6 +10,7 @@ import com.inz.carvisor.service.SecurityService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -31,8 +32,8 @@ public class CalendarController {
         this.securityService = securityService;
     }
 
-    @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public ResponseEntity startTrack(HttpServletRequest request, HttpEntity<String> httpEntity) {
+    @RequestMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    public ResponseEntity<String> add(HttpServletRequest request, HttpEntity<String> httpEntity) {
         if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
             return DefaultResponse.UNAUTHORIZED;
         }
