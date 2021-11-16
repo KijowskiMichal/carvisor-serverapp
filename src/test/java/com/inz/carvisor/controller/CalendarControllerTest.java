@@ -86,11 +86,19 @@ class CalendarControllerTest {
     @Test
     void getEventsByYearAndMonth() {
         putEventsInDatabase();
-        ResponseEntity<String> getResponseEntity = calendarController.getEvent(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), null, "6", "1990");
+        ResponseEntity<String> getResponseEntity = calendarController.get(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), null, "6", "1990");
         assertEquals(200, getResponseEntity.getStatusCodeValue());
         String eventFromGetResponseEntity = getResponseEntity.getBody();
         JSONArray event = new JSONArray(eventFromGetResponseEntity);
         assertEquals(1,event.length());
+    }
+
+    @Test
+    void remove() {
+        putEventsInDatabase();
+        assertEquals(3,calendarDaoJdbc.getAll().size());
+        calendarController.remove(RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),null,1);
+        assertEquals(2,calendarDaoJdbc.getAll().size());
     }
 
     private JSONObject mockJSONObject() {

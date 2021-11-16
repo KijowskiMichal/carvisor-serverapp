@@ -71,8 +71,8 @@ public class CalendarController {
         }
     }
 
-    @RequestMapping(value = "/calendar/get/{month}/{year}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public ResponseEntity<String> getEvent(HttpServletRequest request, HttpEntity<String> httpEntity,
+    @RequestMapping(value = "/get/{month}/{year}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity<String> get(HttpServletRequest request, HttpEntity<String> httpEntity,
                                            @PathVariable("month") String month, @PathVariable("year") String year) {
         if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
             return DefaultResponse.UNAUTHORIZED;
@@ -83,6 +83,21 @@ public class CalendarController {
             JSONArray jsonArray = EventJsonParser.parse(eventOptional);
             return DefaultResponse.ok(jsonArray.toString());
         } catch (Exception e) {
+            return DefaultResponse.BAD_REQUEST;
+        }
+    }
+
+    @RequestMapping(value = "/remove/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
+    public ResponseEntity<String> remove(HttpServletRequest request, HttpEntity<String> httpEntity,
+                                           @PathVariable("id") int id) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+            return DefaultResponse.UNAUTHORIZED;
+        }
+
+        Optional<Event> remove = calendarService.remove(id);
+        if (remove.isPresent()) {
+            return DefaultResponse.OK;
+        } else {
             return DefaultResponse.BAD_REQUEST;
         }
     }

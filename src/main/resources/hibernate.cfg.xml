@@ -25,5 +25,6 @@
         <mapping class="com.inz.carvisor.entities.model.Offence" />
         <mapping class="com.inz.carvisor.entities.model.Notification" />
         <mapping class="com.inz.carvisor.entities.model.Event" />
+        <mapping class="com.inz.carvisor.entities.model.Zone" />
     </session-factory>
 </hibernate-configuration>

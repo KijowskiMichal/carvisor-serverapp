@@ -54,8 +54,11 @@ public class RankingController {
                 .collect(Collectors.toList());//todo bad solution
         //todo this is even worse
         int maxPage = getUserTracks.size() / pagesize + 1;
-        List<Track> tracksListed = getUserTracks.subList(pagesize * page - 1, pagesize * page + pagesize);
-        JSONObject jsonObject = toJson(userToCheck, safetyPointsRankingPosition, ecoPointsRankingPosition, tracksListed);
+
+        int from = Math.max(0,page*maxPage);
+        int to = Math.min(getUserTracks.size(),(page+1)*maxPage);
+        //todo whole method need stabilization
+        JSONObject jsonObject = toJson(userToCheck, safetyPointsRankingPosition, ecoPointsRankingPosition, getUserTracks.subList(to,from-1));
         jsonObject.put(Key.PAGE, page);
         jsonObject.put(Key.PAGE_MAX, maxPage);
         return DefaultResponse.ok(jsonObject.toString());
@@ -112,5 +115,9 @@ public class RankingController {
                 .put(AttributeKey.Track.SAFETY_POINTS, 0)
                 .put(AttributeKey.Track.ECO_POINTS, track.getEcoPointsScore())
                 .put(AttributeKey.Track.LIST_OF_OFFENCES, toJSONArray(track.getOffences()));
+    }
+
+    private List<Track> getPage(List<Track> list, int page, int maxPage) {
+        return null;
     }
 }
