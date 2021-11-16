@@ -8,6 +8,7 @@ import com.inz.carvisor.entities.model.Event;
 import com.inz.carvisor.service.CalendarService;
 import com.inz.carvisor.service.SecurityService;
 import com.inz.carvisor.util.jsonparser.EventJsonParser;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -49,7 +51,7 @@ public class CalendarController {
         }
     }
 
-    @RequestMapping(value = "/getEvent/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    @RequestMapping(value = "/getEvent/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> getEvent(HttpServletRequest request, HttpEntity<String> httpEntity,
                                            @PathVariable("id") long id) {
         if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
@@ -67,6 +69,21 @@ public class CalendarController {
         } catch (Exception e) {
             return DefaultResponse.BAD_REQUEST;
         }
+    }
 
+    @RequestMapping(value = "/calendar/get/{month}/{year}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity<String> getEvent(HttpServletRequest request, HttpEntity<String> httpEntity,
+                                           @PathVariable("month") String month, @PathVariable("year") String year) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+            return DefaultResponse.UNAUTHORIZED;
+        }
+        List<Event> eventOptional = calendarService.getEventList(Integer.parseInt(month),Integer.parseInt(year));
+
+        try {
+            JSONArray jsonArray = EventJsonParser.parse(eventOptional);
+            return DefaultResponse.ok(jsonArray.toString());
+        } catch (Exception e) {
+            return DefaultResponse.BAD_REQUEST;
+        }
     }
 }

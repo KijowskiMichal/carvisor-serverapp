@@ -3,7 +3,10 @@ package com.inz.carvisor.util.jsonparser;
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.entities.builders.EventBuilder;
 import com.inz.carvisor.entities.model.Event;
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class EventJsonParser {
 
@@ -18,6 +21,12 @@ public class EventJsonParser {
                 .setDraggable(jsonObject.getBoolean(AttributeKey.Calendar.DRAGGABLE))
                 .setRemind(jsonObject.getBoolean(AttributeKey.Calendar.REMIND))
                 .build();
+    }
+
+    public static JSONArray parse(List<Event> eventList) {
+        JSONArray jsonArray = new JSONArray();
+        eventList.forEach(event -> jsonArray.put(parse(event)));
+        return jsonArray;
     }
 
     public static JSONObject parse(Event event) {

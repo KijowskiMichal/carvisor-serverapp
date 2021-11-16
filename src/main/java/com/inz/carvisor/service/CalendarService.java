@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,5 +32,9 @@ public class CalendarService {
 
     public Optional<Event> getEvent(long id) {
         return calendarDaoJdbc.get(id);
+    }
+
+    public List<Event> getEventList(int month, int year) {
+        return calendarDaoJdbc.getEvents(month, year);
     }
 }
