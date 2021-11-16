@@ -70,7 +70,18 @@ public class AttributeKey {
         public static final String LOCATION_TO = "locationTo";
         public static final String SAFETY_POINTS = "safetyPoints";
         public static final String LIST_OF_OFFENCES = "listOfOffencess";
+    }
 
+    public static class Calendar {
 
+        public static final String ID = "id";
+        public static final String START_TIMESTAMP = "start";
+        public static final String END_TIMESTAMP = "end";
+        public static final String TITLE = "title";
+        public static final String DESCRIPTION = "description";
+        public static final String TYPE = "type";
+        public static final String DEVICE_ID = "device";
+        public static final String DRAGGABLE = "draggable";
+        public static final String REMIND = "remind";
     }
 }
