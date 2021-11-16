@@ -50,13 +50,13 @@ public class TrackREST {
     }
 
     @RequestMapping(value = "/getTrackDataForDevice/{id}/{date}/", method = RequestMethod.GET)
-    public ResponseEntity getTrackDataForDevice(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID, @PathVariable("date") String date) {
+    public ResponseEntity getTrackDataForDevice(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID, @PathVariable("date") long date) {
         return trackService.getTrackDataForDevice(request, httpEntity, userID, date);
     }
 
     @RequestMapping(value = "/list/{id}/{page}/{pagesize}/{dateFrom}/{dateTo}/", method = RequestMethod.GET)
     public ResponseEntity list(HttpServletRequest request, HttpEntity<String> httpEntity,
-                               @PathVariable("id") int userID, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("dateFrom") String dateFrom, @PathVariable("dateTo") String dateTo) {
+                               @PathVariable("id") int userID, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("dateFrom") long dateFrom, @PathVariable("dateTo") long dateTo) {
         return trackService.list(request, userID, page, pageSize, dateFrom, dateTo);
     }
 

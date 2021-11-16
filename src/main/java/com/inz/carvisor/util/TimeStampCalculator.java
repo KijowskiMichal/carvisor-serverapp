@@ -1,6 +1,9 @@
 package com.inz.carvisor.util;
 
+import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.time.*;
 
 public class TimeStampCalculator {
@@ -21,5 +24,11 @@ public class TimeStampCalculator {
 
     public static int getLastDayOfMonth(int month, int year) {
         return Month.of(month).length(Year.isLeap(year));
+    }
+
+    public static String toDate(long x) {
+        Date date = new Date(x);
+        Format format = new SimpleDateFormat("yyyy-MM-dd");
+        return format.format(date);
     }
 }

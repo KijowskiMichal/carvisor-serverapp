@@ -38,7 +38,7 @@ public class CalendarService {
         return calendarDaoJdbc.getEvents(month, year);
     }
 
-    public Optional<Event> remove(int id) {
+    public Optional<Event> remove(long id) {
         return calendarDaoJdbc.delete(id);
     }
 }

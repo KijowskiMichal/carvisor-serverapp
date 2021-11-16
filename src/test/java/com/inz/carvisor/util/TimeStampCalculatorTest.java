@@ -20,6 +20,6 @@ class TimeStampCalculatorTest {
 
     @Test
     void getLastDay() {
-        assertEquals(644198400,TimeStampCalculator.getLastDayTimestamp(6,1990));
+        assertEquals(646704000,TimeStampCalculator.getLastDayTimestamp(6,1990));
     }
 }

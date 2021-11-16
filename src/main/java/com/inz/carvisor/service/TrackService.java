@@ -10,6 +10,7 @@ import com.inz.carvisor.entities.model.TrackRate;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.util.EcoPointsCalculator;
+import com.inz.carvisor.util.TimeStampCalculator;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -471,7 +472,7 @@ public class TrackService {
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200, track data as JsonString.
      */
-    public ResponseEntity getTrackDataForDevice(HttpServletRequest request, HttpEntity<String> httpEntity, int userID, String date) {
+    public ResponseEntity getTrackDataForDevice(HttpServletRequest request, HttpEntity<String> httpEntity, int userID, long dateLong) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("TrackService.getTrackDataForDevice cannot send data (session not found)");
@@ -488,11 +489,13 @@ public class TrackService {
             JSONArray points = new JSONArray();
             JSONArray startPoints = new JSONArray();
             JSONArray endPoints = new JSONArray();
+            String date = TimeStampCalculator.toDate(dateLong);
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             ZonedDateTime before = LocalDate.parse(date, formatter).atStartOfDay(ZoneId.systemDefault());
             Timestamp timestampBefore = Timestamp.valueOf(before.toLocalDateTime());
             ZonedDateTime after = before.with(LocalTime.MAX);
             Timestamp timestampAfter = Timestamp.valueOf(after.toLocalDateTime());
+            TimeStampCalculator.getEndOfDayTimeStamp(dateLong);
             Query query = session.createQuery("Select t from TrackRate t WHERE t.timestamp > " + timestampBefore.getTime() + " AND  t.timestamp < " + timestampAfter.getTime() + " AND t.track.car.id = " + userID + " ORDER BY t.id ASC");
             List<TrackRate> trackRates = query.getResultList();
             boolean first = true;
@@ -588,11 +591,11 @@ public class TrackService {
      * @param request  Object of HttpServletRequest represents our request.
      * @param page     Page of tracks list. Parameter associated with pageSize.
      * @param pageSize Number of record we want to get.
-     * @param timeFrom Time from we want to list tracks.
-     * @param timeTo   Time up to we want to list tracks.
+     * @param timeFromLong Time from we want to list tracks.
+     * @param timeToLong   Time up to we want to list tracks.
      * @return HttpStatus 200 Returns the contents of the page that contains a list of tracks in the JSON format.
      */
-    public ResponseEntity<String> list(HttpServletRequest request, int userID, int page, int pageSize, String timeFrom, String timeTo) {
+    public ResponseEntity<String> list(HttpServletRequest request, int userID, int page, int pageSize, long timeFromLong, long timeToLong) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("TrackRest.list cannot list track's (session not found)");
@@ -602,6 +605,8 @@ public class TrackService {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
 
+        String timeFrom = TimeStampCalculator.toDate(timeFromLong);
+        String timeTo = TimeStampCalculator.toDate(timeToLong);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         ZonedDateTime before = LocalDate.parse(timeFrom, formatter).atStartOfDay(ZoneId.systemDefault());
         Timestamp timestampBefore = Timestamp.valueOf(before.toLocalDateTime());

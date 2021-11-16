@@ -89,7 +89,7 @@ public class CalendarController {
 
     @RequestMapping(value = "/remove/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
     public ResponseEntity<String> remove(HttpServletRequest request, HttpEntity<String> httpEntity,
-                                           @PathVariable("id") int id) {
+                                           @PathVariable("id") long id) {
         if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
             return DefaultResponse.UNAUTHORIZED;
         }

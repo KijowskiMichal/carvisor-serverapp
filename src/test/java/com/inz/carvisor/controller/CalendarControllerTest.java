@@ -97,7 +97,8 @@ class CalendarControllerTest {
     void remove() {
         putEventsInDatabase();
         assertEquals(3,calendarDaoJdbc.getAll().size());
-        calendarController.remove(RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),null,1);
+        long id = calendarDaoJdbc.getAll().get(0).getId();
+        calendarController.remove(RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),null,id);
         assertEquals(2,calendarDaoJdbc.getAll().size());
     }
 
