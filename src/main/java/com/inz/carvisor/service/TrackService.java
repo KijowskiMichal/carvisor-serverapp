@@ -387,8 +387,8 @@ public class TrackService {
             List<Track> userTracks = trackDaoJdbc.getUserTracks(userID);
             List<TrackRate> trackRates = userTracks.stream()
                     .flatMap(track -> track.getListOfTrackRates().stream())
-                    .filter(trackRate -> trackRate.getTimestamp() > dateTimeStamp)
-                    .filter(trackRate -> trackRate.getTimestamp() < endOfDay)
+                    .filter(trackRate -> trackRate.getTimestamp() < dateTimeStamp)
+                    .filter(trackRate -> trackRate.getTimestamp() > endOfDay)
                     .collect(Collectors.toList());
 
             boolean first = true;

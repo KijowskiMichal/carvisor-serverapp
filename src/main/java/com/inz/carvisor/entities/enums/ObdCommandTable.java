@@ -4,8 +4,7 @@ public enum ObdCommandTable {
     RPM("12", "0C", "Engine RPM"),
     SPEED("13", "0D", "Vehicle Speed"),
     THROTTLE_POS("17", "11", "Throttle Position"),
-    FUEL_LEVEL("47", "2F", "Fuel Level Input"),
-    ERRORS_LIST("07", "2F", "Fuel Level Input");//todo na kanale ogólnym discd
+    FUEL_LEVEL("47", "2F", "Fuel Level Input");
 
     String decimalPid;
     String hexadecimalPid;
