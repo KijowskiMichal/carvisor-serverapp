@@ -31,4 +31,10 @@ public class TimeStampCalculator {
         Format format = new SimpleDateFormat("yyyy-MM-dd");
         return format.format(date);
     }
+
+    public static long getStartOfDayTimeStamp(long timestamp) {
+        Timestamp zxc = new Timestamp(timestamp * 1000);
+        LocalDateTime localDateTime = zxc.toLocalDateTime();
+        return localDateTime.withHour(0).withMinute(0).withSecond(1).toEpochSecond(ZoneOffset.UTC);
+    }
 }

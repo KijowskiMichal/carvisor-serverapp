@@ -379,16 +379,16 @@ public class TrackService {
             JSONArray points = new JSONArray();
             JSONArray startPoints = new JSONArray();
             JSONArray endPoints = new JSONArray();
-
-            long endOfDay = dateTimeStamp - 86400; //todo cała metoda do przepisania
+            long startOfDay = TimeStampCalculator.getStartOfDayTimeStamp(dateTimeStamp);
+            long endOfDay = TimeStampCalculator.getEndOfDayTimeStamp(dateTimeStamp);
             //Query query = session.createQuery("Select t from TrackRate t WHERE t.timestamp > " + dateTimeStamp + " AND  t.timestamp < " + endOfDay + " AND t.track.user.id = " + userID + " ORDER BY t.id ASC");
             //List<TrackRate> trackRates = query.getResultList();
 
             List<Track> userTracks = trackDaoJdbc.getUserTracks(userID);
             List<TrackRate> trackRates = userTracks.stream()
                     .flatMap(track -> track.getListOfTrackRates().stream())
-                    .filter(trackRate -> trackRate.getTimestamp() < dateTimeStamp)
-                    .filter(trackRate -> trackRate.getTimestamp() > endOfDay)
+                    .filter(trackRate -> trackRate.getTimestamp() < endOfDay)
+                    .filter(trackRate -> trackRate.getTimestamp() > startOfDay)
                     .collect(Collectors.toList());
 
             boolean first = true;
