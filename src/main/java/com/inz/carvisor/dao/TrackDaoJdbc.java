@@ -45,4 +45,23 @@ public class TrackDaoJdbc extends HibernateDaoJdbc<Track> {
         }
         return track;
     }
+
+    public List<Track> getCarTracks(long carId) {
+        Session session = null;
+        Transaction tx = null;
+        List<Track> track = null;
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+            Query query = session.createQuery("SELECT t FROM Track t WHERE t.car.id=" + carId);
+            track = (List<Track>) query.getResultList();
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
+        return track;
+    }
 }

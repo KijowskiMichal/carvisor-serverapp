@@ -1,5 +1,7 @@
 package com.inz.carvisor.service;
 
+import com.inz.carvisor.dao.TrackDaoJdbc;
+import com.inz.carvisor.dao.TrackRateDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.builders.TrackBuilder;
 import com.inz.carvisor.entities.enums.ObdCommandTable;
@@ -25,6 +27,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.UserDataHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -41,6 +44,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TrackService {
@@ -48,14 +52,20 @@ public class TrackService {
     private final static String SELECT_ACTIVE_TRACKS = "SELECT t FROM Track t WHERE t.isActive = true";
     HibernateRequests hibernateRequests;
     Logger logger;
-
-    @Autowired
+    TrackDaoJdbc trackDaoJdbc;
+    TrackRateDaoJdbc trackRateDaoJdbc;
     UserDaoJdbc userDaoJdbc;
 
     @Autowired
-    public TrackService(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger) {
+    public TrackService(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger,
+                        TrackDaoJdbc trackDaoJdbc, TrackRateDaoJdbc trackRateDaoJdbc,
+                        UserDaoJdbc userDaoJdbc
+    ) {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
+        this.trackDaoJdbc = trackDaoJdbc;
+        this.trackRateDaoJdbc = trackRateDaoJdbc;
+        this.userDaoJdbc = userDaoJdbc;
     }
 
     /**
@@ -370,16 +380,23 @@ public class TrackService {
             JSONArray endPoints = new JSONArray();
 
             long endOfDay = dateTimeStamp - 86400; //todo cała metoda do przepisania
+            //Query query = session.createQuery("Select t from TrackRate t WHERE t.timestamp > " + dateTimeStamp + " AND  t.timestamp < " + endOfDay + " AND t.track.user.id = " + userID + " ORDER BY t.id ASC");
+            //List<TrackRate> trackRates = query.getResultList();
 
-            Query query = session.createQuery("Select t from TrackRate t WHERE t.timestamp > " + dateTimeStamp + " AND  t.timestamp < " + endOfDay + " AND t.track.user.id = " + userID + " ORDER BY t.id ASC");
-            List<TrackRate> trackRates = query.getResultList();
+            List<Track> userTracks = trackDaoJdbc.getUserTracks(userID);
+            List<TrackRate> trackRates = userTracks.stream()
+                    .flatMap(track -> track.getListOfTrackRates().stream())
+                    .filter(trackRate -> trackRate.getTimestamp() > dateTimeStamp)
+                    .filter(trackRate -> trackRate.getTimestamp() > endOfDay)
+                    .collect(Collectors.toList());
+
             boolean first = true;
             HashSet<Long> tracksID = new HashSet<>();
             long last = 0;
             long timestamp = 0;
             for (TrackRate trackRate : trackRates) {
                 if (first) {
-                    Query query2 = session.createQuery("Select t from TrackRate t WHERE t.track.id = " + trackRate.getTrackId() + " AND t.timestamp < " + trackRate.getTimestamp() + " ORDER BY t.id ASC");
+                    Query query2 = session.createQuery("Select t from TrackRate t WHERE t.trackId = " + trackRate.getTrackId() + " AND t.timestamp < " + trackRate.getTimestamp() + " ORDER BY t.id ASC");
                     List<TrackRate> trackRates2 = query2.getResultList();
                     for (TrackRate trackRate2 : trackRates2) {
                         JSONObject tmp2 = new JSONObject();
@@ -407,7 +424,7 @@ public class TrackService {
                 tracksID.add(last);
                 timestamp = trackRate.getTimestamp();
             }
-            Query query3 = session.createQuery("Select t from TrackRate t WHERE t.track.id = " + last + " AND t.timestamp > " + timestamp + " ORDER BY t.id ASC");
+            Query query3 = session.createQuery("Select t from TrackRate t WHERE t.trackId = " + last + " AND t.timestamp > " + timestamp + " ORDER BY t.id ASC");
             List<TrackRate> trackRates3 = query3.getResultList();
             for (TrackRate trackRate3 : trackRates3) {
                 JSONObject tmp3 = new JSONObject();
@@ -472,7 +489,7 @@ public class TrackService {
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200, track data as JsonString.
      */
-    public ResponseEntity getTrackDataForDevice(HttpServletRequest request, HttpEntity<String> httpEntity, int userID, long dateLong) {
+    public ResponseEntity getTrackDataForDevice(HttpServletRequest request, HttpEntity<String> httpEntity, int carId, long dateLong) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("TrackService.getTrackDataForDevice cannot send data (session not found)");
@@ -496,15 +513,24 @@ public class TrackService {
             ZonedDateTime after = before.with(LocalTime.MAX);
             Timestamp timestampAfter = Timestamp.valueOf(after.toLocalDateTime());
             TimeStampCalculator.getEndOfDayTimeStamp(dateLong);
-            Query query = session.createQuery("Select t from TrackRate t WHERE t.timestamp > " + timestampBefore.getTime() + " AND  t.timestamp < " + timestampAfter.getTime() + " AND t.track.car.id = " + userID + " ORDER BY t.id ASC");
-            List<TrackRate> trackRates = query.getResultList();
+
+
+            List<TrackRate> trackRates = trackDaoJdbc.getCarTracks(carId)
+                    .stream()
+                    .flatMap(track -> track.getListOfTrackRates().stream())
+                    .filter(trackRate -> trackRate.getTimestamp() > timestampBefore.getTime())
+                    .filter(trackRate -> trackRate.getTimestamp() < timestampAfter.getTime())
+                    .collect(Collectors.toList());
+
+//            Query query = session.createQuery("Select t from TrackRate t WHERE t.timestamp > " + timestampBefore.getTime() + " AND  t.timestamp < " + timestampAfter.getTime() + " AND t.track.car.id = " + carId + " ORDER BY t.id ASC");
+//            List<TrackRate> trackRates = query.getResultList();
             boolean first = true;
             HashSet<Long> tracksID = new HashSet<>();
             long last = 0;
             long timestamp = 0;
             for (TrackRate trackRate : trackRates) {
-                if (first) {
-                    Query query2 = session.createQuery("Select t from TrackRate t WHERE t.track.id = " + trackRate.getTrackId() + " AND t.timestamp < " + trackRate.getTimestamp() + " ORDER BY t.id ASC");
+                if (first) {//todo fix
+                    Query query2 = session.createQuery("Select t from TrackRate t WHERE t.trackId = " + trackRate.getTrackId() + " AND t.timestamp < " + trackRate.getTimestamp() + " ORDER BY t.id ASC");
                     List<TrackRate> trackRates2 = query2.getResultList();
                     for (TrackRate trackRate2 : trackRates2) {
                         JSONObject tmp2 = new JSONObject();
@@ -532,7 +558,7 @@ public class TrackService {
                 tracksID.add(last);
                 timestamp = trackRate.getTimestamp();
             }
-            Query query3 = session.createQuery("Select t from TrackRate t WHERE t.track.id = " + last + " AND t.timestamp > " + timestamp + " ORDER BY t.id ASC");
+            Query query3 = session.createQuery("Select t from TrackRate t WHERE t.trackId = " + last + " AND t.timestamp > " + timestamp + " ORDER BY t.id ASC");
             List<TrackRate> trackRates3 = query3.getResultList();
             for (TrackRate trackRate3 : trackRates3) {
                 JSONObject tmp3 = new JSONObject();

@@ -2,10 +2,13 @@ package com.inz.carvisor.service;
 
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
+import com.inz.carvisor.dao.TrackDaoJdbc;
+import com.inz.carvisor.dao.TrackRateDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Track;
+import com.inz.carvisor.entities.model.TrackRate;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.util.PasswordManipulatior;
@@ -32,6 +35,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Class representing user com.inz.carvisor.service
@@ -43,13 +47,18 @@ public class UserService {
     HibernateRequests hibernateRequests;
     Logger logger;
     UserDaoJdbc userDaoJdbc;
+    TrackDaoJdbc trackDaoJdbc;
+    TrackRateDaoJdbc trackRateDaoJdbc;
 
     @Autowired
     public UserService(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger,
-                       UserDaoJdbc userDaoJdbc) {
+                       UserDaoJdbc userDaoJdbc, TrackDaoJdbc trackDaoJdbc,
+                       TrackRateDaoJdbc trackRateDaoJdbc) {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
         this.userDaoJdbc = userDaoJdbc;
+        this.trackDaoJdbc = trackDaoJdbc;
+        this.trackRateDaoJdbc = trackRateDaoJdbc;
     }
 
     /**
@@ -131,9 +140,26 @@ public class UserService {
                 Timestamp timestampBefore = Timestamp.valueOf(before);
                 LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochMilli(now.getTime()), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
                 Timestamp timestampAfter = Timestamp.valueOf(after);
-                Query countQ = session.createQuery("Select sum (t.distance) from TrackRate t WHERE t.timestamp > " + timestampBefore.getTime() + " AND  t.timestamp < " + timestampAfter.getTime() + " AND t.track.user.id = " + ((User) tmp).getId());
-                Long lonk = (Long) countQ.getSingleResult();
-                jsonObject.put("distance", String.valueOf(lonk == null ? 0 : lonk));
+
+                long sum = 0;
+                List<Long> collect = trackDaoJdbc.getUserTracks(((User) tmp).getId())
+                        .stream()
+                        .flatMap(track -> track.getListOfTrackRates().stream())
+                        .filter(trackRate -> trackRate.getTimestamp() > timestampBefore.getTime())
+                        .filter(trackRate -> trackRate.getTimestamp() < timestampAfter.getTime())
+                        .map(TrackRate::getDistance)
+                        .collect(Collectors.toList());
+
+                for (Long l: collect) {
+                    sum += l;
+                }
+
+//                Query countQ = session.createQuery("Select sum (t.distance) from TrackRate t WHERE t.timestamp > " +
+//                        timestampBefore.getTime() + " AND  t.timestamp < " + timestampAfter.getTime() +
+//                        " AND t.track.user.id = " + ((User) tmp).getId());
+//                Long lonk = (Long) countQ.getSingleResult();
+
+                jsonObject.put("distance", String.valueOf(sum));
                 tx.commit();
                 session.close();
             } catch (HibernateException e) {
