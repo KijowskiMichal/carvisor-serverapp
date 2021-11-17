@@ -212,6 +212,7 @@ public class TrackService {
                         JSONObject safetyAPI = new JSONObject(json);
                         float speedLimit;
                         int added = 1;
+
                         /*try {
                             speedLimit = safetyAPI.getJSONObject("response").getJSONArray("route").getJSONObject(0).getJSONArray("leg").getJSONObject(0).getJSONArray("link").getJSONObject(0).getFloat("speedLimit");
                             if (speed > speedLimit) {
@@ -387,7 +388,7 @@ public class TrackService {
             List<TrackRate> trackRates = userTracks.stream()
                     .flatMap(track -> track.getListOfTrackRates().stream())
                     .filter(trackRate -> trackRate.getTimestamp() > dateTimeStamp)
-                    .filter(trackRate -> trackRate.getTimestamp() > endOfDay)
+                    .filter(trackRate -> trackRate.getTimestamp() < endOfDay)
                     .collect(Collectors.toList());
 
             boolean first = true;
@@ -477,7 +478,6 @@ public class TrackService {
         } finally {
             if (session != null) session.close();
         }
-
         return responseEntity;
     }
 

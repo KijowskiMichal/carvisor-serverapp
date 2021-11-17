@@ -136,9 +136,9 @@ public class UserService {
                     jsonObject.put("licensePlate", "null");
                 }
                 Date now = new Date();
-                LocalDateTime before = LocalDateTime.ofInstant(Instant.ofEpochMilli(now.getTime()), TimeZone.getDefault().toZoneId()).with(LocalTime.MIN);
+                LocalDateTime before = LocalDateTime.ofInstant(Instant.ofEpochSecond(now.getTime()/1000), TimeZone.getDefault().toZoneId()).with(LocalTime.MIN);
                 Timestamp timestampBefore = Timestamp.valueOf(before);
-                LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochMilli(now.getTime()), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
+                LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochSecond(now.getTime()/1000), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
                 Timestamp timestampAfter = Timestamp.valueOf(after);
 
                 long sum = 0;
