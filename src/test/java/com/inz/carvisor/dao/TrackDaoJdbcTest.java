@@ -43,6 +43,8 @@ class TrackDaoJdbcTest {
     private MockMvc mockMvc;
     @Autowired
     CarDaoJdbc carDaoJdbc;
+    @Autowired
+    TrackRateDaoJdbc trackRateDaoJdbc;
 
     @AfterEach
     void clearDatabase() {
@@ -115,13 +117,22 @@ class TrackDaoJdbcTest {
         User userTwo = new UserBuilder().setName("Tomek").build();
         Car car = new CarBuilder().setBrand("Opel").build();
         carDaoJdbc.save(car);
+        userDaoJdbc.save(user);
+        userDaoJdbc.save(userTwo);
+        Track build = new TrackBuilder().setStartTrackTimeStamp(1637183452).setUser(user).setCar(car).build();
+        TrackRate trackRate = new TrackRate();
+        build.addTrackRate(trackRate);
+        trackRateDaoJdbc.save(trackRate);
+        trackDaoJdbc.save(build);
+
+
+
         List<Track> tracks = Arrays.asList(
                 new TrackBuilder().setStartTrackTimeStamp(1637183452).setUser(user).setCar(car).build(),
                 new TrackBuilder().setStartTrackTimeStamp(1637183452).setUser(user).setCar(car).build(),
                 new TrackBuilder().setStartTrackTimeStamp(1637183452).setUser(user).setCar(car).build()
         );
-        userDaoJdbc.save(user);
-        userDaoJdbc.save(userTwo);
+
         tracks.forEach(trackDaoJdbc::save);
 
         HashMap<String, Object> sessionattr = new HashMap<String, Object>();

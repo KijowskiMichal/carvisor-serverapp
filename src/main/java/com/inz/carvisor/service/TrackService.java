@@ -159,6 +159,7 @@ public class TrackService {
                 JSONObject jsonPackage = new JSONObject(httpEntity.getBody());
                 long[] longs = jsonPackage.keySet().stream().mapToLong(Long::parseLong).sorted().toArray();
                 TrackRate trackRate = new TrackRate();
+
                 for (long keyTimestamp : longs) {
                     JSONObject jsonObject = jsonPackage.getJSONObject(String.valueOf(keyTimestamp));
 

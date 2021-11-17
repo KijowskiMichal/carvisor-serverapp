@@ -23,7 +23,7 @@ public class TrackRate {
     public TrackRate() {
     }
 
-    public TrackRate(long track, Short speed, Byte throttle, Double latitude, Double longitude, Short rpm, long distance, long timestamp) {
+    public TrackRate(long trackId, Short speed, Byte throttle, Double latitude, Double longitude, Short rpm, long distance, long timestamp) {
         this.trackId = trackId;
         this.speed = speed;
         this.throttle = throttle;
@@ -105,6 +105,8 @@ public class TrackRate {
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
     }
+
+
 
     @Override
     public String toString() {
