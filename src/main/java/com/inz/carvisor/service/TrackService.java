@@ -328,7 +328,7 @@ public class TrackService {
             Query query = session.createQuery(SELECT_ACTIVE_TRACKS);
             List<Track> tracks = query.getResultList();
             Date date = new Date();
-            long time = date.getTime();
+            long time = date.getTime()/1000;
             for (Track track : tracks) {
                 if (track.getTimestamp() < (time - 15)) {
                     track.getUser().addTrackToEcoPointScore(track);
@@ -490,7 +490,7 @@ public class TrackService {
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200, track data as JsonString.
      */
-    public ResponseEntity getTrackDataForDevice(HttpServletRequest request, HttpEntity<String> httpEntity, int carId, long dateLong) {
+    public ResponseEntity<String> getTrackDataForDevice(HttpServletRequest request, HttpEntity<String> httpEntity, int carId, long dateLong) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("TrackService.getTrackDataForDevice cannot send data (session not found)");

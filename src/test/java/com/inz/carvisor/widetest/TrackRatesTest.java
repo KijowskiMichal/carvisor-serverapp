@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -74,7 +75,9 @@ public class TrackRatesTest {
 
     @Test
     void allTrackRatesShouldBeSaved() {
-        HttpServletRequest httpServletRequest = RequestBuilder.mockHttpServletRequest(mockUserFromDatabase(), mockCarFromDatabase());
+        User user = mockUserFromDatabase();
+        Car car = mockCarFromDatabase();
+        HttpServletRequest httpServletRequest = RequestBuilder.mockHttpServletRequest(user, car);
         trackService.startTrack(httpServletRequest, new HttpEntity<>(startTrackString));
 
         trackService.updateTrackData(httpServletRequest, new HttpEntity<>(trackRatesString));
@@ -82,6 +85,9 @@ public class TrackRatesTest {
 
         Assertions.assertEquals(1, trackDaoJdbc.getAll().size());
         Assertions.assertEquals(trackRatesJson.keySet().size(), listOfTrackRates.size());
+
+        ResponseEntity<String> trackDataForDevice = trackService.getTrackDataForDevice(httpServletRequest, null, car.getId(), 1623879243);
+        System.out.println(trackDataForDevice.getBody());
     }
 
 
