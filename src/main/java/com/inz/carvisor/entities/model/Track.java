@@ -12,7 +12,7 @@ public class Track {
     @OneToMany
     List<Offence> offences;
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @OneToOne
     private Car car;

@@ -2,16 +2,13 @@ package com.inz.carvisor.entities.model;
 
 import com.inz.carvisor.entities.enums.UserPrivileges;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Lob;
+import javax.persistence.*;
 
 @Entity
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Lob
