@@ -224,10 +224,11 @@ public class DevicesService {
                         .setEngine(inJSON.getString("engine"))
                         .setFuelType(inJSON.getString("fuel"))
                         .setProductionDate(inJSON.getInt("yearOfProduction"))
-                        .setFuelNorm(Double.parseDouble(inJSON.getString("norm").replace('.', ',')))
+                        .setFuelNorm(Double.parseDouble(inJSON.getString("norm").replace(',', '.')))
                         .setTank(Integer.parseInt(inJSON.getString("tank")))
                         .setPassword(DigestUtils.sha256Hex(String.valueOf(inJSON.get("password"))));
             } catch (JSONException jsonException) {
+                jsonException.printStackTrace();
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad body");
             }
             Car car = carBuilder.build();
