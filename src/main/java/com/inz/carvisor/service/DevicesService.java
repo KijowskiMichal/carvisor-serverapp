@@ -219,11 +219,12 @@ public class DevicesService {
                 carBuilder
                         .setLicensePlate(inJSON.getString("licensePlate"))
                         .setBrand(inJSON.getString("brand"))
+                        .setImage(inJSON.getString("image"))
                         .setModel(inJSON.getString("model"))
                         .setEngine(inJSON.getString("engine"))
                         .setFuelType(inJSON.getString("fuel"))
                         .setProductionDate(inJSON.getInt("yearOfProduction"))
-                        .setFuelNorm(Double.parseDouble(inJSON.getString("norm")))
+                        .setFuelNorm(Double.parseDouble(inJSON.getString("norm").replace('.', ',')))
                         .setTank(Integer.parseInt(inJSON.getString("tank")))
                         .setPassword(DigestUtils.sha256Hex(String.valueOf(inJSON.get("password"))));
             } catch (JSONException jsonException) {
