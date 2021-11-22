@@ -502,4 +502,8 @@ public class UserService {
         user.get().setPassword(newPassword);
         return user;
     }
+
+    public Optional<User> getUser(int userId) {
+        return userDaoJdbc.get(userId);
+    }
 }

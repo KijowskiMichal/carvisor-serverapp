@@ -26,8 +26,14 @@ public class DefaultResponse {
         return ResponseEntity.status(httpStatus).body(jsonMessage(message));
     }
 
-    public static ResponseEntity<String> badBody(String responseBody) {
+    public static ResponseEntity<String> badRequest(String responseBody) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(jsonMessage(responseBody));
+    }
+
+    public static ResponseEntity<String> badRequestCantFindUer(Number userId) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(jsonMessage("Can't find user witch id=" + userId));
     }
 
     public static ResponseEntity<String> ok(String responseBody) {
