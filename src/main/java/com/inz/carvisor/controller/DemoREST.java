@@ -48,7 +48,6 @@ public class DemoREST {
      *
      * @return Returns the 201 status - OK.
      */
-    //todo zamiast linku do image do base64
     @RequestMapping(value = "/addAll", method = RequestMethod.GET)
     public ResponseEntity addAll() {
         List.of(

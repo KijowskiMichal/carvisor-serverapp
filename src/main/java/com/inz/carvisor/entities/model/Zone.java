@@ -29,6 +29,14 @@ public class Zone {
         this.radius = radius;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public List<User> getUserList() {
         return userList;
     }

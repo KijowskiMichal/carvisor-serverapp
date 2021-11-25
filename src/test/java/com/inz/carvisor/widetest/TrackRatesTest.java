@@ -88,7 +88,8 @@ public class TrackRatesTest {
         Assertions.assertEquals(1, trackDaoJdbc.getAll().size());
         Assertions.assertEquals(trackRatesJson.keySet().size(), listOfTrackRates.size());
 
-        ResponseEntity<String> trackDataForDevice = trackService.getTrackDataForDevice(httpServletRequest, null, car.getId(), 1623879243);
+        ResponseEntity<String> trackDataForDevice = trackService
+                .getTrackDataForDevice(httpServletRequest, null, car.getId(), 1623879243);
         System.out.println(trackDataForDevice.getBody());
     }
 

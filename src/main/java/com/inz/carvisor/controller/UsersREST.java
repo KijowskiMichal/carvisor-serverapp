@@ -63,7 +63,7 @@ public class UsersREST {
         String secondPasswordHashed = PasswordManipulatior.hashPassword(body.get(SECOND_PASSWORD_KEY).getAsString());
 
         if (!firstPasswordHashed.equals(secondPasswordHashed)) {
-            return DefaultResponse.badBody(PASSWORD_DOESNT_MATCH);
+            return DefaultResponse.badRequest(PASSWORD_DOESNT_MATCH);
         }
 
         if (securityService.securityProtocolPassed(UserPrivileges.ADMINISTRATOR, request)) {

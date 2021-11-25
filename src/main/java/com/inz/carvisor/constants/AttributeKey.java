@@ -84,4 +84,12 @@ public class AttributeKey {
         public static final String DRAGGABLE = "draggable";
         public static final String REMIND = "remind";
     }
+
+    public static class Zone {
+
+        public static final String NAME = "name";
+        public static final String POINT_X = "pointX";
+        public static final String POINT_Y = "pointY";
+        public static final String RADIUS = "radius";
+    }
 }
