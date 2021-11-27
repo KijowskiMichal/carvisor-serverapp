@@ -107,7 +107,9 @@ public class TrackRate {
         this.timestamp = timestamp;
     }
 
-
+    public String getLocation() {
+        return longitude + "," + latitude;
+    }
 
     @Override
     public String toString() {

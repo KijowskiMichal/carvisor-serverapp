@@ -20,7 +20,6 @@ public class TrackBuilder {
     private final double combustion = 0;
     private final int speed = 0;
     private final long revolutions = 0;
-    private final List<Offence> offences = new ArrayList<>();
 
     private Car car = null;
     private User user = null;
@@ -31,6 +30,8 @@ public class TrackBuilder {
 
     private long startTrackTimeStamp;
     private long endTrackTimeStamp;
+
+    private long amountOfTrackRates = 0;
 
     public TrackBuilder setStartTrackTimeStamp(long startTrackTimeStamp) {
         this.startTrackTimeStamp = startTrackTimeStamp;
@@ -92,11 +93,11 @@ public class TrackBuilder {
         track.setAverageSpeed(this.speed);
         track.setAverageRevolutionsPerMinute(this.revolutions);
         track.setStartTrackTimeStamp(this.start);
-        track.setOffences(this.offences);
 
         track.setStartTrackTimeStamp(this.startTrackTimeStamp);
         track.setEndTrackTimeStamp(this.endTrackTimeStamp);
         track.setListOfTrackRates(new ArrayList<>());
+
 
         return track;
     }

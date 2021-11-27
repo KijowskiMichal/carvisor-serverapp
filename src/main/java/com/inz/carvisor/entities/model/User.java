@@ -32,6 +32,7 @@ public class User {
     private int throttle;
     private int safetySamples;
     private int safetyNegativeSamples;
+    private float safetyPointsAvg;
 
     public User() {
         init();
@@ -207,6 +208,14 @@ public class User {
 
     public void setDistanceTravelled(long distanceTravelled) {
         this.distanceTravelled = distanceTravelled;
+    }
+
+    public float getSafetyPointsAvg() {
+        return safetyPointsAvg;
+    }
+
+    public void setSafetyPointsAvg(float safetyPointsAvg) {
+        this.safetyPointsAvg = safetyPointsAvg;
     }
 
     public void addDistanceTravelled(long distanceTravelled) {

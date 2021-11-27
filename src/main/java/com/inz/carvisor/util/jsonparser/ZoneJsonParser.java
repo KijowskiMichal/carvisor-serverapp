@@ -9,10 +9,10 @@ public class ZoneJsonParser {
 
     public static JSONObject parse(Zone zone) {
         return new JSONObject()
-                .put(AttributeKey.Zone.NAME,zone.getName())
-                .put(AttributeKey.Zone.POINT_X,zone.getPointX())
-                .put(AttributeKey.Zone.POINT_Y,zone.getPointY())
-                .put(AttributeKey.Zone.RADIUS,zone.getRadius());
+                .put(AttributeKey.Zone.NAME, zone.getName())
+                .put(AttributeKey.Zone.POINT_X, zone.getPointX())
+                .put(AttributeKey.Zone.POINT_Y, zone.getPointY())
+                .put(AttributeKey.Zone.RADIUS, zone.getRadius());
     }
 
     public static Zone parse(JSONObject jsonObject) {

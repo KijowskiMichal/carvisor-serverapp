@@ -39,9 +39,8 @@ import java.util.HashMap;
 @WebMvcTest(CarConfigurationREST.class)
 @ContextConfiguration(classes = {Initializer.class})
 @Ignore
+//todo rewrite this test
 class CarConfigurationRESTTest {
-
-    //todo rewrite this test
 
     @Autowired
     UserDaoJdbc userDaoJdbc;

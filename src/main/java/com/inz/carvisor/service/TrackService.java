@@ -1,17 +1,19 @@
 package com.inz.carvisor.service;
 
-import com.inz.carvisor.dao.TrackDaoJdbc;
-import com.inz.carvisor.dao.TrackRateDaoJdbc;
-import com.inz.carvisor.dao.UserDaoJdbc;
+import com.inz.carvisor.constants.AttributeKey;
+import com.inz.carvisor.constants.DefaultResponse;
+import com.inz.carvisor.dao.*;
+import com.inz.carvisor.entities.builders.NotificationBuilder;
 import com.inz.carvisor.entities.builders.TrackBuilder;
+import com.inz.carvisor.entities.enums.NotificationType;
 import com.inz.carvisor.entities.enums.ObdCommandTable;
 import com.inz.carvisor.entities.enums.UserPrivileges;
-import com.inz.carvisor.entities.model.Car;
-import com.inz.carvisor.entities.model.Track;
-import com.inz.carvisor.entities.model.TrackRate;
-import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.entities.model.*;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
+import com.inz.carvisor.service.offence.CrossingTheZoneOffence;
+import com.inz.carvisor.service.offence.SpeedOffence;
 import com.inz.carvisor.util.EcoPointsCalculator;
+import com.inz.carvisor.util.SafetyPointsCalculator;
 import com.inz.carvisor.util.TimeStampCalculator;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
@@ -27,7 +29,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.UserDataHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -50,22 +51,32 @@ import java.util.stream.Collectors;
 public class TrackService {
 
     private final static String SELECT_ACTIVE_TRACKS = "SELECT t FROM Track t WHERE t.isActive = true";
+    private final static String SPEED_PID = ObdCommandTable.SPEED.getDecimalPid();
+    private final static String RPM_PID = ObdCommandTable.RPM.getDecimalPid();
+    private final static String THROTTLE_POS_PID = ObdCommandTable.THROTTLE_POS.getDecimalPid();
     HibernateRequests hibernateRequests;
     Logger logger;
     TrackDaoJdbc trackDaoJdbc;
     TrackRateDaoJdbc trackRateDaoJdbc;
     UserDaoJdbc userDaoJdbc;
+    OffenceDaoJdbc offenceDaoJdbc;
+    ZoneDaoJdbc zoneDaoJdbc;
+    NotificationDaoJdbc notificationDaoJdbc;
 
     @Autowired
     public TrackService(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger,
                         TrackDaoJdbc trackDaoJdbc, TrackRateDaoJdbc trackRateDaoJdbc,
-                        UserDaoJdbc userDaoJdbc
+                        UserDaoJdbc userDaoJdbc, OffenceDaoJdbc offenceDaoJdbc,
+                        ZoneDaoJdbc zoneDaoJdbc, NotificationDaoJdbc notificationDaoJdbc
     ) {
         this.hibernateRequests = hibernateRequests;
         this.logger = logger.getLOG();
         this.trackDaoJdbc = trackDaoJdbc;
         this.trackRateDaoJdbc = trackRateDaoJdbc;
         this.userDaoJdbc = userDaoJdbc;
+        this.offenceDaoJdbc = offenceDaoJdbc;
+        this.zoneDaoJdbc = zoneDaoJdbc;
+        this.notificationDaoJdbc = notificationDaoJdbc;
     }
 
     /**
@@ -142,7 +153,7 @@ public class TrackService {
      * @param request Object of HttpServletRequest represents our request.
      * @return Returns 200.
      */
-    public ResponseEntity updateTrackData(HttpServletRequest request, HttpEntity<String> httpEntity) {
+    public ResponseEntity updateTrackDataOLD(HttpServletRequest request, HttpEntity<String> httpEntity) {
         Session session = null;
         Transaction tx = null;
         ResponseEntity responseEntity;
@@ -158,8 +169,7 @@ public class TrackService {
             } else {
                 JSONObject jsonPackage = new JSONObject(httpEntity.getBody());
                 long[] longs = jsonPackage.keySet().stream().mapToLong(Long::parseLong).sorted().toArray();
-                TrackRate trackRate = new TrackRate();
-
+                TrackRate trackRate = new TrackRateBuilder().build();
                 for (long keyTimestamp : longs) {
                     JSONObject jsonObject = jsonPackage.getJSONObject(String.valueOf(keyTimestamp));
 
@@ -228,10 +238,10 @@ public class TrackService {
                     }
                     track.addMetersToDistance(distance);
                     track.setEndPosition(latitude + ";" + longitude);
-                    trackRate = new TrackRate(track.getId(), speed, throttle, latitude, longitude, rpm, distance, keyTimestamp);
+                    trackRate = new TrackRateBuilder().setTrackId(track.getId()).setSpeed(speed).setThrottle(throttle).setLatitude(latitude).setLongitude(longitude).setRpm(rpm).setDistance(distance).setTimestamp(keyTimestamp).build();
                     session.save(trackRate);
                     track.addTrackRate(trackRate);
-                    EcoPointsCalculator.calculateEcoPoints(track);
+                    track.setEcoPointsScore(EcoPointsCalculator.calculateEcoPoints(track));
                 }
                 track.setTimestamp(trackRate.getTimestamp());
                 session.update(track);
@@ -264,6 +274,102 @@ public class TrackService {
             if (session != null) session.close();
         }
         return responseEntity;
+    }
+
+    public ResponseEntity<String> updateTrackData(Car car, JSONObject jsonObject) {
+        Optional<Track> activeTrackOptional = trackDaoJdbc.getActiveTrack(car.getId());
+        if (activeTrackOptional.isEmpty()) return DefaultResponse.BAD_REQUEST;
+        Track track = activeTrackOptional.get();
+
+        List<TrackRate> listOfTrackRates = jsonObject
+                .keySet()
+                .stream()
+                .map(Long::parseLong)
+                .sorted()
+                .map(Object::toString)
+                .map(timeStamp -> parseJSONObjectTOTrackRate(timeStamp, jsonObject.getJSONObject(timeStamp)))
+                .collect(Collectors.toList());
+
+        setDistanceBetweenTrackRates(listOfTrackRates);
+
+        processTrackRate(track, listOfTrackRates);
+
+        TrackRate lastTrackRate = listOfTrackRates.get(listOfTrackRates.size() - 1);
+        track.setTimestamp(lastTrackRate.getTimestamp());
+        track.addMetersToDistance(listOfTrackRates.stream().mapToLong(TrackRate::getDistance).sum());
+        track.setEndPosition(lastTrackRate.getLatitude() + ";" + lastTrackRate.getLongitude());
+        track.setEcoPointsScore(EcoPointsCalculator.calculateEcoPoints(track));
+        trackDaoJdbc.update(track);
+        return DefaultResponse.OK;
+    }
+
+    private void processTrackRate(Track track, List<TrackRate> trackRateList) {
+        List<Zone> zonesAssignedToUser = zoneDaoJdbc.get(track.getUser());
+        for (TrackRate trackRate : trackRateList) {
+            saveTrackRateToDatabase(trackRate);
+            addTrackRateToTrack(track, trackRate);
+            checkIfZoneIsCrossed(track, trackRate, zonesAssignedToUser);
+            checkForSpeeding(track, trackRate);
+        }
+    }
+
+    private void checkIfZoneIsCrossed(Track track, TrackRate trackRate, List<Zone> zones) {
+        for (Offence zoneOffence : getZoneOffences(track, trackRate, zones)) {
+            zoneOffence.setAssignedTrackId(track.getId());
+            offenceDaoJdbc.save(zoneOffence);
+            saveNewNotification(zoneOffence, track, trackRate);
+        }
+    }
+
+    private void saveNewNotification(Offence zoneOffence, Track track, TrackRate trackRate) {
+        Notification notification = new NotificationBuilder()
+                .setNotificationType(NotificationType.LEAVING_THE_ZONE)
+                .setUser(track.getUser())
+                .setCar(track.getCar())
+                .setDisplayed(false)
+                .setValue(zoneOffence.getValue())
+                .setTimeStamp(trackRate.getTimestamp())
+                .setLocation(trackRate.getLocation())
+                .build();
+        notificationDaoJdbc.save(notification);
+    }
+
+    private List<Offence> getZoneOffences(Track track, TrackRate trackRate, List<Zone> zones) {
+        return zones
+                .stream()
+                .map(zone -> CrossingTheZoneOffence.createOffenceIfExists(track, trackRate, zone))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+    }
+
+    private void checkForSpeeding(Track track, TrackRate trackRate) {
+        Optional<Offence> speedingOffence = SpeedOffence.createOffenceIfExists(trackRate);
+        if (speedingOffence.isPresent()) {
+            speedingOffence.get().setAssignedTrackId(track.getId());
+            offenceDaoJdbc.save(speedingOffence.get());
+        }
+    }
+
+    private void addTrackRateToTrack(Track track, TrackRate trackRate) {
+        track.addTrackRate(trackRate);
+    }
+
+    private void saveTrackRateToDatabase(TrackRate trackRate) {
+        trackRateDaoJdbc.save(trackRate);
+    }
+
+    private void setDistanceBetweenTrackRates(List<TrackRate> listOfTrackRates) {
+        for (int i = 1; i < listOfTrackRates.size(); i++) {
+            TrackRate prevTrackRate = listOfTrackRates.get(i - 1);
+            TrackRate currentTrackRate = listOfTrackRates.get(i);
+            float distanceBetweenPoints = calculateDistanceBetweenPoints(
+                    prevTrackRate.getLatitude(),
+                    prevTrackRate.getLongitude(),
+                    currentTrackRate.getLatitude(),
+                    currentTrackRate.getLongitude());
+            currentTrackRate.setDistance((long) distanceBetweenPoints);
+        }
     }
 
     /**
@@ -328,7 +434,50 @@ public class TrackService {
             Query query = session.createQuery(SELECT_ACTIVE_TRACKS);
             List<Track> tracks = query.getResultList();
             Date date = new Date();
-            long time = date.getTime()/1000;
+            long time = date.getTime() / 1000;
+            for (Track track : tracks) {
+                if (track.getTimestamp() < (time - 15)) {
+                    track.getUser().addTrackToEcoPointScore(track);
+                    track.getUser().setTracksNumber(track.getUser().getTracksNumber() + 1);
+                    track.getUser().setDistanceTravelled(track.getUser().getDistanceTravelled() + track.getDistanceFromStart());
+                    track.getUser().setSamples(track.getUser().getSamples() + track.getAmountOfSamples());
+                    track.getUser().setSafetyNegativeSamples(track.getUser().getSafetyNegativeSamples() + track.getSafetyNegativeSamples());
+                    track.getUser().setSafetySamples(track.getUser().getSafetySamples() + track.getAmountOfSafetySamples());
+                    track.setActive(false);
+                    track.setEndTrackTimeStamp(time - 8);
+                    track.getUser().addTrackToEcoPointScore(track);
+                    track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track));
+                    SafetyPointsCalculator.validateSafetyPointsScore(track.getUser(),track);
+                    session.update(track);
+                }
+            }
+            tx.commit();
+            responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+        } catch (HibernateException e) {
+            if (tx != null) tx.rollback();
+            e.printStackTrace();
+            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        } finally {
+            if (session != null) session.close();
+        }
+        return responseEntity;
+    }
+
+    /**
+     * DONT USE THIS IN PROD - DEVELOPEMENT ONLY
+     */
+    public ResponseEntity endOfTrackDEVELOP(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        Session session = null;
+        Transaction tx = null;
+        ResponseEntity responseEntity;
+
+        try {
+            session = hibernateRequests.getSession();
+            tx = session.beginTransaction();
+            Query query = session.createQuery(SELECT_ACTIVE_TRACKS);
+            List<Track> tracks = query.getResultList();
+            Date date = new Date();
+            long time = date.getTime() / 1000;
             for (Track track : tracks) {
                 if (track.getTimestamp() < (time - 15)) {
                     track.getUser().addTrackToEcoPointScore(track);
@@ -530,7 +679,7 @@ public class TrackService {
             long last = 0;
             long timestamp = 0;
             for (TrackRate trackRate : trackRates) {
-                if (first) {//todo fix
+                if (first) {
                     Query query2 = session.createQuery("Select t from TrackRate t WHERE t.trackId = " + trackRate.getTrackId() + " AND t.timestamp < " + trackRate.getTimestamp() + " ORDER BY t.id ASC");
                     List<TrackRate> trackRates2 = query2.getResultList();
                     for (TrackRate trackRate2 : trackRates2) {
@@ -615,9 +764,9 @@ public class TrackService {
      * WebMethod which returns a list of tracks
      * <p>
      *
-     * @param request  Object of HttpServletRequest represents our request.
-     * @param page     Page of tracks list. Parameter associated with pageSize.
-     * @param pageSize Number of record we want to get.
+     * @param request      Object of HttpServletRequest represents our request.
+     * @param page         Page of tracks list. Parameter associated with pageSize.
+     * @param pageSize     Number of record we want to get.
      * @param timeFromLong Time from we want to list tracks.
      * @param timeToLong   Time up to we want to list tracks.
      * @return HttpStatus 200 Returns the contents of the page that contains a list of tracks in the JSON format.
@@ -708,6 +857,31 @@ public class TrackService {
             jsonOut.put("address", lon + ";" + lat);
         }
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
+    }
+
+    private TrackRate parseJSONObjectTOTrackRate(String timeStamp, JSONObject currentTrackRate) {
+        TrackRateBuilder trackRateBuilder = new TrackRateBuilder();
+        trackRateBuilder.setTimestamp(Long.parseLong(timeStamp));
+        if (currentTrackRate.has(AttributeKey.Track.OBD)) {
+            addOBDToTrackRateBuilder(trackRateBuilder, currentTrackRate.getJSONObject(AttributeKey.Track.OBD));
+        }
+        if (currentTrackRate.has(AttributeKey.Track.GPS_POS)) {
+            addGpsPosTOTrackRateBuilder(trackRateBuilder, currentTrackRate.getJSONObject(AttributeKey.Track.GPS_POS));
+        }
+        return trackRateBuilder.build();
+    }
+
+    private void addOBDToTrackRateBuilder(TrackRateBuilder trackRateBuilder, JSONObject obd) {
+        if (obd.has(RPM_PID)) trackRateBuilder.setRpm((short) obd.getInt(RPM_PID));
+        if (obd.has(SPEED_PID)) trackRateBuilder.setSpeed((short) obd.getInt(SPEED_PID));
+        if (obd.has(THROTTLE_POS_PID)) trackRateBuilder.setThrottle((byte) obd.getInt(THROTTLE_POS_PID));
+    }
+
+    private void addGpsPosTOTrackRateBuilder(TrackRateBuilder trackRateBuilder, JSONObject gps) {
+        if (gps.has(AttributeKey.Track.LATITUDE))
+            trackRateBuilder.setLatitude(gps.getDouble(AttributeKey.Track.LATITUDE));
+        if (gps.has(AttributeKey.Track.LONGITUDE))
+            trackRateBuilder.setLongitude(gps.getDouble(AttributeKey.Track.LONGITUDE));
     }
 
     private URL createUrlForGeocoding(String lon, String lat) throws MalformedURLException {

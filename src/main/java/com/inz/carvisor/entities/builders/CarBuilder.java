@@ -2,7 +2,8 @@ package com.inz.carvisor.entities.builders;
 
 import com.inz.carvisor.entities.model.Car;
 
-public class CarBuilder { //todo prowizorka z tymi domyślnymi wartościami
+public class CarBuilder {
+
     private String licensePlate = null;
     private String brand = null;
     private String model = null;

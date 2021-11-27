@@ -3,8 +3,6 @@ package com.inz.carvisor.service;
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.dao.ZoneDaoJdbc;
 import com.inz.carvisor.entities.model.Zone;
-import com.inz.carvisor.hibernatepackage.HibernateRequests;
-import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

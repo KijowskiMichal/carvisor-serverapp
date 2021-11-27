@@ -7,7 +7,7 @@ import java.util.List;
 
 public class EcoPointsCalculator {
 
-    public static void calculateEcoPoints(Track track) {
+    public static float calculateEcoPoints(Track track) {
         int eco = 10;
         List<TrackRate> listOfTrackRates = track.getListOfTrackRates();
         int size = listOfTrackRates.size();
@@ -25,9 +25,9 @@ public class EcoPointsCalculator {
         }
 
         long averageRevolutions = track.getAverageRevolutionsPerMinute();
-        if (averageRevolutions > 3000) {
+        if (averageRevolutions > 2600) {
             eco -= 4;
-        } else if (averageRevolutions > 2500) {
+        } else if (averageRevolutions > 2400) {
             eco -= 2;
         } else if (averageRevolutions > 2300) {
             eco -= 1;
@@ -42,6 +42,6 @@ public class EcoPointsCalculator {
             eco -= 1;
         }
 
-        track.setEcoPointsScore(Math.max(eco, 0F) / 2.0F);
+        return Math.max(eco, 0F) / 2.0F;
     }
 }

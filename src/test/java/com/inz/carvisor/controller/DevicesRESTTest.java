@@ -79,7 +79,7 @@ class DevicesRESTTest {
     }
 
     @Test
-    @Ignore //todo bigger problem
+    @Ignore
     void list() {
         List<Car> devices = new ArrayList<>();
         populate(devices);
@@ -192,7 +192,9 @@ class DevicesRESTTest {
             tx = session.beginTransaction();
 
 
-            user = new UserBuilder().setNick("Ala").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("AB").build();
+            user = new UserBuilder()
+                    .setNick("Ala")
+                    .setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("AB").build();
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
             sessionattr.put("user", user);
 
@@ -208,6 +210,7 @@ class DevicesRESTTest {
                                     "  \"yearOfProduction\": \"2013\",\n" +
                                     "  \"norm\": \"123\",\n" +
                                     "  \"password\": \"password\"\n" +
+                                    "  \"image\": \"image\"\n" +
                                     "}"))
                     .andReturn();
             tx.commit();

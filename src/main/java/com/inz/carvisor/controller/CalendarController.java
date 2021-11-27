@@ -1,8 +1,6 @@
 package com.inz.carvisor.controller;
 
-import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
-import com.inz.carvisor.entities.builders.EventBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Event;
 import com.inz.carvisor.service.CalendarService;
@@ -38,7 +36,7 @@ public class CalendarController {
 
     @RequestMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public ResponseEntity<String> add(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return DefaultResponse.UNAUTHORIZED;
         }
         JSONObject jsonObject = new JSONObject(httpEntity.getBody());
@@ -54,7 +52,7 @@ public class CalendarController {
     @RequestMapping(value = "/getEvent/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> getEvent(HttpServletRequest request, HttpEntity<String> httpEntity,
                                            @PathVariable("id") long id) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return DefaultResponse.UNAUTHORIZED;
         }
         calendarService.getEvent(id);
@@ -73,11 +71,11 @@ public class CalendarController {
 
     @RequestMapping(value = "/get/{month}/{year}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> get(HttpServletRequest request, HttpEntity<String> httpEntity,
-                                           @PathVariable("month") String month, @PathVariable("year") String year) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+                                      @PathVariable("month") String month, @PathVariable("year") String year) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return DefaultResponse.UNAUTHORIZED;
         }
-        List<Event> eventOptional = calendarService.getEventList(Integer.parseInt(month),Integer.parseInt(year));
+        List<Event> eventOptional = calendarService.getEventList(Integer.parseInt(month), Integer.parseInt(year));
 
         try {
             JSONArray jsonArray = EventJsonParser.parse(eventOptional);
@@ -89,8 +87,8 @@ public class CalendarController {
 
     @RequestMapping(value = "/remove/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
     public ResponseEntity<String> remove(HttpServletRequest request, HttpEntity<String> httpEntity,
-                                           @PathVariable("id") long id) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+                                         @PathVariable("id") long id) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return DefaultResponse.UNAUTHORIZED;
         }
 

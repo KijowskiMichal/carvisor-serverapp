@@ -6,9 +6,11 @@ import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.TrackRateDaoJdbc;
 import com.inz.carvisor.entities.builders.CarBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
-import com.inz.carvisor.entities.model.*;
+import com.inz.carvisor.entities.model.Car;
+import com.inz.carvisor.entities.model.Setting;
+import com.inz.carvisor.entities.model.Track;
+import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
-import com.inz.carvisor.util.TimeStampCalculator;
 import com.inz.carvisor.util.jsonparser.CarJsonParser;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Level;
@@ -65,7 +67,7 @@ public class DevicesService {
      * @param regex    Part of name or surname we want to display
      * @return Returns the contents of the page that contains a list of devices in the JSON format.
      */
-    public ResponseEntity<String> list(HttpServletRequest request, int page, int pageSize, String regex) { //todo, do przepisania
+    public ResponseEntity<String> list(HttpServletRequest request, int page, int pageSize, String regex) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("DevicesREST.list cannot list device's (session not found)");
@@ -108,9 +110,9 @@ public class DevicesService {
                 tx = session.beginTransaction();
 
                 Date now = new Date();
-                LocalDateTime before = LocalDateTime.ofInstant(Instant.ofEpochSecond(now.getTime()/1000), TimeZone.getDefault().toZoneId()).with(LocalTime.MIN);
+                LocalDateTime before = LocalDateTime.ofInstant(Instant.ofEpochSecond(now.getTime() / 1000), TimeZone.getDefault().toZoneId()).with(LocalTime.MIN);
                 Timestamp timestampBefore = Timestamp.valueOf(before);
-                LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochSecond(now.getTime()/1000), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
+                LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochSecond(now.getTime() / 1000), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
                 Timestamp timestampAfter = Timestamp.valueOf(after);
 
                 Query countQ = session.createQuery("Select sum (t.distanceFromStart) from Track t WHERE t.timestamp > " +
@@ -444,11 +446,6 @@ public class DevicesService {
 
     public Optional<Car> removeDevice(int id) {
         return carDaoJdbc.delete(id);
-    }
-
-    public ResponseEntity<String> listFixed(HttpServletRequest request, int page, int pageSize, String regex) {
-        //todo, zadanie na kiedy indziej
-        return DefaultResponse.OK;
     }
 }
 

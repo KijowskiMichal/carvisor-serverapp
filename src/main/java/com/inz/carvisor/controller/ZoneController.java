@@ -43,7 +43,7 @@ public class ZoneController {
 
     @RequestMapping(value = "/updateZone/{id}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public ResponseEntity<String> updateZone(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int id) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return DefaultResponse.UNAUTHORIZED;
         }
         Optional<Zone> zone = zoneService.updateZone(id, new JSONObject(httpEntity.getBody()));
@@ -53,7 +53,7 @@ public class ZoneController {
 
     @RequestMapping(value = "/list/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("regex") String regex) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return DefaultResponse.UNAUTHORIZED;
         }
         List<Zone> list = zoneService.list(regex);
@@ -64,7 +64,7 @@ public class ZoneController {
 
     @RequestMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public ResponseEntity<String> add(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return DefaultResponse.UNAUTHORIZED;
         }
         JSONObject jsonObject = new JSONObject(httpEntity.getBody());
@@ -75,7 +75,7 @@ public class ZoneController {
 
     @RequestMapping(value = "/remove/{id}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
     public ResponseEntity<String> remove(HttpServletRequest request, @PathVariable("id") int id) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return DefaultResponse.UNAUTHORIZED;
         }
         if (zoneService.remove(id).isPresent()) return DefaultResponse.OK;

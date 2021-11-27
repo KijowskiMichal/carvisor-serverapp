@@ -75,24 +75,28 @@ class SafetyPointsRESTTest {
                         .setOffenceType(OffenceType.SPEEDING)
                         .setValue(200)
                         .setUser(user)
+                        .setAssignedTrackId(1)
                         .build(),
                 new OffenceBuilder()
                         .setLocalDateTime(LocalDateTime.of(2020, 12, 3, 12, 30).toEpochSecond(ZoneOffset.UTC))
                         .setOffenceType(OffenceType.SPEEDING)
                         .setValue(150)
                         .setUser(user)
+                        .setAssignedTrackId(1)
                         .build(),
                 new OffenceBuilder()
                         .setLocalDateTime(LocalDateTime.of(2018, 12, 3, 12, 30).toEpochSecond(ZoneOffset.UTC))
                         .setOffenceType(OffenceType.SPEEDING)
                         .setValue(220)
                         .setUser(user)
+                        .setAssignedTrackId(1)
                         .build(),
                 new OffenceBuilder()
                         .setLocalDateTime(LocalDateTime.of(2015, 12, 3, 12, 30).toEpochSecond(ZoneOffset.UTC))
                         .setOffenceType(OffenceType.SPEEDING)
                         .setValue(185)
                         .setUser(user)
+                        .setAssignedTrackId(1)
                         .build()
         ).forEach(offenceDaoJdbc::save);
 

@@ -44,11 +44,6 @@ import java.util.Objects;
 @RunWith(SpringRunner.class)
 @WebMvcTest(TrackREST.class)
 @ContextConfiguration(classes = {Initializer.class})
-//todo - Marcin mi wyśle
-  /*
-    potrzebuje od Ciebie Marcin próbki testowej bym mógł zrobić sobie tutaj grubsze testy jednostkowe.
-    Dużo dadzą w przyszłości
-  */
 class TrackRESTTest {
 
     @Autowired

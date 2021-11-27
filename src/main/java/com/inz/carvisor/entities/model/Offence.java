@@ -14,6 +14,7 @@ public class Offence {
     @ManyToOne
     private User user;
 
+    private long assignedTrackId;
     private long timeStamp;
     private OffenceType offenceType;
     private int value;
@@ -75,5 +76,23 @@ public class Offence {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public long getAssignedTrackId() {
+        return assignedTrackId;
+    }
+
+    public void setAssignedTrackId(long assignedTrackId) {
+        this.assignedTrackId = assignedTrackId;
+    }
+
+    public String buildDescription() {
+        if (this.offenceType.equals(OffenceType.SPEEDING)) {
+            return "Kierowca przekroczył prędkość o " + value + "km/h";
+        } else if (this.offenceType.equals(OffenceType.LEAVING_THE_ZONE)) {
+            return "Kierowca opuścił strefę o " + value / 1000F + "km";
+        } else {
+            return "";
+        }
     }
 }

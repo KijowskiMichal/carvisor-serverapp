@@ -17,7 +17,7 @@ public class UserBuilder {
     private String name;
     private String surname;
     private String password;
-    private UserPrivileges userPrivileges;
+    private UserPrivileges userPrivileges = UserPrivileges.STANDARD_USER;
     private String image;
     private int phoneNumber;
     private String nfcTag;

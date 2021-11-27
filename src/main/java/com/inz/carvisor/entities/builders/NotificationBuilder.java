@@ -6,6 +6,7 @@ import com.inz.carvisor.entities.model.Notification;
 import com.inz.carvisor.entities.model.User;
 
 public class NotificationBuilder {
+
     private boolean displayed = false;
     private int value = 0;
     private long timeStamp;

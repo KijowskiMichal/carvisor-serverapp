@@ -15,11 +15,11 @@ public class TimeStampCalculator {
     }
 
     public static long getFirstDayTimeStamp(int month, int year) {
-        return LocalDate.of(year, month, 1).toEpochSecond(LocalTime.MIN,ZoneOffset.UTC);
+        return LocalDate.of(year, month, 1).toEpochSecond(LocalTime.MIN, ZoneOffset.UTC);
     }
 
     public static long getLastDayTimestamp(int month, int year) {
-        return LocalDate.of(year,month, getLastDayOfMonth(month,year)).toEpochSecond(LocalTime.MIN,ZoneOffset.UTC);
+        return LocalDate.of(year, month, getLastDayOfMonth(month, year)).toEpochSecond(LocalTime.MIN, ZoneOffset.UTC);
     }
 
     public static int getLastDayOfMonth(int month, int year) {

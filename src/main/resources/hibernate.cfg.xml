@@ -26,5 +26,6 @@
         <mapping class="com.inz.carvisor.entities.model.Notification" />
         <mapping class="com.inz.carvisor.entities.model.Event" />
         <mapping class="com.inz.carvisor.entities.model.Zone" />
+        <mapping class="com.inz.carvisor.entities.model.Report" />
     </session-factory>
 </hibernate-configuration>

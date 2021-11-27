@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Class for operating on Track data from database
@@ -46,6 +47,12 @@ public class TrackDaoJdbc extends HibernateDaoJdbc<Track> {
         return track;
     }
 
+    public List<Track> getUserTracks(long userId, long startTimeStamp, long endTimeStamp) {
+        return this.getList("SELECT t FROM Track t WHERE t.user.id=" + userId + " " +
+                "AND t.startTrackTimeStamp > " + startTimeStamp +
+                " AND t.endTrackTimeStamp < " + endTimeStamp);
+    }
+
     public List<Track> getCarTracks(long carId) {
         Session session = null;
         Transaction tx = null;
@@ -63,5 +70,9 @@ public class TrackDaoJdbc extends HibernateDaoJdbc<Track> {
             if (session != null) session.close();
         }
         return track;
+    }
+
+    public Optional<Track> getActiveTrack(long carId) {
+        return getObject("SELECT t FROM Track t WHERE t.isActive = true AND t.car.id=" + carId);
     }
 }

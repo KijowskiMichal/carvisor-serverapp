@@ -140,13 +140,12 @@ public class EcoPointsService {
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 
-    //todo need heavy testing
     public List<Track> listUser(int userId, long dateFrom, long dateTo) {
         String selectQuery = "SELECT t from Track t " +
                 "WHERE " +
                 "t.user = " + userId + " AND " +
-                "t.startTrackTimeStamp < " + dateTo + " AND " +
-                "t.startTrackTimeStamp > " + dateFrom + " ";
+                "t.startTrackTimeStamp < " + dateFrom + " AND " +
+                "t.endTrackTimeStamp > " + dateTo + " ";
         return trackDaoJdbc.getList(selectQuery);
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ZoneBuilder {
     private List<User> userList = new ArrayList<>();
-    private String name = "strefa";
+    private String name = "Zone";
     private String pointX;
     private String pointY;
     private float radius = 0;

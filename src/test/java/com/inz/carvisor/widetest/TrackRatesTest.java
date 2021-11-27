@@ -33,6 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.stream.IntStream;
 
 @Ignore
 @WebMvcTest(TrackREST.class)
@@ -81,16 +82,67 @@ public class TrackRatesTest {
         User user = mockUserFromDatabase();
         Car car = mockCarFromDatabase();
         HttpServletRequest httpServletRequest = RequestBuilder.mockHttpServletRequest(user, car);
+
         trackService.startTrack(httpServletRequest, new HttpEntity<>(startTrackString));
-        trackService.updateTrackData(httpServletRequest, new HttpEntity<>(trackRatesString));
-        List<TrackRate> listOfTrackRates = trackDaoJdbc.getAll().get(0).getListOfTrackRates();
+        trackService.updateTrackDataOLD(httpServletRequest, new HttpEntity<>(trackRatesString));
+        trackService.endOfTrack(httpServletRequest,null);
 
+        Track oldCalculatedTrack = trackDaoJdbc.getAll().get(0);
         Assertions.assertEquals(1, trackDaoJdbc.getAll().size());
-        Assertions.assertEquals(trackRatesJson.keySet().size(), listOfTrackRates.size());
+        Assertions.assertEquals(trackRatesJson.keySet().size(), oldCalculatedTrack.getListOfTrackRates().size());
 
-        ResponseEntity<String> trackDataForDevice = trackService
-                .getTrackDataForDevice(httpServletRequest, null, car.getId(), 1623879243);
-        System.out.println(trackDataForDevice.getBody());
+        User userSecond = mockSecondUserFromDatabase();
+        Car carSecond = mockCarFromDatabase();
+        HttpServletRequest httpServletRequestSecond = RequestBuilder.mockHttpServletRequest(userSecond, carSecond);
+
+        trackService.startTrack(httpServletRequestSecond, new HttpEntity<>(startTrackString));
+        trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
+        trackService.endOfTrack(httpServletRequestSecond,null);
+
+        List<Track> all = trackDaoJdbc.getAll();
+        compareTracksFromDatabase(all.get(0),all.get(1));
+    }
+
+    private void compareTracksFromDatabase(Track one, Track two) {
+        Assertions.assertEquals(one.getTimestamp(),two.getTimestamp());
+        //Assertions.assertEquals(one.getDistanceFromStart(),two.getDistanceFromStart());
+
+        Assertions.assertEquals(one.getStartTrackTimeStamp(),two.getStartTrackTimeStamp());
+        //Assertions.assertEquals(one.getEndTrackTimeStamp(),two.getEndTrackTimeStamp());
+
+        Assertions.assertEquals(one.getEndPosition(),two.getEndPosition());
+        Assertions.assertEquals(one.getStartPosition(),two.getStartPosition());
+
+        Assertions.assertEquals(one.getAmountOfSamples(),two.getAmountOfSamples());
+        Assertions.assertEquals(one.getAmountOfSafetySamples(),two.getAmountOfSafetySamples());
+        Assertions.assertEquals(one.getSafetyNegativeSamples(),two.getSafetyNegativeSamples());
+
+        Assertions.assertEquals(one.getEcoPointsScore(),two.getEcoPointsScore());
+        Assertions.assertEquals(one.getAverageRevolutionsPerMinute(),two.getAverageRevolutionsPerMinute());
+        Assertions.assertEquals(one.getAverageSpeed(),two.getAverageSpeed());
+        Assertions.assertEquals(one.getAverageThrottle(),two.getAverageThrottle());
+        Assertions.assertEquals(one.getActive(),two.getActive());
+        Assertions.assertEquals(one.getCombustion(),two.getCombustion());
+
+        compareTrackRates(one.getListOfTrackRates(),two.getListOfTrackRates());
+    }
+
+    private void compareTrackRates(List<TrackRate> one, List<TrackRate> two) {
+        if (one.size() != two.size()) Assertions.fail();
+        IntStream.range(0,one.size())
+                .forEach(i -> compareTrackRate(one.get(i),two.get(i)));
+    }
+
+    private void compareTrackRate(TrackRate one, TrackRate two) {
+        Assertions.assertEquals(one.getTimestamp(),two.getTimestamp());
+        Assertions.assertEquals(one.getSpeed(),two.getSpeed());
+        Assertions.assertEquals(one.getLatitude(),two.getLatitude());
+        Assertions.assertEquals(one.getLongitude(),two.getLongitude());
+        Assertions.assertEquals(one.getRpm(),two.getRpm());
+        Assertions.assertEquals(one.getThrottle(),two.getThrottle());
+        if (one.getDistance() != two.getDistance()) {
+            System.out.println("Different distances: " + one.getDistance() + " " + two.getDistance());
+        }
     }
 
 
@@ -102,8 +154,23 @@ public class TrackRatesTest {
                 .setPassword(DigestUtils.sha256Hex("absx"))
                 .setUserPrivileges(UserPrivileges.STANDARD_USER)
                 .setImage("Empty")
-                .setPhoneNumber(12443134).
-                setNfcTag("ABC")
+                .setPhoneNumber(12443134)
+                .setNfcTag("ABC")
+                .build();
+        userDaoJdbc.save(user);
+        return user;
+    }
+
+    private User mockSecondUserFromDatabase() {
+        User user = new UserBuilder()
+                .setNick("admin")
+                .setName("Jaźn")
+                .setSurname("Kowalski")
+                .setPassword(DigestUtils.sha256Hex("absx"))
+                .setUserPrivileges(UserPrivileges.STANDARD_USER)
+                .setImage("Empty")
+                .setPhoneNumber(12443134)
+                .setNfcTag("AAC")
                 .build();
         userDaoJdbc.save(user);
         return user;

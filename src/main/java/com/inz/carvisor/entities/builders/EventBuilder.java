@@ -3,12 +3,13 @@ package com.inz.carvisor.entities.builders;
 import com.inz.carvisor.entities.model.Event;
 
 public class EventBuilder {
+
+    private long deviceId;
     private long startTimestamp;
     private long endTimestamp;
-    private String title;
-    private String description;
-    private String type;
-    private long deviceId;
+    private String title = "Event";
+    private String description = "";
+    private String type = "Event";
     private boolean draggable = true;
     private boolean remind = true;
 

@@ -57,6 +57,8 @@ public class AttributeKey {
         public static final String PRIVATE = "private";
         public static final String GPS_LONGITUDE = "gps_longitude";
         public static final String GPS_LATITUDE = "gps_latitude";
+        public static final String LATITUDE = "latitude";
+        public static final String LONGITUDE = "longitude";
         public static final String NFC_TAG = "nfc_tag";
         public static final String DATE = "date";
         public static final String AMOUNT_OF_TRACK = "tracks";
@@ -70,6 +72,8 @@ public class AttributeKey {
         public static final String LOCATION_TO = "locationTo";
         public static final String SAFETY_POINTS = "safetyPoints";
         public static final String LIST_OF_OFFENCES = "listOfOffencess";
+        public static final String OBD = "obd";
+        public static final String GPS_POS = "gps_pos";
     }
 
     public static class Calendar {

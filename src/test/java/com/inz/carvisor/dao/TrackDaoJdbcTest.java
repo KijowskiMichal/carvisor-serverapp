@@ -4,13 +4,11 @@ import com.inz.carvisor.entities.builders.CarBuilder;
 import com.inz.carvisor.entities.builders.TrackBuilder;
 import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
-import com.inz.carvisor.entities.model.Car;
-import com.inz.carvisor.entities.model.Track;
-import com.inz.carvisor.entities.model.TrackRate;
-import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.entities.model.*;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.otherclasses.Logger;
+import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -24,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.persistence.Id;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -120,7 +119,7 @@ class TrackDaoJdbcTest {
         userDaoJdbc.save(user);
         userDaoJdbc.save(userTwo);
         Track build = new TrackBuilder().setStartTrackTimeStamp(1637183452).setUser(user).setCar(car).build();
-        TrackRate trackRate = new TrackRate();
+        TrackRate trackRate = new TrackRateBuilder().build();
         build.addTrackRate(trackRate);
         trackRateDaoJdbc.save(trackRate);
         trackDaoJdbc.save(build);
@@ -163,5 +162,12 @@ class TrackDaoJdbcTest {
         wrappedSetting = trackDaoJdbc.get(track.getId());
         if (wrappedSetting.isPresent())
             Assertions.fail();
+    }
+
+    @Test
+    @Ignore
+    void getUserTracksWithGivenTimestamps() {
+        //todo test method below
+        trackDaoJdbc.getUserTracks(1,123,123);
     }
 }

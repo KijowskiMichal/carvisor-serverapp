@@ -10,6 +10,7 @@ public class OffenceBuilder {
     private int value;
     private String location;
     private User user;
+    private long assignedTrackId;
 
     public OffenceBuilder setUser(User user) {
         this.user = user;
@@ -36,6 +37,11 @@ public class OffenceBuilder {
         return this;
     }
 
+    public OffenceBuilder setAssignedTrackId(long assignedTrackId) {
+        this.assignedTrackId = assignedTrackId;
+        return this;
+    }
+
     public Offence build() {
         Offence offence = new Offence();
         offence.setOffenceType(offenceType);
@@ -43,6 +49,7 @@ public class OffenceBuilder {
         offence.setValue(value);
         offence.setTimeStamp(timestamp);
         offence.setLocation(location);
+        offence.setAssignedTrackId(assignedTrackId);
         return offence;
     }
 }

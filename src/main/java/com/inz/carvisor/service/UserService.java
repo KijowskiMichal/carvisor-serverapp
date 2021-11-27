@@ -30,7 +30,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -136,9 +135,9 @@ public class UserService {
                     jsonObject.put("licensePlate", "null");
                 }
                 Date now = new Date();
-                LocalDateTime before = LocalDateTime.ofInstant(Instant.ofEpochSecond(now.getTime()/1000), TimeZone.getDefault().toZoneId()).with(LocalTime.MIN);
+                LocalDateTime before = LocalDateTime.ofInstant(Instant.ofEpochSecond(now.getTime() / 1000), TimeZone.getDefault().toZoneId()).with(LocalTime.MIN);
                 Timestamp timestampBefore = Timestamp.valueOf(before);
-                LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochSecond(now.getTime()/1000), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
+                LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochSecond(now.getTime() / 1000), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
                 Timestamp timestampAfter = Timestamp.valueOf(after);
 
                 long sum = 0;
@@ -150,7 +149,7 @@ public class UserService {
                         .map(TrackRate::getDistance)
                         .collect(Collectors.toList());
 
-                for (Long l: collect) {
+                for (Long l : collect) {
                     sum += l;
                 }
 
@@ -358,7 +357,7 @@ public class UserService {
      * @param request    Object of HttpServletRequest represents our request.
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200.
-     */ //todo need heavy testing
+     */
     public ResponseEntity update(HttpServletRequest request, HttpEntity<String> httpEntity, int userID) {
         //authorization
         if (request.getSession().getAttribute("user") == null) {

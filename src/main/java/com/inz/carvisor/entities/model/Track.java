@@ -9,8 +9,7 @@ import java.util.List;
 @Entity
 public class Track {
 
-    @OneToMany
-    List<Offence> offences;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -34,6 +33,7 @@ public class Track {
     private long endTrackTimeStamp;
     private long distanceFromStart;
     private float ecoPointsScore;
+    private float safetyPointsScore;
     private int amountOfSamples;
     private double combustion;
     private int averageSpeed;
@@ -76,14 +76,6 @@ public class Track {
 
     public void setListOfTrackRates(List<TrackRate> listOfTrackRates) {
         this.listOfTrackRates = listOfTrackRates;
-    }
-
-    public List<Offence> getOffences() {
-        return offences;
-    }
-
-    public void setOffences(List<Offence> offences) {
-        this.offences = offences;
     }
 
     public Boolean getPrivateTrack() {
@@ -222,6 +214,14 @@ public class Track {
         this.safetyNegativeSamples = safetyNegativeSamples;
     }
 
+    public float getSafetyPointsScore() {
+        return safetyPointsScore;
+    }
+
+    public void setSafetyPointsScore(float safetyPointsScore) {
+        this.safetyPointsScore = safetyPointsScore;
+    }
+
     public void addTrackRate(TrackRate trackRate) {
         listOfTrackRates.add(trackRate);
         amountOfSamples++;
@@ -241,4 +241,6 @@ public class Track {
                 ", startTrackTimeStamp=" + startTrackTimeStamp +
                 '}';
     }
+
+
 }

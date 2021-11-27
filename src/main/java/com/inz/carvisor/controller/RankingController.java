@@ -3,6 +3,7 @@ package com.inz.carvisor.controller;
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.constants.Key;
+import com.inz.carvisor.dao.OffenceDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.model.Offence;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,13 +31,16 @@ public class RankingController {
 
     private final TrackDaoJdbc trackDaoJdbc;
     private final UserDaoJdbc userDaoJdbc;
+    private final OffenceDaoJdbc offenceDaoJdbc;
 
     @Autowired
-    public RankingController(TrackDaoJdbc trackDaoJdbc, UserDaoJdbc userDaoJdbc) {
+    public RankingController(TrackDaoJdbc trackDaoJdbc, UserDaoJdbc userDaoJdbc, OffenceDaoJdbc offenceDaoJdbc) {
         this.trackDaoJdbc = trackDaoJdbc;
         this.userDaoJdbc = userDaoJdbc;
+        this.offenceDaoJdbc = offenceDaoJdbc;
     }
 
+    //todo refactoring
     @RequestMapping(value = "/getUserSummary/{dateFrom}/{dateTo}/{page}/{pagesize}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
     public ResponseEntity<String> getUserSummary(
             HttpServletRequest request, HttpEntity<String> httpEntity,
@@ -51,14 +56,12 @@ public class RankingController {
                 .stream()
                 .filter(track -> track.getStartTrackTimeStamp() > dateFromTimestamp)
                 .filter(track -> track.getStartTrackTimeStamp() < dateToTimestamp)
-                .collect(Collectors.toList());//todo bad solution
-        //todo this is even worse
+                .collect(Collectors.toList());
         int maxPage = getUserTracks.size() / pagesize + 1;
 
-        int from = Math.max(0,page*maxPage);
-        int to = Math.min(getUserTracks.size(),(page+1)*maxPage);
-        //todo whole method need stabilization
-        JSONObject jsonObject = toJson(userToCheck, safetyPointsRankingPosition, ecoPointsRankingPosition, getUserTracks.subList(to,from-1));
+        int from = Math.max(0, page * maxPage);
+        int to = Math.min(getUserTracks.size(), (page + 1) * maxPage);
+        JSONObject jsonObject = toJson(userToCheck, safetyPointsRankingPosition, ecoPointsRankingPosition, getUserTracks.subList(to, from - 1));
         jsonObject.put(Key.PAGE, page);
         jsonObject.put(Key.PAGE_MAX, maxPage);
         return DefaultResponse.ok(jsonObject.toString());
@@ -73,13 +76,17 @@ public class RankingController {
     }
 
     private int getSafetyPointsRankingPosition(User userToCheck, List<User> allUsers) {
-        return 1; //todo placeholder
+        allUsers.sort((a,b) -> Float.compare(a.getSafetyPointsAvg(), b.getSafetyPointsAvg()));
+        for (int i=0;i<allUsers.size();i++) {
+            if (allUsers.get(0).getId() == userToCheck.getId()) return i+1;
+        }
+        return allUsers.size();
     }
 
     private JSONObject toJson(User user, int safetyRankingPosition, int ecoRankingPosition, List<Track> userTrack) {
         return new JSONObject()
                 .put(AttributeKey.User.NAME, user.getName() + " " + user.getSurname())
-                .put(AttributeKey.User.SAFETY_POINTS, 3) //todo placeholder
+                .put(AttributeKey.User.SAFETY_POINTS, user.getSafetyPointsAvg())
                 .put(AttributeKey.User.ECO_POINTS, user.getEcoPointsAvg())
                 .put(AttributeKey.User.SAFETY_RANKING_POSITION, safetyRankingPosition)
                 .put(AttributeKey.User.ECO_RANKING_POSITION, ecoRankingPosition)
@@ -112,12 +119,8 @@ public class RankingController {
                 .put(AttributeKey.Track.DATE, track.getTimestamp())
                 .put(AttributeKey.Track.LOCATION_FROM, track.getStartPosition())
                 .put(AttributeKey.Track.LOCATION_TO, track.getEndPosition())
-                .put(AttributeKey.Track.SAFETY_POINTS, 0)
+                .put(AttributeKey.Track.SAFETY_POINTS, track.getSafetyPointsScore())
                 .put(AttributeKey.Track.ECO_POINTS, track.getEcoPointsScore())
-                .put(AttributeKey.Track.LIST_OF_OFFENCES, toJSONArray(track.getOffences()));
-    }
-
-    private List<Track> getPage(List<Track> list, int page, int maxPage) {
-        return null;
+                .put(AttributeKey.Track.LIST_OF_OFFENCES, toJSONArray(offenceDaoJdbc.get(track.getUser())));
     }
 }

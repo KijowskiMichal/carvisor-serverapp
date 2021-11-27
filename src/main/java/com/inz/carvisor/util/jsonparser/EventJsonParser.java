@@ -31,13 +31,13 @@ public class EventJsonParser {
 
     public static JSONObject parse(Event event) {
         return new JSONObject()
-                .put(AttributeKey.Calendar.START_TIMESTAMP,event.getStartTimestamp())
-                .put(AttributeKey.Calendar.END_TIMESTAMP,event.getEndTimestamp())
+                .put(AttributeKey.Calendar.START_TIMESTAMP, event.getStartTimestamp())
+                .put(AttributeKey.Calendar.END_TIMESTAMP, event.getEndTimestamp())
                 .put(AttributeKey.Calendar.TITLE, event.getTitle())
-                .put(AttributeKey.Calendar.DESCRIPTION,event.getDescription())
-                .put(AttributeKey.Calendar.TYPE,event.getType())
-                .put(AttributeKey.Calendar.DEVICE_ID,event.getDeviceId())
-                .put(AttributeKey.Calendar.DRAGGABLE,event.isDraggable())
-                .put(AttributeKey.Calendar.REMIND,event.isRemind());
+                .put(AttributeKey.Calendar.DESCRIPTION, event.getDescription())
+                .put(AttributeKey.Calendar.TYPE, event.getType())
+                .put(AttributeKey.Calendar.DEVICE_ID, event.getDeviceId())
+                .put(AttributeKey.Calendar.DRAGGABLE, event.isDraggable())
+                .put(AttributeKey.Calendar.REMIND, event.isRemind());
     }
 }

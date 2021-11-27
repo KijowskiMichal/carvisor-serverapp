@@ -1,6 +1,11 @@
 package com.inz.carvisor.controller;
 
+import com.inz.carvisor.constants.DefaultResponse;
+import com.inz.carvisor.entities.enums.UserPrivileges;
+import com.inz.carvisor.entities.model.Car;
+import com.inz.carvisor.service.SecurityService;
 import com.inz.carvisor.service.TrackService;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +23,12 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/track")
 public class TrackREST {
     private final TrackService trackService;
+    private final SecurityService securityService;
 
     @Autowired
-    public TrackREST(TrackService trackService) {
+    public TrackREST(TrackService trackService, SecurityService securityService) {
         this.trackService = trackService;
+        this.securityService = securityService;
     }
 
     @RequestMapping(value = "/start", method = RequestMethod.POST)
@@ -29,9 +36,18 @@ public class TrackREST {
         return trackService.startTrack(request, httpEntity);
     }
 
+    @RequestMapping(value = "/updateTrackDataOLD/", method = RequestMethod.POST)
+    public ResponseEntity updateTrackDataOLD(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        return trackService.updateTrackDataOLD(request, httpEntity);
+    }
+
     @RequestMapping(value = "/updateTrackData/", method = RequestMethod.POST)
     public ResponseEntity updateTrackData(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        return trackService.updateTrackData(request, httpEntity);
+        if (!securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, request)) {
+            return DefaultResponse.UNAUTHORIZED;
+        }
+        Car car = (Car) request.getSession().getAttribute("car");
+        return trackService.updateTrackData(car, new JSONObject(httpEntity.getBody()));
     }
 
     @RequestMapping(value = "/updateTrack/", method = RequestMethod.POST)

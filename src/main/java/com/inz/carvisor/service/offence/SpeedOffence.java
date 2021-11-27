@@ -8,10 +8,10 @@ import com.inz.carvisor.entities.model.TrackRate;
 import java.util.Optional;
 
 
-public class SpeedOffence extends OffenceStrategy {
+public class SpeedOffence {
 
-    @Override
-    public Optional<Offence> createOffenceIfExists(TrackRate trackRate) {
+
+    public static Optional<Offence> createOffenceIfExists(TrackRate trackRate) {
         long timestamp = trackRate.getTimestamp();
 
         int speedLimit = getSpeedLimit();
@@ -29,14 +29,14 @@ public class SpeedOffence extends OffenceStrategy {
         return Optional.of(offence);
     }
 
-    private int getSpeedLimit() {
-        //TODO WIP - get speed limit
+    private static int getSpeedLimit() {
+        //TODO - API DO SPRAWDZANIA LIMITU PRĘDKOŚCI NIE DZIAŁA JAK NALEŻY?
         return 12;
     }
 
-    private String getLocation(TrackRate trackRate) {
+    private static String getLocation(TrackRate trackRate) {
         Double latitude = trackRate.getLatitude();
         Double longitude = trackRate.getLongitude();
-        return latitude.toString() + longitude.toString();
+        return latitude.toString() + "," + longitude.toString();
     }
 }

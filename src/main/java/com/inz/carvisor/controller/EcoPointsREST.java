@@ -49,13 +49,13 @@ public class EcoPointsREST {
             List<Track> tracks = ecoPointsService.listUser(userId, dateFrom, dateTo);
             Optional<User> userOptional = userService.getUser(userId);
             if (userOptional.isEmpty()) return DefaultResponse.badRequestCantFindUer(userId);
-            return DefaultResponse.ok(parseToJson(userOptional.get(),tracks));
+            return DefaultResponse.ok(parseToJson(userOptional.get(), tracks));
         } else {
             return DefaultResponse.UNAUTHORIZED;
         }
     }
 
-    private String parseToJson(User user,List<Track> trackList) {
+    private String parseToJson(User user, List<Track> trackList) {
         JSONObject mainJson = new JSONObject().put("name", user.getName() + " " + user.getSurname());
         JSONArray listOfDays = new JSONArray();
         trackList.stream().map(this::trackToJson).forEach(listOfDays::put);

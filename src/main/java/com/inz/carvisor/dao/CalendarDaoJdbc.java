@@ -1,6 +1,5 @@
 package com.inz.carvisor.dao;
 
-import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.entities.model.Event;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Logger;
@@ -10,14 +9,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class CalendarDaoJdbc extends HibernateDaoJdbc<Event>{
+public class CalendarDaoJdbc extends HibernateDaoJdbc<Event> {
 
     public CalendarDaoJdbc(HibernateRequests hibernateRequests, Logger logger) {
         super(hibernateRequests, logger);
     }
 
     public List<Event> getEvents(int month, int year) {
-        return getList(buildQuery(month,year));
+        return getList(buildQuery(month, year));
     }
 
     @Override

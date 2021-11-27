@@ -3,8 +3,9 @@ package com.inz.carvisor.entities.builders;
 import com.inz.carvisor.entities.model.Error;
 
 public class ErrorBuilder {
-    private String type;
-    private long value;
+
+    private String type = "Error";
+    private long value = 0;
 
     public ErrorBuilder setType(String type) {
         this.type = type;
