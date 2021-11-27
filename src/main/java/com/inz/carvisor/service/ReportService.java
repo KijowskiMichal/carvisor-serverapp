@@ -29,10 +29,14 @@ public class ReportService {
     }
 
     public List<Report> list(int page, int pageSize, String regex) {
-        return List.of();
+        return reportDaoJdbc.getList(regex,page,pageSize);
     }
 
     public byte[] generateReportBody(List<Long> userIds, long startTimeStamp, long endTimeStamp) {
         return pdfCreatorService.generatePDF(userIds, startTimeStamp, endTimeStamp);
+    }
+
+    public int getMaxPage(int pageSize, String regex) {
+        return reportDaoJdbc.getMaxPageSize(pageSize,regex);
     }
 }

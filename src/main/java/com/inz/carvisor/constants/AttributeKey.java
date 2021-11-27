@@ -2,6 +2,12 @@ package com.inz.carvisor.constants;
 
 public class AttributeKey {
 
+    public static class Util {
+
+        public static final String PAGE = "page";
+        public static final String PAGE_MAX = "pageMax";
+    }
+
     public static class User {
 
         public static final String NAME_SURNAME = "name";
@@ -14,7 +20,6 @@ public class AttributeKey {
         public final static String NFC = "nfc";
         public final static String USER_PRIVILEGES = "userPrivileges";
         public static final String LOGIN = "login";
-
         public static final String SAFETY_POINTS = "safetyPoints";
         public static final String ECO_POINTS = "ecoPoints";
         public static final String SAFETY_RANKING_POSITION = "safetyRankingPosition";
@@ -95,5 +100,18 @@ public class AttributeKey {
         public static final String POINT_X = "pointX";
         public static final String POINT_Y = "pointY";
         public static final String RADIUS = "radius";
+    }
+
+    public static class Report {
+
+        public static final String TYPE = "name";
+        public static final String NAME = "name";
+        public static final String DESCRIPTION = "name";
+        public static final String START = "name";
+        public static final String END = "name";
+        public static final String LIST_OF_USER_IDS = "name";
+        public static final String ID = "id";
+        public static final String LOADING = "loading";
+        public static final String LIST_OF_RAPORTS = "listOfRaports";
     }
 }

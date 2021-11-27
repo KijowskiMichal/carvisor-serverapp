@@ -40,8 +40,8 @@ public class RankingController {
         this.offenceDaoJdbc = offenceDaoJdbc;
     }
 
-    //todo refactoring
-    @RequestMapping(value = "/getUserSummary/{dateFrom}/{dateTo}/{page}/{pagesize}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
+    //todo refactoring - code is not optimal
+    @RequestMapping(value = "/getUserSummary/{dateFrom}/{dateTo}/{page}/{pagesize}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> getUserSummary(
             HttpServletRequest request, HttpEntity<String> httpEntity,
             @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
