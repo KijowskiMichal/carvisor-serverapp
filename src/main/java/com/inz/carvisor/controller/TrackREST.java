@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/track")
 public class TrackREST {
+
     private final TrackService trackService;
     private final SecurityService securityService;
 
@@ -43,9 +44,6 @@ public class TrackREST {
 
     @RequestMapping(value = "/updateTrackData/", method = RequestMethod.POST)
     public ResponseEntity updateTrackData(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, request)) {
-            return DefaultResponse.UNAUTHORIZED;
-        }
         Car car = (Car) request.getSession().getAttribute("car");
         return trackService.updateTrackData(car, new JSONObject(httpEntity.getBody()));
     }
