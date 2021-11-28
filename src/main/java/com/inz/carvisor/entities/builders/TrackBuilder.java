@@ -31,8 +31,6 @@ public class TrackBuilder {
     private long startTrackTimeStamp;
     private long endTrackTimeStamp;
 
-    private long amountOfTrackRates = 0;
-
     public TrackBuilder setStartTrackTimeStamp(long startTrackTimeStamp) {
         this.startTrackTimeStamp = startTrackTimeStamp;
         return this;
@@ -97,7 +95,6 @@ public class TrackBuilder {
         track.setStartTrackTimeStamp(this.startTrackTimeStamp);
         track.setEndTrackTimeStamp(this.endTrackTimeStamp);
         track.setListOfTrackRates(new ArrayList<>());
-
 
         return track;
     }

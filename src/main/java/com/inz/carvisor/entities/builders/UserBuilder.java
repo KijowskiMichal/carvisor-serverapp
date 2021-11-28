@@ -13,6 +13,7 @@ public class UserBuilder {
     private final int samplesNumber = 0;
     private final int safetyNegativeSamples = 0;
     private final int safetySamples = 0;
+    private final int safetyPointsAvg = 0;
     private String nick;
     private String name;
     private String surname;
@@ -83,7 +84,7 @@ public class UserBuilder {
         user.setSamplesNumber(this.samplesNumber);
         user.setSafetyNegativeSamples(this.safetyNegativeSamples);
         user.setSafetySamples(this.safetySamples);
-
+        user.setSafetyPointsAvg(this.safetyPointsAvg);
         return user;
     }
 }

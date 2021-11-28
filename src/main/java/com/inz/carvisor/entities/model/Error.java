@@ -16,7 +16,7 @@ public class Error {
     private Car car;
 
     private String type;
-    private long value;
+    private String value; //todo change to string
     private long timestamp;
     private String location;
     private String userName;
@@ -26,7 +26,7 @@ public class Error {
     public Error() {
     }
 
-    public Error(String type, long value) {
+    public Error(String type, String value) {
         this.type = type;
         this.value = value;
     }
@@ -47,11 +47,11 @@ public class Error {
         this.type = type;
     }
 
-    public long getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(long value) {
+    public void setValue(String value) {
         this.value = value;
     }
 

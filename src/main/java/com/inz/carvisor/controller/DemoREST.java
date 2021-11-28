@@ -10,13 +10,17 @@ import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Car;
 import com.inz.carvisor.entities.model.Setting;
+import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -73,6 +77,27 @@ public class DemoREST {
 
 
         return DefaultResponse.OK;
+    }
+
+    @RequestMapping(value = "/getPdf", method = RequestMethod.GET)
+    public ResponseEntity getPdf() {
+        try {
+            Document document = new Document();
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            PdfWriter.getInstance(document, byteArrayOutputStream);
+            document.open();
+            Font font = FontFactory.getFont(FontFactory.COURIER, 16, BaseColor.BLACK);
+            Chunk chunk = new Chunk("Hello World", font);
+            document.add(chunk);
+            document.close();
+            byte[] inFileBytes = byteArrayOutputStream.toByteArray();
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(inFileBytes);
+        } catch (DocumentException e) {
+            e.printStackTrace();
+        }
+        return DefaultResponse.badRequest("something went wrong");
     }
 
     public List<Car> getCarList() {

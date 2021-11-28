@@ -14,6 +14,7 @@ public class SafetyPointsCalculator {
     public static void validateSafetyPointsScore(User user, Track track) {
         float userSamples = user.getSamples();
         float trackSamples = track.getAmountOfSamples();
+
         float userSamplesWithoutTrack = userSamples - trackSamples;
 
         float trackSPS = track.getSafetyPointsScore();

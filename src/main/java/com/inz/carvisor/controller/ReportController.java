@@ -76,7 +76,6 @@ public class ReportController {
                 .put(AttributeKey.Util.PAGE,page)
                 .put(AttributeKey.Util.PAGE_MAX,reportService.getMaxPage(pageSize,regex))
                 .put(AttributeKey.Report.LIST_OF_RAPORTS,jsonArray);
-
         return DefaultResponse.ok(jsonResponse.toString());
     }
 }

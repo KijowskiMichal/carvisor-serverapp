@@ -5,14 +5,14 @@ import com.inz.carvisor.entities.model.Error;
 public class ErrorBuilder {
 
     private String type = "Error";
-    private long value = 0;
+    private String value = "xyz";
 
     public ErrorBuilder setType(String type) {
         this.type = type;
         return this;
     }
 
-    public ErrorBuilder setValue(long value) {
+    public ErrorBuilder setValue(String value) {
         this.value = value;
         return this;
     }

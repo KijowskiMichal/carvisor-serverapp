@@ -74,7 +74,7 @@ public class ErrorsREST {
     private Error deserializeError(JSONObject jsonObject) {
         return new ErrorBuilder()
                 .setType(jsonObject.getString(AttributeKey.Error.TYPE))
-                .setValue(jsonObject.getInt(AttributeKey.Error.VALUE))
+                .setValue(jsonObject.getString(AttributeKey.Error.VALUE))
                 .build();
     }
 
