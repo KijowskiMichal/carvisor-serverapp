@@ -287,7 +287,7 @@ public class TrackService {
                 .map(Long::parseLong)
                 .sorted()
                 .map(Object::toString)
-                .map(timeStamp -> parseJSONObjectTOTrackRate(timeStamp, jsonObject.getJSONObject(timeStamp)))
+                .map(timeStamp -> parseJSONObjectTOTrackRate(timeStamp, jsonObject.getJSONObject(timeStamp),track))
                 .collect(Collectors.toList());
 
         setDistanceBetweenTrackRates(listOfTrackRates);
@@ -514,7 +514,6 @@ public class TrackService {
      * @return HttpStatus 200, user data as JsonString.
      */
     public ResponseEntity getTrackData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID, long dateTimeStamp) {//
-        // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("TrackService.getTrackData cannot send data (session not found)");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
@@ -523,7 +522,6 @@ public class TrackService {
         Session session = null;
         Transaction tx = null;
         ResponseEntity responseEntity;
-
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
@@ -532,8 +530,6 @@ public class TrackService {
             JSONArray endPoints = new JSONArray();
             long startOfDay = TimeStampCalculator.getStartOfDayTimeStamp(dateTimeStamp);
             long endOfDay = TimeStampCalculator.getEndOfDayTimeStamp(dateTimeStamp);
-            //Query query = session.createQuery("Select t from TrackRate t WHERE t.timestamp > " + dateTimeStamp + " AND  t.timestamp < " + endOfDay + " AND t.track.user.id = " + userID + " ORDER BY t.id ASC");
-            //List<TrackRate> trackRates = query.getResultList();
 
             List<Track> userTracks = trackDaoJdbc.getUserTracks(userID);
             List<TrackRate> trackRates = userTracks.stream()
@@ -550,78 +546,30 @@ public class TrackService {
                 if (first) {
                     Query query2 = session.createQuery("Select t from TrackRate t WHERE t.trackId = " + trackRate.getTrackId() + " AND t.timestamp < " + trackRate.getTimestamp() + " ORDER BY t.id ASC");
                     List<TrackRate> trackRates2 = query2.getResultList();
-                    for (TrackRate trackRate2 : trackRates2) {
-                        JSONObject tmp2 = new JSONObject();
-                        tmp2.put("gpsX", trackRate2.getLatitude());
-                        tmp2.put("gpsY", trackRate2.getLongitude());
-                        tmp2.put("rpm", trackRate2.getRpm());
-                        tmp2.put("speed", trackRate2.getSpeed());
-                        tmp2.put("throttle", trackRate2.getThrottle());
-                        tmp2.put("time", trackRate2.getTimestamp());
-                        tmp2.put("track", trackRate2.getTrackId());
-                        points.put(tmp2);
-                    }
+                    trackRates2.stream().map(this::getPoint).forEach(points::put);
                     first = false;
                 }
-                JSONObject tmp = new JSONObject();
-                tmp.put("gpsX", trackRate.getLatitude());
-                tmp.put("gpsY", trackRate.getLongitude());
-                tmp.put("rpm", trackRate.getRpm());
-                tmp.put("speed", trackRate.getSpeed());
-                tmp.put("throttle", trackRate.getThrottle());
-                tmp.put("time", trackRate.getTimestamp());
-                tmp.put("track", trackRate.getTrackId());
-                points.put(tmp);
+                points.put(getPoint(trackRate));
                 last = trackRate.getTrackId();
                 tracksID.add(last);
                 timestamp = trackRate.getTimestamp();
             }
             Query query3 = session.createQuery("Select t from TrackRate t WHERE t.trackId = " + last + " AND t.timestamp > " + timestamp + " ORDER BY t.id ASC");
             List<TrackRate> trackRates3 = query3.getResultList();
-            for (TrackRate trackRate3 : trackRates3) {
-                JSONObject tmp3 = new JSONObject();
-                tmp3.put("gpsX", trackRate3.getLatitude());
-                tmp3.put("gpsY", trackRate3.getLongitude());
-                tmp3.put("rpm", trackRate3.getRpm());
-                tmp3.put("speed", trackRate3.getSpeed());
-                tmp3.put("throttle", trackRate3.getThrottle());
-                tmp3.put("time", trackRate3.getTimestamp());
-                tmp3.put("track", trackRate3.getTrackId());
-                points.put(tmp3);
-            }
+            trackRates3.stream().map(this::getPoint).forEach(points::put);
+
             for (Long trackID : tracksID) {
                 Query query4 = session.createQuery("Select t from Track t WHERE t.id = " + trackID);
                 Track track = (Track) query4.getSingleResult();
                 List<TrackRate> listOfTrackRates = track.getListOfTrackRates();
                 TrackRate firstTrackRate = listOfTrackRates.get(0);
                 TrackRate lastTrackRate = listOfTrackRates.get(listOfTrackRates.size() - 1);
-
-                JSONObject start = new JSONObject()
-                        .put("vehicle", track.getCar().getLicensePlate())
-                        .put("gpsX", firstTrackRate.getLatitude())
-                        .put("gpsY", firstTrackRate.getLongitude())
-                        .put("rpm", firstTrackRate.getRpm())
-                        .put("speed", firstTrackRate.getSpeed())
-                        .put("throttle", firstTrackRate.getThrottle())
-                        .put("time", firstTrackRate.getTimestamp());
-                startPoints.put(start);
-
-                JSONObject end = new JSONObject()
-                        .put("vehicle", track.getCar().getLicensePlate())
-                        .put("gpsX", lastTrackRate.getLatitude())
-                        .put("gpsY", lastTrackRate.getLongitude())
-                        .put("rpm", lastTrackRate.getRpm())
-                        .put("speed", lastTrackRate.getSpeed())
-                        .put("throttle", lastTrackRate.getThrottle())
-                        .put("time", lastTrackRate.getTimestamp());
-                endPoints.put(end);
+                startPoints.put(getBorderPoint(track, firstTrackRate));
+                endPoints.put(getBorderPoint(track, lastTrackRate));
             }
-
-            JSONObject output = new JSONObject()
-                    .put("points", points)
-                    .put("startPoints", startPoints)
-                    .put("endPoints", endPoints);
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(output.toString());
+            responseEntity = ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(getOutputJson(points, startPoints, endPoints).toString());
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
@@ -630,6 +578,35 @@ public class TrackService {
             if (session != null) session.close();
         }
         return responseEntity;
+    }
+
+    private JSONObject getPoint(TrackRate trackRate) {
+        return new JSONObject()
+        .put("gpsX", trackRate.getLatitude())
+        .put("gpsY", trackRate.getLongitude())
+        .put("rpm", trackRate.getRpm())
+        .put("speed", trackRate.getSpeed())
+        .put("throttle", trackRate.getThrottle())
+        .put("time", trackRate.getTimestamp())
+        .put("track", trackRate.getTrackId());
+    }
+
+    private JSONObject getBorderPoint(Track track, TrackRate firstTrackRate) {
+        return new JSONObject()
+                .put("vehicle", track.getCar().getLicensePlate())
+                .put("gpsX", firstTrackRate.getLatitude())
+                .put("gpsY", firstTrackRate.getLongitude())
+                .put("rpm", firstTrackRate.getRpm())
+                .put("speed", firstTrackRate.getSpeed())
+                .put("throttle", firstTrackRate.getThrottle())
+                .put("time", firstTrackRate.getTimestamp());
+    }
+
+    private JSONObject getOutputJson(JSONArray points, JSONArray startPoints, JSONArray endPoints) {
+        return new JSONObject()
+                .put("points", points)
+                .put("startPoints", startPoints)
+                .put("endPoints", endPoints);
     }
 
     /**
@@ -860,9 +837,10 @@ public class TrackService {
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 
-    private TrackRate parseJSONObjectTOTrackRate(String timeStamp, JSONObject currentTrackRate) {
+    private TrackRate parseJSONObjectTOTrackRate(String timeStamp, JSONObject currentTrackRate, Track track) {
         TrackRateBuilder trackRateBuilder = new TrackRateBuilder();
         trackRateBuilder.setTimestamp(Long.parseLong(timeStamp));
+        trackRateBuilder.setTrackId(track.getId());
         if (currentTrackRate.has(AttributeKey.Track.OBD)) {
             addOBDToTrackRateBuilder(trackRateBuilder, currentTrackRate.getJSONObject(AttributeKey.Track.OBD));
         }

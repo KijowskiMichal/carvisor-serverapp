@@ -138,7 +138,7 @@ public class DemoREST {
                 .setBrand("Ford")
                 .setModel("Focus")
                 .setProductionDate(1990)
-                .setImage("Empty")
+                .setImage(extractBase64Picture(7, USER_PHOTOS_DIRECTORY_NAME))
                 .setPassword(DigestUtils.sha256Hex("safdsdsf"))
                 .setTank(50)
                 .setFuelNorm(7D)
@@ -149,12 +149,12 @@ public class DemoREST {
 
     private User mockSecondUserFromDatabase() {
         User user = new UserBuilder()
-                .setNick("admin")
-                .setName("Jaźn")
-                .setSurname("Kowalski")
+                .setNick("Mocked")
+                .setName("Mocked")
+                .setSurname("Mocked")
                 .setPassword(DigestUtils.sha256Hex("absx"))
                 .setUserPrivileges(UserPrivileges.STANDARD_USER)
-                .setImage("Empty")
+                .setImage(extractBase64Picture(7, USER_PHOTOS_DIRECTORY_NAME))
                 .setPhoneNumber(12443134)
                 .setNfcTag("AAC")
                 .build();

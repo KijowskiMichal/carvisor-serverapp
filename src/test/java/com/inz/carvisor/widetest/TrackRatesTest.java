@@ -99,8 +99,11 @@ public class TrackRatesTest {
         trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
         trackREST.endOfTrack(httpServletRequestSecond,null);
 
-        List<Track> all = trackDaoJdbc.getAll();
-        compareTracksFromDatabase(all.get(0),all.get(1));
+        //List<Track> all = trackDaoJdbc.getAll();
+        //compareTracksFromDatabase(all.get(0),all.get(1));
+
+        ResponseEntity<String> trackData = trackREST.getTrackData(httpServletRequest, null, user.getId(), 1623879247);
+        System.out.println("");
     }
 
     private void compareTracksFromDatabase(Track one, Track two) {
