@@ -83,9 +83,9 @@ public class TrackRatesTest {
         Car car = mockCarFromDatabase();
         HttpServletRequest httpServletRequest = RequestBuilder.mockHttpServletRequest(user, car);
 
-        trackService.startTrack(httpServletRequest, new HttpEntity<>(startTrackString));
-        trackService.updateTrackDataOLD(httpServletRequest, new HttpEntity<>(trackRatesString));
-        trackService.endOfTrack(httpServletRequest,null);
+        trackREST.startTrack(httpServletRequest, new HttpEntity<>(startTrackString));
+        trackREST.updateTrackDataOLD(httpServletRequest, new HttpEntity<>(trackRatesString));
+        trackREST.endOfTrack(httpServletRequest,null);
 
         Track oldCalculatedTrack = trackDaoJdbc.getAll().get(0);
         Assertions.assertEquals(1, trackDaoJdbc.getAll().size());
@@ -95,9 +95,9 @@ public class TrackRatesTest {
         Car carSecond = mockCarFromDatabase();
         HttpServletRequest httpServletRequestSecond = RequestBuilder.mockHttpServletRequest(userSecond, carSecond);
 
-        trackService.startTrack(httpServletRequestSecond, new HttpEntity<>(startTrackString));
+        trackREST.startTrack(httpServletRequestSecond, new HttpEntity<>(startTrackString));
         trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
-        trackService.endOfTrack(httpServletRequestSecond,null);
+        trackREST.endOfTrack(httpServletRequestSecond,null);
 
         List<Track> all = trackDaoJdbc.getAll();
         compareTracksFromDatabase(all.get(0),all.get(1));

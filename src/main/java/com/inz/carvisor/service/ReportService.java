@@ -29,7 +29,7 @@ public class ReportService {
     }
 
     public List<Report> list(int page, int pageSize, String regex) {
-        return reportDaoJdbc.getList(regex,page,pageSize);
+        return reportDaoJdbc.list(page,pageSize, regex);
     }
 
     public byte[] generateReportBody(List<Long> userIds, long startTimeStamp, long endTimeStamp) {

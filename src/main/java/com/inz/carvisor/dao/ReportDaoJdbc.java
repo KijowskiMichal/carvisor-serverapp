@@ -31,6 +31,6 @@ public class ReportDaoJdbc extends HibernateDaoJdbc<Report> {
     }
 
     private String createQuery(String regex) {
-        return "SELECT x FROM REPORT x WHERE x.name like '%" + regex + "%'";
+        return "SELECT x FROM Report x WHERE x.name like '%" + regex + "%'";
     }
 }
