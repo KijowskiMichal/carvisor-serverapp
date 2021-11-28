@@ -104,12 +104,12 @@ public class AttributeKey {
 
     public static class Report {
 
-        public static final String TYPE = "name";
+        public static final String TYPE = "type";
         public static final String NAME = "name";
-        public static final String DESCRIPTION = "name";
-        public static final String START = "name";
-        public static final String END = "name";
-        public static final String LIST_OF_USER_IDS = "name";
+        public static final String DESCRIPTION = "description";
+        public static final String START = "start";
+        public static final String END = "end";
+        public static final String LIST_OF_USER_IDS = "listOfUserIds";
         public static final String ID = "id";
         public static final String LOADING = "loading";
         public static final String LIST_OF_RAPORTS = "listOfRaports";

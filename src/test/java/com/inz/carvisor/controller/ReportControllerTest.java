@@ -1,20 +1,27 @@
 package com.inz.carvisor.controller;
 
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.dao.*;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.*;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.util.RequestBuilder;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,6 +48,8 @@ class ReportControllerTest {
     private CalendarController calendarController;
     @Autowired
     private ReportController reportController;
+    @Autowired
+    private ReportDaoJdbc reportDaoJdbc;
 
     @AfterEach
     void cleanupDatabase() {
@@ -49,10 +58,28 @@ class ReportControllerTest {
         settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
         trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
         calendarDaoJdbc.getAll().stream().map(Event::getId).forEach(calendarDaoJdbc::delete);
+        reportDaoJdbc.getAll().stream().map(Report::getId).forEach(reportDaoJdbc::delete);
     }
 
     @Test
     void add() {
+        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR);
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(1);
+        jsonArray.put(2);
+        jsonArray.put(3);
+        JSONObject jsonObject = new JSONObject()
+                .put(AttributeKey.Report.TYPE,"Type")
+                .put(AttributeKey.Report.NAME,"Type")
+                .put(AttributeKey.Report.DESCRIPTION,"Type")
+                .put(AttributeKey.Report.START,"Type")
+                .put(AttributeKey.Report.END,"Type")
+                .put(AttributeKey.Report.LIST_OF_USER_IDS,jsonArray);
+        HttpEntity<String> httpEntity = new HttpEntity<String>(jsonObject.toString());
+        ResponseEntity<String> add = reportController.add(mockHttpServletRequest, httpEntity);
+        System.out.println("");
+        List<Report> z = reportDaoJdbc.getAll();
+        System.out.println();
     }
 
     @Test
@@ -61,8 +88,28 @@ class ReportControllerTest {
 
     @Test
     void list() {
-        ResponseEntity<String> la = reportController
-                .list(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), null, 1, 4, "la");
+        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR);
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(1);
+        jsonArray.put(2);
+        jsonArray.put(3);
+        JSONObject jsonObject = new JSONObject()
+                .put(AttributeKey.Report.TYPE,"Type")
+                .put(AttributeKey.Report.NAME,"Type")
+                .put(AttributeKey.Report.DESCRIPTION,"Type")
+                .put(AttributeKey.Report.START,"Type")
+                .put(AttributeKey.Report.END,"Type")
+                .put(AttributeKey.Report.LIST_OF_USER_IDS,jsonArray);
+        HttpEntity<String> httpEntity = new HttpEntity<String>(jsonObject.toString());
+        ResponseEntity<String> add = reportController.add(mockHttpServletRequest, httpEntity);
+        ResponseEntity<String> addTwo = reportController.add(mockHttpServletRequest, httpEntity);
+        ResponseEntity<String> addThree = reportController.add(mockHttpServletRequest, httpEntity);
+        System.out.println("");
+        List<Report> z = reportDaoJdbc.getAll();
+        System.out.println();
 
+        ResponseEntity<String> la = reportController
+                .list(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), null, 1, 4, "Ty");
+        System.out.println();
     }
 }
