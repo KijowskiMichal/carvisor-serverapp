@@ -24,5 +24,4 @@ public class FileDataGetter {
             return "{}";
         }
     }
-
 }

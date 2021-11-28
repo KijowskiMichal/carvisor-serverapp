@@ -1,6 +1,7 @@
 package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.DefaultResponse;
+import com.inz.carvisor.constants.Key;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
@@ -10,20 +11,27 @@ import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Car;
 import com.inz.carvisor.entities.model.Setting;
+import com.inz.carvisor.entities.model.User;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * REST com.inz.carvisor.controller responsible for demo data management.
@@ -37,13 +45,15 @@ public class DemoREST {
     UserDaoJdbc userDaoJdbc;
     CarDaoJdbc carDaoJdbc;
     SettingDaoJdbc settingDaoJdbc;
+    TrackREST trackREST;
 
     @Autowired
     public DemoREST(UserDaoJdbc userDaoJdbc, TrackDaoJdbc trackDaoJdbc,
-                    SettingDaoJdbc settingDaoJdbc, CarDaoJdbc carDaoJdbc) {
+                    SettingDaoJdbc settingDaoJdbc, CarDaoJdbc carDaoJdbc, TrackREST trackREST) {
         this.userDaoJdbc = userDaoJdbc;
         this.carDaoJdbc = carDaoJdbc;
         this.settingDaoJdbc = settingDaoJdbc;
+        this.trackREST = trackREST;
     }
 
     /**
@@ -98,6 +108,58 @@ public class DemoREST {
             e.printStackTrace();
         }
         return DefaultResponse.badRequest("something went wrong");
+    }
+
+    @RequestMapping(value = "/addTracks", method = RequestMethod.POST)
+    public ResponseEntity addTracks() {
+        User userSecond = mockSecondUserFromDatabase();
+        Car carSecond = mockCarFromDatabase();
+        HttpServletRequest httpServletRequestSecond = mockHttpServletRequest(userSecond, carSecond);
+
+        String startTrackString = getStartTrackJson();
+        String trackRatesString = getTrackJson();
+
+        trackREST.startTrack(httpServletRequestSecond, new HttpEntity<>(startTrackString));
+        trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
+        trackREST.endOfTrack(httpServletRequestSecond,null);
+        return ResponseEntity.ok("");
+    }
+
+    public static MockHttpServletRequest mockHttpServletRequest(User user, Car car) {
+        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(Key.USER, user);
+        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(Key.CAR, car);
+        return mockHttpServletRequest;
+    }
+
+    private Car mockCarFromDatabase() {
+        Car car = new CarBuilder()
+                .setLicensePlate("DWL5636")
+                .setBrand("Ford")
+                .setModel("Focus")
+                .setProductionDate(1990)
+                .setImage("Empty")
+                .setPassword(DigestUtils.sha256Hex("safdsdsf"))
+                .setTank(50)
+                .setFuelNorm(7D)
+                .build();
+        carDaoJdbc.save(car);
+        return car;
+    }
+
+    private User mockSecondUserFromDatabase() {
+        User user = new UserBuilder()
+                .setNick("admin")
+                .setName("Jaźn")
+                .setSurname("Kowalski")
+                .setPassword(DigestUtils.sha256Hex("absx"))
+                .setUserPrivileges(UserPrivileges.STANDARD_USER)
+                .setImage("Empty")
+                .setPhoneNumber(12443134)
+                .setNfcTag("AAC")
+                .build();
+        userDaoJdbc.save(user);
+        return user;
     }
 
     public List<Car> getCarList() {
@@ -202,6 +264,26 @@ public class DemoREST {
             return new String(demoPhotosStream.readAllBytes());
         } catch (IOException ioException) {
             return DEF_IMAGE;
+        }
+    }
+
+    public static String getTrackJson() {
+        try {
+            InputStream trackRatesStream = DemoREST.class.getClassLoader().getResourceAsStream("trackjson/trackRatesSample.json");
+            assert trackRatesStream != null;
+            return new String(trackRatesStream.readAllBytes());
+        } catch (IOException ioException) {
+            return "{}";
+        }
+    }
+
+    public static String getStartTrackJson() {
+        try {
+            InputStream trackRatesStream = DemoREST.class.getClassLoader().getResourceAsStream("trackjson/startTrack.json");
+            assert trackRatesStream != null;
+            return new String(trackRatesStream.readAllBytes());
+        } catch (IOException ioException) {
+            return "{}";
         }
     }
 }
