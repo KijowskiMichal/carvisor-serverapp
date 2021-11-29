@@ -16,8 +16,8 @@ public class ReportJsonParser {
                 .setType(jsonObject.getString(AttributeKey.Report.TYPE))
                 .setName(jsonObject.getString(AttributeKey.Report.NAME))
                 .setDescription(jsonObject.getString(AttributeKey.Report.DESCRIPTION))
-                .setStart(jsonObject.getString(AttributeKey.Report.START))
-                .setEnd(jsonObject.getString(AttributeKey.Report.END))
+                .setStart(jsonObject.getInt(AttributeKey.Report.START))
+                .setEnd(jsonObject.getInt(AttributeKey.Report.END))
                 .setUserIdList(extractUserIdList(jsonObject))
                 .build();
     }

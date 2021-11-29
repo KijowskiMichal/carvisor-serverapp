@@ -9,8 +9,8 @@ public class ReportBuilder {
     private String type = "";
     private String name = "";
     private String description = "";
-    private String start = "";
-    private String end = "";
+    private int start = 0;
+    private int end = 0;
     private int[] userIdList = new int[5];
     private byte[] body = new byte[0];
 
@@ -29,12 +29,12 @@ public class ReportBuilder {
         return this;
     }
 
-    public ReportBuilder setStart(String start) {
+    public ReportBuilder setStart(int start) {
         this.start = start;
         return this;
     }
 
-    public ReportBuilder setEnd(String end) {
+    public ReportBuilder setEnd(int end) {
         this.end = end;
         return this;
     }

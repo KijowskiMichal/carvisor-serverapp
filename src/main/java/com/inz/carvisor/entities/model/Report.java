@@ -14,15 +14,15 @@ public class Report {
     private String type;
     private String name;
     private String description;
-    private String start;
-    private String end;
+    private int start;
+    private int end;
     private int[] userIdList;
     private byte[] body;
 
     public Report() {
     }
 
-    public Report(String type, String name, String description, String start, String end, int[] userIdList) {
+    public Report(String type, String name, String description, int start, int end, int[] userIdList) {
         this.type = type;
         this.name = name;
         this.description = description;
@@ -63,19 +63,19 @@ public class Report {
         this.description = description;
     }
 
-    public String getStart() {
+    public int getStart() {
         return start;
     }
 
-    public void setStart(String start) {
+    public void setStart(int start) {
         this.start = start;
     }
 
-    public String getEnd() {
+    public int getEnd() {
         return end;
     }
 
-    public void setEnd(String end) {
+    public void setEnd(int end) {
         this.end = end;
     }
 
