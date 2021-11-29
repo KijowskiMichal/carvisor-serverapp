@@ -29,6 +29,7 @@ public class ReportService {
     }
 
     public List<Report> list(int page, int pageSize, String regex) {
+        if (regex.isEmpty()) return reportDaoJdbc.getAll();
         return reportDaoJdbc.list(page,pageSize, regex);
     }
 

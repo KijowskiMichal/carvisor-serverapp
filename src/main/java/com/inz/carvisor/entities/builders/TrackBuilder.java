@@ -23,7 +23,6 @@ public class TrackBuilder {
 
     private Car car = null;
     private User user = null;
-    private int numberOfparameter = 0;
     private Boolean privateTrack = false;
     private long timeStamp = 0;
     private String startPosiotion;
@@ -51,11 +50,6 @@ public class TrackBuilder {
         return this;
     }
 
-    public TrackBuilder setNumberOfparameter(int numberOfparameter) {
-        this.numberOfparameter = numberOfparameter;
-        return this;
-    }
-
     public TrackBuilder setPrivateTrack(Boolean privateTrack) {
         this.privateTrack = privateTrack;
         return this;
@@ -75,7 +69,6 @@ public class TrackBuilder {
         Track track = new Track();
         track.setCar(this.car);
         track.setUser(this.user);
-        track.setNumberOfParameter(this.numberOfparameter);
         track.setPrivateTrack(this.privateTrack);
         track.setTimestamp(this.timeStamp);
         track.setStartPosition(this.startPosiotion);
@@ -84,8 +77,6 @@ public class TrackBuilder {
         track.setActive(this.active);
 
         track.setAmountOfSamples(this.samples);
-        track.setAmountOfSafetySamples(this.samples);
-        track.setSafetyNegativeSamples(this.samples);
         track.setEcoPointsScore(this.ecoPoints);
         track.setCombustion(this.combustion);
         track.setAverageSpeed(this.speed);

@@ -28,10 +28,8 @@ public class User {
     private int revolutionsAVG;
     private long distanceTravelled;
     private int samples;
-    private int samplesNumber;
     private int throttle;
     private int safetySamples;
-    private int safetyNegativeSamples;
     private float safetyPointsAvg;
 
     public User() {
@@ -45,17 +43,7 @@ public class User {
         this.speedAVG = 0;
         this.ecoPointsAvg = 0;
         this.distanceTravelled = 0;
-        this.samplesNumber = 0;
-        this.safetyNegativeSamples = 0;
         this.safetySamples = 0;
-    }
-
-    public int getSamplesNumber() {
-        return samplesNumber;
-    }
-
-    public void setSamplesNumber(int samplesNumber) {
-        this.samplesNumber = samplesNumber;
     }
 
     public int getThrottle() {
@@ -72,14 +60,6 @@ public class User {
 
     public void setSafetySamples(int safetySamples) {
         this.safetySamples = safetySamples;
-    }
-
-    public int getSafetyNegativeSamples() {
-        return safetyNegativeSamples;
-    }
-
-    public void setSafetyNegativeSamples(int safetyNegativeSamples) {
-        this.safetyNegativeSamples = safetyNegativeSamples;
     }
 
     public int getSamples() {

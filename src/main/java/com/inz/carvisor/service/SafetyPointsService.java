@@ -93,7 +93,7 @@ public class SafetyPointsService {
             if (((User) tmp).getSafetySamples() == 0) {
                 jsonObject.put("rate", 0);
             } else {
-                jsonObject.put("rate", 5 - ((float) ((User) tmp).getSafetyNegativeSamples() / ((User) tmp).getSafetySamples()) * 5);
+                jsonObject.put("rate", 5 - ((float) ((User) tmp).getSafetyPointsAvg() / ((User) tmp).getSafetySamples()) * 5);
             }
             jsonObject.put("tracks", ((User) tmp).getTracksNumber());
             jsonArray.put(jsonObject);

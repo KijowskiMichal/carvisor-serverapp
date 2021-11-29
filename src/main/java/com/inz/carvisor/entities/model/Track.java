@@ -25,7 +25,6 @@ public class Track {
     @Type(type = "org.hibernate.type.NumericBooleanType")
     private Boolean isActive;
 
-    private int numberOfParameter;
     private String startPosition;
     private String endPosition;
     private long timestamp;
@@ -39,8 +38,6 @@ public class Track {
     private int averageSpeed;
     private long averageRevolutionsPerMinute;
     private long averageThrottle;
-    private int amountOfSafetySamples;
-    private int safetyNegativeSamples;
 
     public Track() {
         super();
@@ -92,14 +89,6 @@ public class Track {
 
     public void setActive(Boolean active) {
         isActive = active;
-    }
-
-    public int getNumberOfParameter() {
-        return numberOfParameter;
-    }
-
-    public void setNumberOfParameter(int numberOfParameter) {
-        this.numberOfParameter = numberOfParameter;
     }
 
     public String getStartPosition() {
@@ -196,22 +185,6 @@ public class Track {
 
     public void setAverageThrottle(long averageThrottle) {
         this.averageThrottle = averageThrottle;
-    }
-
-    public int getAmountOfSafetySamples() {
-        return amountOfSafetySamples;
-    }
-
-    public void setAmountOfSafetySamples(int amountOfSafetySamples) {
-        this.amountOfSafetySamples = amountOfSafetySamples;
-    }
-
-    public int getSafetyNegativeSamples() {
-        return safetyNegativeSamples;
-    }
-
-    public void setSafetyNegativeSamples(int safetyNegativeSamples) {
-        this.safetyNegativeSamples = safetyNegativeSamples;
     }
 
     public float getSafetyPointsScore() {

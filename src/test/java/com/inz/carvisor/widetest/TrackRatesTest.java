@@ -117,8 +117,7 @@ public class TrackRatesTest {
         Assertions.assertEquals(one.getStartPosition(),two.getStartPosition());
 
         Assertions.assertEquals(one.getAmountOfSamples(),two.getAmountOfSamples());
-        Assertions.assertEquals(one.getAmountOfSafetySamples(),two.getAmountOfSafetySamples());
-        Assertions.assertEquals(one.getSafetyNegativeSamples(),two.getSafetyNegativeSamples());
+        Assertions.assertEquals(one.getSafetyPointsScore(),two.getSafetyPointsScore());
 
         Assertions.assertEquals(one.getEcoPointsScore(),two.getEcoPointsScore());
         Assertions.assertEquals(one.getAverageRevolutionsPerMinute(),two.getAverageRevolutionsPerMinute());

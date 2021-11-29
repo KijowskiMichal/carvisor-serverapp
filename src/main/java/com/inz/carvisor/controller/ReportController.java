@@ -69,7 +69,6 @@ public class ReportController {
         if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
             return DefaultResponse.UNAUTHORIZED;
         }
-
         List<Report> list = reportService.list(page, pageSize, regex);
         JSONArray jsonArray = ReportJsonParser.parse(list);
         JSONObject jsonResponse = new JSONObject()

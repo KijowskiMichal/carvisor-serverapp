@@ -114,56 +114,6 @@ class TrackRESTTest {
     }
 
     @Test
-    void updateTrackData() {
-        Session session = null;
-        Transaction tx = null;
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-
-            //initialization
-            Car car = new CarBuilder()
-                    .setLicensePlate("AAB")
-                    .setPassword(DigestUtils.sha256Hex("password"))
-                    .build();
-            session.save(car);
-
-            tx.commit();
-            session.close();
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-
-            //starting
-
-            HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("car", car);
-
-            MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/track/updateTrackData/")
-                            .sessionAttrs(sessionattr)
-                            .content("{\"1622548178\": {\"obd\": {\"12\": 920.0, \"13\": 64.0, \"17\": 100.0}, \"gps_pos\": {\"longitude\": 16.91677, \"latitude\": 52.45726}}}")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andReturn();
-
-            tx.commit();
-            session.close();
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-
-            Assertions.assertTrue(result.getResponse().getStatus() == 200);
-            tx.commit();
-            session.close();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (session != null) session.close();
-        }
-    }
-
-    @Test
     void updateTrack() {
         Session session = null;
         Transaction tx = null;
@@ -177,7 +127,6 @@ class TrackRESTTest {
 
             Track track = new TrackBuilder()
                     .setCar(car)
-                    .setNumberOfparameter(0)
                     .setPrivateTrack(true)
                     .setTimeStamp(43675465)
                     .setStartPosiotion("gsdfggfd")
@@ -236,7 +185,6 @@ class TrackRESTTest {
 
             Track track = new TrackBuilder()
                     .setCar(car)
-                    .setNumberOfparameter(0)
                     .setPrivateTrack(true)
                     .setTimeStamp(43675465)
                     .setStartPosiotion("gsdfggfd")

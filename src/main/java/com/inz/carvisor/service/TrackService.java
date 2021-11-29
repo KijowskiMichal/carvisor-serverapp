@@ -220,21 +220,6 @@ public class TrackService {
                             json += sc.nextLine();
                         }
                         sc.close();
-                        JSONObject safetyAPI = new JSONObject(json);
-                        float speedLimit;
-                        int added = 1;
-
-                        /*try {
-                            speedLimit = safetyAPI.getJSONObject("response").getJSONArray("route").getJSONObject(0).getJSONArray("leg").getJSONObject(0).getJSONArray("link").getJSONObject(0).getFloat("speedLimit");
-                            if (speed > speedLimit) {
-                                added = (int) (Math.floor(speed - speedLimit) * 0.2);
-                                track.setSafetyNegativeSamples(track.getSafetyNegativeSamples() + added);
-                            }
-                            track.setAmountOfSafetySamples(track.getAmountOfSafetySamples() + added);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }*/
-                        //end safety points calculated
                     }
                     track.addMetersToDistance(distance);
                     track.setEndPosition(latitude + ";" + longitude);
@@ -442,54 +427,12 @@ public class TrackService {
                     track.getUser().setTracksNumber(track.getUser().getTracksNumber() + 1);
                     track.getUser().setDistanceTravelled(track.getUser().getDistanceTravelled() + track.getDistanceFromStart());
                     track.getUser().setSamples(track.getUser().getSamples() + track.getAmountOfSamples());
-                    track.getUser().setSafetyNegativeSamples(track.getUser().getSafetyNegativeSamples() + track.getSafetyNegativeSamples());
-                    track.getUser().setSafetySamples(track.getUser().getSafetySamples() + track.getAmountOfSafetySamples());
+                    track.getUser().setSafetyPointsAvg(track.getUser().getSafetyPointsAvg() + track.getSafetyPointsScore());
                     track.setActive(false);
                     track.setEndTrackTimeStamp(time - 8);
                     track.getUser().addTrackToEcoPointScore(track);
                     track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track));
                     SafetyPointsCalculator.validateSafetyPointsScore(track.getUser(),track);
-                    session.update(track);
-                }
-            }
-            tx.commit();
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-        } finally {
-            if (session != null) session.close();
-        }
-        return responseEntity;
-    }
-
-    /**
-     * DONT USE THIS IN PROD - DEVELOPEMENT ONLY
-     */
-    public ResponseEntity endOfTrackDEVELOP(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        Session session = null;
-        Transaction tx = null;
-        ResponseEntity responseEntity;
-
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            Query query = session.createQuery(SELECT_ACTIVE_TRACKS);
-            List<Track> tracks = query.getResultList();
-            Date date = new Date();
-            long time = date.getTime() / 1000;
-            for (Track track : tracks) {
-                if (track.getTimestamp() < (time - 15)) {
-                    track.getUser().addTrackToEcoPointScore(track);
-                    track.getUser().setTracksNumber(track.getUser().getTracksNumber() + 1);
-                    track.getUser().setDistanceTravelled(track.getUser().getDistanceTravelled() + track.getDistanceFromStart());
-                    track.getUser().setSamples(track.getUser().getSamples() + track.getAmountOfSamples());
-                    track.getUser().setSafetyNegativeSamples(track.getUser().getSafetyNegativeSamples() + track.getSafetyNegativeSamples());
-                    track.getUser().setSafetySamples(track.getUser().getSafetySamples() + track.getAmountOfSafetySamples());
-                    track.setActive(false);
-                    track.setEndTrackTimeStamp(time - 8);
-                    track.getUser().addTrackToEcoPointScore(track);
                     session.update(track);
                 }
             }

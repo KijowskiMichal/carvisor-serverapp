@@ -72,8 +72,8 @@ class ReportControllerTest {
                 .put(AttributeKey.Report.TYPE,"Type")
                 .put(AttributeKey.Report.NAME,"Type")
                 .put(AttributeKey.Report.DESCRIPTION,"Type")
-                .put(AttributeKey.Report.START,"Type")
-                .put(AttributeKey.Report.END,"Type")
+                .put(AttributeKey.Report.START,123)
+                .put(AttributeKey.Report.END,324)
                 .put(AttributeKey.Report.LIST_OF_USER_IDS,jsonArray);
         HttpEntity<String> httpEntity = new HttpEntity<String>(jsonObject.toString());
         ResponseEntity<String> add = reportController.add(mockHttpServletRequest, httpEntity);
@@ -97,8 +97,8 @@ class ReportControllerTest {
                 .put(AttributeKey.Report.TYPE,"Type")
                 .put(AttributeKey.Report.NAME,"Type")
                 .put(AttributeKey.Report.DESCRIPTION,"Type")
-                .put(AttributeKey.Report.START,"Type")
-                .put(AttributeKey.Report.END,"Type")
+                .put(AttributeKey.Report.START, 123)
+                .put(AttributeKey.Report.END,134)
                 .put(AttributeKey.Report.LIST_OF_USER_IDS,jsonArray);
         HttpEntity<String> httpEntity = new HttpEntity<String>(jsonObject.toString());
         ResponseEntity<String> add = reportController.add(mockHttpServletRequest, httpEntity);
