@@ -634,20 +634,16 @@ public class TrackService {
             JSONArray points = new JSONArray();
             JSONArray startPoints = new JSONArray();
             JSONArray endPoints = new JSONArray();
-            String date = TimeStampCalculator.toDate(dateLong);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            ZonedDateTime before = LocalDate.parse(date, formatter).atStartOfDay(ZoneId.systemDefault());
-            Timestamp timestampBefore = Timestamp.valueOf(before.toLocalDateTime());
-            ZonedDateTime after = before.with(LocalTime.MAX);
-            Timestamp timestampAfter = Timestamp.valueOf(after.toLocalDateTime());
-            TimeStampCalculator.getEndOfDayTimeStamp(dateLong);
+
+            long before = TimeStampCalculator.getStartOfDayTimeStamp(dateLong);
+            long after = TimeStampCalculator.getEndOfDayTimeStamp(dateLong);
 
 
             List<TrackRate> trackRates = trackDaoJdbc.getCarTracks(carId)
                     .stream()
                     .flatMap(track -> track.getListOfTrackRates().stream())
-                    .filter(trackRate -> trackRate.getTimestamp() > timestampBefore.getTime())
-                    .filter(trackRate -> trackRate.getTimestamp() < timestampAfter.getTime())
+                    .filter(trackRate -> trackRate.getTimestamp() > before)
+                    .filter(trackRate -> trackRate.getTimestamp() < after)
                     .collect(Collectors.toList());
 
 //            Query query = session.createQuery("Select t from TrackRate t WHERE t.timestamp > " + timestampBefore.getTime() + " AND  t.timestamp < " + timestampAfter.getTime() + " AND t.track.car.id = " + carId + " ORDER BY t.id ASC");

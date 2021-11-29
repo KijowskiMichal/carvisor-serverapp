@@ -65,7 +65,7 @@ public class TrackREST {
 
     @RequestMapping(value = "/getTrackDataForDevice/{id}/{date}/", method = RequestMethod.GET)
     public ResponseEntity getTrackDataForDevice(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID, @PathVariable("date") long date) {
-        return trackService.getTrackDataForDevice(request, httpEntity, userID, date * 1000);
+        return trackService.getTrackDataForDevice(request, httpEntity, userID, date);
     }
 
     @RequestMapping(value = "/list/{id}/{page}/{pagesize}/{dateFrom}/{dateTo}/", method = RequestMethod.GET)

@@ -121,7 +121,7 @@ public class UserService {
                 if (tracks.size() > 0) {
                     jsonObject.put("status", "Aktywny");
                     jsonObject.put("startTime", tracks.get(0).getStartTrackTimeStamp());
-                    jsonObject.put("finishTime", "-1");
+                    jsonObject.put("finishTime", -1);
                     jsonObject.put("licensePlate", tracks.get(0).getCar().getLicensePlate());
                 } else {
                     selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.isActive = false AND t.user.id = " + ((User) tmp).getId() + " ORDER BY t.id DESC");
@@ -129,9 +129,9 @@ public class UserService {
                     tracks = selectQuery.list();
                     if (tracks.size() > 0) {
                         jsonObject.put("finishTime", tracks.get(0).getEndTrackTimeStamp());
-                    } else jsonObject.put("finishTime", "-1");
+                    } else jsonObject.put("finishTime", -1);
                     jsonObject.put("status", "Nieaktywny");
-                    jsonObject.put("startTime", "-1");
+                    jsonObject.put("startTime", -1);
                     jsonObject.put("licensePlate", "");
                 }
                 Date now = new Date();

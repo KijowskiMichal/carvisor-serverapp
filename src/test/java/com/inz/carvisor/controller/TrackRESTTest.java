@@ -16,6 +16,8 @@ import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
+import com.inz.carvisor.util.FileDataGetter;
+import com.inz.carvisor.util.RequestBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -30,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -37,6 +40,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -92,6 +96,21 @@ class TrackRESTTest {
         trackREST.startTrack(mockHttpServletRequest, new HttpEntity<>(jsonObject.toString()));
         List<Track> tracks = trackDaoJdbc.getAll();
         Assertions.assertEquals(1, tracks.size());
+    }
+
+    @Test
+    void getTrackDataForDevice() {
+        User user = mockUserFromDatabase();
+        Car car = mockCarFromDatabase();
+        HttpServletRequest httpServletRequestSecond = RequestBuilder.mockHttpServletRequest(user, car);
+        String trackRatesString = FileDataGetter.getTrackJson();
+        String startTrackString = FileDataGetter.getStartTrackJson();
+        trackREST.startTrack(httpServletRequestSecond, new HttpEntity<>(startTrackString));
+        trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
+        trackREST.endOfTrack(httpServletRequestSecond,null);
+        ResponseEntity trackDataForDevice = trackREST.getTrackDataForDevice(RequestBuilder.mockHttpServletRequest(user),
+                null, car.getId(), 1623879238);
+        System.out.println("");
     }
 
     @Test
@@ -253,5 +272,35 @@ class TrackRESTTest {
         } finally {
             if (session != null) session.close();
         }
+    }
+
+    private Car mockCarFromDatabase() {
+        Car car = new CarBuilder()
+                .setLicensePlate("DWL5636")
+                .setBrand("Ford")
+                .setModel("Focus")
+                .setProductionDate(1990)
+                .setImage("Empty")
+                .setPassword(DigestUtils.sha256Hex("safdsdsf"))
+                .setTank(50)
+                .setFuelNorm(7D)
+                .build();
+        carDaoJdbc.save(car);
+        return car;
+    }
+
+    private User mockUserFromDatabase() {
+        User user = new UserBuilder()
+                .setNick("admin")
+                .setName("Jaźn")
+                .setSurname("Kowalski")
+                .setPassword(DigestUtils.sha256Hex("absx"))
+                .setUserPrivileges(UserPrivileges.STANDARD_USER)
+                .setImage("Empty")
+                .setPhoneNumber(12443134)
+                .setNfcTag("ABC")
+                .build();
+        userDaoJdbc.save(user);
+        return user;
     }
 }
