@@ -23,6 +23,7 @@ public class ReportDaoJdbc extends HibernateDaoJdbc<Report> {
     }
 
     public List<Report> list(int page, int pageSize, String regex) {
+        if (regex.isBlank()) return getAll();
         return getList(createQuery(regex),page,pageSize);
     }
 
