@@ -28,6 +28,7 @@ public class ReportDaoJdbc extends HibernateDaoJdbc<Report> {
     }
 
     public int getMaxPageSize(int pageSize, String regex) {
+        if (regex.isBlank()) return this.checkMaxPage(this.createSelectGetAll(),pageSize);
         return this.checkMaxPage(createQuery(regex),pageSize);
     }
 
