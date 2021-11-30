@@ -21,6 +21,8 @@ import java.util.Optional;
 @Repository
 public abstract class HibernateDaoJdbc<T> {
 
+    protected final String EMPTY_REGEX_SIGN = "$";
+
     HibernateRequests hibernateRequests;
     Logger logger;
 

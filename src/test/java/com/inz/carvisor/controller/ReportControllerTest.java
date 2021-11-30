@@ -110,6 +110,8 @@ class ReportControllerTest {
 
         ResponseEntity<String> la = reportController
                 .list(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), null, 1, 4, "Ty");
+        ResponseEntity<String> zx = reportController
+                .list(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), null, 1, 4, "$");
         System.out.println();
     }
 }
