@@ -3,12 +3,9 @@ package com.inz.carvisor.controller;
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.entities.enums.UserPrivileges;
-import com.inz.carvisor.entities.model.Event;
 import com.inz.carvisor.entities.model.Report;
-import com.inz.carvisor.service.CalendarService;
-import com.inz.carvisor.service.ReportService;
+import com.inz.carvisor.service.report.service.ReportService;
 import com.inz.carvisor.service.SecurityService;
-import com.inz.carvisor.util.jsonparser.EventJsonParser;
 import com.inz.carvisor.util.jsonparser.ReportJsonParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -60,6 +57,19 @@ public class ReportController {
         Optional<Report> remove = reportService.remove(id);
         if (remove.isPresent()) return DefaultResponse.OK;
         else return DefaultResponse.BAD_REQUEST;
+    }
+
+    @RequestMapping(value = "/get/{id}",method = RequestMethod.GET)
+    public ResponseEntity<byte[]> get(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int reportId) {
+
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+            return DefaultResponse.unauthorized();
+        }
+
+        Optional<Report> report = reportService.get(reportId);
+
+        if (report.isEmpty()) return DefaultResponse.badRequest();
+        else return DefaultResponse.okByte(report.get().getBody());
     }
 
     @RequestMapping(value = "/list/{page}/{pagesize}/{regex}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)

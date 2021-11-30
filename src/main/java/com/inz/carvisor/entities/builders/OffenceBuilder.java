@@ -4,6 +4,8 @@ import com.inz.carvisor.entities.enums.OffenceType;
 import com.inz.carvisor.entities.model.Offence;
 import com.inz.carvisor.entities.model.User;
 
+import java.util.Optional;
+
 public class OffenceBuilder {
     private long timestamp;
     private OffenceType offenceType;
@@ -51,5 +53,9 @@ public class OffenceBuilder {
         offence.setLocation(location);
         offence.setAssignedTrackId(assignedTrackId);
         return offence;
+    }
+
+    public Optional<Offence> buildOptional() {
+        return Optional.of(build());
     }
 }

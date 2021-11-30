@@ -1,4 +1,4 @@
-package com.inz.carvisor.service;
+package com.inz.carvisor.service.report.service;
 
 import com.inz.carvisor.dao.ReportDaoJdbc;
 import com.inz.carvisor.entities.model.Report;
@@ -12,16 +12,17 @@ import java.util.Optional;
 public class ReportService {
 
     private final ReportDaoJdbc reportDaoJdbc;
-    private final PdfCreatorService pdfCreatorService;
+    private final ReportGenerator reportGenerator;
 
     @Autowired
-    public ReportService(ReportDaoJdbc reportDaoJdbc, PdfCreatorService pdfCreatorService) {
+    public ReportService(ReportDaoJdbc reportDaoJdbc, ReportGenerator reportGenerator) {
         this.reportDaoJdbc = reportDaoJdbc;
-        this.pdfCreatorService = pdfCreatorService;
+        this.reportGenerator = reportGenerator;
     }
 
-    public Optional<Report> add(Report report) {
-        return reportDaoJdbc.save(report);
+    public Optional<Report> add(Report reportWithoutBody) {
+        reportWithoutBody.setBody(generateReportBody(reportWithoutBody));
+        return reportDaoJdbc.save(reportWithoutBody);
     }
 
     public Optional<Report> remove(int reportId) {
@@ -33,11 +34,15 @@ public class ReportService {
         return reportDaoJdbc.list(page,pageSize, regex);
     }
 
-    public byte[] generateReportBody(List<Long> userIds, long startTimeStamp, long endTimeStamp) {
-        return pdfCreatorService.generatePDF(userIds, startTimeStamp, endTimeStamp);
+    public byte[] generateReportBody(Report report) {
+        return reportGenerator.generate(report);
     }
 
     public int getMaxPage(int pageSize, String regex) {
         return reportDaoJdbc.getMaxPageSize(pageSize,regex);
+    }
+
+    public Optional<Report> get(int id) {
+        return reportDaoJdbc.get(id);
     }
 }

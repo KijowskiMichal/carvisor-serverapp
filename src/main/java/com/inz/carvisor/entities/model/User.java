@@ -213,6 +213,10 @@ public class User {
         this.distanceTravelled += track.getDistanceFromStart();
     }
 
+    public String getNameAndSurname() {
+        return name + " " + surname;
+    }
+
     @Override
     public String toString() {
         return "User{" +
