@@ -38,19 +38,19 @@ public class ErrorService {
 
     public int getMaxPageAllErrors(long dateFromTimestamp, long dateToTimestamp, int page, int pagesize) {
         String whereTimestamp = QueryBuilder.getWhereTimestamp(dateFromTimestamp, dateToTimestamp);
-        String query = "SELECT x FROM Errors x WHERE " + whereTimestamp;
+        String query = "SELECT x FROM Error x WHERE " + whereTimestamp;
         return errorDaoJdbc.checkMaxPage(query, pagesize);
     }
 
     public List<Error> getUserErrors(User user, long dateFromTimestamp, long dateToTimestamp, int page, int pagesize) {
         String whereTimestamp = QueryBuilder.getWhereTimestamp(dateFromTimestamp, dateToTimestamp);
-        String query = "SELECT x FROM Errors x WHERE " + whereTimestamp + " and x.user.id = " + user.getId();
+        String query = "SELECT x FROM Error x WHERE " + whereTimestamp + " and x.user.id = " + user.getId();
         return errorDaoJdbc.getList(query, page, pagesize);
     }
 
     public int getMaxPageUserErrors(User user, long dateFromTimestamp, long dateToTimestamp, int page, int pagesize) {
         String whereTimestamp = QueryBuilder.getWhereTimestamp(dateFromTimestamp, dateToTimestamp);
-        String query = "SELECT x FROM Errors x WHERE " + whereTimestamp + " and x.user.id = " + user.getId();
+        String query = "SELECT x FROM Error x WHERE " + whereTimestamp + " and x.user.id = " + user.getId();
         return errorDaoJdbc.checkMaxPage(query, pagesize);
     }
 }
