@@ -16,7 +16,7 @@ public class Error {
     private Car car;
 
     private String type;
-    private String value; //todo change to string
+    private String value;
     private long timestamp;
     private String location;
     private String userName;
@@ -26,9 +26,16 @@ public class Error {
     public Error() {
     }
 
-    public Error(String type, String value) {
+    public Error(User user, Car car, String type, String value, long timestamp, String location, String userName, String deviceLicensePlate, long date) {
+        this.user = user;
+        this.car = car;
         this.type = type;
         this.value = value;
+        this.timestamp = timestamp;
+        this.location = location;
+        this.userName = userName;
+        this.deviceLicensePlate = deviceLicensePlate;
+        this.date = date;
     }
 
     public int getId() {

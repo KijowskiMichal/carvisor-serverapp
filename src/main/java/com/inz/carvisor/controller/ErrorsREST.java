@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,11 +49,15 @@ public class ErrorsREST {
         } else if (!httpEntity.hasBody()) {
             return DefaultResponse.EMPTY_BODY;
         }
-
-        Error error = deserializeError(new JSONObject(httpEntity.getBody()));
-        Optional<Error> wrappedError = errorService.addError(error);
-        if (wrappedError.isPresent()) return DefaultResponse.OK;
-        else return DefaultResponse.BAD_REQUEST;
+        JSONArray jsonArray = new JSONArray(httpEntity.getBody());
+        List<Error> errorList = new ArrayList<>();
+        int length = jsonArray.length();
+        for (int i=0; i<length;i++) {
+            Error error = deserializeError(jsonArray.getJSONObject(i));
+            errorList.add(error);
+        }
+        errorList.forEach(errorService::addError);
+        return DefaultResponse.OK;
     }
 
     @RequestMapping(value = "/getErrors/{dateFrom}/{dateTo}/{page}/{pagesize}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
@@ -60,7 +65,6 @@ public class ErrorsREST {
             HttpServletRequest request, HttpEntity<String> httpEntity,
             @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
             @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) {
-
         if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return getAllErrors(dateFromTimestamp, dateToTimestamp, page, pagesize);
         } else if (securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, request)) {
@@ -75,6 +79,7 @@ public class ErrorsREST {
         return new ErrorBuilder()
                 .setType(jsonObject.getString(AttributeKey.Error.TYPE))
                 .setValue(jsonObject.getString(AttributeKey.Error.VALUE))
+                .setTimestamp(jsonObject.getLong(AttributeKey.Error.TIMESTAMP))
                 .build();
     }
 
@@ -112,9 +117,9 @@ public class ErrorsREST {
                 .put(AttributeKey.Notification.TYPE, error.getType())
                 .put(AttributeKey.Notification.VALUE, error.getValue())
                 .put(AttributeKey.Notification.DATE, error.getDate())
-                .put(AttributeKey.Notification.LOCATION, error.getValue())
-                .put(AttributeKey.Notification.USER_ID, error.getValue())
-                .put(AttributeKey.Notification.USER_NAME, error.getValue())
-                .put(AttributeKey.Notification.DEVICE_LICENSE_PLATE, error.getValue());
+                .put(AttributeKey.Notification.LOCATION, error.getLocation())
+                .put(AttributeKey.Notification.USER_ID, error.getUser().getId())
+                .put(AttributeKey.Notification.USER_NAME, error.getUserName())
+                .put(AttributeKey.Notification.DEVICE_LICENSE_PLATE, error.getDeviceLicensePlate());
     }
 }

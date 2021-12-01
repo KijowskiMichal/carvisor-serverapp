@@ -2,11 +2,9 @@ package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.constants.Key;
-import com.inz.carvisor.dao.CarDaoJdbc;
-import com.inz.carvisor.dao.SettingDaoJdbc;
-import com.inz.carvisor.dao.TrackDaoJdbc;
-import com.inz.carvisor.dao.UserDaoJdbc;
+import com.inz.carvisor.dao.*;
 import com.inz.carvisor.entities.builders.CarBuilder;
+import com.inz.carvisor.entities.builders.ErrorBuilder;
 import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Car;
@@ -15,13 +13,11 @@ import com.inz.carvisor.entities.model.User;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,18 +38,22 @@ public class DemoREST {
     public static final String DEF_IMAGE = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAAAAXNSR0IArs4c6QAHOqFJREFUeNrs4V2SbVuSHe";
     public static final String USER_PHOTOS_DIRECTORY_NAME = "demoUserPhotos";
     public static final String CAR_PHOTOS_DIRECTORY_NAME = "demoCarPhotos";
+
     UserDaoJdbc userDaoJdbc;
     CarDaoJdbc carDaoJdbc;
     SettingDaoJdbc settingDaoJdbc;
     TrackREST trackREST;
+    ErrorDaoJdbc errorDaoJdbc;
 
     @Autowired
     public DemoREST(UserDaoJdbc userDaoJdbc, TrackDaoJdbc trackDaoJdbc,
-                    SettingDaoJdbc settingDaoJdbc, CarDaoJdbc carDaoJdbc, TrackREST trackREST) {
+                    SettingDaoJdbc settingDaoJdbc, CarDaoJdbc carDaoJdbc, TrackREST trackREST,
+                    ErrorDaoJdbc errorDaoJdbc) {
         this.userDaoJdbc = userDaoJdbc;
         this.carDaoJdbc = carDaoJdbc;
         this.settingDaoJdbc = settingDaoJdbc;
         this.trackREST = trackREST;
+        this.errorDaoJdbc = errorDaoJdbc;
     }
 
     /**
@@ -63,7 +63,39 @@ public class DemoREST {
      * @return Returns the 201 status - OK.
      */
     @RequestMapping(value = "/addAll", method = RequestMethod.GET)
-    public ResponseEntity addAll() {
+    public ResponseEntity<String> addAll() {
+        addMockedUsers();
+        addMockedCars();
+        addMockedSettings();
+
+        User user = userDaoJdbc.getAll().get(0);
+        Car car = carDaoJdbc.getAll().get(0);
+        addMockedErrors(user,car);
+
+        return DefaultResponse.OK;
+    }
+
+    private void addMockedErrors(User user, Car car) {
+        List.of(
+                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(System.currentTimeMillis()/1000).setTimestamp(System.currentTimeMillis()/1000).setType("ErrorTypeOne").setValue("ErrorValueOne").build(),
+                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(System.currentTimeMillis()/1000).setTimestamp(System.currentTimeMillis()/1000).setType("ErrorTypetwo").setValue("ErrorValueTwo").build(),
+                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(System.currentTimeMillis()/1000).setTimestamp(System.currentTimeMillis()/1000).setType("ErrorTypethree").setValue("ErrorValueThree").build()
+        ).forEach(errorDaoJdbc::save);
+    }
+
+    private void addMockedSettings() {
+        List.of(
+                new Setting("sendInterval", 15),
+                new Setting("locationInterval", 15),
+                new Setting("historyTimeout", 180)
+        ).forEach(settingDaoJdbc::save);
+    }
+
+    private void addMockedCars() {
+        getCarList().forEach(carDaoJdbc::save);
+    }
+
+    private void addMockedUsers() {
         List.of(
                 new UserBuilder().setNick("admin").setName("Jan").setSurname("Kowalski").setPassword(DigestUtils.sha256Hex("absx")).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(extractBase64Picture(1, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12443134).setNfcTag("AAA").build(),
                 new UserBuilder().setNick("zenek").setName("Zenon").setSurname("Kolodziej").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(2, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12378456).setNfcTag("AAB").build(),
@@ -76,17 +108,6 @@ public class DemoREST {
                 new UserBuilder().setNick("user9").setName("Jakub").setSurname("Szymczak").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(9, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(43656543).setNfcTag("CCC").build(),
                 new UserBuilder().setNick("user10").setName("Agnieszka").setSurname("Wasilewska").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(10, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(34255342).setNfcTag("CDA").build()
         ).forEach(userDaoJdbc::save);
-
-        getCarList().forEach(carDaoJdbc::save);
-
-        List.of(
-                new Setting("sendInterval", 15),
-                new Setting("locationInterval", 15),
-                new Setting("historyTimeout", 180)
-        ).forEach(settingDaoJdbc::save);
-
-
-        return DefaultResponse.OK;
     }
 
     @RequestMapping(value = "/getPdf", method = RequestMethod.GET)

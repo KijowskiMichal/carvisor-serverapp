@@ -53,6 +53,7 @@ public class AttributeKey {
 
         public static final String TYPE = "type";
         public static final String VALUE = "value";
+        public static final String TIMESTAMP = "timestamp";
     }
 
     public static class Track {

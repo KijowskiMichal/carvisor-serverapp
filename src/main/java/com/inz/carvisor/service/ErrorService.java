@@ -32,7 +32,7 @@ public class ErrorService {
 
     public List<Error> getAllErrors(long dateFromTimestamp, long dateToTimestamp, int page, int pagesize) {
         String whereTimestamp = QueryBuilder.getWhereTimestamp(dateFromTimestamp, dateToTimestamp);
-        String query = "SELECT x FROM Errors x WHERE " + whereTimestamp;
+        String query = "SELECT x FROM Error x WHERE " + whereTimestamp;
         return errorDaoJdbc.getList(query, page, pagesize);
     }
 
