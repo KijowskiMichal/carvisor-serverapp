@@ -3,10 +3,8 @@ package com.inz.carvisor.controller;
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.constants.Key;
 import com.inz.carvisor.dao.*;
-import com.inz.carvisor.entities.builders.CarBuilder;
-import com.inz.carvisor.entities.builders.ErrorBuilder;
-import com.inz.carvisor.entities.builders.NotificationBuilder;
-import com.inz.carvisor.entities.builders.UserBuilder;
+import com.inz.carvisor.entities.builders.*;
+import com.inz.carvisor.entities.enums.EventType;
 import com.inz.carvisor.entities.enums.NotificationType;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Car;
@@ -47,17 +45,20 @@ public class DemoREST {
     TrackREST trackREST;
     ErrorDaoJdbc errorDaoJdbc;
     NotificationDaoJdbc notificationDaoJdbc;
+    CalendarDaoJdbc calendarDaoJdbc;
 
     @Autowired
     public DemoREST(UserDaoJdbc userDaoJdbc, TrackDaoJdbc trackDaoJdbc,
                     SettingDaoJdbc settingDaoJdbc, CarDaoJdbc carDaoJdbc, TrackREST trackREST,
-                    ErrorDaoJdbc errorDaoJdbc, NotificationDaoJdbc notificationDaoJdbc) {
+                    ErrorDaoJdbc errorDaoJdbc, NotificationDaoJdbc notificationDaoJdbc,
+                    CalendarDaoJdbc calendarDaoJdbc) {
         this.userDaoJdbc = userDaoJdbc;
         this.carDaoJdbc = carDaoJdbc;
         this.settingDaoJdbc = settingDaoJdbc;
         this.trackREST = trackREST;
         this.errorDaoJdbc = errorDaoJdbc;
         this.notificationDaoJdbc = notificationDaoJdbc;
+        this.calendarDaoJdbc = calendarDaoJdbc;
     }
 
     /**
@@ -77,8 +78,18 @@ public class DemoREST {
         addMockedErrors(user,car);
 
         addMockedNotifications(user, car);
-
+        addMockedEvents(car.getId());
         return DefaultResponse.OK;
+    }
+
+    private void addMockedEvents(long deviceId) {
+        List.of(
+                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
+                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
+                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
+                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
+                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build()
+        ).forEach(calendarDaoJdbc::save);
     }
 
     private void addMockedNotifications(User user, Car car) {

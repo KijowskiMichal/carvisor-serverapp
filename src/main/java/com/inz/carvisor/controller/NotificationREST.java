@@ -91,7 +91,7 @@ public class NotificationREST {
                 .put(AttributeKey.Notification.LOCATION, notification.getLocation())
                 .put(AttributeKey.Notification.USER_ID, notification.getUser().getId())
                 .put(AttributeKey.Notification.DEVICE_ID, notification.getCar().getId())
-                .put(AttributeKey.Notification.USER_NAME, notification.getUser().getName())
+                .put(AttributeKey.Notification.USER_NAME, notification.getUser().getNameAndSurname())
                 .put(AttributeKey.Notification.DEVICE_LICENSE_PLATE, notification.getCar().getLicensePlate());
     }
 
