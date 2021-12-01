@@ -1,5 +1,6 @@
 package com.inz.carvisor.controller;
 
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.constants.Key;
 import com.inz.carvisor.dao.*;
@@ -8,11 +9,13 @@ import com.inz.carvisor.entities.enums.EventType;
 import com.inz.carvisor.entities.enums.NotificationType;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Car;
+import com.inz.carvisor.entities.model.Notification;
 import com.inz.carvisor.entities.model.Setting;
 import com.inz.carvisor.entities.model.User;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -82,63 +85,23 @@ public class DemoREST {
         return DefaultResponse.OK;
     }
 
-    private void addMockedEvents(long deviceId) {
-        List.of(
-                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
-                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
-                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
-                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
-                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build()
-        ).forEach(calendarDaoJdbc::save);
+    @RequestMapping(value = "/newNotification", method = RequestMethod.POST)
+    public ResponseEntity<String> newNotification(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        JSONObject jsonObject = new JSONObject(httpEntity.getBody());
+        Notification build = new NotificationBuilder()
+                .setNotificationType(NotificationType.matchNotificationType(jsonObject.getString("notificationType")))
+                .setDisplayed(jsonObject.getBoolean("displayed"))
+                .setCar(carDaoJdbc.get(jsonObject.getLong("carId")).get())
+                .setValue(jsonObject.getInt("value"))
+                .setTimeStamp(jsonObject.getLong("timeStamp"))
+                .setLocation(jsonObject.getString("location"))
+                .setUser(userDaoJdbc.get(jsonObject.getLong("userId")).get())
+                .build();
+        notificationDaoJdbc.save(build);
+        return DefaultResponse.OK;
     }
 
-    private void addMockedNotifications(User user, Car car) {
-        List.of(
-                new NotificationBuilder().setNotificationType(NotificationType.LEAVING_THE_ZONE).setValue(10).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build(),
-                new NotificationBuilder().setNotificationType(NotificationType.SPEEDING).setValue(50).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build(),
-                new NotificationBuilder().setNotificationType(NotificationType.SPEEDING).setValue(30).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build(),
-                new NotificationBuilder().setNotificationType(NotificationType.LEAVING_THE_ZONE).setValue(10).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build()
-        ).forEach(notificationDaoJdbc::save);
-    }
 
-    private long getThreeDaysBeforeTimeStamp() {
-        return System.currentTimeMillis() / 1000 - 432000;
-    }
-
-    private void addMockedErrors(User user, Car car) {
-        List.of(
-                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getThreeDaysBeforeTimeStamp()).setTimestamp(getThreeDaysBeforeTimeStamp()).setType("ErrorTypeOne").setValue("ErrorValueOne").build(),
-                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getThreeDaysBeforeTimeStamp()).setTimestamp(getThreeDaysBeforeTimeStamp()).setType("ErrorTypetwo").setValue("ErrorValueTwo").build(),
-                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getThreeDaysBeforeTimeStamp()).setTimestamp(getThreeDaysBeforeTimeStamp()).setType("ErrorTypethree").setValue("ErrorValueThree").build()
-        ).forEach(errorDaoJdbc::save);
-    }
-
-    private void addMockedSettings() {
-        List.of(
-                new Setting("sendInterval", 15),
-                new Setting("locationInterval", 15),
-                new Setting("historyTimeout", 180)
-        ).forEach(settingDaoJdbc::save);
-    }
-
-    private void addMockedCars() {
-        getCarList().forEach(carDaoJdbc::save);
-    }
-
-    private void addMockedUsers() {
-        List.of(
-                new UserBuilder().setNick("admin").setName("Jan").setSurname("Kowalski").setPassword(DigestUtils.sha256Hex("absx")).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(extractBase64Picture(1, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12443134).setNfcTag("AAA").build(),
-                new UserBuilder().setNick("zenek").setName("Zenon").setSurname("Kolodziej").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(2, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12378456).setNfcTag("AAB").build(),
-                new UserBuilder().setNick("user3").setName("Maciej").setSurname("Jakubowski").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(3, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12354316).setNfcTag("AAC").build(),
-                new UserBuilder().setNick("user4").setName("Janina").setSurname("Zakrzewska").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(4, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(23455342).setNfcTag("ABB").build(),
-                new UserBuilder().setNick("user5").setName("Piotr").setSurname("Blaszczyk").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(5, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(132213).setNfcTag("ACC").build(),
-                new UserBuilder().setNick("user6").setName("Marian").setSurname("Ostrowski").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(6, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12341).setNfcTag("BBA").build(),
-                new UserBuilder().setNick("user7").setName("Kamil").setSurname("Cieaslak").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(7, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(123451).setNfcTag("BCA").build(),
-                new UserBuilder().setNick("user8").setName("Aleksander").setSurname("Zielizxski").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(8, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(21344312).setNfcTag("ACA").build(),
-                new UserBuilder().setNick("user9").setName("Jakub").setSurname("Szymczak").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(9, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(43656543).setNfcTag("CCC").build(),
-                new UserBuilder().setNick("user10").setName("Agnieszka").setSurname("Wasilewska").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(10, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(34255342).setNfcTag("CDA").build()
-        ).forEach(userDaoJdbc::save);
-    }
 
     @RequestMapping(value = "/getPdf", method = RequestMethod.GET)
     public ResponseEntity getPdf() {
@@ -336,5 +299,63 @@ public class DemoREST {
         } catch (IOException ioException) {
             return "{}";
         }
+    }
+
+    private void addMockedEvents(long deviceId) {
+        List.of(
+                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
+                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
+                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
+                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
+                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build()
+        ).forEach(calendarDaoJdbc::save);
+    }
+
+    private void addMockedNotifications(User user, Car car) {
+        List.of(
+                new NotificationBuilder().setNotificationType(NotificationType.LEAVING_THE_ZONE).setValue(10).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build(),
+                new NotificationBuilder().setNotificationType(NotificationType.SPEEDING).setValue(50).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build(),
+                new NotificationBuilder().setNotificationType(NotificationType.SPEEDING).setValue(30).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build(),
+                new NotificationBuilder().setNotificationType(NotificationType.LEAVING_THE_ZONE).setValue(10).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build()
+        ).forEach(notificationDaoJdbc::save);
+    }
+
+    private long getThreeDaysBeforeTimeStamp() {
+        return System.currentTimeMillis() / 1000 - 432000;
+    }
+
+    private void addMockedErrors(User user, Car car) {
+        List.of(
+                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getThreeDaysBeforeTimeStamp()).setTimestamp(getThreeDaysBeforeTimeStamp()).setType("ErrorTypeOne").setValue("ErrorValueOne").build(),
+                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getThreeDaysBeforeTimeStamp()).setTimestamp(getThreeDaysBeforeTimeStamp()).setType("ErrorTypetwo").setValue("ErrorValueTwo").build(),
+                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getThreeDaysBeforeTimeStamp()).setTimestamp(getThreeDaysBeforeTimeStamp()).setType("ErrorTypethree").setValue("ErrorValueThree").build()
+        ).forEach(errorDaoJdbc::save);
+    }
+
+    private void addMockedSettings() {
+        List.of(
+                new Setting("sendInterval", 15),
+                new Setting("locationInterval", 15),
+                new Setting("historyTimeout", 180)
+        ).forEach(settingDaoJdbc::save);
+    }
+
+    private void addMockedCars() {
+        getCarList().forEach(carDaoJdbc::save);
+    }
+
+    private void addMockedUsers() {
+        List.of(
+                new UserBuilder().setNick("admin").setName("Jan").setSurname("Kowalski").setPassword(DigestUtils.sha256Hex("absx")).setUserPrivileges(UserPrivileges.ADMINISTRATOR).setImage(extractBase64Picture(1, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12443134).setNfcTag("AAA").build(),
+                new UserBuilder().setNick("zenek").setName("Zenon").setSurname("Kolodziej").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(2, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12378456).setNfcTag("AAB").build(),
+                new UserBuilder().setNick("user3").setName("Maciej").setSurname("Jakubowski").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(3, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12354316).setNfcTag("AAC").build(),
+                new UserBuilder().setNick("user4").setName("Janina").setSurname("Zakrzewska").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(4, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(23455342).setNfcTag("ABB").build(),
+                new UserBuilder().setNick("user5").setName("Piotr").setSurname("Blaszczyk").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(5, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(132213).setNfcTag("ACC").build(),
+                new UserBuilder().setNick("user6").setName("Marian").setSurname("Ostrowski").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(6, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(12341).setNfcTag("BBA").build(),
+                new UserBuilder().setNick("user7").setName("Kamil").setSurname("Cieaslak").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(7, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(123451).setNfcTag("BCA").build(),
+                new UserBuilder().setNick("user8").setName("Aleksander").setSurname("Zielizxski").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(8, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(21344312).setNfcTag("ACA").build(),
+                new UserBuilder().setNick("user9").setName("Jakub").setSurname("Szymczak").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(9, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(43656543).setNfcTag("CCC").build(),
+                new UserBuilder().setNick("user10").setName("Agnieszka").setSurname("Wasilewska").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage(extractBase64Picture(10, USER_PHOTOS_DIRECTORY_NAME)).setPhoneNumber(34255342).setNfcTag("CDA").build()
+        ).forEach(userDaoJdbc::save);
     }
 }
