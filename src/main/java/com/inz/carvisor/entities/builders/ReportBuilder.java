@@ -44,8 +44,9 @@ public class ReportBuilder {
         return this;
     }
 
-    public void setBody(byte[] body) {
+    public ReportBuilder setBody(byte[] body) {
         this.body = body;
+        return this;
     }
 
     public Report build() {

@@ -2,6 +2,7 @@ package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.dao.*;
+import com.inz.carvisor.entities.builders.ReportBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.*;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
@@ -22,6 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -84,6 +86,11 @@ class ReportControllerTest {
 
     @Test
     void remove() {
+        byte[] bytes = new byte[35000];
+        Report report = new ReportBuilder().setBody(bytes).build();
+        Optional<Report> save = reportDaoJdbc.save(report);
+        List<Report> all = reportDaoJdbc.getAll();
+        System.out.println("succes");
     }
 
     @Test

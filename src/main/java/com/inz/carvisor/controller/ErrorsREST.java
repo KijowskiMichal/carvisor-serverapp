@@ -55,7 +55,7 @@ public class ErrorsREST {
         else return DefaultResponse.BAD_REQUEST;
     }
 
-    @RequestMapping(value = "/getErrors", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    @RequestMapping(value = "/getErrors/{dateFrom}/{dateTo}/{page}/{pagesize}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> getErrors(
             HttpServletRequest request, HttpEntity<String> httpEntity,
             @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,

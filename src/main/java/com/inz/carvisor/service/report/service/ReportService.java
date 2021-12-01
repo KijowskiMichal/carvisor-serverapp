@@ -29,7 +29,7 @@ public class ReportService {
         return reportDaoJdbc.delete(reportId);
     }
 
-    public List<Report> list(int page, int pageSize, String regex) {
+    public List<Report> getList(int page, int pageSize, String regex) {
         if (regex.isEmpty()) return reportDaoJdbc.getAll();
         return reportDaoJdbc.list(page,pageSize, regex);
     }

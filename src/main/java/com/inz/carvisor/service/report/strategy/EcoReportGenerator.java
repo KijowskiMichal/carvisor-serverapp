@@ -6,6 +6,7 @@ import com.inz.carvisor.entities.enums.ReportType;
 import com.inz.carvisor.entities.model.Report;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.service.report.util.ReportGeneratorHelper;
 import com.itextpdf.text.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,6 +33,12 @@ public class EcoReportGenerator implements ReportGenerator{
         this.trackDaoJdbc = trackDaoJdbc;
     }
 
+
+    @Override
+    public String getTitle() {
+        return "Eco Report";
+    }
+
     @Override
     public boolean isForMe(Report report) {
         return ReportType.ECO.matches(report);
@@ -38,47 +46,29 @@ public class EcoReportGenerator implements ReportGenerator{
 
     @Override
     public void generate(Document document, Report report) throws DocumentException {
-        generateTitle(document,report);
+        ReportGeneratorHelper.generateHeader(this,report,document);
         List<User> userList = userDaoJdbc.get(report.getUserIdList());
         userList.forEach(user -> {
             try {
                 generate(user,document,report);
-            } catch (DocumentException e) {
-                e.printStackTrace();
-            }
+            } catch (DocumentException ignore) {}
         });
     }
 
-    private void generateTitle(Document document, Report report) throws DocumentException {
-        Font font = FontFactory.getFont(FontFactory.COURIER_BOLD, 24, BaseColor.BLACK);
-        Font dateFont = FontFactory.getFont(FontFactory.COURIER_BOLD, 14, BaseColor.BLACK);
-        String paragraphString = "Eco Report " + "\n";
-        String dateString = getDate(report) + "\n";
-        document.add(new Paragraph(paragraphString, font));
-        document.add(new Paragraph(dateString, dateFont));
-        document.add(new Paragraph("------------------------------------\n", font));
-
-    }
-
-    private String getDate(Report report) {
-        return simpleDateFormat.format(new Date(report.getStart())) +
-                " - " +
-                simpleDateFormat.format(new Date(report.getEnd()));
-    }
-
     private void generate(User user,Document document,Report report) throws DocumentException {
+        List<String> userSummary = getUserSummary(user, report);
+        ReportGeneratorHelper.generateList(document,user.getNameAndSurname(),userSummary);
+    }
 
+    private List<String> getUserSummary(User user, Report report) {
         List<Track> userTracks = trackDaoJdbc.getUserTracks(user.getId(), report.getStart(), report.getEnd());
-        Chunk chunk = new Chunk(user.getNameAndSurname());
-        com.itextpdf.text.List list = new com.itextpdf.text.List();
-        list.setPreSymbol("");
+        List<String> list = new ArrayList<>();
         list.add("Eco score: " + getEcoScore(userTracks));
         list.add("Amount of tracks: " + getAmountOfTracks(userTracks));
         list.add("Average fuel consumption: " + getAverageFuelConsumption(userTracks));
         list.add("Average RPM: " + getAverageRPM(userTracks));
         list.add("Average speed: " + getAverageSpeed(userTracks));
-        document.add(chunk);
-        document.add(list);
+        return list;
     }
 
     private int getAverageSpeed(List<Track> userTracks) {
@@ -86,7 +76,7 @@ public class EcoReportGenerator implements ReportGenerator{
                 .stream()
                 .mapToDouble(Track::getAverageSpeed)
                 .average()
-                .orElse(Double.NaN);
+                .orElse(0.0);
     }
 
     private int getAverageRPM(List<Track> userTracks) {
@@ -94,7 +84,7 @@ public class EcoReportGenerator implements ReportGenerator{
                 .stream()
                 .mapToDouble(Track::getAverageRevolutionsPerMinute)
                 .average()
-                .orElse(Double.NaN);
+                .orElse(0.0);
     }
 
     private String getAverageFuelConsumption(List<Track> userTracks) {

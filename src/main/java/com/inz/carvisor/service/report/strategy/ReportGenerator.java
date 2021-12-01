@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface ReportGenerator {
 
+    String getTitle();
+
     boolean isForMe(Report report);
 
     void generate(Document document, Report report) throws DocumentException;

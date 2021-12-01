@@ -23,16 +23,18 @@ public class ReportGenerator {
     private final EcoReportGenerator ecoReportGenerator;
     private final SafetyReportGenerator safetyReportGenerator;
     private final TrackReportGenerator trackReportGenerator;
+    private final DefReportGenerator defReportGenerator;
 
     @Autowired
     public ReportGenerator(UserDaoJdbc userDaoJdbc, TrackDaoJdbc trackDaoJdbc,
                            EcoReportGenerator ecoReportGenerator, SafetyReportGenerator safetyReportGenerator,
-                           TrackReportGenerator trackReportGenerator) {
+                           TrackReportGenerator trackReportGenerator, DefReportGenerator defReportGenerator) {
         this.trackDaoJdbc = trackDaoJdbc;
         this.userDaoJdbc = userDaoJdbc;
         this.trackReportGenerator = trackReportGenerator;
         this.safetyReportGenerator = safetyReportGenerator;
         this.ecoReportGenerator = ecoReportGenerator;
+        this.defReportGenerator = defReportGenerator;
     }
 
     public byte[] generate(Report report) {
@@ -61,7 +63,7 @@ public class ReportGenerator {
                 .stream()
                 .filter(reportGenerator -> reportGenerator.isForMe(report))
                 .findAny()
-                .orElse(new DefReportGenerator())
+                .orElse(defReportGenerator)
                 .generate(document, report);
     }
 }
