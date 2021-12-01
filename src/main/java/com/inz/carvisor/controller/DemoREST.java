@@ -85,17 +85,18 @@ public class DemoREST {
         return DefaultResponse.OK;
     }
 
-    @RequestMapping(value = "/newNotification", method = RequestMethod.POST)
+    @RequestMapping(value = "/newNotification", method = RequestMethod.GET)
     public ResponseEntity<String> newNotification(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        JSONObject jsonObject = new JSONObject(httpEntity.getBody());
+        Car car = carDaoJdbc.getAll().get(0);
+        User user = userDaoJdbc.getAll().get(0);
         Notification build = new NotificationBuilder()
-                .setNotificationType(NotificationType.matchNotificationType(jsonObject.getString("notificationType")))
-                .setDisplayed(jsonObject.getBoolean("displayed"))
-                .setCar(carDaoJdbc.get(jsonObject.getLong("carId")).get())
-                .setValue(jsonObject.getInt("value"))
-                .setTimeStamp(jsonObject.getLong("timeStamp"))
-                .setLocation(jsonObject.getString("location"))
-                .setUser(userDaoJdbc.get(jsonObject.getLong("userId")).get())
+                .setNotificationType(NotificationType.SPEEDING)
+                .setDisplayed(false)
+                .setCar(car)
+                .setValue(29)
+                .setTimeStamp(System.currentTimeMillis()/1000)
+                .setLocation("52.4026280, 16.889948")
+                .setUser(user)
                 .build();
         notificationDaoJdbc.save(build);
         return DefaultResponse.OK;
