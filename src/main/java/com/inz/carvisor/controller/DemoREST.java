@@ -10,7 +10,6 @@ import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.entities.enums.NotificationType;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Car;
-import com.inz.carvisor.entities.model.Notification;
 import com.inz.carvisor.entities.model.Setting;
 import com.inz.carvisor.entities.model.User;
 import com.itextpdf.text.*;
@@ -84,22 +83,22 @@ public class DemoREST {
 
     private void addMockedNotifications(User user, Car car) {
         List.of(
-                new NotificationBuilder().setNotificationType(NotificationType.LEAVING_THE_ZONE).setValue(10).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getNowTimeStamp()).setLocation("52.448235,16.907205").build(),
-                new NotificationBuilder().setNotificationType(NotificationType.SPEEDING).setValue(50).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getNowTimeStamp()).setLocation("52.448235,16.907205").build(),
-                new NotificationBuilder().setNotificationType(NotificationType.SPEEDING).setValue(30).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getNowTimeStamp()).setLocation("52.448235,16.907205").build(),
-                new NotificationBuilder().setNotificationType(NotificationType.LEAVING_THE_ZONE).setValue(10).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getNowTimeStamp()).setLocation("52.448235,16.907205").build()
+                new NotificationBuilder().setNotificationType(NotificationType.LEAVING_THE_ZONE).setValue(10).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build(),
+                new NotificationBuilder().setNotificationType(NotificationType.SPEEDING).setValue(50).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build(),
+                new NotificationBuilder().setNotificationType(NotificationType.SPEEDING).setValue(30).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build(),
+                new NotificationBuilder().setNotificationType(NotificationType.LEAVING_THE_ZONE).setValue(10).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build()
         ).forEach(notificationDaoJdbc::save);
     }
 
-    private long getNowTimeStamp() {
-        return System.currentTimeMillis() / 1000;
+    private long getThreeDaysBeforeTimeStamp() {
+        return System.currentTimeMillis() / 1000 - 432000;
     }
 
     private void addMockedErrors(User user, Car car) {
         List.of(
-                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getNowTimeStamp()).setTimestamp(getNowTimeStamp()).setType("ErrorTypeOne").setValue("ErrorValueOne").build(),
-                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getNowTimeStamp()).setTimestamp(getNowTimeStamp()).setType("ErrorTypetwo").setValue("ErrorValueTwo").build(),
-                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getNowTimeStamp()).setTimestamp(getNowTimeStamp()).setType("ErrorTypethree").setValue("ErrorValueThree").build()
+                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getThreeDaysBeforeTimeStamp()).setTimestamp(getThreeDaysBeforeTimeStamp()).setType("ErrorTypeOne").setValue("ErrorValueOne").build(),
+                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getThreeDaysBeforeTimeStamp()).setTimestamp(getThreeDaysBeforeTimeStamp()).setType("ErrorTypetwo").setValue("ErrorValueTwo").build(),
+                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getThreeDaysBeforeTimeStamp()).setTimestamp(getThreeDaysBeforeTimeStamp()).setType("ErrorTypethree").setValue("ErrorValueThree").build()
         ).forEach(errorDaoJdbc::save);
     }
 

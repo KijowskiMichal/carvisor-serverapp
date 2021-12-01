@@ -316,7 +316,7 @@ public class TrackService {
                 .setDisplayed(false)
                 .setValue(zoneOffence.getValue())
                 .setTimeStamp(trackRate.getTimestamp())
-                .setLocation(trackRate.getLocation())
+                .setLocation(trackRate.getLocation()) //todo check to nice location
                 .build();
         notificationDaoJdbc.save(notification);
     }
