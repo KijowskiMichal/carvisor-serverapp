@@ -95,7 +95,7 @@ public class DemoREST {
                 .setCar(car)
                 .setValue(29)
                 .setTimeStamp(System.currentTimeMillis()/1000)
-                .setLocation("52.4026280,16.889948")
+                .setLocation("52.4026280;16.889948")
                 .setUser(user)
                 .build();
         notificationDaoJdbc.save(build);
