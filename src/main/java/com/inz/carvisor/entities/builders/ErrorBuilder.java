@@ -4,8 +4,6 @@ import com.inz.carvisor.entities.model.Car;
 import com.inz.carvisor.entities.model.Error;
 import com.inz.carvisor.entities.model.User;
 
-import java.util.Date;
-
 public class ErrorBuilder {
 
     private User user;
@@ -69,7 +67,7 @@ public class ErrorBuilder {
         error.setCar(this.car);
         error.setType(this.type);
         error.setValue(this.value);
-        error.setTimestamp(this.timestamp);
+        error.setTimeStamp(this.timestamp);
         error.setLocation(this.location);
         error.setUserName(this.userName);
         error.setDeviceLicensePlate(this.deviceLicensePlate);

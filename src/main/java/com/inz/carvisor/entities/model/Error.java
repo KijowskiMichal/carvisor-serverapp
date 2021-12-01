@@ -17,7 +17,7 @@ public class Error {
 
     private String type;
     private String value;
-    private long timestamp;
+    private long timeStamp;
     private String location;
     private String userName;
     private String deviceLicensePlate;
@@ -26,12 +26,12 @@ public class Error {
     public Error() {
     }
 
-    public Error(User user, Car car, String type, String value, long timestamp, String location, String userName, String deviceLicensePlate, long date) {
+    public Error(User user, Car car, String type, String value, long timeStamp, String location, String userName, String deviceLicensePlate, long date) {
         this.user = user;
         this.car = car;
         this.type = type;
         this.value = value;
-        this.timestamp = timestamp;
+        this.timeStamp = timeStamp;
         this.location = location;
         this.userName = userName;
         this.deviceLicensePlate = deviceLicensePlate;
@@ -62,12 +62,12 @@ public class Error {
         this.value = value;
     }
 
-    public long getTimestamp() {
-        return timestamp;
+    public long getTimeStamp() {
+        return timeStamp;
     }
 
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     public String getLocation() {
@@ -124,7 +124,7 @@ public class Error {
                 "id=" + id +
                 ", type='" + type + '\'' +
                 ", value=" + value +
-                ", timestamp=" + timestamp +
+                ", timestamp=" + timeStamp +
                 '}';
     }
 }
