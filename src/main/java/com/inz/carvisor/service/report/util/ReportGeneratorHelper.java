@@ -12,7 +12,8 @@ public class ReportGeneratorHelper {
 
     private static final Font TITLE_FONT = FontFactory.getFont(FontFactory.COURIER_BOLD, 24, BaseColor.BLACK);
     private static final Font DATE_FONT = FontFactory.getFont(FontFactory.COURIER_BOLD, 14, BaseColor.BLACK);
-    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+    private static final Font LIST_ITEM_FONT = FontFactory.getFont(FontFactory.TIMES, 11, BaseColor.BLACK);
+    private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yy/M/dd HH:mm");
 
     private static final String DIVIDER = "------------------------------------\n";
     private static final String EMPTY_STRING = "\n";
@@ -32,27 +33,41 @@ public class ReportGeneratorHelper {
         com.itextpdf.text.List list = new com.itextpdf.text.List();
         list.setListSymbol(LIST_POINTER);
         Chunk chunkListHeader = new Chunk(listHeader);
-        componentList.forEach(list::add);
+        componentList.stream().map(string -> new ListItem(string,LIST_ITEM_FONT)).forEach(list::add);
         try {
             document.add(chunkListHeader);
             document.add(list);
+        } catch (Exception ignore) {}
+    }
+
+    public static void generateEnter(Document document) {
+        try {
             document.add(LIST_ELEMENT_SEPARATOR_PARAGRAPH);
         } catch (Exception ignore) {}
     }
 
-    private static void generateListWithoutSpace(Document document, String listHeader, List<String> componentList) {
-        com.itextpdf.text.List list = new com.itextpdf.text.List();
-        list.setListSymbol(LIST_POINTER);
-        Chunk chunkListHeader = new Chunk(listHeader);
-        componentList.forEach(list::add);
-        try {
-            document.add(chunkListHeader);
-            document.add(list);
-        } catch (Exception ignore) {}
+    public static String getDate(Report report) {
+        return getNiceDate(report.getStart()) + " - " + getNiceDate(report.getEnd());
     }
 
-    private static String getDate(Report report) {
-        return DATE_TIME_FORMAT.format(new Date(report.getStart())) + " - " +
-                DATE_TIME_FORMAT.format(new Date(report.getEnd()));
+    public static String getNiceDate(long timestamp) {
+        return DATE_TIME_FORMAT.format(new Date(timestamp*1000));
+    }
+
+    public static String getNiceDate(long from, long to) {
+        return DATE_TIME_FORMAT.format(new Date(from*1000)) + " - " + DATE_TIME_FORMAT.format(new Date(from*1000));
+    }
+
+    public static String getNiceLocation(String from, String to) {
+        return "Poznan to Warszawa";
+    }
+
+    public static String getNiceLocation(String location) {
+        //todo this method should convert 51.1234;15.2134 to something like "Poznań, grunwaldzka"
+        return "Poznan";
+    }
+
+    public static String getNiceDistance(long meters) {
+        return meters + "m";
     }
 }

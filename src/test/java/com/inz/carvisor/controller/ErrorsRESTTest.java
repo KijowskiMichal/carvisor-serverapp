@@ -8,6 +8,7 @@ import com.inz.carvisor.entities.model.*;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.util.RequestBuilder;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -55,8 +56,11 @@ class ErrorsRESTTest {
     @Test
     void addError() {
         MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.STANDARD_USER);
-        JSONObject jsonObject = new JSONObject().put(AttributeKey.Error.VALUE, "10").put(AttributeKey.Error.TYPE, "custom type");
-        HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
+        JSONObject jsonObject = new JSONObject().put(AttributeKey.Error.VALUE, "10").put(AttributeKey.Error.TYPE, "custom type")
+                .put(AttributeKey.Error.TIMESTAMP,"12345");
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(jsonObject);
+        HttpEntity<String> httpEntity = new HttpEntity<>(jsonArray.toString());
 
         Assertions.assertEquals(0, errorDaoJdbc.getAll().size());
         errorsREST.addError(mockHttpServletRequest, httpEntity);

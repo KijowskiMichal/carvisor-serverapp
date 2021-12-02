@@ -7,15 +7,14 @@ import com.inz.carvisor.entities.model.Report;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.service.report.util.ReportGeneratorHelper;
-import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Font;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TrackReportGenerator implements ReportGenerator {
@@ -45,26 +44,48 @@ public class TrackReportGenerator implements ReportGenerator {
         List<User> userList = userDaoJdbc.get(report.getUserIdList());
         userList.forEach(user -> {
             try {
-                generate(user,document,report);
+                generateUserSegment(user,document,report);
             } catch (DocumentException ignore) {}
         });
     }
 
-    private void generate(User user,Document document,Report report) throws DocumentException {
-        List<String> userSummary = getUserSummary(user, report);
+    private void generateUserSegment(User user, Document document, Report report) throws DocumentException {
+        List<Track> userTracks = trackDaoJdbc.getUserTracks(user.getId());
+        List<String> userTracksSummary = getUserTracksSummary(userTracks, document, report);
+        List<String> userSummary = getUserSummary(userTracks, document, report);
+        ReportGeneratorHelper.generateList(document,user.getNameAndSurname(),userSummary);
+        ReportGeneratorHelper.generateList(document,user.getName() + " Tracks",userTracksSummary);
+        ReportGeneratorHelper.generateEnter(document);
     }
 
-    private List<String> getUserSummary(User user, Report report) {
-        List<Track> userTracks = trackDaoJdbc.getUserTracks(user.getId(), report.getStart(), report.getEnd());
+    private List<String> getUserSummary(List<Track> userTracks, Document document, Report report) {
         List<String> list = new ArrayList<>();
-        list.add("Track ONE");
-        list.add("Track TWO");
-        list.add("Track THREE");
+        list.add("Tracks amount: " + userTracks.size());
+        list.add("Distance sum: " + getUserDistance(userTracks));
         return list;
     }
 
-    private void generateTrackSummary(List<Track> userTracks, Document document, Report report) {
+    private String getUserDistance(List<Track> userTracks) {
+        long sum = userTracks
+                .stream()
+                .mapToLong(Track::getDistanceFromStart)
+                .sum();
+        return ReportGeneratorHelper.getNiceDistance(sum);
+    }
 
+    private List<String> getUserTracksSummary(List<Track> userTracks,Document document, Report report) {
+        return userTracks
+                .stream()
+                .map(this::generateTrackString)
+                .collect(Collectors.toList());
+    }
+
+    private String generateTrackString(Track track) {
+        return ReportGeneratorHelper.getNiceDate(track.getStartTrackTimeStamp(),track.getEndTrackTimeStamp()) +
+                " | From " +
+                ReportGeneratorHelper.getNiceLocation(track.getStartPosition(),track.getEndPosition()) +
+                " | Distance: " +
+                ReportGeneratorHelper.getNiceDistance(track.getDistanceFromStart());
     }
 
 }

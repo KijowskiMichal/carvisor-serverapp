@@ -42,7 +42,6 @@ public class TrackRatesTest {
 
     private static String trackRatesString;
     private static String startTrackString;
-    private static JSONObject trackRatesJson;
 
     @Autowired
     private UserDaoJdbc userDaoJdbc;
@@ -65,7 +64,6 @@ public class TrackRatesTest {
     static void prepareTrackRates() {
         trackRatesString = FileDataGetter.getTrackJson();
         startTrackString = FileDataGetter.getStartTrackJson();
-        trackRatesJson = new JSONObject(trackRatesString);
     }
 
     @AfterEach
@@ -79,30 +77,17 @@ public class TrackRatesTest {
     @Ignore
     @Test
     void allTrackRatesShouldBeSaved() {
-        User user = mockUserFromDatabase();
-        Car car = mockCarFromDatabase();
-        HttpServletRequest httpServletRequest = RequestBuilder.mockHttpServletRequest(user, car);
-
-        trackREST.startTrack(httpServletRequest, new HttpEntity<>(startTrackString));
-        trackREST.updateTrackDataOLD(httpServletRequest, new HttpEntity<>(trackRatesString));
-        trackREST.endOfTrack(httpServletRequest,null);
-
-        Track oldCalculatedTrack = trackDaoJdbc.getAll().get(0);
-        Assertions.assertEquals(1, trackDaoJdbc.getAll().size());
-        Assertions.assertEquals(trackRatesJson.keySet().size(), oldCalculatedTrack.getListOfTrackRates().size());
-
         User userSecond = mockSecondUserFromDatabase();
         Car carSecond = mockCarFromDatabase();
         HttpServletRequest httpServletRequestSecond = RequestBuilder.mockHttpServletRequest(userSecond, carSecond);
-
+        long start = System.currentTimeMillis();
+        System.out.println("startTrack() = " + (System.currentTimeMillis() - start));
         trackREST.startTrack(httpServletRequestSecond, new HttpEntity<>(startTrackString));
+        System.out.println("updateTrackData() =" + (System.currentTimeMillis() - start));
         trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
+        System.out.println("endOfTrack() =" + (System.currentTimeMillis() - start));
         trackREST.endOfTrack(httpServletRequestSecond,null);
 
-        //List<Track> all = trackDaoJdbc.getAll();
-        //compareTracksFromDatabase(all.get(0),all.get(1));
-
-        ResponseEntity<String> trackData = trackREST.getTrackData(httpServletRequest, null, user.getId(), 1623879247);
         System.out.println("");
     }
 
@@ -147,22 +132,6 @@ public class TrackRatesTest {
         }
     }
 
-
-    private User mockUserFromDatabase() {
-        User user = new UserBuilder()
-                .setNick("admin")
-                .setName("Jaźn")
-                .setSurname("Kowalski")
-                .setPassword(DigestUtils.sha256Hex("absx"))
-                .setUserPrivileges(UserPrivileges.STANDARD_USER)
-                .setImage("Empty")
-                .setPhoneNumber(12443134)
-                .setNfcTag("ABC")
-                .build();
-        userDaoJdbc.save(user);
-        return user;
-    }
-
     private User mockSecondUserFromDatabase() {
         User user = new UserBuilder()
                 .setNick("admin")
@@ -172,7 +141,7 @@ public class TrackRatesTest {
                 .setUserPrivileges(UserPrivileges.STANDARD_USER)
                 .setImage("Empty")
                 .setPhoneNumber(12443134)
-                .setNfcTag("AAC")
+                .setNfcTag("ABC")
                 .build();
         userDaoJdbc.save(user);
         return user;

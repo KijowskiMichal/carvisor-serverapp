@@ -15,6 +15,16 @@ public class FileDataGetter {
         }
     }
 
+    public static String getSmallTrackRatesJson() {
+        try {
+            InputStream trackRatesStream = FileDataGetter.class.getClassLoader().getResourceAsStream("smalltrackjson/trackRatesSample.json");
+            assert trackRatesStream != null;
+            return new String(trackRatesStream.readAllBytes());
+        } catch (IOException ioException) {
+            return "{}";
+        }
+    }
+
     public static String getStartTrackJson() {
         try {
             InputStream trackRatesStream = FileDataGetter.class.getClassLoader().getResourceAsStream("trackjson/startTrack.json");

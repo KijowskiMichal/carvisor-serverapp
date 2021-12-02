@@ -48,17 +48,19 @@ public class EcoReportGenerator implements ReportGenerator{
     @Override
     public void generate(Document document, Report report) throws DocumentException {
         ReportGeneratorHelper.generateHeader(this,report,document);
+
         List<User> userList = userDaoJdbc.get(report.getUserIdList());
         userList.forEach(user -> {
             try {
-                generate(user,document,report);
+                generateUserSegment(user,document,report);
             } catch (DocumentException ignore) {}
         });
     }
 
-    private void generate(User user,Document document,Report report) throws DocumentException {
+    private void generateUserSegment(User user, Document document, Report report) throws DocumentException {
         List<String> userSummary = getUserSummary(user, report);
         ReportGeneratorHelper.generateList(document,user.getNameAndSurname(),userSummary);
+        ReportGeneratorHelper.generateEnter(document);
     }
 
     private List<String> getUserSummary(User user, Report report) {

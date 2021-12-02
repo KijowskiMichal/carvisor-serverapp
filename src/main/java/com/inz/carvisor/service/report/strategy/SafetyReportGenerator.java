@@ -59,6 +59,7 @@ public class SafetyReportGenerator implements ReportGenerator{
     private void generate(User user, Document document, Report report) throws DocumentException {
         List<String> userSummary = getUserSummary(user, report);
         ReportGeneratorHelper.generateList(document,user.getNameAndSurname(),userSummary);
+        ReportGeneratorHelper.generateEnter(document);
     }
 
     private java.util.List<String> getUserSummary(User user, Report report) {

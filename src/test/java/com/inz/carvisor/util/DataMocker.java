@@ -1,13 +1,19 @@
 package com.inz.carvisor.util;
 
+import com.inz.carvisor.entities.builders.CarBuilder;
+import com.inz.carvisor.entities.builders.TrackBuilder;
 import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
-import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.entities.model.*;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.util.List;
+import java.util.Random;
 
 public class DataMocker {
+
+    private static final Random random = new Random();
+    private static final int SECONDS_IN_ONE_DAY = 86_400;
 
     public static List<User> getUsers() {
 
@@ -22,6 +28,101 @@ public class DataMocker {
                 new UserBuilder().setNick("user8").setName("Aleksander").setSurname("Zielizxski").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage("Image").setPhoneNumber(21344312).setNfcTag("ACA").build(),
                 new UserBuilder().setNick("user9").setName("Jakub").setSurname("Szymczak").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage("Image").setPhoneNumber(43656543).setNfcTag("CCC").build(),
                 new UserBuilder().setNick("user10").setName("Agnieszka").setSurname("Wasilewska").setPassword(DigestUtils.sha256Hex("xsba")).setUserPrivileges(UserPrivileges.STANDARD_USER).setImage("Image").setPhoneNumber(34255342).setNfcTag("CDA").build()
+        );
+    }
+
+    public static List<Car> getCars() {
+        return List.of(
+                new CarBuilder()
+                        .setLicensePlate("DWL5636")
+                        .setBrand("Ford")
+                        .setModel("Focus")
+                        .setProductionDate(1990)
+                        .setImage("image")
+                        .setPassword(DigestUtils.sha256Hex("safdsdsf"))
+                        .setTank(50)
+                        .setFuelNorm(7D)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("EPI6395")
+                        .setBrand("Renault")
+                        .setModel("Laguna")
+                        .setProductionDate(1993)
+                        .setImage("image")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .setFuelNorm(7D)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("WA42613")
+                        .setBrand("BMW")
+                        .setModel("X6")
+                        .setProductionDate(1993)
+                        .setImage("image")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .setFuelNorm(7D)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("CW02838")
+                        .setBrand("Kia")
+                        .setModel("Picanto")
+                        .setProductionDate(1993)
+                        .setImage("image")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .setFuelNorm(7D)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("FZA5527")
+                        .setBrand("Audi")
+                        .setModel("A4")
+                        .setProductionDate(1993)
+                        .setImage("image")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .setFuelNorm(7D)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("GKW0134")
+                        .setBrand("Ford")
+                        .setModel("Fiesta")
+                        .setProductionDate(1993)
+                        .setImage("image")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .setFuelNorm(7D)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("WL85883")
+                        .setBrand("Opel")
+                        .setModel("Corsa")
+                        .setProductionDate(1993)
+                        .setImage("image")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .setFuelNorm(7D)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("EWE1751")
+                        .setBrand("Volkswagen")
+                        .setModel("Passat")
+                        .setProductionDate(1993)
+                        .setImage("image")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .setFuelNorm(7D)
+                        .build(),
+                new CarBuilder()
+                        .setLicensePlate("NEB1632")
+                        .setBrand("Hyundai")
+                        .setModel("I20")
+                        .setProductionDate(1993)
+                        .setImage("image")
+                        .setPassword(DigestUtils.sha256Hex("dfsdfds"))
+                        .setTank(50)
+                        .setFuelNorm(7D)
+                        .build()
         );
     }
 }
