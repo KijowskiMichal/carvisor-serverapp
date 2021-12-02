@@ -37,7 +37,7 @@ public class EcoReportGenerator implements ReportGenerator{
 
     @Override
     public String getTitle() {
-        return "Eco Report";
+        return "Raport ekologiczności jazdy";
     }
 
     @Override
@@ -66,11 +66,11 @@ public class EcoReportGenerator implements ReportGenerator{
     private List<String> getUserSummary(User user, Report report) {
         List<Track> userTracks = trackDaoJdbc.getUserTracks(user.getId(), report.getStart(), report.getEnd());
         List<String> list = new ArrayList<>();
-        list.add("Eco score: " + getEcoScore(userTracks));
-        list.add("Amount of tracks: " + getAmountOfTracks(userTracks));
-        list.add("Average fuel consumption: " + getAverageFuelConsumption(userTracks));
-        list.add("Average RPM: " + getAverageRPM(userTracks));
-        list.add("Average speed: " + getAverageSpeed(userTracks));
+        list.add("Wynik punktów eco: " + getEcoScore(userTracks));
+        list.add("Ilość przejechanych tras: " + getAmountOfTracks(userTracks));
+        list.add("Średnie zużycie paliwa: " + getAverageFuelConsumption(userTracks));
+        list.add("Średnia ilość obrotów na minutę: " + getAverageRPM(userTracks));
+        list.add("Średnia prędkość: " + getAverageSpeed(userTracks));
         return list;
     }
 

@@ -37,7 +37,7 @@ public class SafetyReportGenerator implements ReportGenerator{
 
     @Override
     public String getTitle() {
-        return "Safety Report";
+        return "Raport bezpieczeństwa";
     }
 
     @Override
@@ -65,9 +65,9 @@ public class SafetyReportGenerator implements ReportGenerator{
     private java.util.List<String> getUserSummary(User user, Report report) {
         java.util.List<Track> userTracks = trackDaoJdbc.getUserTracks(user.getId(), report.getStart(), report.getEnd());
         java.util.List<String> list = new ArrayList<>();
-        list.add("Safety score: " + calculateSafetyScore(userTracks));
-        list.add("Amount of tracks: " + getAmountOfTracks(userTracks));
-        list.add("Amount of offences: " + getOffences(userTracks));
+        list.add("Wynik punktów bezpieczeństwa: " + calculateSafetyScore(userTracks));
+        list.add("Ilość tras: " + getAmountOfTracks(userTracks));
+        list.add("Ilość wykroczeń: " + getOffences(userTracks));
         return list;
     }
 

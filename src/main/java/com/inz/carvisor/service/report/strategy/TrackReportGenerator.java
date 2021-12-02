@@ -30,7 +30,7 @@ public class TrackReportGenerator implements ReportGenerator {
 
     @Override
     public String getTitle() {
-        return "Track Report";
+        return "Raport tras";
     }
 
     @Override
@@ -54,14 +54,14 @@ public class TrackReportGenerator implements ReportGenerator {
         List<String> userTracksSummary = getUserTracksSummary(userTracks, document, report);
         List<String> userSummary = getUserSummary(userTracks, document, report);
         ReportGeneratorHelper.generateList(document,user.getNameAndSurname(),userSummary);
-        ReportGeneratorHelper.generateList(document,user.getName() + " Tracks",userTracksSummary);
+        ReportGeneratorHelper.generateList(document,"Trasy " + user.getName(),userTracksSummary);
         ReportGeneratorHelper.generateEnter(document);
     }
 
     private List<String> getUserSummary(List<Track> userTracks, Document document, Report report) {
         List<String> list = new ArrayList<>();
-        list.add("Tracks amount: " + userTracks.size());
-        list.add("Distance sum: " + getUserDistance(userTracks));
+        list.add("Ilość tras: " + userTracks.size());
+        list.add("Łączny przejechany dystans: " + getUserDistance(userTracks));
         return list;
     }
 
@@ -82,9 +82,9 @@ public class TrackReportGenerator implements ReportGenerator {
 
     private String generateTrackString(Track track) {
         return ReportGeneratorHelper.getNiceDate(track.getStartTrackTimeStamp(),track.getEndTrackTimeStamp()) +
-                " | From " +
+                " | Z " +
                 ReportGeneratorHelper.getNiceLocation(track.getStartPosition(),track.getEndPosition()) +
-                " | Distance: " +
+                " | Łączny przejechany dystans: " +
                 ReportGeneratorHelper.getNiceDistance(track.getDistanceFromStart());
     }
 
