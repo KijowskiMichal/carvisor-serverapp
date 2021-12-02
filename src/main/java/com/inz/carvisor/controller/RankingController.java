@@ -2,7 +2,6 @@ package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
-import com.inz.carvisor.constants.Key;
 import com.inz.carvisor.dao.OffenceDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,7 +44,7 @@ public class RankingController {
             HttpServletRequest request, HttpEntity<String> httpEntity,
             @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
             @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) {
-        User userToCheck = (User) request.getSession().getAttribute(Key.USER);
+        User userToCheck = (User) request.getSession().getAttribute(AttributeKey.CommonKey.USER);
         List<User> allUsers = userDaoJdbc.getAll();
 
         int safetyPointsRankingPosition = getSafetyPointsRankingPosition(userToCheck, allUsers);
@@ -62,8 +60,8 @@ public class RankingController {
         int from = Math.max(0, page * maxPage);
         int to = Math.min(getUserTracks.size(), (page + 1) * maxPage);
         JSONObject jsonObject = toJson(userToCheck, safetyPointsRankingPosition, ecoPointsRankingPosition, getUserTracks.subList(to, from - 1));
-        jsonObject.put(Key.PAGE, page);
-        jsonObject.put(Key.PAGE_MAX, maxPage);
+        jsonObject.put(AttributeKey.CommonKey.PAGE, page);
+        jsonObject.put(AttributeKey.CommonKey.PAGE_MAX, maxPage);
         return DefaultResponse.ok(jsonObject.toString());
     }
 

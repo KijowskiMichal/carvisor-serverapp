@@ -46,16 +46,15 @@ public class DefaultResponse {
         return ResponseEntity.status(HttpStatus.OK).body(responseBody);
     }
 
-    public static ResponseEntity<byte[]> unauthorized() {
+    public static ResponseEntity<byte[]> unauthorizedBytes() {
         return ResponseEntity.status(HttpStatus.OK).body("Unauthorized".getBytes(StandardCharsets.UTF_8));
     }
 
-    public static ResponseEntity<byte[]> badRequest() {
+    public static ResponseEntity<byte[]> badRequestBytes() {
         return ResponseEntity.status(HttpStatus.OK).body("Bad Request".getBytes(StandardCharsets.UTF_8));
     }
 
     private static String jsonMessage(String msg) {
         return new JSONObject().put("message:", msg).toString();
     }
-
 }

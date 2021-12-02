@@ -33,7 +33,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(CarAuthorizationREST.class)
+@WebMvcTest(CarAuthorizationController.class)
 @ContextConfiguration(classes = {Initializer.class})
 class CarAuthorizationControllerTest {
 

@@ -7,9 +7,14 @@ import com.inz.carvisor.entities.model.Report;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.service.report.util.ReportGeneratorHelper;
-import com.itextpdf.text.*;
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,24 +51,20 @@ public class TrackReportGenerator implements ReportGenerator {
     }
 
     private void generate(User user,Document document,Report report) throws DocumentException {
+        List<String> userSummary = getUserSummary(user, report);
+    }
+
+    private List<String> getUserSummary(User user, Report report) {
         List<Track> userTracks = trackDaoJdbc.getUserTracks(user.getId(), report.getStart(), report.getEnd());
-        Chunk chunk = new Chunk(user.getNameAndSurname(),new Font(Font.FontFamily.COURIER,16));
-        document.add(chunk);
-        Chunk summaryChunk = new Chunk(user.getNameAndSurname(),new Font(Font.FontFamily.COURIER,16));
-        document.add(summaryChunk);
-        generateSummary(userTracks,document,report);
-        Chunk userTrackChunk = new Chunk(user.getNameAndSurname(),new Font(Font.FontFamily.COURIER,16));
-        document.add(userTrackChunk);
-        generateTrackSummary(userTracks,document,report);
+        List<String> list = new ArrayList<>();
+        list.add("Track ONE");
+        list.add("Track TWO");
+        list.add("Track THREE");
+        return list;
     }
 
     private void generateTrackSummary(List<Track> userTracks, Document document, Report report) {
 
     }
 
-    private void generateSummary(List<Track> userTracks, Document document, Report report) {
-        com.itextpdf.text.List list = new com.itextpdf.text.List();
-        list.add("Sum of tracks: " + userTracks.size());
-        list.add("");
-    }
 }

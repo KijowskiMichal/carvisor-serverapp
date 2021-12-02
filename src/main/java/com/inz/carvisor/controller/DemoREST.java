@@ -2,7 +2,6 @@ package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
-import com.inz.carvisor.constants.Key;
 import com.inz.carvisor.dao.*;
 import com.inz.carvisor.entities.builders.*;
 import com.inz.carvisor.entities.enums.EventType;
@@ -15,7 +14,6 @@ import com.inz.carvisor.entities.model.User;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -142,8 +140,8 @@ public class DemoREST {
 
     public static MockHttpServletRequest mockHttpServletRequest(User user, Car car) {
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(Key.USER, user);
-        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(Key.CAR, car);
+        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(AttributeKey.CommonKey.USER, user);
+        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(AttributeKey.CommonKey.CAR, car);
         return mockHttpServletRequest;
     }
 

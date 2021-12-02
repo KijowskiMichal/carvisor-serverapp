@@ -2,9 +2,6 @@ package com.inz.carvisor.entities.builders;
 
 import com.inz.carvisor.entities.model.Report;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ReportBuilder {
     private String type = "";
     private String name = "";

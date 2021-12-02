@@ -13,11 +13,11 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/carConfiguration")
-public class CarConfigurationREST {
+public class CarConfigurationController {
     private final CarConfigurationService carConfigurationService;
 
     @Autowired
-    public CarConfigurationREST(CarConfigurationService carConfigurationService) {
+    public CarConfigurationController(CarConfigurationService carConfigurationService) {
         this.carConfigurationService = carConfigurationService;
     }
 

@@ -36,11 +36,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.HashMap;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(CarConfigurationREST.class)
+@WebMvcTest(CarConfigurationController.class)
 @ContextConfiguration(classes = {Initializer.class})
 @Ignore
 //todo rewrite this test
-class CarConfigurationRESTTest {
+class CarConfigurationControllerTest {
 
     @Autowired
     UserDaoJdbc userDaoJdbc;

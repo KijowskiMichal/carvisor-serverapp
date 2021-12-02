@@ -1,6 +1,6 @@
 package com.inz.carvisor.controller;
 
-import com.inz.carvisor.constants.Key;
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
@@ -135,7 +135,7 @@ class AuthorizationControllerTest {
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
         User user = new UserBuilder().setNick("ala").setName("abc").setPassword(PasswordManipulatior.hashPassword("password")).build();
 
-        JSONObject jsonObject = new JSONObject().put(Key.LOGIN, "ala").put(Key.PASSWORD, "password");
+        JSONObject jsonObject = new JSONObject().put(AttributeKey.CommonKey.LOGIN, "ala").put(AttributeKey.CommonKey.PASSWORD, "password");
         HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
 
         ResponseEntity authorize = authorizationController.authorize(mockHttpServletRequest, httpEntity);

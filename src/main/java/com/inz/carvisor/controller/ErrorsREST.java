@@ -2,8 +2,6 @@ package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
-import com.inz.carvisor.constants.Key;
-import com.inz.carvisor.constants.SessionAttributeKey;
 import com.inz.carvisor.entities.builders.ErrorBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Error;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * REST com.inz.carvisor.controller responsible for user management.
@@ -68,7 +65,7 @@ public class ErrorsREST {
         if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return getAllErrors(dateFromTimestamp, dateToTimestamp, page, pagesize);
         } else if (securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, request)) {
-            User user = (User) request.getSession().getAttribute(SessionAttributeKey.USER_KEY);
+            User user = (User) request.getSession().getAttribute(AttributeKey.CommonKey.USER);
             return getUserErrors(user, dateFromTimestamp, dateToTimestamp, page, pagesize);
         } else {
             return DefaultResponse.UNAUTHORIZED;
@@ -88,8 +85,8 @@ public class ErrorsREST {
         int maxPageUserErrors = errorService.getMaxPageAllErrors(dateFromTimestamp, dateToTimestamp, page, pagesize);
         List<Error> userErrors = errorService.getAllErrors(dateFromTimestamp, dateToTimestamp, page, pagesize);
         return DefaultResponse.ok(new JSONObject()
-                .put(Key.PAGE, page)
-                .put(Key.PAGE_MAX, maxPageUserErrors)
+                .put(AttributeKey.CommonKey.PAGE, page)
+                .put(AttributeKey.CommonKey.PAGE_MAX, maxPageUserErrors)
                 .put(AttributeKey.Notification.LIST_OF_NOTIFICATIONS, toJSONArray(userErrors))
                 .toString());
     }
@@ -100,8 +97,8 @@ public class ErrorsREST {
         int maxPageUserErrors = errorService.getMaxPageUserErrors(user, dateFromTimestamp, dateToTimestamp, page, pagesize);
         List<Error> userErrors = errorService.getUserErrors(user, dateFromTimestamp, dateToTimestamp, page, pagesize);
         return DefaultResponse.ok(new JSONObject()
-                .put(Key.PAGE, page)
-                .put(Key.PAGE_MAX, maxPageUserErrors)
+                .put(AttributeKey.CommonKey.PAGE, page)
+                .put(AttributeKey.CommonKey.PAGE_MAX, maxPageUserErrors)
                 .put(AttributeKey.Notification.LIST_OF_NOTIFICATIONS, toJSONArray(userErrors))
                 .toString());
     }

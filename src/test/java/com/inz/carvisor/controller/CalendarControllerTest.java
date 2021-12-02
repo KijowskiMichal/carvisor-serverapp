@@ -26,7 +26,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(CarAuthorizationREST.class)
+@WebMvcTest(CarAuthorizationController.class)
 @ContextConfiguration(classes = {Initializer.class})
 class CalendarControllerTest {
 

@@ -7,19 +7,20 @@ import com.inz.carvisor.entities.model.Report;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.service.report.util.ReportGeneratorHelper;
-import com.itextpdf.text.*;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service
 public class EcoReportGenerator implements ReportGenerator{
+
+    private static final Double DEF_VALUE = 0.0;
 
     private final UserDaoJdbc userDaoJdbc;
     private final TrackDaoJdbc trackDaoJdbc;
@@ -76,7 +77,7 @@ public class EcoReportGenerator implements ReportGenerator{
                 .stream()
                 .mapToDouble(Track::getAverageSpeed)
                 .average()
-                .orElse(0.0);
+                .orElse(DEF_VALUE);
     }
 
     private int getAverageRPM(List<Track> userTracks) {
@@ -84,7 +85,7 @@ public class EcoReportGenerator implements ReportGenerator{
                 .stream()
                 .mapToDouble(Track::getAverageRevolutionsPerMinute)
                 .average()
-                .orElse(0.0);
+                .orElse(DEF_VALUE);
     }
 
     private String getAverageFuelConsumption(List<Track> userTracks) {
@@ -92,7 +93,7 @@ public class EcoReportGenerator implements ReportGenerator{
                 .stream()
                 .mapToDouble(Track::getCombustion)
                 .average()
-                .orElse(Double.NaN));
+                .orElse(DEF_VALUE));
     }
 
     private int getAmountOfTracks(List<Track> userTracks) {
@@ -104,6 +105,6 @@ public class EcoReportGenerator implements ReportGenerator{
                 .stream()
                 .mapToDouble(Track::getEcoPointsScore)
                 .average()
-                .orElse(Double.NaN));
+                .orElse(DEF_VALUE));
     }
 }

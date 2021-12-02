@@ -4,19 +4,18 @@ import com.inz.carvisor.dao.OffenceDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.enums.ReportType;
-import com.inz.carvisor.entities.model.Offence;
 import com.inz.carvisor.entities.model.Report;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.service.report.util.ReportGeneratorHelper;
-import com.itextpdf.text.*;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service

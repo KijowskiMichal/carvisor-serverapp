@@ -1,6 +1,6 @@
 package com.inz.carvisor.service;
 
-import com.inz.carvisor.constants.Key;
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
@@ -61,7 +61,7 @@ class SecurityServiceTest {
     public MockHttpServletRequest buildRequestWithUser(UserPrivileges userPrivileges) {
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
         Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(
-                Key.USER,
+                AttributeKey.CommonKey.USER,
                 new UserBuilder().setUserPrivileges(userPrivileges).build()
         );
         return mockHttpServletRequest;

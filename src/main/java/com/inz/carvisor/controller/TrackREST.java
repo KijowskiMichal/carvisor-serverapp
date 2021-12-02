@@ -1,7 +1,5 @@
 package com.inz.carvisor.controller;
 
-import com.inz.carvisor.constants.DefaultResponse;
-import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Car;
 import com.inz.carvisor.service.SecurityService;
 import com.inz.carvisor.service.TrackService;

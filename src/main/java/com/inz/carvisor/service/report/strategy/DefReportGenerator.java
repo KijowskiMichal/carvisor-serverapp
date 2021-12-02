@@ -1,6 +1,5 @@
 package com.inz.carvisor.service.report.strategy;
 
-import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.model.Report;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;

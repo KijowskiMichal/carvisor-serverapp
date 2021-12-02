@@ -1,6 +1,5 @@
 package com.inz.carvisor.service;
 
-import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.TrackRateDaoJdbc;

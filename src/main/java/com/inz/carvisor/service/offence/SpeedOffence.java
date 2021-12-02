@@ -3,21 +3,16 @@ package com.inz.carvisor.service.offence;
 import com.inz.carvisor.entities.builders.OffenceBuilder;
 import com.inz.carvisor.entities.enums.OffenceType;
 import com.inz.carvisor.entities.model.Offence;
-import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.TrackRate;
 import org.json.JSONObject;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
-import java.util.Map;
 import java.util.Optional;
-import java.util.jar.JarEntry;
 
 
 public class SpeedOffence {

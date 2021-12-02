@@ -1,7 +1,6 @@
 package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.AttributeKey;
-import com.inz.carvisor.constants.Key;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
@@ -80,12 +79,12 @@ class TrackRESTTest {
         User user = new UserBuilder().setNfcTag("ABB").setUserPrivileges(UserPrivileges.STANDARD_USER).build();
 
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(Key.USER, user);
-        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(Key.CAR, user);
+        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(AttributeKey.CommonKey.USER, user);
+        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(AttributeKey.CommonKey.CAR, user);
 
         carDaoJdbc.save(car);
         userDaoJdbc.save(user);
-        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(Key.CAR, car);
+        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(AttributeKey.CommonKey.CAR, car);
         JSONObject jsonObject = new JSONObject()
                 .put(AttributeKey.Track.TIME, 165000)
                 .put(AttributeKey.Track.PRIVATE, false)

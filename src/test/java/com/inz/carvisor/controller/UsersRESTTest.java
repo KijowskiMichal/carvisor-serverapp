@@ -1,7 +1,6 @@
 package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.AttributeKey;
-import com.inz.carvisor.constants.Key;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
@@ -127,7 +126,7 @@ class UsersRESTTest {
                 .build();
 
         HashMap<String, Object> sessionattr = new HashMap<>();
-        sessionattr.put(Key.USER, user);
+        sessionattr.put(AttributeKey.CommonKey.USER, user);
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/users/listUserNames/Ala/")
                         .sessionAttrs(sessionattr))
