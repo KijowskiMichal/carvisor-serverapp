@@ -51,7 +51,6 @@ public class SafetyPointsREST {
         }
     }
 
-
     private String parseToJson(List<Offence> offenceList, int userId) {
         JSONArray listOfOffencess = toJSONArray(offenceList);
         String userName = userDaoJdbc.get(userId).map(user -> user.getName() + " " + user.getSurname()).orElse("");

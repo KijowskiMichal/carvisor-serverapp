@@ -43,6 +43,6 @@ public class ReportJsonParser {
                 .put(AttributeKey.Report.TYPE,report.getType())
                 .put(AttributeKey.Report.NAME,report.getName())
                 .put(AttributeKey.Report.DESCRIPTION,report.getDescription())
-                .put(AttributeKey.Report.LOADING,true);
+                .put(AttributeKey.Report.LOADING,false);
     }
 }
