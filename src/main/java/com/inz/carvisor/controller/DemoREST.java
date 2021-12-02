@@ -312,10 +312,10 @@ public class DemoREST {
 
     private void addMockedNotifications(User user, Car car) {
         List.of(
-                new NotificationBuilder().setNotificationType(NotificationType.LEAVING_THE_ZONE).setValue(10).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build(),
-                new NotificationBuilder().setNotificationType(NotificationType.SPEEDING).setValue(50).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build(),
-                new NotificationBuilder().setNotificationType(NotificationType.SPEEDING).setValue(30).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build(),
-                new NotificationBuilder().setNotificationType(NotificationType.LEAVING_THE_ZONE).setValue(10).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235,16.907205").build()
+                new NotificationBuilder().setNotificationType(NotificationType.LEAVING_THE_ZONE).setValue(10).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235;16.907205").build(),
+                new NotificationBuilder().setNotificationType(NotificationType.SPEEDING).setValue(50).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235;16.907205").build(),
+                new NotificationBuilder().setNotificationType(NotificationType.SPEEDING).setValue(30).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235;16.907205").build(),
+                new NotificationBuilder().setNotificationType(NotificationType.LEAVING_THE_ZONE).setValue(10).setUser(user).setCar(car).setDisplayed(false).setTimeStamp(getThreeDaysBeforeTimeStamp()).setLocation("52.448235;16.907205").build()
         ).forEach(notificationDaoJdbc::save);
     }
 
@@ -325,9 +325,9 @@ public class DemoREST {
 
     private void addMockedErrors(User user, Car car) {
         List.of(
-                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getThreeDaysBeforeTimeStamp()).setTimestamp(getThreeDaysBeforeTimeStamp()).setType("ErrorTypeOne").setValue("ErrorValueOne").build(),
-                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getThreeDaysBeforeTimeStamp()).setTimestamp(getThreeDaysBeforeTimeStamp()).setType("ErrorTypetwo").setValue("ErrorValueTwo").build(),
-                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235,16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getThreeDaysBeforeTimeStamp()).setTimestamp(getThreeDaysBeforeTimeStamp()).setType("ErrorTypethree").setValue("ErrorValueThree").build()
+                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235;16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getThreeDaysBeforeTimeStamp()).setTimestamp(getThreeDaysBeforeTimeStamp()).setType("ErrorTypeOne").setValue("ErrorValueOne").build(),
+                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235;16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getThreeDaysBeforeTimeStamp()).setTimestamp(getThreeDaysBeforeTimeStamp()).setType("ErrorTypetwo").setValue("ErrorValueTwo").build(),
+                new ErrorBuilder().setUser(user).setDeviceLicensePlate(car.getLicensePlate()).setLocation("52.448235;16.907205").setUserName(user.getNameAndSurname()).setCar(car).setDate(getThreeDaysBeforeTimeStamp()).setTimestamp(getThreeDaysBeforeTimeStamp()).setType("ErrorTypethree").setValue("ErrorValueThree").build()
         ).forEach(errorDaoJdbc::save);
     }
 
