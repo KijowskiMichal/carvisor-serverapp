@@ -21,7 +21,7 @@ public class ReportService {
     }
 
     public Optional<Report> add(Report reportWithoutBody) {
-        //reportWithoutBody.setBody(generateReportBody(reportWithoutBody));
+        reportWithoutBody.setBody(generateReportBody(reportWithoutBody));
         return reportDaoJdbc.save(reportWithoutBody);
     }
 
