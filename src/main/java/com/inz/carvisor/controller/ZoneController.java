@@ -4,6 +4,7 @@ import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.enums.UserPrivileges;
+import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.entities.model.Zone;
 import com.inz.carvisor.service.SecurityService;
 import com.inz.carvisor.service.ZoneService;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/zones")
@@ -80,5 +82,30 @@ public class ZoneController {
         }
         if (zoneService.remove(id).isPresent()) return DefaultResponse.OK;
         else return DefaultResponse.BAD_REQUEST;
+    }
+
+    //todo test
+    @RequestMapping(value = "/listUserZones/{id}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity<String> listUserZones(HttpServletRequest request, @PathVariable("id") int id) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
+            return DefaultResponse.UNAUTHORIZED;
+        }
+        Optional<User> user = userDaoJdbc.get(id);
+        if (user.isEmpty()) return DefaultResponse.BAD_REQUEST;
+
+        JSONArray zones = new JSONArray();
+        zoneService.getUserZones(user.get()).stream().map(ZoneJsonParser::parse).forEach(zones::put);
+        return DefaultResponse.ok(zones.toString());
+    }
+
+    @RequestMapping(value = "/getZones/{page}/{pagesize}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity<String> getZonesPaged(HttpServletRequest request,
+                                                @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
+            return DefaultResponse.UNAUTHORIZED;
+        }
+        JSONArray zones = new JSONArray();
+        zoneService.getZones(page, pagesize).stream().map(ZoneJsonParser::parse).forEach(zones::put);
+        return DefaultResponse.ok(zones.toString());
     }
 }

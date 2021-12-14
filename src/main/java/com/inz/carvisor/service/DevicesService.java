@@ -1,5 +1,6 @@
 package com.inz.carvisor.service;
 
+import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.TrackRateDaoJdbc;
@@ -70,10 +71,10 @@ public class DevicesService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("DevicesREST.list cannot list device's (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
             logger.info("DevicesREST.list cannot list device's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
         //listing
         List<Object> devices = new ArrayList<>();
@@ -98,7 +99,7 @@ public class DevicesService {
             if (tx != null) tx.rollback();
             session.close();
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            return DefaultResponse.BAD_REQUEST;
         }
         JSONObject jsonOut = new JSONObject();
         JSONArray jsonArray = new JSONArray();
@@ -133,7 +134,7 @@ public class DevicesService {
                 if (tx != null) tx.rollback();
                 session.close();
                 e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+                return DefaultResponse.BAD_REQUEST;
             }
             jsonArray.put(jsonObject);
         }
@@ -158,10 +159,10 @@ public class DevicesService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("DevicesREST.listDevicesNames cannot list user's (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
             logger.info("DevicesREST.listDevicesNames cannot list devices's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
         //listing
         List<Object> cars = new ArrayList<>();
@@ -180,7 +181,7 @@ public class DevicesService {
             if (tx != null) tx.rollback();
             session.close();
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            return DefaultResponse.BAD_REQUEST;
         }
         JSONArray jsonArray = new JSONArray();
         for (Object tmp : cars) {
@@ -206,7 +207,7 @@ public class DevicesService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("DevicesRest.addDevice cannot change device data (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
 
         Session session = null;
@@ -253,7 +254,7 @@ public class DevicesService {
             if (tx != null) tx.rollback();
             logger.log(Level.ERROR, "Hibernate Exception: " + e);
             e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            responseEntity = DefaultResponse.BAD_REQUEST;
         } finally {
             if (session != null) session.close();
         }
@@ -273,7 +274,7 @@ public class DevicesService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("DevicesRest.getDeviceData cannot send data (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
 
         Session session = null;
@@ -313,7 +314,7 @@ public class DevicesService {
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            responseEntity = DefaultResponse.BAD_REQUEST;
         } finally {
             if (session != null) session.close();
         }
@@ -333,7 +334,7 @@ public class DevicesService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("DevicesRest.changeDeviceData cannot change device data (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
 
         Session session = null;
@@ -360,7 +361,7 @@ public class DevicesService {
                 tank = Integer.parseInt(inJSON.getString("tank"));
                 norm = Double.parseDouble(inJSON.getString("norm"));
             } catch (JSONException jsonException) {
-                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+                responseEntity = DefaultResponse.BAD_REQUEST;
                 return responseEntity;
             }
 
@@ -380,7 +381,7 @@ public class DevicesService {
             car.setProductionYear(yearOfProduction);
             session.update(car);
             tx.commit();
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+            responseEntity = DefaultResponse.OK;
             logger.log(Level.INFO, "Car data changed (car id=" + carID + ") data changed to " +
                     "(licensePlate=" + licensePlate +
                     " brand=" + brand + " model=" + model + " engine=" + engine +
@@ -388,7 +389,7 @@ public class DevicesService {
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            responseEntity = DefaultResponse.BAD_REQUEST;
         } finally {
             if (session != null) session.close();
         }
@@ -409,7 +410,7 @@ public class DevicesService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("DevicesRest.changeDeviceImage cannot change device image (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
 
         Session session = null;
@@ -419,7 +420,7 @@ public class DevicesService {
         try {
             JSONObject inJSON = new JSONObject(httpEntity.getBody());
             if (!inJSON.has("image")) {
-                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+                responseEntity = DefaultResponse.BAD_REQUEST;
                 return responseEntity;
             }
             String image = inJSON.getString("image");
@@ -431,11 +432,11 @@ public class DevicesService {
             car.setImage(image);
             session.update(car);
             tx.commit();
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+            responseEntity = DefaultResponse.OK;
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            responseEntity = DefaultResponse.BAD_REQUEST;
         } finally {
             if (session != null) session.close();
         }

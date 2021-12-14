@@ -1,5 +1,6 @@
 package com.inz.carvisor.service;
 
+import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.entities.model.Car;
 import com.inz.carvisor.entities.model.Setting;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
@@ -46,7 +47,7 @@ public class CarConfigurationService {
         // authorization
         if (request.getSession().getAttribute("car") == null) {
             logger.info("CarConfigurationService.get cannot return configuration (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
 
         Session session = null;
@@ -77,7 +78,7 @@ public class CarConfigurationService {
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            responseEntity = DefaultResponse.BAD_REQUEST;
         } catch (NullPointerException nullPointerException) {
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Car doesn't have configuration");
         } finally {
@@ -98,7 +99,7 @@ public class CarConfigurationService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("CarConfigurationService.changeConfiguration cannot change configuration (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
 
         Session session = null;
@@ -123,7 +124,7 @@ public class CarConfigurationService {
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            responseEntity = DefaultResponse.BAD_REQUEST;
         } catch (NullPointerException nullPointerException) {
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Car doesn't have configuration");
         } finally {
@@ -146,7 +147,7 @@ public class CarConfigurationService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("CarConfigurationService.changeConfiguration cannot change configuration (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
 
         Session session = null;
@@ -161,7 +162,7 @@ public class CarConfigurationService {
                 getLocationInterval = Integer.parseInt(inJSON.getString("locationInterval"));
                 sendInterval = Integer.parseInt(inJSON.getString("sendInterval"));
             } catch (JSONException jsonException) {
-                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+                responseEntity = DefaultResponse.BAD_REQUEST;
                 return responseEntity;
             }
 
@@ -179,13 +180,13 @@ public class CarConfigurationService {
             } else car.setLocationInterval(null);
             session.update(car);
             tx.commit();
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+            responseEntity = DefaultResponse.OK;
             logger.log(Level.INFO, "Configuration of Car (id:" + configID + ") changed to: " +
                     "sendInterval=" + sendInterval + " locationInterval=" + getLocationInterval);
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            responseEntity = DefaultResponse.BAD_REQUEST;
         } finally {
             if (session != null) session.close();
         }
@@ -203,7 +204,7 @@ public class CarConfigurationService {
     public ResponseEntity getGlobalConfiguration(HttpServletRequest request) {
         if (request.getSession().getAttribute("user") == null) {
             logger.info("CarConfigurationService.getGlobalConfiguration cannot get global configuration (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
 
         Session session = null;
@@ -232,7 +233,7 @@ public class CarConfigurationService {
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            responseEntity = DefaultResponse.BAD_REQUEST;
         } catch (NullPointerException nullPointerException) {
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Car doesn't have configuration");
         } finally {
@@ -256,7 +257,7 @@ public class CarConfigurationService {
     public ResponseEntity setGlobalConfiguration(HttpServletRequest request, HttpEntity<String> httpEntity) {
         if (request.getSession().getAttribute("user") == null) {
             logger.info("CarConfigurationService.setGlobalConfiguration cannot set global configuration (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
 
         JSONObject inJSON = new JSONObject(httpEntity.getBody());
@@ -268,7 +269,7 @@ public class CarConfigurationService {
             sendInterval = Integer.parseInt(inJSON.getString("sendInterval"));
             historyTimeout = Integer.parseInt(inJSON.getString("historyTimeout"));
         } catch (JSONException jsonException) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            return DefaultResponse.BAD_REQUEST;
         }
 
         Session session = null;
@@ -294,13 +295,13 @@ public class CarConfigurationService {
             session.update(set2);
             session.update(set3);
             tx.commit();
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+            responseEntity = DefaultResponse.OK;
             logger.log(Level.INFO, "Global car configuration changed " +
                     "(sendInterval=" + sendInterval + ", locationInterval=" + getLocationInterval + ", historyTimeout=" + historyTimeout + ")");
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            responseEntity = DefaultResponse.BAD_REQUEST;
         } catch (NullPointerException nullPointerException) {
             responseEntity = ResponseEntity.status(HttpStatus.OK).body("Car doesn't have configuration");
         } finally {

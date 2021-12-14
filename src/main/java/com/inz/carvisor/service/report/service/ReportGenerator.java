@@ -18,7 +18,6 @@ import java.util.List;
 
 @Service
 public class ReportGenerator {
-    //todo do this!
     //https://www.tutorialspoint.com/itext/itext_adding_list.htm
     private final UserDaoJdbc userDaoJdbc;
     private final TrackDaoJdbc trackDaoJdbc;
@@ -47,7 +46,6 @@ public class ReportGenerator {
         try {
             PdfWriter.getInstance(document, byteArrayOutputStream);
             document.open();
-            prepareReport(document,report);
             document.close();
             reportBody = byteArrayOutputStream.toByteArray();
             byteArrayOutputStream.close();

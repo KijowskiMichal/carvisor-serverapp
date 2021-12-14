@@ -1,6 +1,7 @@
 package com.inz.carvisor.service;
 
 import com.inz.carvisor.constants.AttributeKey;
+import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -96,6 +97,6 @@ public class AuthorizationService {
         if (request.getSession().getAttribute("user") != null)
             logger.info("AuthorizationREST.logout logout user (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
         request.getSession().invalidate();
-        return ResponseEntity.status(HttpStatus.OK).body("");
+        return DefaultResponse.OK;
     }
 }

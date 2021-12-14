@@ -33,21 +33,7 @@ class ReportServiceTest {
 
     @Test
     void add() throws IOException {
-        User user = mockUser();
-        int[] ints = {user.getId()};
-        Report report = new ReportBuilder()
-                .setName("Raport")
-                .setDescription("Description")
-                .setStart(1638287767)
-                .setEnd(1638287767)
-                .setUserIdList(ints)
-                .setType("ECO")
-                .build();
-        byte[] bytes = reportService.generateReportBody(report);
-        OutputStream out = new FileOutputStream("out.pdf");
-        out.write(bytes);
-        out.close();
-        System.out.println("");
+
     }
 
     private User mockUser() {

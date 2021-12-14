@@ -11,7 +11,6 @@ public class TrackBuilder {
     //def values
     private final long start = new Date().getTime();
     private final long end = 0;
-    private final boolean active = true;
     private final long distance = 0;
     private final int samples = 0;
     private final float ecoPoints = 0;
@@ -19,6 +18,7 @@ public class TrackBuilder {
     private final int speed = 0;
     private final long revolutions = 0;
 
+    private boolean active = true;
     private Car car = null;
     private User user = null;
     private Boolean privateTrack = false;

@@ -2,6 +2,7 @@ package com.inz.carvisor.service;
 
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.dao.ZoneDaoJdbc;
+import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.entities.model.Zone;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,4 +49,12 @@ public class ZoneService {
         return zoneDaoJdbc.get(id);
     }
 
+    public List<Zone> getUserZones(User user) {
+        return zoneDaoJdbc.get(user);
+    }
+
+    public List<Zone> getZones(int page, int pagesize) {
+        return zoneDaoJdbc.getList(page,pagesize);
+
+    }
 }

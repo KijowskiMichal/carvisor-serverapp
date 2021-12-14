@@ -1,5 +1,6 @@
 package com.inz.carvisor.service;
 
+import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.enums.UserPrivileges;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -56,7 +58,7 @@ public class EcoPointsService {
     public ResponseEntity getUserEcoPoints(HttpServletRequest request, HttpEntity<String> httpEntity, int userId) {
         if (request.getSession().getAttribute("user") == null) {
             logger.info("EcoPointsService.getUserEcoPoints cannot get user id=" + userId + " Eco Points (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         } else {
             User user = (User) request.getSession().getAttribute("user");
             if (user.getUserPrivileges() != UserPrivileges.ADMINISTRATOR && user.getUserPrivileges() != UserPrivileges.MODERATOR) {
@@ -67,7 +69,6 @@ public class EcoPointsService {
         Session session = null;
         Transaction tx = null;
         ResponseEntity responseEntity;
-
         try {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
@@ -81,6 +82,23 @@ public class EcoPointsService {
             if (session != null) session.close();
         }
         return responseEntity;
+    }
+
+    public ResponseEntity<String> getUserEcoPointsNew(HttpServletRequest request, HttpEntity<String> httpEntity, int userId) {
+        if (request.getSession().getAttribute("user") == null) {
+            logger.info("EcoPointsService.getUserEcoPoints cannot get user id=" + userId + " Eco Points (session not found)");
+            return DefaultResponse.UNAUTHORIZED;
+        } else {
+            User user = (User) request.getSession().getAttribute("user");
+            if (user.getUserPrivileges() != UserPrivileges.ADMINISTRATOR && user.getUserPrivileges() != UserPrivileges.MODERATOR) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("dont have access");
+            }
+        }
+        return userDaoJdbc
+                .get(userId)
+                .map(User::getEcoPointsAvg)
+                .map(ecoPoints -> ResponseEntity.status(HttpStatus.OK).body(ecoPoints.toString()))
+                .orElse(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(""));
     }
 
     /**
@@ -97,10 +115,10 @@ public class EcoPointsService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.list cannot list user's (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
             logger.info("UserREST.list cannot list user's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
         //listing
         List<Object> users = new ArrayList<>();
@@ -125,18 +143,15 @@ public class EcoPointsService {
             if (tx != null) tx.rollback();
             session.close();
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            return DefaultResponse.BAD_REQUEST;
         }
 
         JSONArray jsonArray = new JSONArray();
         users.forEach(user -> jsonArray.put(UserJsonParser.parse((User) user)));
-
         JSONObject jsonOut = new JSONObject()
                 .put("page", page)
                 .put("pageMax", lastPageNumber)
                 .put("listOfUsers", jsonArray);
-
-        logger.info("UsersREST.list returns list of users (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 

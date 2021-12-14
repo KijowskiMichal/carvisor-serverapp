@@ -135,7 +135,7 @@ public class DemoREST {
         trackREST.startTrack(httpServletRequestSecond, new HttpEntity<>(startTrackString));
         trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
         trackREST.endOfTrack(httpServletRequestSecond,null);
-        return ResponseEntity.ok("");
+        return DefaultResponse.OK;
     }
 
     public static MockHttpServletRequest mockHttpServletRequest(User user, Car car) {

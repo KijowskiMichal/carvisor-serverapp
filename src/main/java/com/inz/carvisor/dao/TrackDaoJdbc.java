@@ -72,6 +72,10 @@ public class TrackDaoJdbc extends HibernateDaoJdbc<Track> {
         return track;
     }
 
+    public List<Track> getActiveTracks() {
+        return getList("SELECT t FROM Track t WHERE t.isActive = true");
+    }
+
     public Optional<Track> getActiveTrack(long carId) {
         return getObject("SELECT t FROM Track t WHERE t.isActive = true AND t.car.id=" + carId);
     }

@@ -33,11 +33,14 @@ public class UsersREST {
     private static final String SECOND_PASSWORD_KEY = "secondPassword";
     private static final String PASSWORD_DOESNT_MATCH = "passwords doesn't match";
 
+    private final SecurityService securityService;
+    private final UserService userService;
+
     @Autowired
-    SecurityService securityService;
-    @Autowired
-    UserService userService;
-    JsonParser jsonParser = new JsonParser();
+    public UsersREST(SecurityService securityService, UserService userService) {
+        this.securityService = securityService;
+        this.userService = userService;
+    }
 
     @RequestMapping(value = "/list/{page}/{pagesize}/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
     public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("page") int page, @PathVariable("pagesize") int pageSize, @PathVariable("regex") String regex) {
@@ -58,7 +61,7 @@ public class UsersREST {
     public ResponseEntity<String> changePasswordById(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID) {
         Optional<User> user;
         if (!httpEntity.hasBody()) return DefaultResponse.EMPTY_BODY;
-        JsonObject body = jsonParser.parse(Objects.requireNonNull(httpEntity.getBody())).getAsJsonObject();
+        JsonObject body = new JsonParser().parse(Objects.requireNonNull(httpEntity.getBody())).getAsJsonObject();
         String firstPasswordHashed = PasswordManipulatior.hashPassword(body.get(FIRST_PASSWORD_KEY).getAsString());
         String secondPasswordHashed = PasswordManipulatior.hashPassword(body.get(SECOND_PASSWORD_KEY).getAsString());
 

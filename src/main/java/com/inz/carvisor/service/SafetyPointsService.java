@@ -1,5 +1,6 @@
 package com.inz.carvisor.service;
 
+import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.dao.OffenceDaoJdbc;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Offence;
@@ -52,10 +53,10 @@ public class SafetyPointsService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("SafetyPointsService.list cannot list user's (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
             logger.info("SafetyPointsService.list cannot list user's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
         //listing
         List<Object> users = new ArrayList<>();
@@ -80,7 +81,7 @@ public class SafetyPointsService {
             if (tx != null) tx.rollback();
             session.close();
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            return DefaultResponse.BAD_REQUEST;
         }
         JSONObject jsonOut = new JSONObject();
         JSONArray jsonArray = new JSONArray();

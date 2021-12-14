@@ -1,5 +1,6 @@
 package com.inz.carvisor.service;
 
+import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.entities.model.Car;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -89,6 +90,6 @@ public class CarAuthorizationService {
         if (request.getSession().getAttribute("car") != null)
             logger.info("CarAuthorizationREST.logout logout car (license plate: " + ((Car) request.getSession().getAttribute("car")).getLicensePlate() + ")");
         request.getSession().invalidate();
-        return ResponseEntity.status(HttpStatus.OK).body("");
+        return DefaultResponse.OK;
     }
 }

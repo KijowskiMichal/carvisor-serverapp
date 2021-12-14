@@ -3,10 +3,17 @@ package com.inz.carvisor.service.report.util;
 import com.inz.carvisor.entities.model.Report;
 import com.inz.carvisor.service.report.strategy.ReportGenerator;
 import com.itextpdf.text.*;
+import org.json.JSONObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.Scanner;
 
 public class ReportGeneratorHelper {
 
@@ -29,7 +36,7 @@ public class ReportGeneratorHelper {
         document.add(DIVIDER_PARAGRAPH);
     }
 
-    public static void generateList(Document document, String listHeader, List<String> componentList) {
+    public static void generateList(Document document, String listHeader, java.util.List<String> componentList) {
         com.itextpdf.text.List list = new com.itextpdf.text.List();
         list.setListSymbol(LIST_POINTER);
         Chunk chunkListHeader = new Chunk(listHeader);
@@ -59,15 +66,52 @@ public class ReportGeneratorHelper {
     }
 
     public static String getNiceLocation(String from, String to) {
-        return "Poznan to Warszawa";
+        return getNiceLocation(from) + " -> " + getNiceLocation(to);
     }
 
     public static String getNiceLocation(String location) {
-        //todo this method should convert 51.1234;15.2134 to something like "Poznań, grunwaldzka"
-        return "Poznan";
+        String[] fromAddress = location.split(";");
+        if (fromAddress.length != 2) return "";
+        return reverseGeocoding(fromAddress[0],fromAddress[1]);
     }
 
     public static String getNiceDistance(long meters) {
         return meters + "m";
+    }
+
+    private static String reverseGeocoding(String lon, String lat) {
+        JSONObject jsonOut = new JSONObject();
+        try {
+            URL url = createUrlForGeocoding(lon, lat);
+            String json = "";
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.connect();
+            Scanner sc = new Scanner(url.openStream());
+            while (sc.hasNext()) {
+                json += sc.nextLine();
+            }
+            sc.close();
+            return new JSONObject(json)
+                    .getJSONArray("results")
+                    .getJSONObject(0)
+                    .getJSONArray("locations")
+                    .getJSONObject(0)
+                    .getString("adminArea5");
+
+        } catch (IOException e) {
+            jsonOut.put("address", lon + ";" + lat);
+        }
+        return "";
+    }
+
+    private static URL createUrlForGeocoding(String lon, String lat) throws MalformedURLException {
+        String urlString = "http://open.mapquestapi.com" +
+                "/geocoding/v1" +
+                "/reverse?key=X6gyYLjl2XsAApWachPDkLRHfUA3ZPGI" +
+                "&location=" + lon + "," + lat +
+                "&includeRoadMetadata=true" +
+                "&includeNearestIntersection=true";
+        return new URL(urlString);
     }
 }

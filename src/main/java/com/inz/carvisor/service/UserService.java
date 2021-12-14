@@ -74,10 +74,10 @@ public class UserService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.list cannot list user's (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
             logger.info("UserREST.list cannot list user's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
         //listing
         List<Object> users = new ArrayList<>();
@@ -102,7 +102,7 @@ public class UserService {
             if (tx != null) tx.rollback();
             session.close();
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            return DefaultResponse.BAD_REQUEST;
         }
         JSONObject jsonOut = new JSONObject();
         JSONArray jsonArray = new JSONArray();
@@ -165,7 +165,7 @@ public class UserService {
                 if (tx != null) tx.rollback();
                 session.close();
                 e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+                return DefaultResponse.BAD_REQUEST;
             }
             jsonArray.put(jsonObject);
         }
@@ -189,10 +189,10 @@ public class UserService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.listUserNames cannot list user's (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
             logger.info("UserREST.listUserNames cannot list user's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
         //listing
         List<Object> users = new ArrayList<>();
@@ -211,7 +211,7 @@ public class UserService {
             if (tx != null) tx.rollback();
             session.close();
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            return DefaultResponse.BAD_REQUEST;
         }
         JSONArray jsonArray = new JSONArray();
         for (Object tmp : users) {
@@ -237,7 +237,7 @@ public class UserService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.changePassword cannot work (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
         try {
             JSONObject inJSON = new JSONObject(httpEntity.getBody());
@@ -253,16 +253,16 @@ public class UserService {
                     tx.commit();
                     session.close();
                     logger.log(Level.INFO, "User (id=" + user.getId() + ") changed password");
-                    return ResponseEntity.status(HttpStatus.OK).body("");
+                    return DefaultResponse.OK;
                 } catch (HibernateException e) {
                     if (tx != null) tx.rollback();
                     session.close();
                     e.printStackTrace();
                     return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("");
                 }
-            } else return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            } else return DefaultResponse.BAD_REQUEST;
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            return DefaultResponse.BAD_REQUEST;
         }
     }
 
@@ -279,7 +279,7 @@ public class UserService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.getUserData cannot send data (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
 
         Optional<User> wrappedUser = userDaoJdbc.get(userID);
@@ -307,7 +307,7 @@ public class UserService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.changeUserData cannot change user data (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
 
         Session session = null;
@@ -337,12 +337,12 @@ public class UserService {
             user.setPhoneNumber(telephone);
             session.update(user);
             tx.commit();
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+            responseEntity = DefaultResponse.OK;
             logger.log(Level.INFO, "User (id=" + userID + ") changed data to (" + "name=" + names[0] + " surname=" + names[1] + " phoneNumber=" + telephone + ")");
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            responseEntity = DefaultResponse.BAD_REQUEST;
         } finally {
             if (session != null) session.close();
         }
@@ -362,13 +362,13 @@ public class UserService {
         //authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.changeUserData cannot change user data (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
 
         User user = userDaoJdbc.get(userID).orElse(null);
         //checking if user exists
         if (Objects.equals(user, null))
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            return DefaultResponse.BAD_REQUEST;
 
         //modifying user
         JSONObject inJSON = new JSONObject(httpEntity.getBody());
@@ -378,7 +378,7 @@ public class UserService {
             telephone = Integer.parseInt(inJSON.getString("telephone"));
             name = inJSON.getString("name").split(" "); //name standard: "name surname"
         } catch (JSONException jsonException) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            return DefaultResponse.BAD_REQUEST;
         }
         user.setName(name[0]);
         user.setSurname(name[1]);
@@ -386,8 +386,8 @@ public class UserService {
 
 
         if (userDaoJdbc.update(user).isEmpty())
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
-        return ResponseEntity.status(HttpStatus.OK).body("");
+            return DefaultResponse.BAD_REQUEST;
+        return DefaultResponse.OK;
     }
 
     /**
@@ -398,16 +398,16 @@ public class UserService {
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200.
      */
-    public ResponseEntity changeUserImage(HttpServletRequest request, HttpEntity<String> httpEntity, int userID) {
+    public ResponseEntity<String> changeUserImage(HttpServletRequest request, HttpEntity<String> httpEntity, int userID) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.changeUserImage cannot change user image (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
 
         Session session = null;
         Transaction tx = null;
-        ResponseEntity responseEntity;
+        ResponseEntity<String> responseEntity;
 
         try {
             JSONObject inJSON = new JSONObject(httpEntity.getBody());
@@ -415,7 +415,7 @@ public class UserService {
             try {
                 image = inJSON.getString("image");
             } catch (JSONException jsonException) {
-                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+                responseEntity = DefaultResponse.BAD_REQUEST;
                 return responseEntity;
             }
 
@@ -428,11 +428,11 @@ public class UserService {
             user.setImage(image);
             session.update(user);
             tx.commit();
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body("");
+            responseEntity = DefaultResponse.OK;
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+            responseEntity = DefaultResponse.BAD_REQUEST;
         } finally {
             if (session != null) session.close();
         }
@@ -451,7 +451,7 @@ public class UserService {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("UserREST.addUser cannot add user (session not found)");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
+            return DefaultResponse.UNAUTHORIZED;
         }
 
         JSONObject jsonObject = new JSONObject(httpEntity.getBody());

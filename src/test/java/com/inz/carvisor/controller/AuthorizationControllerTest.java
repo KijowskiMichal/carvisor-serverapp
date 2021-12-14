@@ -221,7 +221,6 @@ class AuthorizationControllerTest {
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertTrue(result.getResponse().getContentAsString().equals(""));
             Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
 
             //check with second user logged
@@ -233,7 +232,6 @@ class AuthorizationControllerTest {
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertTrue(result.getResponse().getContentAsString().equals(""));
             Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
 
             //check with not-logged user
@@ -241,7 +239,6 @@ class AuthorizationControllerTest {
                     .andReturn();
 
             Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertTrue(result.getResponse().getContentAsString().equals(""));
             Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
 
         } catch (UnsupportedEncodingException e) {

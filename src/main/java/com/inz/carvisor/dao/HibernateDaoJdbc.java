@@ -137,6 +137,30 @@ public abstract class HibernateDaoJdbc<T> {
         else return listOfObjects;
     }
 
+    @SuppressWarnings("unchecked")
+    public List<T> getList(int page, int pageSize) {
+        Session session = null;
+        Transaction transaction = null;
+        List<T> listOfObjects = null;
+        try {
+            session = hibernateRequests.getSession();
+            transaction = session.beginTransaction();
+            listOfObjects = (List<T>) session
+                    .createQuery(createSelectGetAll())
+                    .setFirstResult((page - 1) * pageSize)
+                    .setMaxResults(pageSize)
+                    .getResultList();
+            transaction.commit();
+        } catch (HibernateException e) {
+            if (transaction != null) transaction.rollback();
+            e.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
+        if (listOfObjects == null) return new ArrayList<>();
+        else return listOfObjects;
+    }
+
     public List<T> getList(long fromTimeStampEpochSeconds, long toTimeStampEpochSeconds, int page, int pageSize) {
         return getList(createSelectByTimeStamp(fromTimeStampEpochSeconds, toTimeStampEpochSeconds), page, pageSize);
     }
