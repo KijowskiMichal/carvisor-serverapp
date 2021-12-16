@@ -283,6 +283,7 @@ public class TrackService {
         track.setEndPosition(lastTrackRate.getLatitude() + ";" + lastTrackRate.getLongitude());
         track.setEcoPointsScore(EcoPointsCalculator.calculateEcoPoints(track));
         track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track));
+
         //todo ErrorsREST.addError -
         trackDaoJdbc.update(track);
         return DefaultResponse.OK;

@@ -3,6 +3,7 @@ package com.inz.carvisor.service.report.util;
 import com.inz.carvisor.entities.model.Report;
 import com.inz.carvisor.service.report.strategy.ReportGenerator;
 import com.itextpdf.text.*;
+import com.itextpdf.text.pdf.BaseFont;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +18,10 @@ import java.util.Scanner;
 
 public class ReportGeneratorHelper {
 
-    private static final Font TITLE_FONT = FontFactory.getFont(FontFactory.COURIER_BOLD, 24, BaseColor.BLACK);
-    private static final Font DATE_FONT = FontFactory.getFont(FontFactory.COURIER_BOLD, 14, BaseColor.BLACK);
-    private static final Font LIST_ITEM_FONT = FontFactory.getFont(FontFactory.TIMES, 11, BaseColor.BLACK);
+    private static final Font TITLE_FONT = FontFactory.getFont(BaseFont.HELVETICA, 24, BaseColor.BLACK);
+    private static final Font DATE_FONT = FontFactory.getFont(BaseFont.HELVETICA, 14, BaseColor.BLACK);
+    //private static final Font LIST_ITEM_FONT = FontFactory.getFont(BaseFont.HELVETICA, 11, BaseColor.BLACK);
+    private static final Font LIST_ITEM_FONT = FontFactory.getFont(BaseFont.HELVETICA, "UTF-8");
     private static final SimpleDateFormat DATE_TIME_FORMAT = new SimpleDateFormat("yy/M/dd HH:mm");
 
     private static final String DIVIDER = "------------------------------------\n";

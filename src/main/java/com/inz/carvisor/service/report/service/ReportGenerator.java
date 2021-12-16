@@ -46,6 +46,7 @@ public class ReportGenerator {
         try {
             PdfWriter.getInstance(document, byteArrayOutputStream);
             document.open();
+            prepareReport(document,report);
             document.close();
             reportBody = byteArrayOutputStream.toByteArray();
             byteArrayOutputStream.close();
