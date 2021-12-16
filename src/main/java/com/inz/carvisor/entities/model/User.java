@@ -3,6 +3,7 @@ package com.inz.carvisor.entities.model;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 
 import javax.persistence.*;
+import java.sql.Time;
 
 @Entity
 public class User {
@@ -197,6 +198,8 @@ public class User {
     public void setSafetyPointsAvg(float safetyPointsAvg) {
         this.safetyPointsAvg = safetyPointsAvg;
     }
+
+
 
     public void addDistanceTravelled(long distanceTravelled) {
         this.distanceTravelled += distanceTravelled;

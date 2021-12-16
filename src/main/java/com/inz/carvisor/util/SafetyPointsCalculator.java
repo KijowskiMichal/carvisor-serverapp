@@ -8,7 +8,7 @@ import java.util.Random;
 public class SafetyPointsCalculator {
 
     public static float calculateSafetyPoints(Track track) {
-        return new Random().nextInt() % 5 + 1;
+        return Math.abs(new Random().nextInt()) % 5 + 1;
     }
 
     public static void validateSafetyPointsScore(User user, Track track) {
