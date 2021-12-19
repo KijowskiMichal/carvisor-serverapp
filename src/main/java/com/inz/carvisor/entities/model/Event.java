@@ -1,5 +1,7 @@
 package com.inz.carvisor.entities.model;
 
+import com.inz.carvisor.entities.enums.EventType;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,7 +26,8 @@ public class Event {
     public Event() {
     }
 
-    public Event(long startTimestamp, long endTimestamp, String title, String description, String type, long deviceId, boolean draggable, boolean remind) {
+    public Event(long startTimestamp, long endTimestamp, String title, String description, String type,
+                 long deviceId, boolean draggable, boolean remind) {
         this.startTimestamp = startTimestamp;
         this.endTimestamp = endTimestamp;
         this.title = title;
@@ -73,6 +76,10 @@ public class Event {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getColor() {
+        return EventType.valueOf(type).getColor();
     }
 
     public String getType() {

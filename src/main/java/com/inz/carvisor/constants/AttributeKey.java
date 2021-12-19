@@ -95,6 +95,7 @@ public class AttributeKey {
         public static final String DEVICE_ID = "device";
         public static final String DRAGGABLE = "draggable";
         public static final String REMIND = "remind";
+        public static final String COLOR = "color";
     }
 
     public static class Zone {
