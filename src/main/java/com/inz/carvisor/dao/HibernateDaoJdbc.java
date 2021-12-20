@@ -225,7 +225,7 @@ public abstract class HibernateDaoJdbc<T> {
         return "SELECT x FROM " + getTableName() + " x ";
     }
 
-    protected final String createSelectByTimeStamp(long fromTimeStampEpochSeconds, long toTimeStampEpochSeconds) {
+    protected String createSelectByTimeStamp(long fromTimeStampEpochSeconds, long toTimeStampEpochSeconds) {
         return "SELECT x from " + getTableName() + " x " +
                 "WHERE " +
                 "x.timeStamp > " + fromTimeStampEpochSeconds + " AND " +

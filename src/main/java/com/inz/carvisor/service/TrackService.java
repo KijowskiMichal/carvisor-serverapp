@@ -1,5 +1,6 @@
 package com.inz.carvisor.service;
 
+import com.google.gson.JsonParser;
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.dao.*;
@@ -37,12 +38,6 @@ import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -265,7 +260,7 @@ public class TrackService {
                 .map(Long::parseLong)
                 .sorted()
                 .map(Object::toString)
-                .map(timeStamp -> parseJSONObjectTOTrackRate(timeStamp, jsonObject.getJSONObject(timeStamp),track))
+                .map(timeStamp -> parseJSONObjectTOTrackRate(timeStamp, jsonObject.getJSONObject(timeStamp), track))
                 .collect(Collectors.toList());
 
         setDistanceBetweenTrackRates(listOfTrackRates);
@@ -364,7 +359,7 @@ public class TrackService {
                     track.setEndTrackTimeStamp(time - 8);
                     currentUser.addTrackToEcoPointScore(track);
                     track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track));
-                    SafetyPointsCalculator.validateSafetyPointsScore(currentUser,track);
+                    SafetyPointsCalculator.validateSafetyPointsScore(currentUser, track);
                     session.update(track);
                 }
             }
@@ -386,7 +381,7 @@ public class TrackService {
         activeTrack
                 .stream()
                 .filter(track -> track.getTimestamp() < (time - 15))
-                .forEach(track -> processTrack(time,track,track.getUser()));
+                .forEach(track -> processTrack(time, track, track.getUser()));
         long updatedTracks = activeTrack.stream().map(trackDaoJdbc::update).filter(Optional::isPresent).count();
         if (updatedTracks == activeTrack.size()) return DefaultResponse.OK;
         else return DefaultResponse.BAD_REQUEST;
@@ -574,72 +569,49 @@ public class TrackService {
      * WebMethod which returns a list of tracks
      * <p>
      *
-     * @param request      Object of HttpServletRequest represents our request.
      * @param page         Page of tracks list. Parameter associated with pageSize.
      * @param pageSize     Number of record we want to get.
      * @param timeFromLong Time from we want to list tracks.
      * @param timeToLong   Time up to we want to list tracks.
      * @return HttpStatus 200 Returns the contents of the page that contains a list of tracks in the JSON format.
      */
-    public ResponseEntity<String> list(HttpServletRequest request, int userID, int page, int pageSize, long timeFromLong, long timeToLong) {
-        // authorization
-        if (request.getSession().getAttribute("user") == null) {
-            logger.info("TrackRest.list cannot list track's (session not found)");
-            return DefaultResponse.UNAUTHORIZED;
-        } else if ((((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.ADMINISTRATOR) && (((User) request.getSession().getAttribute("user")).getUserPrivileges() != UserPrivileges.MODERATOR)) {
-            logger.info("TrackRest.list cannot list track's because rbac (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
-            return DefaultResponse.UNAUTHORIZED;
-        }
+    public ResponseEntity<String> list(int userID, int page, int pageSize, long timeFromLong, long timeToLong) {
+
+        Optional<User> userOpt = userDaoJdbc.get(userID);
+        if (userOpt.isEmpty()) return DefaultResponse.BAD_REQUEST;
+        User user = userOpt.get();
 
         long timeStampBeforeSeconds = TimeStampCalculator.getStartOfDayTimeStamp(timeFromLong);
         long timeStampAfterSeconds = TimeStampCalculator.getEndOfDayTimeStamp(timeToLong);
-        //listing
-        List<Object> tracks = new ArrayList<>();
-        int lastPageNumber;
-        Session session = hibernateRequests.getSession();
-        Transaction tx = null;
-        User user;
-        try {
-            tx = session.beginTransaction();
-            Query selectUser = session.createQuery("SELECT u FROM User u WHERE id=" + userID);
-            user = (User) selectUser.getSingleResult();
+        String query = getUserTracksQuery(userID, timeStampBeforeSeconds, timeStampAfterSeconds);
 
-            String countQ = "Select count (t.id) from Track t WHERE t.user.id=" + userID + " AND t.startTrackTimeStamp > " + timeStampBeforeSeconds + " AND t.endTrackTimeStamp < " + timeStampAfterSeconds;
-            Query countQuery = session.createQuery(countQ);
-            Long countResults = (Long) countQuery.uniqueResult();
-            lastPageNumber = (int) (Math.ceil(countResults / (double) pageSize));
-            Query selectQuery = session.createQuery("SELECT t from Track t WHERE t.user.id=" + userID + " AND t.startTrackTimeStamp > " + timeStampBeforeSeconds + " AND t.endTrackTimeStamp < " + timeStampAfterSeconds);
-            selectQuery.setFirstResult((page - 1) * pageSize);
-            selectQuery.setMaxResults(pageSize);
-            tracks = selectQuery.list();
-            tx.commit();
-            session.close();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            session.close();
-            e.printStackTrace();
-            return DefaultResponse.BAD_REQUEST;
-        }
-
-        JSONObject jsonOut = new JSONObject();
         JSONArray jsonArray = new JSONArray();
-        for (Object tmp : tracks) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id", ((Track) tmp).getId());
-            jsonObject.put("from", ((Track) tmp).getStartPosition());
-            jsonObject.put("to", ((Track) tmp).getEndPosition());
-            jsonObject.put("start", ((Track) tmp).getStartTrackTimeStamp());
-            jsonObject.put("end", ((Track) tmp).getEndTrackTimeStamp());
-            jsonObject.put("distance", ((Track) tmp).getDistanceFromStart());
-            jsonArray.put(jsonObject);
-        }
+        trackDaoJdbc.getList(query, page, pageSize)
+                .stream()
+                .map(this::parse)
+                .forEach(jsonArray::put);
 
-        jsonOut.put("user", user.getName() + " " + user.getSurname());
-        jsonOut.put("page", page);
-        jsonOut.put("pageMax", lastPageNumber);
-        jsonOut.put("listOfTracks", jsonArray);
-        logger.info("TrackRest.list returns list of tracks (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+        JSONObject jsonOut = new JSONObject()
+                .put("user", user.getNameAndSurname())
+                .put("page", page)
+                .put("pageMax", trackDaoJdbc.getMaxPageSize(timeFromLong, timeToLong, pageSize))
+                .put("listOfTracks", jsonArray);
+
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
+    }
+
+    private JSONObject parse(Track track) {
+        return new JSONObject()
+                .put("id", track.getId())
+                .put("from", track.getStartPosition())
+                .put("to", track.getEndPosition())
+                .put("start", track.getStartTrackTimeStamp())
+                .put("end", track.getEndTrackTimeStamp())
+                .put("distance", track.getDistanceFromStart());
+    }
+
+    private String getUserTracksQuery(int userID, long timeStampBeforeSeconds, long timeStampAfterSeconds) {
+        return "SELECT t from Track t WHERE t.user.id=" + userID + " AND t.startTrackTimeStamp > " + timeStampBeforeSeconds + " AND t.endTrackTimeStamp < " + timeStampAfterSeconds;
     }
 
     public ResponseEntity<String> reverseGeocoding(String lon, String lat) {

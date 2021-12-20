@@ -28,6 +28,19 @@ public class TrackDaoJdbc extends HibernateDaoJdbc<Track> {
         return "Track";
     }
 
+    @Override
+    public int getMaxPageSize(long fromTimeStampEpochSeconds, long toTimeStampEpochSeconds, int pageSize) {
+        return checkMaxPage(createSelectByTimeStamp(fromTimeStampEpochSeconds, toTimeStampEpochSeconds), pageSize);
+    }
+
+    @Override
+    protected final String createSelectByTimeStamp(long fromTimeStampEpochSeconds, long toTimeStampEpochSeconds) {
+        return "SELECT x from " + getTableName() + " x " +
+                "WHERE " +
+                "x.startTrackTimeStamp > " + fromTimeStampEpochSeconds + " AND " +
+                "x.endTrackTimeStamp < " + toTimeStampEpochSeconds + " ";
+    }
+
     public List<Track> getUserTracks(long userId) {
         Session session = null;
         Transaction tx = null;
