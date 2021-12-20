@@ -591,13 +591,8 @@ public class TrackService {
             return DefaultResponse.UNAUTHORIZED;
         }
 
-        String timeFrom = TimeStampCalculator.toDate(timeFromLong);
-        String timeTo = TimeStampCalculator.toDate(timeToLong);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        ZonedDateTime before = LocalDate.parse(timeFrom, formatter).atStartOfDay(ZoneId.systemDefault());
-        Timestamp timestampBefore = Timestamp.valueOf(before.toLocalDateTime());
-        ZonedDateTime after = LocalDate.parse(timeTo, formatter).atStartOfDay(ZoneId.systemDefault()).with(LocalTime.MAX);
-        Timestamp timestampAfter = Timestamp.valueOf(after.toLocalDateTime());
+        long timeStampBeforeSeconds = TimeStampCalculator.getStartOfDayTimeStamp(timeFromLong);
+        long timeStampAfterSeconds = TimeStampCalculator.getEndOfDayTimeStamp(timeToLong);
         //listing
         List<Object> tracks = new ArrayList<>();
         int lastPageNumber;
@@ -606,15 +601,14 @@ public class TrackService {
         User user;
         try {
             tx = session.beginTransaction();
-            Query selectUser = session.createQuery("SELECT u FROM User u WHERE id = " + userID);
+            Query selectUser = session.createQuery("SELECT u FROM User u WHERE id=" + userID);
             user = (User) selectUser.getSingleResult();
 
-            String countQ = "Select count (t.id) from Track t WHERE t.user = " + userID + " AND t.startPosition > " + timestampBefore.getTime() + " AND t.startPosition < " + timestampAfter.getTime() + " ";
+            String countQ = "Select count (t.id) from Track t WHERE t.user.id=" + userID + " AND t.startTrackTimeStamp > " + timeStampBeforeSeconds + " AND t.endTrackTimeStamp < " + timeStampAfterSeconds;
             Query countQuery = session.createQuery(countQ);
             Long countResults = (Long) countQuery.uniqueResult();
             lastPageNumber = (int) (Math.ceil(countResults / (double) pageSize));
-
-            Query selectQuery = session.createQuery("SELECT t from Track t WHERE t.user = " + userID + " AND t.startPosition > " + timestampBefore.getTime() + " AND t.startPosition < " + timestampAfter.getTime() + " ");
+            Query selectQuery = session.createQuery("SELECT t from Track t WHERE t.user.id=" + userID + " AND t.startTrackTimeStamp > " + timeStampBeforeSeconds + " AND t.endTrackTimeStamp < " + timeStampAfterSeconds);
             selectQuery.setFirstResult((page - 1) * pageSize);
             selectQuery.setMaxResults(pageSize);
             tracks = selectQuery.list();
@@ -626,6 +620,7 @@ public class TrackService {
             e.printStackTrace();
             return DefaultResponse.BAD_REQUEST;
         }
+
         JSONObject jsonOut = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         for (Object tmp : tracks) {

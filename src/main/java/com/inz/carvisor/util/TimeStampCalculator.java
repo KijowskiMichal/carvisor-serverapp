@@ -14,6 +14,12 @@ public class TimeStampCalculator {
         return localDateTime.withHour(23).withMinute(59).withSecond(59).toEpochSecond(ZoneOffset.UTC);
     }
 
+    public static long getStartOfDayTimeStamp(long timestamp) {
+        Timestamp zxc = new Timestamp(timestamp * 1000);
+        LocalDateTime localDateTime = zxc.toLocalDateTime();
+        return localDateTime.withHour(0).withMinute(0).withSecond(1).toEpochSecond(ZoneOffset.UTC);
+    }
+
     public static long getFirstDayTimeStamp(int month, int year) {
         return LocalDate.of(year, month, 1).toEpochSecond(LocalTime.MIN, ZoneOffset.UTC);
     }
@@ -30,11 +36,5 @@ public class TimeStampCalculator {
         Date date = new Date(x);
         Format format = new SimpleDateFormat("yyyy-MM-dd");
         return format.format(date);
-    }
-
-    public static long getStartOfDayTimeStamp(long timestamp) {
-        Timestamp zxc = new Timestamp(timestamp * 1000);
-        LocalDateTime localDateTime = zxc.toLocalDateTime();
-        return localDateTime.withHour(0).withMinute(0).withSecond(1).toEpochSecond(ZoneOffset.UTC);
     }
 }
