@@ -2,6 +2,7 @@ package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.dao.*;
+import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.entities.builders.ZoneBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.*;
@@ -112,12 +113,15 @@ class ZoneControllerTest {
 
     @Test
     void remove() {
-        zoneController.add(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR),mockHttpEntityWithZone());
+        saveMockedZonesToDatabase();
         List<Zone> allZones = zoneDaoJdbc.getAll();
-        Assertions.assertEquals(1, allZones.size());
+        List<User> all = userDaoJdbc.getAll();
+        allZones.forEach(zone -> zone.setUserList(all));
+        allZones.forEach(zoneDaoJdbc::update);
+        Assertions.assertEquals(6, allZones.size());
         int idToDelete = allZones.get(0).getId();
         zoneController.remove(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR),idToDelete);
-        Assertions.assertEquals(0,zoneDaoJdbc.getAll().size());
+        Assertions.assertEquals(5,zoneDaoJdbc.getAll().size());
 
     }
 
@@ -139,6 +143,17 @@ class ZoneControllerTest {
                 new ZoneBuilder().setName("Twoja Strefunia").setPointX("16.42").setPointY("52.52").setRadius(15.3F).build(),
                 new ZoneBuilder().setName("Twoja Strefcia").setPointX("16.42").setPointY("52.52").setRadius(15.3F).build()
         ).forEach(zoneDaoJdbc::save);
+    }
+
+    private void saveMockedUsersToDatabase() {
+        List.of(
+                new UserBuilder().build(),
+                new UserBuilder().build(),
+                new UserBuilder().build(),
+                new UserBuilder().build(),
+                new UserBuilder().build(),
+                new UserBuilder().build()
+        ).forEach(userDaoJdbc::save);
     }
 
     private int getSizeOfListWithRegex(String key) {
