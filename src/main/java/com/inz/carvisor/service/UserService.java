@@ -29,6 +29,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -289,7 +290,9 @@ public class UserService {
                 .put(AttributeKey.User.IMAGE, user.getImage())
                 .put(AttributeKey.User.NAME, user.getName() + " " + user.getSurname())
                 .put(AttributeKey.User.PHONE_NUMBER, user.getPhoneNumber())
-                .put(AttributeKey.User.USER_PRIVILEGES, user.getUserPrivileges());
+                .put(AttributeKey.User.USER_PRIVILEGES, user.getUserPrivileges())
+                .put(AttributeKey.User.TIME_TO, cutSeconds(user.getWorkingHoursEnd()))
+                .put(AttributeKey.User.TIME_FROM, cutSeconds(user.getWorkingHoursStart()));
         return DefaultResponse.ok(jsonObject.toString());
     }
 
@@ -331,6 +334,12 @@ public class UserService {
             String getQuery = "SELECT u FROM User u WHERE u.id like " + userID;
             Query query = session.createQuery(getQuery);
             User user = (User) query.getSingleResult();
+
+            if (inJSON.has(AttributeKey.User.TIME_FROM) && inJSON.has(AttributeKey.User.TIME_TO)) {
+                user.setWorkingHoursStart(Time.valueOf(inJSON.getString(AttributeKey.User.TIME_FROM) + ":00"));
+                user.setWorkingHoursEnd(Time.valueOf(inJSON.getString(AttributeKey.User.TIME_TO) + ":00"));
+            }
+
             String[] names = name.split(" ");
             user.setName(names[0]);
             user.setSurname(names[1]);
@@ -338,7 +347,6 @@ public class UserService {
             session.update(user);
             tx.commit();
             responseEntity = DefaultResponse.OK;
-            logger.log(Level.INFO, "User (id=" + userID + ") changed data to (" + "name=" + names[0] + " surname=" + names[1] + " phoneNumber=" + telephone + ")");
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             e.printStackTrace();
@@ -500,6 +508,10 @@ public class UserService {
         if (!oldPassword.equals(user.get().getPassword())) return Optional.empty();
         user.get().setPassword(newPassword);
         return user;
+    }
+
+    public String cutSeconds(Time timeString) {
+        return timeString.toString().substring(0,5);
     }
 
     public Optional<User> getUser(int userId) {

@@ -34,6 +34,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.sql.Time;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -190,13 +191,17 @@ class UsersRESTTest {
                 .setSurname("Zablocki")
                 .setUserPrivileges(UserPrivileges.ADMINISTRATOR)
                 .setPhoneNumber(123456789)
+                .setWorkingHoursStart(Time.valueOf("08:00:00"))
+                .setWorkingHoursEnd(Time.valueOf("16:00:00"))
                 .build();
         userDaoJdbc.save(user);
         int userId = user.getId();
 
         JSONObject inputUserJson = new JSONObject()
                 .put(AttributeKey.User.NAME, "Zbigniew Wodecki")
-                .put(AttributeKey.User.PHONE_NUMBER, "112");
+                .put(AttributeKey.User.PHONE_NUMBER, "112")
+                .put(AttributeKey.User.TIME_FROM,"09:00")
+                .put(AttributeKey.User.TIME_TO,"17:00");
 
         HttpEntity<String> httpEntity = new HttpEntity<>(inputUserJson.toString());
 
@@ -206,10 +211,12 @@ class UsersRESTTest {
 
         Optional<User> wrappedUser = userDaoJdbc.get(userId);
         if (wrappedUser.isEmpty()) fail();
-        User zxc = wrappedUser.get();
-        assertEquals("Zbigniew", zxc.getName());
-        assertEquals("Wodecki", zxc.getSurname());
-        assertEquals(112, zxc.getPhoneNumber());
+        User userAfterChanges = wrappedUser.get();
+        assertEquals("Zbigniew", userAfterChanges.getName());
+        assertEquals("Wodecki", userAfterChanges.getSurname());
+        assertEquals(112, userAfterChanges.getPhoneNumber());
+        assertEquals("09:00:00",userAfterChanges.getWorkingHoursStart().toString());
+        assertEquals("17:00:00",userAfterChanges.getWorkingHoursEnd().toString());
     }
 
     @Test

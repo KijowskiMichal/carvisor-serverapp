@@ -26,6 +26,8 @@ public class AttributeKey {
         public static final String ECO_POINTS = "ecoPoints";
         public static final String SAFETY_RANKING_POSITION = "safetyRankingPosition";
         public static final String ECO_RANKING_POSITION = "ecoRankingPosition";
+        public static final String TIME_FROM = "timeFrom";
+        public static final String TIME_TO = "timeTo";
     }
 
     public static class Offence {

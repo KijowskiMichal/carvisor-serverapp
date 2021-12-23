@@ -3,6 +3,8 @@ package com.inz.carvisor.entities.builders;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.User;
 
+import java.sql.Time;
+
 public class UserBuilder {
     private final int samples = 0;
     private final int throttle = 0;
@@ -19,6 +21,9 @@ public class UserBuilder {
     private String image;
     private int phoneNumber;
     private String nfcTag;
+
+    private Time workingHoursStart = Time.valueOf("00:00:00");
+    private Time workingHoursEnd = Time.valueOf("23:59:59");
 
     public UserBuilder setNick(String nick) {
         this.nick = nick;
@@ -60,6 +65,17 @@ public class UserBuilder {
         return this;
     }
 
+
+    public UserBuilder setWorkingHoursStart(Time workingHoursStart) {
+        this.workingHoursStart = workingHoursStart;
+        return this;
+    }
+
+    public UserBuilder setWorkingHoursEnd(Time workingHoursEnd) {
+        this.workingHoursEnd = workingHoursEnd;
+        return this;
+    }
+
     public User build() {
         User user = new User();
 
@@ -79,6 +95,9 @@ public class UserBuilder {
         user.setEcoPointsAvg(this.ecoPointsAvg);
         user.setDistanceTravelled(this.distanceTravelled);
         user.setSafetyPointsAvg(this.safetyPointsAvg);
+
+        user.setWorkingHoursStart(workingHoursStart);
+        user.setWorkingHoursEnd(workingHoursEnd);
         return user;
     }
 }

@@ -22,14 +22,18 @@ public class User {
     private UserPrivileges userPrivileges;
     private int phoneNumber;
     private String nfcTag;
+
+    private Time workingHoursStart;
+    private Time workingHoursEnd;
+
     private float ecoPointsAvg;
     private float combustionAVG;
     private int speedAVG;
     private int tracksNumber;
     private int revolutionsAVG;
     private long distanceTravelled;
-    private int samples;
     private int throttle;
+    private int samples;
     private int safetySamples;
     private float safetyPointsAvg;
 
@@ -199,7 +203,21 @@ public class User {
         this.safetyPointsAvg = safetyPointsAvg;
     }
 
+    public Time getWorkingHoursStart() {
+        return workingHoursStart;
+    }
 
+    public void setWorkingHoursStart(Time workingHoursStart) {
+        this.workingHoursStart = workingHoursStart;
+    }
+
+    public Time getWorkingHoursEnd() {
+        return workingHoursEnd;
+    }
+
+    public void setWorkingHoursEnd(Time workingHoursEnd) {
+        this.workingHoursEnd = workingHoursEnd;
+    }
 
     public void addDistanceTravelled(long distanceTravelled) {
         this.distanceTravelled += distanceTravelled;
