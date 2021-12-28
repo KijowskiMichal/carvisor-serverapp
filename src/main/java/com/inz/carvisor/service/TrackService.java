@@ -254,14 +254,7 @@ public class TrackService {
         if (activeTrackOptional.isEmpty()) return DefaultResponse.BAD_REQUEST;
         Track track = activeTrackOptional.get();
 
-        List<TrackRate> listOfTrackRates = jsonObject
-                .keySet()
-                .stream()
-                .map(Long::parseLong)
-                .sorted()
-                .map(Object::toString)
-                .map(timeStamp -> parseJSONObjectTOTrackRate(timeStamp, jsonObject.getJSONObject(timeStamp), track))
-                .collect(Collectors.toList());
+        List<TrackRate> listOfTrackRates = extractTrackRatesFromJson(jsonObject, track);
 
         setDistanceBetweenTrackRates(listOfTrackRates);
         List<Zone> zonesAssignedToUser = zoneDaoJdbc.get(track.getUser());
@@ -272,15 +265,8 @@ public class TrackService {
             checkForSpeeding(track, trackRate);
         }
 
-        TrackRate lastTrackRate = listOfTrackRates.get(listOfTrackRates.size() - 1);
-        track.setTimestamp(lastTrackRate.getTimestamp());
-        track.addMetersToDistance(listOfTrackRates.stream().mapToLong(TrackRate::getDistance).sum());
-        track.setEndPosition(lastTrackRate.getLatitude() + ";" + lastTrackRate.getLongitude());
-        track.setEcoPointsScore(EcoPointsCalculator.calculateEcoPoints(track));
-        track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track));
-
+        updateTrackValues(track, listOfTrackRates);
         //todo ErrorsREST.addError -
-        trackDaoJdbc.update(track);
         return DefaultResponse.OK;
     }
 
@@ -599,6 +585,39 @@ public class TrackService {
 
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
+
+    private List<TrackRate> extractTrackRatesFromJson(JSONObject jsonObject, Track track) {
+        return jsonObject
+                .keySet()
+                .stream()
+                .map(Long::parseLong)
+                .sorted()
+                .map(Object::toString)
+                .map(timeStamp -> parseJSONObjectTOTrackRate(timeStamp, jsonObject.getJSONObject(timeStamp), track))
+                .collect(Collectors.toList());
+    }
+
+    private void updateTrackValues(Track track, List<TrackRate> listOfTrackRates) {
+        TrackRate lastTrackRate = getLast(listOfTrackRates);
+        track.setTimestamp(lastTrackRate.getTimestamp());
+        track.addMetersToDistance(getTotalDistance(listOfTrackRates));
+        track.setEndPosition(lastTrackRate.getLocation());
+        track.setEcoPointsScore(EcoPointsCalculator.calculateEcoPoints(track));
+        track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track));
+        trackDaoJdbc.update(track);
+    }
+
+    private TrackRate getLast(List<TrackRate> listOfTrackRates) {
+        return listOfTrackRates.get(listOfTrackRates.size() - 1);
+    }
+
+    private long getTotalDistance(List<TrackRate> listOfTrackRates) {
+        return listOfTrackRates
+                .stream()
+                .mapToLong(TrackRate::getDistance)
+                .sum();
+    }
+
 
     private JSONObject parse(Track track) {
         return new JSONObject()

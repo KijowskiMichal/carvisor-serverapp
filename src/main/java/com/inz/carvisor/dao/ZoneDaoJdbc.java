@@ -32,9 +32,9 @@ public class ZoneDaoJdbc extends HibernateDaoJdbc<Zone> {
                 .collect(Collectors.toList());
     }
 
-    private String createQueryWithName(String name) {
-        if (name.isEmpty()) return "SELECT x FROM " + getTableName();
-        return "SELECT x FROM " + getTableName() + " x WHERE x.name like '%" + name + "%'";
+    private String createQueryWithName(String regex) {
+        if (regex.isEmpty() || this.EMPTY_REGEX_SIGN.equals(regex)) return "SELECT x FROM " + getTableName();
+        return "SELECT x FROM " + getTableName() + " x WHERE x.regex like '%" + regex + "%'";
     }
 
     private boolean containUserById(long userId, Zone zone) {

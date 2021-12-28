@@ -108,7 +108,7 @@ public class TrackRate {
     }
 
     public String getLocation() {
-        return longitude + "," + latitude;
+        return latitude + ";" + longitude;
     }
 
     @Override
