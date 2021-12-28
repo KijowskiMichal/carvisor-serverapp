@@ -1,5 +1,6 @@
 package com.inz.carvisor.controller;
 
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
@@ -62,6 +63,25 @@ public class ZoneController {
         JSONArray zones = new JSONArray();
         list.stream().map(ZoneJsonParser::parse).forEach(zones::put);
         return DefaultResponse.ok(zones.toString());
+    }
+
+    @RequestMapping(value = "/getZones/{regex}/{page}/{pagesize}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity<String> list(HttpServletRequest request, @PathVariable("regex") String regex,
+                                       @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
+            return DefaultResponse.UNAUTHORIZED;
+        }
+
+        JSONArray zones = new JSONArray();
+        zoneService.list(regex,page, pagesize)
+                .stream()
+                .map(ZoneJsonParser::parse)
+                .forEach(zones::put);
+        JSONObject jsonObject = new JSONObject()
+                .put(AttributeKey.CommonKey.PAGE,page)
+                .put(AttributeKey.CommonKey.PAGE_MAX,zoneService.checkMaxPage(regex,pagesize))
+                .put(AttributeKey.Zone.LIST_OF_ZONES,zones);
+        return DefaultResponse.ok(jsonObject.toString());
     }
 
     @RequestMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)

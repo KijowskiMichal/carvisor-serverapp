@@ -37,6 +37,10 @@ public class ZoneService {
         return zoneDaoJdbc.getListWithName(regex);
     }
 
+    public List<Zone> list(String regex, int page, int pageMax) {
+        return zoneDaoJdbc.get(regex, page, pageMax);
+    }
+
     public Optional<Zone> add(Zone zone) {
         return zoneDaoJdbc.save(zone);
     }
@@ -52,6 +56,11 @@ public class ZoneService {
     public List<Zone> getUserZones(User user) {
         return zoneDaoJdbc.get(user);
     }
+
+    public int checkMaxPage(String regex, int pageSize) {
+        return zoneDaoJdbc.checkMaxPageWithRegex(regex, pageSize);
+    }
+
 
     public List<Zone> getZones(int page, int pagesize) {
         return zoneDaoJdbc.getList(page,pagesize);

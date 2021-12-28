@@ -21,8 +21,8 @@ public class ZoneDaoJdbc extends HibernateDaoJdbc<Zone> {
         return "Zone";
     }
 
-    public List<Zone> getListWithName(String name) {
-        return this.getList(createQueryWithName(name));
+    public List<Zone> getListWithName(String regex) {
+        return this.getList(createQueryWithRegex(regex));
     }
 
     public List<Zone> get(User user) {
@@ -32,9 +32,17 @@ public class ZoneDaoJdbc extends HibernateDaoJdbc<Zone> {
                 .collect(Collectors.toList());
     }
 
-    private String createQueryWithName(String regex) {
+    public List<Zone> get(String regex, int page, int pageSize) {
+        return this.getList(createQueryWithRegex(regex),page,pageSize);
+    }
+
+    public int checkMaxPageWithRegex(String regex, int pageSize) {
+        return this.checkMaxPage(createQueryWithRegex(regex),pageSize);
+    }
+
+    private String createQueryWithRegex(String regex) {
         if (regex.isEmpty() || this.EMPTY_REGEX_SIGN.equals(regex)) return "SELECT x FROM " + getTableName();
-        return "SELECT x FROM " + getTableName() + " x WHERE x.regex like '%" + regex + "%'";
+        return "SELECT x FROM " + getTableName() + " x WHERE x.name like '%" + regex + "%'";
     }
 
     private boolean containUserById(long userId, Zone zone) {

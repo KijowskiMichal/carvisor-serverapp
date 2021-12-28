@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -100,6 +101,18 @@ class ZoneControllerTest {
         regexMatchingZonesMap.put("a",6);
         saveMockedZonesToDatabase();
         regexMatchingZonesMap.forEach((key,value) -> Assertions.assertEquals(value,getSizeOfListWithRegex(key)));
+    }
+
+    @Test
+    void listWithRegexAndPages() {
+        saveMockedZonesToDatabase();
+        ResponseEntity<String> moja = zoneController
+                .list(RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR), "Moja", 1, 2);
+        JSONObject jsonObject = new JSONObject(moja.getBody());
+        assertEquals(1,jsonObject.getInt(AttributeKey.CommonKey.PAGE));
+        assertEquals(2,jsonObject.getInt(AttributeKey.CommonKey.PAGE_MAX));
+        JSONArray jsonArray = jsonObject.getJSONArray(AttributeKey.Zone.LIST_OF_ZONES);
+        assertEquals(2,jsonArray.length());
     }
 
     @Test
