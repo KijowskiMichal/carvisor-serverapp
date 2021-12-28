@@ -33,6 +33,7 @@ public class ZoneDaoJdbc extends HibernateDaoJdbc<Zone> {
     }
 
     private String createQueryWithName(String name) {
+        if (name.isEmpty()) return "SELECT x FROM " + getTableName();
         return "SELECT x FROM " + getTableName() + " x WHERE x.name like '%" + name + "%'";
     }
 
