@@ -120,8 +120,10 @@ class ZoneControllerTest {
         zoneController.add(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR),mockHttpEntityWithZone());
         List<Zone> allZones = zoneDaoJdbc.getAll();
         Assertions.assertEquals(1, allZones.size());
+        JSONObject parsedAns = ZoneJsonParser.parse(allZones.get(0));
+        parsedAns.remove("id");
         Assertions.assertEquals(mockHttpEntityWithZone().getBody()
-                ,ZoneJsonParser.parse(allZones.get(0)).toString());
+                ,parsedAns.toString());
     }
 
     @Test
