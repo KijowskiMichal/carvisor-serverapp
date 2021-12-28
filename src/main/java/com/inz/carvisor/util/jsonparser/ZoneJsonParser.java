@@ -9,6 +9,7 @@ public class ZoneJsonParser {
 
     public static JSONObject parse(Zone zone) {
         return new JSONObject()
+                .put(AttributeKey.CommonKey.ID, zone.getId())
                 .put(AttributeKey.Zone.NAME, zone.getName())
                 .put(AttributeKey.Zone.POINT_X, zone.getPointX())
                 .put(AttributeKey.Zone.POINT_Y, zone.getPointY())

@@ -10,6 +10,7 @@ public class AttributeKey {
         public static final String CAR = "car";
         public static final String LOGIN = "login";
         public static final String PASSWORD = "password";
+        public static final String ID = "id";
     }
 
     public static class User {
