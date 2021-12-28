@@ -24,6 +24,10 @@ public class DefaultResponse {
             .status(HttpStatus.BAD_REQUEST)
             .body(jsonMessage("empty body"));
 
+    public static final ResponseEntity<String> NOT_ACCEPTABLE = ResponseEntity
+            .status(HttpStatus.NOT_ACCEPTABLE)
+            .body(jsonMessage("not acceptable"));
+
     public static ResponseEntity<String> custom(HttpStatus httpStatus, String message) {
         return ResponseEntity.status(httpStatus).body(jsonMessage(message));
     }

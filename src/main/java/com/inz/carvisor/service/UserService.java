@@ -463,6 +463,10 @@ public class UserService {
         }
 
         JSONObject jsonObject = new JSONObject(httpEntity.getBody());
+
+        String nick = jsonObject.getString("nick");
+        if (!nickIsValid(nick)) return DefaultResponse.NOT_ACCEPTABLE;
+
         UserBuilder userBuilder = new UserBuilder()
                 .setName(jsonObject.getString("name"))
                 .setSurname(jsonObject.getString("surname"))
@@ -516,5 +520,12 @@ public class UserService {
 
     public Optional<User> getUser(int userId) {
         return userDaoJdbc.get(userId);
+    }
+
+    public boolean nickIsValid(String nick) {
+        return userDaoJdbc.getAll()
+                .stream()
+                .map(User::getNick)
+                .noneMatch(nick::equals);
     }
 }
