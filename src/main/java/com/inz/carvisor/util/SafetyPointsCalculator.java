@@ -1,13 +1,15 @@
 package com.inz.carvisor.util;
 
+import com.inz.carvisor.entities.model.Offence;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
 
+import java.util.List;
 import java.util.Random;
 
 public class SafetyPointsCalculator {
 
-    public static float calculateSafetyPoints(Track track) {
+    public static float calculateSafetyPoints(Track track, List<Offence> trackOffences) {
         return Math.abs(new Random().nextInt()) % 5 + 1;
     }
 
@@ -20,7 +22,7 @@ public class SafetyPointsCalculator {
         float trackSPS = track.getSafetyPointsScore();
         float userSPS = user.getSafetyPointsAvg();
 
-        float total = trackSPS * (trackSamples / userSamples) + userSPS * (userSamplesWithoutTrack/userSamples);
+        float total = trackSPS * (trackSamples / userSamples) + userSPS * (userSamplesWithoutTrack / userSamples);
         user.setSafetyPointsAvg(total);
     }
 }

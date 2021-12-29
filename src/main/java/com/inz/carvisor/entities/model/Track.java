@@ -1,6 +1,5 @@
 package com.inz.carvisor.entities.model;
 
-import javassist.compiler.ast.ASTree;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
@@ -8,7 +7,7 @@ import java.util.List;
 
 
 @Entity
-public class Track{
+public class Track {
 
 
     @Id

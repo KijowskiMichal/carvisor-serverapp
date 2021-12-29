@@ -11,6 +11,7 @@ import com.inz.carvisor.entities.enums.ReportType;
 import com.inz.carvisor.entities.model.*;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
+import com.inz.carvisor.service.report.service.ReportGenerator;
 import com.inz.carvisor.service.report.service.ReportService;
 import com.inz.carvisor.util.DataMocker;
 import com.inz.carvisor.util.FileDataGetter;
@@ -35,7 +36,7 @@ import java.util.List;
 import java.util.Random;
 
 @Ignore
-@WebMvcTest(UserDaoJdbc.class)
+@WebMvcTest(ReportGenerator.class)
 @ContextConfiguration(classes = {Initializer.class})
 public class ReportGeneratorToPDFTest {
 
@@ -86,7 +87,7 @@ public class ReportGeneratorToPDFTest {
     @Test
     void runCleanup() {}
 
-    @Ignore
+
     @Test
     void generateAllReports() {
         List<User> mockedUsers = DataMocker.getUsers();

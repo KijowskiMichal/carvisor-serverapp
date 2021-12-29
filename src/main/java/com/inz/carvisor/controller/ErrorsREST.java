@@ -49,7 +49,7 @@ public class ErrorsREST {
         JSONArray jsonArray = new JSONArray(httpEntity.getBody());
         List<Error> errorList = new ArrayList<>();
         int length = jsonArray.length();
-        for (int i=0; i<length;i++) {
+        for (int i = 0; i < length; i++) {
             Error error = deserializeError(jsonArray.getJSONObject(i));
             errorList.add(error);
         }

@@ -33,11 +33,11 @@ public class ZoneDaoJdbc extends HibernateDaoJdbc<Zone> {
     }
 
     public List<Zone> get(String regex, int page, int pageSize) {
-        return this.getList(createQueryWithRegex(regex),page,pageSize);
+        return this.getList(createQueryWithRegex(regex), page, pageSize);
     }
 
     public int checkMaxPageWithRegex(String regex, int pageSize) {
-        return this.checkMaxPage(createQueryWithRegex(regex),pageSize);
+        return this.checkMaxPage(createQueryWithRegex(regex), pageSize);
     }
 
     private String createQueryWithRegex(String regex) {

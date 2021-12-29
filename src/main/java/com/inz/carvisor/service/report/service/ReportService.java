@@ -31,7 +31,7 @@ public class ReportService {
 
     public List<Report> getList(int page, int pageSize, String regex) {
         if (regex.isEmpty()) return reportDaoJdbc.getAll();
-        return reportDaoJdbc.list(page,pageSize, regex);
+        return reportDaoJdbc.list(page, pageSize, regex);
     }
 
     public byte[] generateReportBody(Report report) {
@@ -39,7 +39,7 @@ public class ReportService {
     }
 
     public int getMaxPage(int pageSize, String regex) {
-        return reportDaoJdbc.getMaxPageSize(pageSize,regex);
+        return reportDaoJdbc.getMaxPageSize(pageSize, regex);
     }
 
     public Optional<Report> get(int id) {

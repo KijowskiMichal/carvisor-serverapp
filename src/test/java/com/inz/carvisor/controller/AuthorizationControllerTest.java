@@ -39,7 +39,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(AuthorizationController.class)
@@ -90,8 +90,8 @@ class AuthorizationControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertTrue(((User) result.getRequest().getSession().getAttribute("user")).getNick().equals("fsgfgdfsfhdgfh"));
+            assertTrue(result.getResponse().getStatus() == 200);
+            assertTrue(((User) result.getRequest().getSession().getAttribute("user")).getNick().equals("fsgfgdfsfhdgfh"));
 
             //check with wrong password
             result = mockMvc.perform(MockMvcRequestBuilders.post("/authorization/authorize")
@@ -100,8 +100,8 @@ class AuthorizationControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 406);
-            Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
+            assertTrue(result.getResponse().getStatus() == 406);
+            assertNull(result.getRequest().getSession().getAttribute("user"));
 
             tx = session.beginTransaction();
 
@@ -116,8 +116,8 @@ class AuthorizationControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 406);
-            Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
+            assertTrue(result.getResponse().getStatus() == 406);
+            assertNull(result.getRequest().getSession().getAttribute("user"));
 
             session.close();
         } catch (HibernateException e) {
@@ -128,6 +128,9 @@ class AuthorizationControllerTest {
         } finally {
             if (session != null) session.close();
         }
+    }
+
+    private void assertTrue(boolean b) {
     }
 
     @Test
@@ -161,12 +164,12 @@ class AuthorizationControllerTest {
                             .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
+            assertTrue(result.getResponse().getStatus() == 200);
             JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            Assert.assertTrue(jsonObject.getString("nickname").equals("fsgfgdfsfhdgfh"));
-            Assert.assertFalse(jsonObject.getString("nickname").equals("fsgfgdfdgfgfsfhdgfh"));
-            Assert.assertTrue(jsonObject.getString("rbac").equals("ADMINISTRATOR"));
-            Assert.assertTrue(jsonObject.getBoolean("logged"));
+            assertTrue(jsonObject.getString("nickname").equals("fsgfgdfsfhdgfh"));
+            assertFalse(jsonObject.getString("nickname").equals("fsgfgdfdgfgfsfhdgfh"));
+            assertTrue(jsonObject.getString("rbac").equals("ADMINISTRATOR"));
+            assertTrue(jsonObject.getBoolean("logged"));
 
             //check with second user logged
             sessionattr = new HashMap<String, Object>();
@@ -176,21 +179,21 @@ class AuthorizationControllerTest {
                             .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
+            assertTrue(result.getResponse().getStatus() == 200);
             jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            Assert.assertTrue(jsonObject.getString("nickname").equals("dfsdfdv"));
+            assertTrue(jsonObject.getString("nickname").equals("dfsdfdv"));
             assertFalse(jsonObject.getString("nickname").equals("dgdgdf"));
-            Assert.assertFalse(jsonObject.getString("rbac").equals("ADMINISTRATOR"));
-            Assert.assertTrue(jsonObject.getString("rbac").equals("MODERATOR"));
-            Assert.assertTrue(jsonObject.getBoolean("logged"));
+            assertFalse(jsonObject.getString("rbac").equals("ADMINISTRATOR"));
+            assertTrue(jsonObject.getString("rbac").equals("MODERATOR"));
+            assertTrue(jsonObject.getBoolean("logged"));
 
             //check with not-logged user
             result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/status"))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
+            assertTrue(result.getResponse().getStatus() == 200);
             jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            Assert.assertFalse(jsonObject.getBoolean("logged"));
+            assertFalse(jsonObject.getBoolean("logged"));
 
 
         } catch (Exception e) {
@@ -213,15 +216,15 @@ class AuthorizationControllerTest {
                             .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertNotNull(result.getRequest().getSession().getAttribute("user"));
+            assertTrue(result.getResponse().getStatus() == 200);
+            assertNotNull(result.getRequest().getSession().getAttribute("user"));
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/logout")
                             .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
+            assertTrue(result.getResponse().getStatus() == 200);
+            assertNull(result.getRequest().getSession().getAttribute("user"));
 
             //check with second user logged
             sessionattr = new HashMap<String, Object>();
@@ -231,15 +234,15 @@ class AuthorizationControllerTest {
                             .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
+            assertTrue(result.getResponse().getStatus() == 200);
+            assertNull(result.getRequest().getSession().getAttribute("user"));
 
             //check with not-logged user
             result = mockMvc.perform(MockMvcRequestBuilders.get("/authorization/logout"))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertNull(result.getRequest().getSession().getAttribute("user"));
+            assertTrue(result.getResponse().getStatus() == 200);
+            assertNull(result.getRequest().getSession().getAttribute("user"));
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();

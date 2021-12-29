@@ -74,9 +74,9 @@ public class RankingController {
     }
 
     private int getSafetyPointsRankingPosition(User userToCheck, List<User> allUsers) {
-        allUsers.sort((a,b) -> Float.compare(a.getSafetyPointsAvg(), b.getSafetyPointsAvg()));
-        for (int i=0;i<allUsers.size();i++) {
-            if (allUsers.get(0).getId() == userToCheck.getId()) return i+1;
+        allUsers.sort((a, b) -> Float.compare(a.getSafetyPointsAvg(), b.getSafetyPointsAvg()));
+        for (int i = 0; i < allUsers.size(); i++) {
+            if (allUsers.get(0).getId() == userToCheck.getId()) return i + 1;
         }
         return allUsers.size();
     }

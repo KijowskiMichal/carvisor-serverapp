@@ -21,12 +21,13 @@ public class ReportDaoJdbc extends HibernateDaoJdbc<Report> {
 
     public List<Report> list(int page, int pageSize, String regex) {
         if (regex.isBlank() || this.EMPTY_REGEX_SIGN.equals(regex)) return getAll();
-        return getList(createQuery(regex),page,pageSize);
+        return getList(createQuery(regex), page, pageSize);
     }
 
     public int getMaxPageSize(int pageSize, String regex) {
-        if (regex.isBlank() || this.EMPTY_REGEX_SIGN.equals(regex)) return this.checkMaxPage(this.createSelectGetAll(),pageSize);
-        return this.checkMaxPage(createQuery(regex),pageSize);
+        if (regex.isBlank() || this.EMPTY_REGEX_SIGN.equals(regex))
+            return this.checkMaxPage(this.createSelectGetAll(), pageSize);
+        return this.checkMaxPage(createQuery(regex), pageSize);
     }
 
     private String createQuery(String regex) {

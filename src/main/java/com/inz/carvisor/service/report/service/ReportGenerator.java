@@ -46,7 +46,7 @@ public class ReportGenerator {
         try {
             PdfWriter.getInstance(document, byteArrayOutputStream);
             document.open();
-            prepareReport(document,report);
+            prepareReport(document, report);
             document.close();
             reportBody = byteArrayOutputStream.toByteArray();
             byteArrayOutputStream.close();
@@ -57,7 +57,7 @@ public class ReportGenerator {
     }
 
     private List<com.inz.carvisor.service.report.strategy.ReportGenerator> reportGeneratorList() {
-        return List.of(ecoReportGenerator,safetyReportGenerator,trackReportGenerator);
+        return List.of(ecoReportGenerator, safetyReportGenerator, trackReportGenerator);
     }
 
     private void prepareReport(Document document, Report report) throws DocumentException {

@@ -32,6 +32,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @RunWith(SpringRunner.class)
 @WebMvcTest(CarAuthorizationController.class)
 @ContextConfiguration(classes = {Initializer.class})
@@ -79,8 +81,8 @@ class CarAuthorizationControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertTrue(((Car) result.getRequest().getSession().getAttribute("car")).getLicensePlate().equals("fghfdhfdhf"));
+            assertEquals(200, result.getResponse().getStatus());
+            assertEquals("fghfdhfdhf", ((Car) result.getRequest().getSession().getAttribute("car")).getLicensePlate());
 
             //check with wrong password
             result = mockMvc.perform(MockMvcRequestBuilders.post("/carAuthorization/authorize")
@@ -89,8 +91,8 @@ class CarAuthorizationControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 406);
-            Assert.assertNull(result.getRequest().getSession().getAttribute("car"));
+            assertEquals(406, result.getResponse().getStatus());
+            assertNull(result.getRequest().getSession().getAttribute("car"));
 
             tx = session.beginTransaction();
 
@@ -105,8 +107,8 @@ class CarAuthorizationControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 406);
-            Assert.assertNull(result.getRequest().getSession().getAttribute("car"));
+            assertEquals(406, result.getResponse().getStatus());
+            assertNull(result.getRequest().getSession().getAttribute("car"));
 
             session.close();
         } catch (HibernateException e) {
@@ -124,39 +126,37 @@ class CarAuthorizationControllerTest {
         try {
             //check with first device logged
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
-            sessionattr.put("car", new CarBuilder().setLicensePlate("fghfdhfdhf").build());
+            sessionattr.put("car", new CarBuilder().setLicensePlate("abc").build());
 
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status")
                             .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
+            assertEquals(200, result.getResponse().getStatus());
             JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            Assert.assertTrue(jsonObject.getString("licensePlate").equals("fghfdhfdhf"));
-            Assert.assertFalse(jsonObject.getString("licensePlate").equals("fsgfgdfdgfgfsfhdgfh"));
-            Assert.assertTrue(jsonObject.getBoolean("logged"));
+            assertEquals("abc", jsonObject.getString("licensePlate"));
+            assertTrue(jsonObject.getBoolean("logged"));
 
             //check with second device logged
-            sessionattr = new HashMap<String, Object>();
+            sessionattr = new HashMap<>();
             sessionattr.put("car", new CarBuilder().setLicensePlate("ttrutrtt").build());
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status")
                             .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
+            assertEquals(200, result.getResponse().getStatus());
             jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            Assert.assertTrue(jsonObject.getString("licensePlate").equals("ttrutrtt"));
-            Assert.assertFalse(jsonObject.getString("licensePlate").equals("dgyrutrtrdgdf"));
-            Assert.assertTrue(jsonObject.getBoolean("logged"));
+            assertEquals("ttrutrtt", jsonObject.getString("licensePlate"));
+            assertTrue(jsonObject.getBoolean("logged"));
 
             //check with not-logged device
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/status"))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
+            assertEquals(200, result.getResponse().getStatus());
             jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            Assert.assertFalse(jsonObject.getBoolean("logged"));
+            assertFalse(jsonObject.getBoolean("logged"));
 
 
         } catch (Exception e) {
@@ -175,16 +175,15 @@ class CarAuthorizationControllerTest {
                             .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertNotNull(result.getRequest().getSession().getAttribute("car"));
+            assertEquals(200, result.getResponse().getStatus());
+            assertNotNull(result.getRequest().getSession().getAttribute("car"));
 
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/logout")
                             .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertTrue(result.getResponse().getContentAsString().equals(""));
-            Assert.assertNull(result.getRequest().getSession().getAttribute("car"));
+            assertEquals(200, result.getResponse().getStatus());
+            assertNull(result.getRequest().getSession().getAttribute("car"));
 
             //check with second device logged
             sessionattr = new HashMap<String, Object>();
@@ -194,20 +193,18 @@ class CarAuthorizationControllerTest {
                             .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertTrue(result.getResponse().getContentAsString().equals(""));
-            Assert.assertNull(result.getRequest().getSession().getAttribute("car"));
+            assertEquals(200, result.getResponse().getStatus());
+            assertEquals("", result.getResponse().getContentAsString());
+            assertNull(result.getRequest().getSession().getAttribute("car"));
 
             //check with not-logged device
             result = mockMvc.perform(MockMvcRequestBuilders.get("/carAuthorization/logout"))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertTrue(result.getResponse().getContentAsString().equals(""));
-            Assert.assertNull(result.getRequest().getSession().getAttribute("car"));
+            assertEquals(200, result.getResponse().getStatus());
+            assertEquals("", result.getResponse().getContentAsString());
+            assertNull(result.getRequest().getSession().getAttribute("car"));
 
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }

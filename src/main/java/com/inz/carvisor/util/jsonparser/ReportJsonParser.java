@@ -25,10 +25,10 @@ public class ReportJsonParser {
     public static int[] extractUserIdList(JSONObject jsonObject) {
         JSONArray jsonArray = jsonObject.getJSONArray(AttributeKey.Report.LIST_OF_USER_IDS);
         List<Integer> integerList = new ArrayList<>();
-        for (int i=0;i<jsonArray.length();i++) {
+        for (int i = 0; i < jsonArray.length(); i++) {
             integerList.add(jsonArray.getInt(i));
         }
-        return integerList.stream().mapToInt(i->i).toArray();
+        return integerList.stream().mapToInt(i -> i).toArray();
     }
 
     public static JSONArray parse(List<Report> reportList) {
@@ -39,10 +39,10 @@ public class ReportJsonParser {
 
     public static JSONObject parse(Report report) {
         return new JSONObject()
-                .put(AttributeKey.Report.ID,report.getId())
-                .put(AttributeKey.Report.TYPE,report.getType())
-                .put(AttributeKey.Report.NAME,report.getName())
-                .put(AttributeKey.Report.DESCRIPTION,report.getDescription())
-                .put(AttributeKey.Report.LOADING,false);
+                .put(AttributeKey.Report.ID, report.getId())
+                .put(AttributeKey.Report.TYPE, report.getType())
+                .put(AttributeKey.Report.NAME, report.getName())
+                .put(AttributeKey.Report.DESCRIPTION, report.getDescription())
+                .put(AttributeKey.Report.LOADING, false);
     }
 }

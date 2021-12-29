@@ -95,8 +95,7 @@ public class SpeedOffence {
             return Optional.of(content.toString());
         } catch (Exception e) {
             return Optional.empty();
-        }
-        finally {
+        } finally {
             if (con != null) con.disconnect();
             if (in != null) {
                 try {

@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -83,7 +82,7 @@ public class ZoneController {
                     .stream()
                     .map(number -> (Integer) number)
                     .collect(Collectors.toList());
-            zoneService.assignZonesToUser(zonesIds,user.get());
+            zoneService.assignZonesToUser(zonesIds, user.get());
             return DefaultResponse.OK;
         } catch (Exception e) {
             return DefaultResponse.BAD_REQUEST;
@@ -109,14 +108,14 @@ public class ZoneController {
         }
 
         JSONArray zones = new JSONArray();
-        zoneService.list(regex,page, pagesize)
+        zoneService.list(regex, page, pagesize)
                 .stream()
                 .map(ZoneJsonParser::parse)
                 .forEach(zones::put);
         JSONObject jsonObject = new JSONObject()
-                .put(AttributeKey.CommonKey.PAGE,page)
-                .put(AttributeKey.CommonKey.PAGE_MAX,zoneService.checkMaxPage(regex,pagesize))
-                .put(AttributeKey.Zone.LIST_OF_ZONES,zones);
+                .put(AttributeKey.CommonKey.PAGE, page)
+                .put(AttributeKey.CommonKey.PAGE_MAX, zoneService.checkMaxPage(regex, pagesize))
+                .put(AttributeKey.Zone.LIST_OF_ZONES, zones);
         return DefaultResponse.ok(jsonObject.toString());
     }
 

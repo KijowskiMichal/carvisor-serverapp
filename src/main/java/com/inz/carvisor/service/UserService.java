@@ -515,7 +515,7 @@ public class UserService {
     }
 
     public String cutSeconds(Time timeString) {
-        return timeString.toString().substring(0,5);
+        return timeString.toString().substring(0, 5);
     }
 
     public Optional<User> getUser(int userId) {

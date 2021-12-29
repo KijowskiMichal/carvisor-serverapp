@@ -2,6 +2,7 @@ package com.inz.carvisor.controller;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.User;

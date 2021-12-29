@@ -62,6 +62,33 @@ public class DemoREST {
         this.calendarDaoJdbc = calendarDaoJdbc;
     }
 
+    public static MockHttpServletRequest mockHttpServletRequest(User user, Car car) {
+        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(AttributeKey.CommonKey.USER, user);
+        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(AttributeKey.CommonKey.CAR, car);
+        return mockHttpServletRequest;
+    }
+
+    public static String getTrackJson() {
+        try {
+            InputStream trackRatesStream = DemoREST.class.getClassLoader().getResourceAsStream("trackjson/trackRatesSample.json");
+            assert trackRatesStream != null;
+            return new String(trackRatesStream.readAllBytes());
+        } catch (IOException ioException) {
+            return "{}";
+        }
+    }
+
+    public static String getStartTrackJson() {
+        try {
+            InputStream trackRatesStream = DemoREST.class.getClassLoader().getResourceAsStream("trackjson/startTrack.json");
+            assert trackRatesStream != null;
+            return new String(trackRatesStream.readAllBytes());
+        } catch (IOException ioException) {
+            return "{}";
+        }
+    }
+
     /**
      * WebMethod which adding example data.
      * <p>
@@ -76,7 +103,7 @@ public class DemoREST {
 
         User user = userDaoJdbc.getAll().get(0);
         Car car = carDaoJdbc.getAll().get(0);
-        addMockedErrors(user,car);
+        addMockedErrors(user, car);
 
         addMockedNotifications(user, car);
         addMockedEvents(car.getId());
@@ -92,15 +119,13 @@ public class DemoREST {
                 .setDisplayed(false)
                 .setCar(car)
                 .setValue(29)
-                .setTimeStamp(System.currentTimeMillis()/1000)
+                .setTimeStamp(System.currentTimeMillis() / 1000)
                 .setLocation("52.4026280;16.889948")
                 .setUser(user)
                 .build();
         notificationDaoJdbc.save(build);
         return DefaultResponse.OK;
     }
-
-
 
     @RequestMapping(value = "/getPdf", method = RequestMethod.GET)
     public ResponseEntity getPdf() {
@@ -134,15 +159,8 @@ public class DemoREST {
 
         trackREST.startTrack(httpServletRequestSecond, new HttpEntity<>(startTrackString));
         trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
-        trackREST.endOfTrack(httpServletRequestSecond,null);
+        trackREST.endOfTrack(httpServletRequestSecond, null);
         return DefaultResponse.OK;
-    }
-
-    public static MockHttpServletRequest mockHttpServletRequest(User user, Car car) {
-        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
-        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(AttributeKey.CommonKey.USER, user);
-        Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(AttributeKey.CommonKey.CAR, car);
-        return mockHttpServletRequest;
     }
 
     private Car mockCarFromDatabase() {
@@ -280,33 +298,13 @@ public class DemoREST {
         }
     }
 
-    public static String getTrackJson() {
-        try {
-            InputStream trackRatesStream = DemoREST.class.getClassLoader().getResourceAsStream("trackjson/trackRatesSample.json");
-            assert trackRatesStream != null;
-            return new String(trackRatesStream.readAllBytes());
-        } catch (IOException ioException) {
-            return "{}";
-        }
-    }
-
-    public static String getStartTrackJson() {
-        try {
-            InputStream trackRatesStream = DemoREST.class.getClassLoader().getResourceAsStream("trackjson/startTrack.json");
-            assert trackRatesStream != null;
-            return new String(trackRatesStream.readAllBytes());
-        } catch (IOException ioException) {
-            return "{}";
-        }
-    }
-
     private void addMockedEvents(long deviceId) {
         List.of(
-                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
-                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
-                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
-                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build(),
-                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp()+3000).setDeviceId(deviceId).setRemind(true).build()
+                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp() + 3000).setDeviceId(deviceId).setRemind(true).build(),
+                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp() + 3000).setDeviceId(deviceId).setRemind(true).build(),
+                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp() + 3000).setDeviceId(deviceId).setRemind(true).build(),
+                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp() + 3000).setDeviceId(deviceId).setRemind(true).build(),
+                new EventBuilder().setTitle("Event").setDraggable(true).setType(EventType.SERVICE.getType()).setDescription("Serwis Pojazdu").setStartTimestamp(getThreeDaysBeforeTimeStamp()).setEndTimestamp(getThreeDaysBeforeTimeStamp() + 3000).setDeviceId(deviceId).setRemind(true).build()
         ).forEach(calendarDaoJdbc::save);
     }
 

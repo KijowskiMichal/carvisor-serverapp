@@ -23,7 +23,7 @@ public class TrackReportGenerator implements ReportGenerator {
     private final TrackDaoJdbc trackDaoJdbc;
 
     @Autowired
-    public TrackReportGenerator(UserDaoJdbc userDaoJdbc,TrackDaoJdbc trackDaoJdbc) {
+    public TrackReportGenerator(UserDaoJdbc userDaoJdbc, TrackDaoJdbc trackDaoJdbc) {
         this.userDaoJdbc = userDaoJdbc;
         this.trackDaoJdbc = trackDaoJdbc;
     }
@@ -40,12 +40,13 @@ public class TrackReportGenerator implements ReportGenerator {
 
     @Override
     public void generate(Document document, Report report) throws DocumentException {
-        ReportGeneratorHelper.generateHeader(this,report,document);
+        ReportGeneratorHelper.generateHeader(this, report, document);
         List<User> userList = userDaoJdbc.get(report.getUserIdList());
         userList.forEach(user -> {
             try {
-                generateUserSegment(user,document,report);
-            } catch (DocumentException ignore) {}
+                generateUserSegment(user, document, report);
+            } catch (DocumentException ignore) {
+            }
         });
     }
 
@@ -53,8 +54,8 @@ public class TrackReportGenerator implements ReportGenerator {
         List<Track> userTracks = trackDaoJdbc.getUserTracks(user.getId());
         List<String> userTracksSummary = getUserTracksSummary(userTracks, document, report);
         List<String> userSummary = getUserSummary(userTracks, document, report);
-        ReportGeneratorHelper.generateList(document,user.getNameAndSurname(),userSummary);
-        ReportGeneratorHelper.generateList(document,"Trasy " + user.getName(),userTracksSummary);
+        ReportGeneratorHelper.generateList(document, user.getNameAndSurname(), userSummary);
+        ReportGeneratorHelper.generateList(document, "Trasy " + user.getName(), userTracksSummary);
         ReportGeneratorHelper.generateEnter(document);
     }
 
@@ -73,7 +74,7 @@ public class TrackReportGenerator implements ReportGenerator {
         return ReportGeneratorHelper.getNiceDistance(sum);
     }
 
-    private List<String> getUserTracksSummary(List<Track> userTracks,Document document, Report report) {
+    private List<String> getUserTracksSummary(List<Track> userTracks, Document document, Report report) {
         return userTracks
                 .stream()
                 .map(this::generateTrackString)
@@ -81,9 +82,9 @@ public class TrackReportGenerator implements ReportGenerator {
     }
 
     private String generateTrackString(Track track) {
-        return ReportGeneratorHelper.getNiceDate(track.getStartTrackTimeStamp(),track.getEndTrackTimeStamp()) +
+        return ReportGeneratorHelper.getNiceDate(track.getStartTrackTimeStamp(), track.getEndTrackTimeStamp()) +
                 " | Z " +
-                ReportGeneratorHelper.getNiceLocation(track.getStartPosition(),track.getEndPosition()) +
+                ReportGeneratorHelper.getNiceLocation(track.getStartPosition(), track.getEndPosition()) +
                 " | Łączny przejechany dystans: " +
                 ReportGeneratorHelper.getNiceDistance(track.getDistanceFromStart());
     }

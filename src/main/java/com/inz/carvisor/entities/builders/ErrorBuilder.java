@@ -10,11 +10,11 @@ public class ErrorBuilder {
     private Car car;
     private String type = "";
     private String value = "";
-    private long timestamp = System.currentTimeMillis()/1000;
+    private long timestamp = System.currentTimeMillis() / 1000;
     private String location = "";
     private String userName = "";
     private String deviceLicensePlate = "";
-    private long date = System.currentTimeMillis()/1000;;
+    private long date = System.currentTimeMillis() / 1000;
 
     public ErrorBuilder setUser(User user) {
         this.user = user;

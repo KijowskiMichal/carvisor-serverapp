@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -38,14 +37,13 @@ public class OffenceDaoJdbc extends HibernateDaoJdbc<Offence> {
     public List<Offence> get(List<Track> trackList) {
         return trackList.stream()
                 .map(Track::getId)
-                .map(this::getOffence)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .map(this::getTrackOffences)
+                .flatMap(List::stream)
                 .collect(Collectors.toList());
     }
 
-    public Optional<Offence> getOffence(int trackId) {
-        return this.getObject(createQuery(trackId));
+    public List<Offence> getTrackOffences(int trackId) {
+        return this.getList(createQuery(trackId));
     }
 
     public String createQuery(int trackId) {

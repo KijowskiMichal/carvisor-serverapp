@@ -77,13 +77,9 @@ class TrackServiceTest {
         Car carSecond = mockCarFromDatabase();
         HttpServletRequest httpServletRequestSecond = RequestBuilder.mockHttpServletRequest(userSecond, carSecond);
         long start = System.currentTimeMillis();
-        System.out.println("startTrack() = " + (System.currentTimeMillis() - start));
         trackREST.startTrack(httpServletRequestSecond, new HttpEntity<>(startTrackString));
-        System.out.println("updateTrackData() =" + (System.currentTimeMillis() - start));
         trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
-        System.out.println("endOfTrack() =" + (System.currentTimeMillis() - start));
         trackREST.endOfTrack(httpServletRequestSecond,null);
-
 
         ResponseEntity<String> list = trackREST.list(RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
                 null,

@@ -31,8 +31,8 @@ public class EventJsonParser {
 
     public static JSONObject parse(Event event) {
         return new JSONObject()
-                .put(AttributeKey.Calendar.ID,event.getId())
-                .put(AttributeKey.Calendar.COLOR,event.getColor())
+                .put(AttributeKey.Calendar.ID, event.getId())
+                .put(AttributeKey.Calendar.COLOR, event.getColor())
                 .put(AttributeKey.Calendar.START_TIMESTAMP, event.getStartTimestamp())
                 .put(AttributeKey.Calendar.END_TIMESTAMP, event.getEndTimestamp())
                 .put(AttributeKey.Calendar.TITLE, event.getTitle())

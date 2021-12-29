@@ -22,6 +22,7 @@ public class DefReportGenerator implements ReportGenerator {
     public void generate(Document document, Report report) {
         try {
             document.add(new Paragraph("SOMETHING WENT WRONG"));
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
     }
 }

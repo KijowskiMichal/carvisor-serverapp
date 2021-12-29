@@ -37,7 +37,7 @@ public class ReportController {
 
     @RequestMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public ResponseEntity<String> add(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return DefaultResponse.UNAUTHORIZED;
         }
         JSONObject jsonObject = new JSONObject(httpEntity.getBody());
@@ -50,7 +50,7 @@ public class ReportController {
     @RequestMapping(value = "/remove/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
     public ResponseEntity<String> remove(HttpServletRequest request, HttpEntity<String> httpEntity,
                                          @PathVariable("id") int id) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return DefaultResponse.UNAUTHORIZED;
         }
         return reportService.remove(id)
@@ -58,9 +58,9 @@ public class ReportController {
                 .orElse(DefaultResponse.BAD_REQUEST);
     }
 
-    @RequestMapping(value = "/getPdf/{id}",method = RequestMethod.GET)
+    @RequestMapping(value = "/getPdf/{id}", method = RequestMethod.GET)
     public ResponseEntity<byte[]> get(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int reportId) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return DefaultResponse.unauthorizedBytes();
         }
         return reportService.get(reportId)
@@ -73,15 +73,15 @@ public class ReportController {
     public ResponseEntity<String> list(HttpServletRequest request, HttpEntity<String> httpEntity,
                                        @PathVariable("page") int page, @PathVariable("pagesize") int pageSize,
                                        @PathVariable("regex") String regex) {
-        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR,request)) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return DefaultResponse.UNAUTHORIZED;
         }
         List<Report> list = reportService.getList(page, pageSize, regex);
         JSONArray jsonArray = ReportJsonParser.parse(list);
         JSONObject jsonResponse = new JSONObject()
-                .put(AttributeKey.CommonKey.PAGE,page)
-                .put(AttributeKey.CommonKey.PAGE_MAX,reportService.getMaxPage(pageSize,regex))
-                .put(AttributeKey.Report.LIST_OF_REPORTS,jsonArray);
+                .put(AttributeKey.CommonKey.PAGE, page)
+                .put(AttributeKey.CommonKey.PAGE_MAX, reportService.getMaxPage(pageSize, regex))
+                .put(AttributeKey.Report.LIST_OF_REPORTS, jsonArray);
         return DefaultResponse.ok(jsonResponse.toString());
     }
 }

@@ -5,8 +5,6 @@ import com.inz.carvisor.service.report.strategy.ReportGenerator;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
 import org.json.JSONObject;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -27,8 +25,8 @@ public class ReportGeneratorHelper {
     private static final String DIVIDER = "------------------------------------\n";
     private static final String EMPTY_STRING = "\n";
     private static final String LIST_POINTER = "   \n";
-    private static final Paragraph DIVIDER_PARAGRAPH = new Paragraph(DIVIDER,TITLE_FONT);
-    private static final Paragraph LIST_ELEMENT_SEPARATOR_PARAGRAPH = new Paragraph(EMPTY_STRING,DATE_FONT);
+    private static final Paragraph DIVIDER_PARAGRAPH = new Paragraph(DIVIDER, TITLE_FONT);
+    private static final Paragraph LIST_ELEMENT_SEPARATOR_PARAGRAPH = new Paragraph(EMPTY_STRING, DATE_FONT);
 
     public static void generateHeader(ReportGenerator reportGenerator, Report report, Document document) throws DocumentException {
         String title = reportGenerator.getTitle() + "\n";
@@ -42,17 +40,19 @@ public class ReportGeneratorHelper {
         com.itextpdf.text.List list = new com.itextpdf.text.List();
         list.setListSymbol(LIST_POINTER);
         Chunk chunkListHeader = new Chunk(listHeader);
-        componentList.stream().map(string -> new ListItem(string,LIST_ITEM_FONT)).forEach(list::add);
+        componentList.stream().map(string -> new ListItem(string, LIST_ITEM_FONT)).forEach(list::add);
         try {
             document.add(chunkListHeader);
             document.add(list);
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
     }
 
     public static void generateEnter(Document document) {
         try {
             document.add(LIST_ELEMENT_SEPARATOR_PARAGRAPH);
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
     }
 
     public static String getDate(Report report) {
@@ -60,11 +60,11 @@ public class ReportGeneratorHelper {
     }
 
     public static String getNiceDate(long timestamp) {
-        return DATE_TIME_FORMAT.format(new Date(timestamp*1000));
+        return DATE_TIME_FORMAT.format(new Date(timestamp * 1000));
     }
 
     public static String getNiceDate(long from, long to) {
-        return DATE_TIME_FORMAT.format(new Date(from*1000)) + " - " + DATE_TIME_FORMAT.format(new Date(from*1000));
+        return DATE_TIME_FORMAT.format(new Date(from * 1000)) + " - " + DATE_TIME_FORMAT.format(new Date(from * 1000));
     }
 
     public static String getNiceLocation(String from, String to) {
@@ -74,7 +74,7 @@ public class ReportGeneratorHelper {
     public static String getNiceLocation(String location) {
         String[] fromAddress = location.split(";");
         if (fromAddress.length != 2) return "";
-        return reverseGeocoding(fromAddress[0],fromAddress[1]);
+        return reverseGeocoding(fromAddress[0], fromAddress[1]);
     }
 
     public static String getNiceDistance(long meters) {

@@ -19,17 +19,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class SafetyReportGenerator implements ReportGenerator{
+public class SafetyReportGenerator implements ReportGenerator {
 
+    private static final DecimalFormat df = new DecimalFormat("0.0");
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
     private final UserDaoJdbc userDaoJdbc;
     private final TrackDaoJdbc trackDaoJdbc;
     private final OffenceDaoJdbc offenceDaoJdbc;
 
-    private static final DecimalFormat df = new DecimalFormat("0.0");
-    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-
     @Autowired
-    public SafetyReportGenerator(UserDaoJdbc userDaoJdbc,TrackDaoJdbc trackDaoJdbc, OffenceDaoJdbc offenceDaoJdbc) {
+    public SafetyReportGenerator(UserDaoJdbc userDaoJdbc, TrackDaoJdbc trackDaoJdbc, OffenceDaoJdbc offenceDaoJdbc) {
         this.userDaoJdbc = userDaoJdbc;
         this.trackDaoJdbc = trackDaoJdbc;
         this.offenceDaoJdbc = offenceDaoJdbc;
@@ -47,18 +46,19 @@ public class SafetyReportGenerator implements ReportGenerator{
 
     @Override
     public void generate(Document document, Report report) throws DocumentException {
-        ReportGeneratorHelper.generateHeader(this,report,document);
+        ReportGeneratorHelper.generateHeader(this, report, document);
         java.util.List<User> userList = userDaoJdbc.get(report.getUserIdList());
         userList.forEach(user -> {
             try {
-                generate(user,document,report);
-            } catch (DocumentException ignore) {}
+                generate(user, document, report);
+            } catch (DocumentException ignore) {
+            }
         });
     }
 
     private void generate(User user, Document document, Report report) throws DocumentException {
         List<String> userSummary = getUserSummary(user, report);
-        ReportGeneratorHelper.generateList(document,user.getNameAndSurname(),userSummary);
+        ReportGeneratorHelper.generateList(document, user.getNameAndSurname(), userSummary);
         ReportGeneratorHelper.generateEnter(document);
     }
 

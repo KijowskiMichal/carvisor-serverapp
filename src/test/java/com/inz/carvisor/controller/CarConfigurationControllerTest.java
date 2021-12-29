@@ -35,6 +35,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.HashMap;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @RunWith(SpringRunner.class)
 @WebMvcTest(CarConfigurationController.class)
 @ContextConfiguration(classes = {Initializer.class})
@@ -92,7 +94,7 @@ class CarConfigurationControllerTest {
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/carConfiguration/getConfiguration/" + car.getId() + "/"))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 401);
+            assertTrue(result.getResponse().getStatus() == 401);
 
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
             sessionattr.put("user", user);
@@ -104,10 +106,10 @@ class CarConfigurationControllerTest {
                             .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
+            assertTrue(result.getResponse().getStatus() == 200);
             JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            Assert.assertTrue(jsonObject.getInt("locationInterval") == -1);
-            Assert.assertTrue(jsonObject.getInt("sendInterval") == -1);
+            assertTrue(jsonObject.getInt("locationInterval") == -1);
+            assertTrue(jsonObject.getInt("sendInterval") == -1);
 
             //with changed data
 
@@ -123,10 +125,10 @@ class CarConfigurationControllerTest {
                             .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
+            assertTrue(result.getResponse().getStatus() == 200);
             jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            Assert.assertTrue(jsonObject.getInt("locationInterval") == 32);
-            Assert.assertTrue(jsonObject.getInt("sendInterval") == 34);
+            assertTrue(jsonObject.getInt("locationInterval") == 32);
+            assertTrue(jsonObject.getInt("sendInterval") == 34);
 
             session.delete(car);
 
@@ -176,7 +178,7 @@ class CarConfigurationControllerTest {
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/carConfiguration/get/"))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 401);
+            assertTrue(result.getResponse().getStatus() == 401);
 
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
             sessionattr.put("car", car);
@@ -188,10 +190,10 @@ class CarConfigurationControllerTest {
                             .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
+            assertTrue(result.getResponse().getStatus() == 200);
             JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            Assert.assertTrue(jsonObject.getInt("locationInterval") == locationInterval.getValue());
-            Assert.assertTrue(jsonObject.getInt("sendInterval") == sendInterval.getValue());
+            assertTrue(jsonObject.getInt("locationInterval") == locationInterval.getValue());
+            assertTrue(jsonObject.getInt("sendInterval") == sendInterval.getValue());
 
             //with changed data
 
@@ -207,10 +209,10 @@ class CarConfigurationControllerTest {
                             .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
+            assertTrue(result.getResponse().getStatus() == 200);
             jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            Assert.assertTrue(jsonObject.getInt("locationInterval") == 32);
-            Assert.assertTrue(jsonObject.getInt("sendInterval") == 34);
+            assertTrue(jsonObject.getInt("locationInterval") == 32);
+            assertTrue(jsonObject.getInt("sendInterval") == 34);
 
             session.delete(car);
 
@@ -254,7 +256,7 @@ class CarConfigurationControllerTest {
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/carConfiguration/changeConfiguration/" + car.getId()))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 401);
+            assertTrue(result.getResponse().getStatus() == 401);
 
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
             sessionattr.put("user", user);
@@ -276,10 +278,10 @@ class CarConfigurationControllerTest {
             Car carz = (Car) queryInner.getSingleResult();
 
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
+            assertTrue(result.getResponse().getStatus() == 200);
 
-            Assert.assertTrue(carz.getLocationInterval() == 324);
-            Assert.assertTrue(carz.getSendInterval() == 34342);
+            assertTrue(carz.getLocationInterval() == 324);
+            assertTrue(carz.getSendInterval() == 34342);
 
             //finishing
             tx.commit();
@@ -328,7 +330,7 @@ class CarConfigurationControllerTest {
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/carConfiguration/getGlobalConfiguration/"))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 401);
+            assertTrue(result.getResponse().getStatus() == 401);
 
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
             sessionattr.put("user", user);
@@ -340,11 +342,11 @@ class CarConfigurationControllerTest {
                             .sessionAttrs(sessionattr))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
+            assertTrue(result.getResponse().getStatus() == 200);
             JSONObject jsonObject = new JSONObject(result.getResponse().getContentAsString());
-            Assert.assertTrue(jsonObject.getInt("getLocationInterval") == locationInterval.getValue());
-            Assert.assertTrue(jsonObject.getInt("sendInterval") == sendInterval.getValue());
-            Assert.assertTrue(jsonObject.getInt("historyTimeout") == historyTimeout.getValue());
+            assertTrue(jsonObject.getInt("getLocationInterval") == locationInterval.getValue());
+            assertTrue(jsonObject.getInt("sendInterval") == sendInterval.getValue());
+            assertTrue(jsonObject.getInt("historyTimeout") == historyTimeout.getValue());
 
             //finishing
 
@@ -393,7 +395,7 @@ class CarConfigurationControllerTest {
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/carConfiguration/setGlobalConfiguration/"))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 401);
+            assertTrue(result.getResponse().getStatus() == 401);
 
             HashMap<String, Object> sessionattr = new HashMap<String, Object>();
             sessionattr.put("user", user);
@@ -408,7 +410,7 @@ class CarConfigurationControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
 
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
+            assertTrue(result.getResponse().getStatus() == 200);
 
             tx.commit();
             tx = session.beginTransaction();
@@ -423,9 +425,9 @@ class CarConfigurationControllerTest {
             queryInner = session.createQuery(getQueryInner);
             Setting historyTimeout = (Setting) queryInner.getSingleResult();
 
-            Assert.assertTrue(sendInterval.getValue() == 34342);
-            Assert.assertTrue(locationInterval.getValue() == 324);
-            Assert.assertTrue(historyTimeout.getValue() == 343);
+            assertTrue(sendInterval.getValue() == 34342);
+            assertTrue(locationInterval.getValue() == 324);
+            assertTrue(historyTimeout.getValue() == 343);
 
             session.close();
         } catch (HibernateException e) {

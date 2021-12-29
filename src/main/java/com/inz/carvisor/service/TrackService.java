@@ -1,6 +1,5 @@
 package com.inz.carvisor.service;
 
-import com.google.gson.JsonParser;
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.dao.*;
@@ -8,7 +7,6 @@ import com.inz.carvisor.entities.builders.NotificationBuilder;
 import com.inz.carvisor.entities.builders.TrackBuilder;
 import com.inz.carvisor.entities.enums.NotificationType;
 import com.inz.carvisor.entities.enums.ObdCommandTable;
-import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.*;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.service.offence.CrossingTheZoneOffence;
@@ -344,7 +342,7 @@ public class TrackService {
                     track.setActive(false);
                     track.setEndTrackTimeStamp(time - 8);
                     currentUser.addTrackToEcoPointScore(track);
-                    track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track));
+                    track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track, offenceDaoJdbc.getTrackOffences(track.getId())));
                     SafetyPointsCalculator.validateSafetyPointsScore(currentUser, track);
                     session.update(track);
                 }
@@ -383,7 +381,7 @@ public class TrackService {
         track.setActive(false);
         track.setEndTrackTimeStamp(time - 8);
         currentUser.addTrackToEcoPointScore(track);
-        track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track));
+        track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track, offenceDaoJdbc.getTrackOffences(track.getId())));
         SafetyPointsCalculator.validateSafetyPointsScore(currentUser, track);
     }
 
@@ -603,7 +601,7 @@ public class TrackService {
         track.addMetersToDistance(getTotalDistance(listOfTrackRates));
         track.setEndPosition(lastTrackRate.getLocation());
         track.setEcoPointsScore(EcoPointsCalculator.calculateEcoPoints(track));
-        track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track));
+        track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track, offenceDaoJdbc.getTrackOffences(track.getId())));
         trackDaoJdbc.update(track);
     }
 

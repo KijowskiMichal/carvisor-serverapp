@@ -12,27 +12,22 @@ import com.itextpdf.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
-public class EcoReportGenerator implements ReportGenerator{
+public class EcoReportGenerator implements ReportGenerator {
 
     private static final Double DEF_VALUE = 0.0;
-
+    private static final DecimalFormat df = new DecimalFormat("0.0");
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
     private final UserDaoJdbc userDaoJdbc;
     private final TrackDaoJdbc trackDaoJdbc;
 
-    private static final DecimalFormat df = new DecimalFormat("0.0");
-    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
-
     @Autowired
-    public EcoReportGenerator(UserDaoJdbc userDaoJdbc,TrackDaoJdbc trackDaoJdbc) {
+    public EcoReportGenerator(UserDaoJdbc userDaoJdbc, TrackDaoJdbc trackDaoJdbc) {
         this.userDaoJdbc = userDaoJdbc;
         this.trackDaoJdbc = trackDaoJdbc;
     }
@@ -50,19 +45,20 @@ public class EcoReportGenerator implements ReportGenerator{
 
     @Override
     public void generate(Document document, Report report) throws DocumentException {
-        ReportGeneratorHelper.generateHeader(this,report,document);
+        ReportGeneratorHelper.generateHeader(this, report, document);
 
         List<User> userList = userDaoJdbc.get(report.getUserIdList());
         userList.forEach(user -> {
             try {
-                generateUserSegment(user,document,report);
-            } catch (DocumentException ignore) {}
+                generateUserSegment(user, document, report);
+            } catch (DocumentException ignore) {
+            }
         });
     }
 
     private void generateUserSegment(User user, Document document, Report report) throws DocumentException {
         List<String> userSummary = getUserSummary(user, report);
-        ReportGeneratorHelper.generateList(document,user.getNameAndSurname(),userSummary);
+        ReportGeneratorHelper.generateList(document, user.getNameAndSurname(), userSummary);
         ReportGeneratorHelper.generateEnter(document);
     }
 

@@ -44,6 +44,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 @RunWith(SpringRunner.class)
 @WebMvcTest(TrackREST.class)
 @ContextConfiguration(classes = {Initializer.class})
@@ -102,14 +104,13 @@ class TrackRESTTest {
         User user = mockUserFromDatabase();
         Car car = mockCarFromDatabase();
         HttpServletRequest httpServletRequestSecond = RequestBuilder.mockHttpServletRequest(user, car);
-        String trackRatesString = FileDataGetter.getTrackJson();
+        String trackRatesString = FileDataGetter.getSmallTrackRatesJson();
         String startTrackString = FileDataGetter.getStartTrackJson();
         trackREST.startTrack(httpServletRequestSecond, new HttpEntity<>(startTrackString));
         trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
         trackREST.endOfTrack(httpServletRequestSecond,null);
         ResponseEntity trackDataForDevice = trackREST.getTrackDataForDevice(RequestBuilder.mockHttpServletRequest(user),
                 null, car.getId(), 1623879238);
-        System.out.println("");
     }
 
     @Test
@@ -154,8 +155,8 @@ class TrackRESTTest {
             tx = session.beginTransaction();
 
             track = (Track) session.createQuery("SELECT t from Track t WHERE t.id = " + track.getId()).getSingleResult();
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertTrue(track.getTimestamp() != 43675465);
+            assertTrue(result.getResponse().getStatus() == 200);
+            assertTrue(track.getTimestamp() != 43675465);
             //finishing
             tx.commit();
             session.close();
@@ -206,8 +207,8 @@ class TrackRESTTest {
             tx = session.beginTransaction();
 
             track = (Track) session.createQuery("SELECT t from Track t WHERE t.id = " + track.getId()).getSingleResult();
-            Assert.assertTrue(result.getResponse().getStatus() == 200);
-            Assert.assertTrue(!track.getActive());
+            assertTrue(result.getResponse().getStatus() == 200);
+            assertTrue(!track.getActive());
             //finishing
             tx.commit();
             session.close();
