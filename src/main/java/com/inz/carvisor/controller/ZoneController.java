@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -52,6 +53,29 @@ public class ZoneController {
         Optional<Zone> zone = zoneService.updateZone(id, new JSONObject(httpEntity.getBody()));
         if (zone.isEmpty()) return DefaultResponse.BAD_REQUEST;
         else return DefaultResponse.OK;
+    }
+
+    @RequestMapping(value = "/assignZones/{userId}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    public ResponseEntity<String> assignZones(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("userId") int userId) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
+            return DefaultResponse.UNAUTHORIZED;
+        }
+
+        Optional<User> user = userDaoJdbc.get(userId);
+        if (user.isEmpty()) return DefaultResponse.BAD_REQUEST;
+
+        try {
+            List<Integer> zonesIds = new JSONObject(httpEntity.getBody())
+                    .getJSONArray(AttributeKey.Zone.ZONES_IDS)
+                    .toList()
+                    .stream()
+                    .map(number -> (Integer) number)
+                    .collect(Collectors.toList());
+            zoneService.assignZonesToUser(zonesIds,user.get());
+            return DefaultResponse.OK;
+        } catch (Exception e) {
+            return DefaultResponse.BAD_REQUEST;
+        }
     }
 
     @RequestMapping(value = "/list/{regex}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)

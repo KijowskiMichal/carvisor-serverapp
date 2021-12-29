@@ -8,8 +8,10 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ZoneService {
@@ -31,6 +33,17 @@ public class ZoneService {
         zone.setPointY(newZoneValues.getString(AttributeKey.Zone.POINT_Y));
         zone.setRadius(newZoneValues.getFloat(AttributeKey.Zone.RADIUS));
         return zoneDaoJdbc.update(zone);
+    }
+
+    public void assignZonesToUser(Collection<Integer> zonesIds, User user) {
+        List<Zone> collect = zonesIds
+                .stream()
+                .map(zoneDaoJdbc::get)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+        collect.forEach(zone -> zone.assignUser(user));
+        collect.forEach(zoneDaoJdbc::update);
     }
 
     public List<Zone> list(String regex) {

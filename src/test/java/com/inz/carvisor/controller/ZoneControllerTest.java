@@ -30,6 +30,7 @@ import java.net.http.HttpRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -65,11 +66,11 @@ class ZoneControllerTest {
 
     @AfterEach
     void cleanupDatabase() {
+        zoneDaoJdbc.getAll().stream().map(Zone::getId).forEach(zoneDaoJdbc::delete);
         trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
         trackRateDaoJdbc.getAll().stream().map(TrackRate::getId).forEach(trackRateDaoJdbc::delete);
         carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
         userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
-        zoneDaoJdbc.getAll().stream().map(Zone::getId).forEach(zoneDaoJdbc::delete);
     }
 
     @Test
@@ -113,6 +114,36 @@ class ZoneControllerTest {
         assertEquals(2,jsonObject.getInt(AttributeKey.CommonKey.PAGE_MAX));
         JSONArray jsonArray = jsonObject.getJSONArray(AttributeKey.Zone.LIST_OF_ZONES);
         assertEquals(2,jsonArray.length());
+    }
+
+    @Test
+    void zonesShouldBeAssigned() {
+        saveMockedZonesToDatabase();
+        saveMockedUsersToDatabase();
+        
+        User user = userDaoJdbc.getAll().get(0);
+        int sizeOfUserZonesBeforeAdding = zoneDaoJdbc.get(user).size();
+        JSONArray jsonArray = new JSONArray();
+        zoneDaoJdbc.getAll()
+                .stream()
+                .map(Zone::getId)
+                .limit(3)
+                .forEach(jsonArray::put);
+        
+        JSONObject jsonObject = new JSONObject()
+                .put(AttributeKey.Zone.ZONES_IDS,jsonArray);
+        
+        zoneController.assignZones(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR),
+                new HttpEntity<>(jsonObject.toString()),
+                user.getId());
+
+        Optional<User> userWithNewZones = userDaoJdbc.get(user.getId());
+        assertTrue(userWithNewZones.isPresent());
+        user = userWithNewZones.get();
+        int sizeOfUserZonesAfterAddign = zoneDaoJdbc.get(user).size();
+        assertEquals(0,sizeOfUserZonesBeforeAdding);
+        assertEquals(3,sizeOfUserZonesAfterAddign);
     }
 
     @Test

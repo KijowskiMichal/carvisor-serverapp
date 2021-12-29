@@ -10,7 +10,7 @@ public class Zone {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<User> userList;
 
     private String name;
@@ -75,5 +75,9 @@ public class Zone {
 
     public void setRadius(float radius) {
         this.radius = radius;
+    }
+
+    public void assignUser(User user) {
+        if (!userList.contains(user)) userList.add(user);
     }
 }

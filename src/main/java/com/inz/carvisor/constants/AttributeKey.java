@@ -108,6 +108,7 @@ public class AttributeKey {
         public static final String POINT_Y = "pointY";
         public static final String RADIUS = "radius";
         public static final String LIST_OF_ZONES = "listOfZones";
+        public static final String ZONES_IDS = "zonesIds";
     }
 
     public static class Report {
