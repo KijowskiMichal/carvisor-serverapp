@@ -147,6 +147,20 @@ class ZoneControllerTest {
     }
 
     @Test
+    void getZoneById() {
+        saveMockedZonesToDatabase();
+        Zone zone = zoneDaoJdbc.getAll().get(1);
+
+        ResponseEntity<String> response = zoneController.getZone(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR),
+                null,
+                zone.getId());
+        assertEquals(200,response.getStatusCodeValue());
+        JSONObject parse = ZoneJsonParser.parse(zone);
+        assertEquals(parse.toString(),response.getBody());
+    }
+
+    @Test
     void add() {
         zoneController.add(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR),mockHttpEntityWithZone());
         List<Zone> allZones = zoneDaoJdbc.getAll();

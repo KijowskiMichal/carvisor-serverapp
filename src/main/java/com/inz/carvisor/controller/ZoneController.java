@@ -45,6 +45,18 @@ public class ZoneController {
         this.zoneService = zoneService;
     }
 
+    @RequestMapping(value = "/getZone/{id}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity<String> getZone(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int zoneId) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
+            return DefaultResponse.UNAUTHORIZED;
+        }
+        Optional<Zone> zone = zoneService.getZone(zoneId);
+        if (zone.isEmpty()) return DefaultResponse.BAD_REQUEST;
+
+        JSONObject parse = ZoneJsonParser.parse(zone.get());
+        return DefaultResponse.ok(parse.toString());
+    }
+
     @RequestMapping(value = "/updateZone/{id}/", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public ResponseEntity<String> updateZone(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int id) {
         if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
