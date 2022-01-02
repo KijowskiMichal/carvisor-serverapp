@@ -2,6 +2,8 @@ package com.inz.carvisor.entities.builders;
 
 import com.inz.carvisor.entities.model.Car;
 
+import java.sql.Time;
+
 public class CarBuilder {
 
     private String licensePlate = null;
@@ -16,6 +18,9 @@ public class CarBuilder {
     private Double fuelNorm = 5.0;
     private Integer sendInterval = null;
     private Integer locationInterval = null;
+
+    private Time workingHoursStart = Time.valueOf("00:00:00");
+    private Time workingHoursEnd = Time.valueOf("23:59:59");
 
     public CarBuilder setLicensePlate(String licensePlate) {
         this.licensePlate = licensePlate;
@@ -77,6 +82,16 @@ public class CarBuilder {
         return this;
     }
 
+    public CarBuilder setWorkingHoursStart(Time workingHoursStart) {
+        this.workingHoursStart = workingHoursStart;
+        return this;
+    }
+
+    public CarBuilder setWorkingHoursEnd(Time workingHoursEnd) {
+        this.workingHoursEnd = workingHoursEnd;
+        return this;
+    }
+
     public Car build() {
         Car car = new Car();
         car.setLicensePlate(this.licensePlate);
@@ -91,6 +106,9 @@ public class CarBuilder {
         car.setProductionYear(this.productionDate);
         car.setSendInterval(this.sendInterval);
         car.setImage(this.image);
+
+        car.setWorkingHoursStart(workingHoursStart);
+        car.setWorkingHoursEnd(workingHoursEnd);
         return car;
     }
 }

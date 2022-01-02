@@ -1,5 +1,6 @@
 package com.inz.carvisor.controller;
 
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.SettingDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
@@ -79,7 +80,6 @@ class DevicesRESTTest {
     }
 
     @Test
-    @Ignore
     void list() {
         List<Car> devices = new ArrayList<>();
         populate(devices);
@@ -92,7 +92,6 @@ class DevicesRESTTest {
     }
 
     @Test
-    @Ignore
     void getDeviceData() {
         List<Car> devices = new ArrayList<>();
         populate(devices);
@@ -132,8 +131,14 @@ class DevicesRESTTest {
         populate(devices);
 
         //auth
-        User user = new UserBuilder().setNick("Ala").setPassword("123").setUserPrivileges(UserPrivileges.ADMINISTRATOR).setPhoneNumber(0).setNfcTag("AB").build();
-        HashMap<String, Object> sessionattr = new HashMap<String, Object>();
+        User user = new UserBuilder()
+                .setNick("Ala")
+                .setPassword("123")
+                .setUserPrivileges(UserPrivileges.ADMINISTRATOR)
+                .setPhoneNumber(0)
+                .setNfcTag("AB")
+                .build();
+        HashMap<String, Object> sessionattr = new HashMap<>();
         sessionattr.put("user", user);
 
         Session session = null;
@@ -148,18 +153,21 @@ class DevicesRESTTest {
             long carId = car.getId();
             String licensePlate = car.getLicensePlate();
 
+            JSONObject jsonObject = new JSONObject()
+                    .put("licensePlate","string")
+                    .put("brand","string")
+                    .put("model","string")
+                    .put("engine","string")
+                    .put("fuel","string")
+                    .put("tank","123")
+                    .put("yearOfProduction","2013")
+                    .put("norm","123")
+                    .put(AttributeKey.User.TIME_FROM,"15:10")
+                    .put(AttributeKey.User.TIME_TO,"18:40");
+
             MvcResult result = mockMvc.perform(MockMvcRequestBuilders.post("/devices/changeDeviceData/" + carId + "/")
                             .sessionAttrs(sessionattr)
-                            .content("{\n" +
-                                    "  \"licensePlate\": \"string\",\n" +
-                                    "  \"brand\": \"string\",\n" +
-                                    "  \"model\": \"string\",\n" +
-                                    "  \"engine\": \"string\",\n" +
-                                    "  \"fuel\": \"string\",\n" +
-                                    "  \"tank\": \"123\",\n" +
-                                    "  \"yearOfProduction\": \"2013\",\n" +
-                                    "  \"norm\": \"123\"\n" +
-                                    "}")
+                            .content(jsonObject.toString())
                             .contentType(MediaType.APPLICATION_JSON)
                             .accept(MediaType.APPLICATION_JSON))
                     .andReturn();
@@ -174,10 +182,11 @@ class DevicesRESTTest {
 
             assertNotEquals(licensePlate, newCar.getLicensePlate());
             assertEquals(200, result.getResponse().getStatus());
+            assertEquals("15:10:00",newCar.getWorkingHoursStart().toString());
+            assertEquals("18:40:00",newCar.getWorkingHoursEnd().toString());
             transaction.commit();
             session.close();
         } catch (Exception e) {
-            e.printStackTrace();
             fail();
         }
     }

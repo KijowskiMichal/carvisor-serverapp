@@ -37,11 +37,6 @@ public class TrackREST {
         return trackService.startTrack(request, httpEntity);
     }
 
-    @RequestMapping(value = "/updateTrackDataOLD/", method = RequestMethod.POST)
-    public ResponseEntity updateTrackDataOLD(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        return trackService.updateTrackDataOLD(request, httpEntity);
-    }
-
     @RequestMapping(value = "/updateTrackData/", method = RequestMethod.POST)
     public ResponseEntity updateTrackData(HttpServletRequest request, HttpEntity<String> httpEntity) {
         Car car = (Car) request.getSession().getAttribute("car");

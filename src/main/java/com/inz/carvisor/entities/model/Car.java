@@ -1,6 +1,7 @@
 package com.inz.carvisor.entities.model;
 
 import javax.persistence.*;
+import java.sql.Time;
 
 
 @Entity
@@ -24,6 +25,9 @@ public class Car {
     private Integer productionYear;
     private Integer sendInterval;
     private Integer locationInterval;
+
+    private Time workingHoursStart;
+    private Time workingHoursEnd;
 
     public Car() {
     }
@@ -130,6 +134,22 @@ public class Car {
 
     public void setLocationInterval(Integer locationInterval) {
         this.locationInterval = locationInterval;
+    }
+
+    public Time getWorkingHoursStart() {
+        return workingHoursStart;
+    }
+
+    public void setWorkingHoursStart(Time workingHoursStart) {
+        this.workingHoursStart = workingHoursStart;
+    }
+
+    public Time getWorkingHoursEnd() {
+        return workingHoursEnd;
+    }
+
+    public void setWorkingHoursEnd(Time workingHoursEnd) {
+        this.workingHoursEnd = workingHoursEnd;
     }
 
     @Override

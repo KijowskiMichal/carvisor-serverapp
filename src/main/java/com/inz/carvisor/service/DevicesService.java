@@ -1,5 +1,6 @@
 package com.inz.carvisor.service;
 
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
@@ -11,6 +12,7 @@ import com.inz.carvisor.entities.model.Setting;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
+import com.inz.carvisor.util.TimeStampCalculator;
 import com.inz.carvisor.util.jsonparser.CarJsonParser;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Level;
@@ -29,6 +31,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -270,131 +273,49 @@ public class DevicesService {
      * @param id         the id of the device
      * @return HttpStatus 200, Json String representing device data
      */
-    public ResponseEntity getDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, int id) {
+    public ResponseEntity<String> getDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, int id) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
             logger.info("DevicesRest.getDeviceData cannot send data (session not found)");
             return DefaultResponse.UNAUTHORIZED;
         }
 
-        Session session = null;
-        Transaction tx = null;
-        ResponseEntity responseEntity;
-
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-
-            String getQuery = "SELECT c FROM Car c WHERE c.id like " + id;
-            Query query = session.createQuery(getQuery);
-            Car car = (Car) query.getSingleResult();
-            tx.commit();
-            JSONObject jsonObject = new JSONObject()
-                    .put("image", car.getImage())
-                    .put("licensePlate", car.getLicensePlate())
-                    .put("brand", car.getBrand())
-                    .put("model", car.getModel())
-                    .put("engine", car.getEngine())
-                    .put("fuel", car.getFuelType())
-                    .put("tank", car.getTank())
-                    .put("norm", car.getFuelNorm());
-
-
-            try {
-                jsonObject
-                        .put("timeFrom", "---")
-                        .put("timeTo", "---");
-            } catch (NullPointerException nullPointerException) {
-                jsonObject
-                        .put("timeFrom", "---")
-                        .put("timeTo", "---");
-            }
-            jsonObject.put("yearOfProduction", car.getProductionYear());
-            responseEntity = ResponseEntity.status(HttpStatus.OK).body(jsonObject.toString());
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-            responseEntity = DefaultResponse.BAD_REQUEST;
-        } finally {
-            if (session != null) session.close();
-        }
-        return responseEntity;
+        Optional<Car> carOptional = carDaoJdbc.get(id);
+        if (carOptional.isEmpty()) return DefaultResponse.BAD_REQUEST;
+        else return DefaultResponse.ok(CarJsonParser.parse(carOptional.get()).toString());
     }
 
-    /**
-     * WebMethod which change device data with given body
-     * <p>
-     *
-     * @param request    Object of HttpServletRequest represents our request
-     * @param httpEntity Object of httpEntity
-     * @param carID      id of the device that we want to change
-     * @return HttpStatus 200
-     */
-    public ResponseEntity changeDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, int carID) {
+
+    public ResponseEntity<String> changeDeviceData(HttpServletRequest request, HttpEntity<String> httpEntity, int carID) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
-            logger.info("DevicesRest.changeDeviceData cannot change device data (session not found)");
             return DefaultResponse.UNAUTHORIZED;
         }
 
-        Session session = null;
-        Transaction tx = null;
-        ResponseEntity responseEntity;
+        Optional<Car> carOptional = carDaoJdbc.get(carID);
+        if (carOptional.isEmpty()) return DefaultResponse.BAD_REQUEST;
+        Car car = carOptional.get();
 
+        JSONObject inJSON = new JSONObject(httpEntity.getBody());
         try {
-            JSONObject inJSON = new JSONObject(httpEntity.getBody());
-            String licensePlate;
-            String brand;
-            String model;
-            String engine;
-            String fuelType;
-            int tank;
-            int yearOfProduction;
-            double norm;
+            car.setLicensePlate(inJSON.getString("licensePlate"));
+            car.setBrand(inJSON.getString("brand"));
+            car.setModel(inJSON.getString("model"));
+            car.setEngine(inJSON.getString("engine"));
+            car.setFuelType(inJSON.getString("fuel"));
+            car.setTank(inJSON.getInt("tank"));
+            car.setFuelNorm(inJSON.getDouble("norm"));
+            car.setProductionYear(inJSON.getInt("yearOfProduction"));
             try {
-                licensePlate = inJSON.getString("licensePlate");
-                brand = inJSON.getString("brand");
-                model = inJSON.getString("model");
-                engine = inJSON.getString("engine");
-                fuelType = inJSON.getString("fuel");
-                yearOfProduction = inJSON.getInt("yearOfProduction");
-                tank = Integer.parseInt(inJSON.getString("tank"));
-                norm = Double.parseDouble(inJSON.getString("norm"));
-            } catch (JSONException jsonException) {
-                responseEntity = DefaultResponse.BAD_REQUEST;
-                return responseEntity;
-            }
-
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-
-            String getQuery = "SELECT c FROM Car c WHERE c.id like " + carID;
-            Query query = session.createQuery(getQuery);
-            Car car = (Car) query.getSingleResult();
-            car.setLicensePlate(licensePlate);
-            car.setBrand(brand);
-            car.setModel(model);
-            car.setEngine(engine);
-            car.setFuelType(fuelType);
-            car.setTank(tank);
-            car.setFuelNorm(norm);
-            car.setProductionYear(yearOfProduction);
-            session.update(car);
-            tx.commit();
-            responseEntity = DefaultResponse.OK;
-            logger.log(Level.INFO, "Car data changed (car id=" + carID + ") data changed to " +
-                    "(licensePlate=" + licensePlate +
-                    " brand=" + brand + " model=" + model + " engine=" + engine +
-                    "fuelType=" + fuelType + "tank=" + tank + "norm=" + norm + ")");
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            e.printStackTrace();
-            responseEntity = DefaultResponse.BAD_REQUEST;
-        } finally {
-            if (session != null) session.close();
+                car.setWorkingHoursStart(Time.valueOf(inJSON.getString(AttributeKey.User.TIME_FROM) + ":00"));
+                car.setWorkingHoursEnd(Time.valueOf(inJSON.getString(AttributeKey.User.TIME_TO) + ":00"));
+            } catch (Exception ignore) {}
+        } catch (JSONException jsonException) {
+            return DefaultResponse.BAD_REQUEST;
         }
-
-        return responseEntity;
+        Optional<Car> update = carDaoJdbc.update(car);
+        if (update.isPresent()) return DefaultResponse.OK;
+        else return DefaultResponse.BAD_REQUEST;
     }
 
     /**

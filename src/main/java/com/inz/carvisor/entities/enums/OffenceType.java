@@ -3,7 +3,8 @@ package com.inz.carvisor.entities.enums;
 public enum OffenceType {
 
     SPEEDING(true, "SPEEDING"),
-    LEAVING_THE_ZONE(false, "LEAVING_THE_ZONE");
+    LEAVING_THE_ZONE(false, "LEAVING_THE_ZONE"),
+    OVER_HOURS(false,"OVER_HOURS");
 
     boolean isImportant;
     String type;

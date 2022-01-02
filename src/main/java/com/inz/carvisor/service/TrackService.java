@@ -138,115 +138,6 @@ public class TrackService {
         return responseEntity;
     }
 
-    /**
-     * WebMethods which update track with sending data.
-     * <p>
-     *
-     * @param request Object of HttpServletRequest represents our request.
-     * @return Returns 200.
-     */
-    public ResponseEntity<String> updateTrackDataOLD(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        Session session = null;
-        Transaction tx = null;
-        ResponseEntity<String> responseEntity;
-
-        try {
-            session = hibernateRequests.getSession();
-            tx = session.beginTransaction();
-            String getQuery = "SELECT t FROM Track t WHERE t.isActive = true AND t.car.id = " + ((Car) request.getSession().getAttribute("car")).getId();
-            Query query = session.createQuery(getQuery);
-            Track track = (Track) query.getSingleResult();
-            if (track == null) {
-                responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Track = null");
-            } else {
-                JSONObject jsonPackage = new JSONObject(httpEntity.getBody());
-                long[] longs = jsonPackage.keySet().stream().mapToLong(Long::parseLong).sorted().toArray();
-                TrackRate trackRate = new TrackRateBuilder().build();
-                for (long keyTimestamp : longs) {
-                    JSONObject jsonObject = jsonPackage.getJSONObject(String.valueOf(keyTimestamp));
-
-                    Short rpm = null;
-                    Short speed = null;
-                    Byte throttle = null;
-                    Double latitude = null;
-                    Double longitude = null;
-
-                    JSONObject obd = jsonObject.getJSONObject("obd");
-                    JSONObject gps = jsonObject.getJSONObject("gps_pos");
-
-                    Set<String> obdKeySet = obd.keySet();
-                    for (String s : obdKeySet) {
-                        if (ObdCommandTable.RPM.getDecimalPid().equals(s)) {
-                            rpm = ((Double) obd.get(s)).shortValue();
-                        } else if (ObdCommandTable.SPEED.getDecimalPid().equals(s)) {
-                            speed = ((Double) obd.get(s)).shortValue();
-                        } else if (ObdCommandTable.THROTTLE_POS.getDecimalPid().equals(s)) {
-                            throttle = ((Double) obd.get(s)).byteValue();
-                        }
-                    }
-
-                    Set<String> gpsKeySet = gps.keySet();
-                    for (String s : gpsKeySet) {
-                        if ("latitude".equals(s)) {
-                            latitude = ((Double) gps.get(s)).doubleValue();
-                        } else if ("longitude".equals(s)) {
-                            longitude = ((Double) gps.get(s)).doubleValue();
-                        }
-                    }
-
-                    long distance = 0;
-                    //calculate distance
-                    if (longitude != null && latitude != null) {
-                        String[] trackEndPosition = track.getEndPosition().split(";");
-                        float y1 = Float.parseFloat(trackEndPosition[0]);
-                        float x1 = Float.parseFloat(trackEndPosition[1]);
-                        distance = (long) calculateDistanceBetweenPoints(y1, x1, latitude, longitude);
-                        //start safety points calculated
-                        URL url = new URL("https://route.ls.hereapi.com/routing/7.2/calculateroute.json?jsonAttributes=1&waypoint0=" + latitude + "," + longitude + "&waypoint1=" + latitude + "," + longitude + "&routeattributes=sh%2Clg&legattributes=li&linkattributes=nl%2Cfc&mode=fastest%3Bcar%3Btraffic%3Aenabled&apiKey=EV06iVKQPJMrzRh1CIplbrUc00D-WxwoMDJM2wmZf5M");
-                        String json = "";
-                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                        conn.setRequestMethod("GET");
-                        conn.connect();
-                        Scanner sc = new Scanner(url.openStream());
-                        while (sc.hasNext()) {
-                            json += sc.nextLine();
-                        }
-                        sc.close();
-                    }
-                    track.addMetersToDistance(distance);
-                    track.setEndPosition(latitude + ";" + longitude);
-                    trackRate = new TrackRateBuilder().setTrackId(track.getId()).setSpeed(speed).setThrottle(throttle).setLatitude(latitude).setLongitude(longitude).setRpm(rpm).setDistance(distance).setTimestamp(keyTimestamp).build();
-                    session.save(trackRate);
-                    track.addTrackRate(trackRate);
-                    track.setEcoPointsScore(EcoPointsCalculator.calculateEcoPoints(track));
-                }
-                track.setTimestamp(trackRate.getTimestamp());
-                session.update(track);
-                responseEntity = DefaultResponse.OK;
-                logger.log(Level.INFO, "Track: " + track.getId() + " updated");
-            }
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) tx.rollback();
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw, true);
-            e.printStackTrace(pw);
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Hibernate exception" + sw.getBuffer().toString());
-        } catch (JSONException e) {
-            if (tx != null) tx.rollback();
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body("JSONException exception\n" + sw);
-        } catch (Exception e) {
-            e.printStackTrace();
-            responseEntity = DefaultResponse.BAD_REQUEST;
-        } finally {
-            if (session != null) session.close();
-        }
-        return responseEntity;
-    }
-
     public ResponseEntity<String> updateTrackData(Car car, JSONObject jsonObject) {
         Optional<Track> activeTrackOptional = trackDaoJdbc.getActiveTrack(car.getId());
         if (activeTrackOptional.isEmpty()) return DefaultResponse.BAD_REQUEST;
@@ -261,10 +152,11 @@ public class TrackService {
             addTrackRateToTrack(track, trackRate);
             checkIfZoneIsCrossed(track, trackRate, zonesAssignedToUser);
             checkForSpeeding(track, trackRate);
+            checkForOverHours(track, trackRate);
         }
 
         updateTrackValues(track, listOfTrackRates);
-        //todo ErrorsREST.addError -
+        //todo ErrorsREST.addError - from json
         return DefaultResponse.OK;
     }
 
@@ -730,6 +622,10 @@ public class TrackService {
             speedingOffence.get().setAssignedTrackId(track.getId());
             offenceDaoJdbc.save(speedingOffence.get());
         }
+    }
+
+    private void checkForOverHours(Track track, TrackRate trackRate) {
+        //todo check for over hours
     }
 
     private void addTrackRateToTrack(Track track, TrackRate trackRate) {

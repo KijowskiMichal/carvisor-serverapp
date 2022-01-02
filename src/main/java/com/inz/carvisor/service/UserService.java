@@ -275,7 +275,6 @@ public class UserService {
      * @param httpEntity Object of HttpEntity represents content of our request.
      * @return HttpStatus 200, user data as JsonString.
      */
-    @Deprecated
     public ResponseEntity<String> getUserData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
@@ -305,7 +304,6 @@ public class UserService {
      * @return HttpStatus 200.
      * @Deprecated use xyz
      */
-    @Deprecated
     public ResponseEntity changeUserData(HttpServletRequest request, HttpEntity<String> httpEntity, int userID) {
         // authorization
         if (request.getSession().getAttribute("user") == null) {
