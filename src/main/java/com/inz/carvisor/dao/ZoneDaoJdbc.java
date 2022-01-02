@@ -41,7 +41,7 @@ public class ZoneDaoJdbc extends HibernateDaoJdbc<Zone> {
     }
 
     private String createQueryWithRegex(String regex) {
-        if (regex.isEmpty() || this.EMPTY_REGEX_SIGN.equals(regex)) return "SELECT x FROM " + getTableName();
+        if (regex.isEmpty() || this.EMPTY_REGEX_SIGN.equals(regex)) return "SELECT x FROM " + getTableName() + " x";
         return "SELECT x FROM " + getTableName() + " x WHERE x.name like '%" + regex + "%'";
     }
 
