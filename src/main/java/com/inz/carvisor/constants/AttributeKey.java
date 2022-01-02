@@ -85,6 +85,7 @@ public class AttributeKey {
         public static final String LIST_OF_OFFENCES = "listOfOffencess";
         public static final String OBD = "obd";
         public static final String GPS_POS = "gps_pos";
+        public static final String ADDRESS = "address";
     }
 
     public static class Calendar {

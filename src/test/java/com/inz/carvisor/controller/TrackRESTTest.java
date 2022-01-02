@@ -171,6 +171,19 @@ class TrackRESTTest {
     }
 
     @Test
+    void reverseGeocoding() {
+        ResponseEntity<String> responseEntity = trackREST.reverseGeocoding(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                null,
+                "52.449623",
+                "16.927295");
+        assertEquals(200,responseEntity.getStatusCodeValue());
+        JSONObject jsonObject = new JSONObject(responseEntity.getBody());
+        String address = jsonObject.getString(AttributeKey.Track.ADDRESS);
+        assertEquals("Umultowska, Poznań",address);
+    }
+
+    @Test
     void endOfTrack() {
         Session session = null;
         Transaction tx = null;

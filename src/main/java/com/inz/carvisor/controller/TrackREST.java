@@ -77,8 +77,8 @@ public class TrackREST {
         return trackService.list(userID, page, pageSize, dateFrom, dateTo);
     }
 
-    @RequestMapping(value = "/reverseGeocoding/{lon}/{lat}/", method = RequestMethod.GET)
-    public ResponseEntity reverseGeocoding(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("lon") String lon, @PathVariable("lat") String lat) {
+    @RequestMapping(value = "/reverseGeocoding/{lon}/{lat}/",produces = "text/plain;charset=UTF-8",method = RequestMethod.GET)
+    public ResponseEntity<String> reverseGeocoding(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("lon") String lon, @PathVariable("lat") String lat) {
         return trackService.reverseGeocoding(lon, lat);
     }
 }
