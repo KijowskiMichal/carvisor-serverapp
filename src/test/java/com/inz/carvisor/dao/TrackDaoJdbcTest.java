@@ -164,10 +164,4 @@ class TrackDaoJdbcTest {
             Assertions.fail();
     }
 
-    @Test
-    @Ignore
-    void getUserTracksWithGivenTimestamps() {
-        //todo test method below
-        trackDaoJdbc.getUserTracks(1,123,123);
-    }
 }

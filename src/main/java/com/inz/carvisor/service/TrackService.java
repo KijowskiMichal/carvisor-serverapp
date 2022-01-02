@@ -10,6 +10,7 @@ import com.inz.carvisor.entities.enums.ObdCommandTable;
 import com.inz.carvisor.entities.model.*;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.service.offence.CrossingTheZoneOffence;
+import com.inz.carvisor.service.offence.OverHoursOffence;
 import com.inz.carvisor.service.offence.SpeedOffence;
 import com.inz.carvisor.util.EcoPointsCalculator;
 import com.inz.carvisor.util.SafetyPointsCalculator;
@@ -31,8 +32,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -106,7 +105,6 @@ public class TrackService {
             session = hibernateRequests.getSession();
             tx = session.beginTransaction();
             Car car = (Car) request.getSession().getAttribute("car");
-            //check if car has started track
             Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.car.id=" + car.getId() + " and t.isActive=1");
             if (selectQuery.uniqueResult() != null) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Car with id=" + car.getId() + " have started track");
@@ -124,12 +122,8 @@ public class TrackService {
             track.setListOfTrackRates(new ArrayList<>());
             session.save(track);
             tx.commit();
-            logger.log(Level.INFO, "Track (id=" + track.getId() + ") started.\n " +
-                    "With Car(id=" + car.getId() + ")");
             responseEntity = DefaultResponse.OK;
         } catch (HibernateException e) {
-            e.printStackTrace();
-            logger.log(Level.WARN, e);
             responseEntity = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.toString());
             if (tx != null) tx.rollback();
         } finally {
@@ -602,7 +596,7 @@ public class TrackService {
                 .setDisplayed(false)
                 .setValue(zoneOffence.getValue())
                 .setTimeStamp(trackRate.getTimestamp())
-                .setLocation(trackRate.getLocation()) //todo check to nice location
+                .setLocation(trackRate.getLocation())
                 .build();
         notificationDaoJdbc.save(notification);
     }
@@ -617,15 +611,15 @@ public class TrackService {
     }
 
     private void checkForSpeeding(Track track, TrackRate trackRate) {
-        Optional<Offence> speedingOffence = SpeedOffence.createOffenceIfExists(trackRate);
-        if (speedingOffence.isPresent()) {
-            speedingOffence.get().setAssignedTrackId(track.getId());
-            offenceDaoJdbc.save(speedingOffence.get());
-        }
+        SpeedOffence
+                .createOffenceIfExists(track,trackRate)
+                .ifPresent(offenceDaoJdbc::save);
     }
 
     private void checkForOverHours(Track track, TrackRate trackRate) {
-        //todo check for over hours
+        OverHoursOffence
+                .createOffenceIfExists(track, trackRate)
+                .ifPresent(offenceDaoJdbc::save);
     }
 
     private void addTrackRateToTrack(Track track, TrackRate trackRate) {

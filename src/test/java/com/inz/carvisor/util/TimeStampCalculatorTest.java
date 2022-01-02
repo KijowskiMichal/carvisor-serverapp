@@ -2,6 +2,8 @@ package com.inz.carvisor.util;
 
 import org.junit.jupiter.api.Test;
 
+import java.sql.Time;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class TimeStampCalculatorTest {
@@ -21,5 +23,11 @@ class TimeStampCalculatorTest {
     @Test
     void getLastDay() {
         assertEquals(646704000,TimeStampCalculator.getLastDayTimestamp(6,1990));
+    }
+
+    @Test
+    void getTimeFromTimestamp() {
+        assertEquals(Time.valueOf("15:45:00"),TimeStampCalculator.parseToTime(1641134700));
+
     }
 }

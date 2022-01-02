@@ -3,6 +3,7 @@ package com.inz.carvisor.service.offence;
 import com.inz.carvisor.entities.builders.OffenceBuilder;
 import com.inz.carvisor.entities.enums.OffenceType;
 import com.inz.carvisor.entities.model.Offence;
+import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.TrackRate;
 import org.json.JSONObject;
 
@@ -17,7 +18,7 @@ import java.util.Optional;
 
 public class SpeedOffence {
 
-    public static Optional<Offence> createOffenceIfExists(TrackRate trackRate) {
+    public static Optional<Offence> createOffenceIfExists(Track track, TrackRate trackRate) {
         int speedLimit = getSpeedLimit(trackRate);
         int currentSpeed = trackRate.getSpeed();
 
@@ -27,6 +28,7 @@ public class SpeedOffence {
                 .setOffenceType(OffenceType.SPEEDING)
                 .setLocation(getLocation(trackRate))
                 .setValue(currentSpeed - speedLimit)
+                .setAssignedTrackId(track.getId())
                 .buildOptional();
     }
 

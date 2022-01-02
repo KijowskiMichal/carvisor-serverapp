@@ -40,8 +40,8 @@ class SpeedOffenceTest {
                 .setLongitude(33.353536)
                 .build();
 
-        Assertions.assertTrue(SpeedOffence.createOffenceIfExists(trackRateWithOffence).isPresent());
-        Assertions.assertFalse(SpeedOffence.createOffenceIfExists(trackRateWithoutOffence).isPresent());
-        Assertions.assertFalse(SpeedOffence.createOffenceIfExists(impossibleToResolveTrackRate).isPresent());
+        Assertions.assertTrue(SpeedOffence.createOffenceIfExists(null,trackRateWithOffence).isPresent());
+        Assertions.assertFalse(SpeedOffence.createOffenceIfExists(null,trackRateWithoutOffence).isPresent());
+        Assertions.assertFalse(SpeedOffence.createOffenceIfExists(null,impossibleToResolveTrackRate).isPresent());
     }
 }
