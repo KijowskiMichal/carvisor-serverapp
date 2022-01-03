@@ -58,12 +58,26 @@ class SecurityServiceTest {
         assertTrue(securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, requestFromStandardUser));
     }
 
+    @Test
+    void shouldReturnFalseWhenUserEmpty() {
+        MockHttpServletRequest requestFromStandardUser = buildRequestWithEmptyUser();
+        assertFalse(securityService.securityProtocolPassed(UserPrivileges.ADMINISTRATOR, requestFromStandardUser));
+        assertFalse(securityService.securityProtocolPassed(UserPrivileges.MODERATOR, requestFromStandardUser));
+        assertFalse(securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, requestFromStandardUser));
+    }
+
     public MockHttpServletRequest buildRequestWithUser(UserPrivileges userPrivileges) {
         MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
         Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(
                 AttributeKey.CommonKey.USER,
                 new UserBuilder().setUserPrivileges(userPrivileges).build()
         );
+        return mockHttpServletRequest;
+    }
+
+    public MockHttpServletRequest buildRequestWithEmptyUser() {
+        MockHttpServletRequest mockHttpServletRequest = new MockHttpServletRequest();
+        Objects.requireNonNull(mockHttpServletRequest.getSession());
         return mockHttpServletRequest;
     }
 }
