@@ -314,4 +314,28 @@ class UsersRESTTest {
         if (user1.isEmpty()) fail();
         assertEquals(newNfc, user1.get().getNfcTag());
     }
+
+    @Test
+    void shouldNotDeleteAdmin() {
+        User userToDelete = new UserBuilder().setUserPrivileges(UserPrivileges.ADMINISTRATOR).build();
+        User user = new UserBuilder().setUserPrivileges(UserPrivileges.ADMINISTRATOR).build();
+        userDaoJdbc.save(userToDelete);
+        userDaoJdbc.save(user);
+        ResponseEntity<String> stringResponseEntity = usersREST.removeUser(
+                RequestBuilder.mockHttpServletRequest(user),
+                null,
+                user.getId());
+        assertEquals(406,stringResponseEntity.getStatusCodeValue());
+    }
+
+    @Test
+    void shouldNotDeleteMyself() {
+        User user = new UserBuilder().setUserPrivileges(UserPrivileges.MODERATOR).build();
+        userDaoJdbc.save(user);
+        ResponseEntity<String> stringResponseEntity = usersREST.removeUser(
+                RequestBuilder.mockHttpServletRequest(user),
+                null,
+                user.getId());
+        assertEquals(406,stringResponseEntity.getStatusCodeValue());
+    }
 }

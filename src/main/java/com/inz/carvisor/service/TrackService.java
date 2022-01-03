@@ -15,7 +15,6 @@ import com.inz.carvisor.service.offence.SpeedOffence;
 import com.inz.carvisor.util.EcoPointsCalculator;
 import com.inz.carvisor.util.SafetyPointsCalculator;
 import com.inz.carvisor.util.TimeStampCalculator;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -45,6 +44,8 @@ public class TrackService {
     private final static String SPEED_PID = ObdCommandTable.SPEED.getDecimalPid();
     private final static String RPM_PID = ObdCommandTable.RPM.getDecimalPid();
     private final static String THROTTLE_POS_PID = ObdCommandTable.THROTTLE_POS.getDecimalPid();
+    private final static String FUEL_LEVEL_PID = ObdCommandTable.FUEL_LEVEL.getDecimalPid();
+
     HibernateRequests hibernateRequests;
     Logger logger;
     TrackDaoJdbc trackDaoJdbc;
@@ -139,7 +140,7 @@ public class TrackService {
 
         List<TrackRate> listOfTrackRates = extractTrackRatesFromJson(jsonObject, track);
 
-        setDistanceBetweenTrackRates(listOfTrackRates);
+        setBetweenTrackRates(listOfTrackRates);
         List<Zone> zonesAssignedToUser = zoneDaoJdbc.get(track.getUser());
         for (TrackRate trackRate : listOfTrackRates) {
             saveTrackRateToDatabase(trackRate);
@@ -153,6 +154,7 @@ public class TrackService {
         //todo ErrorsREST.addError - from json
         return DefaultResponse.OK;
     }
+
 
     /**
      * WebMethods which update track without sending data.
@@ -549,7 +551,6 @@ public class TrackService {
                 .put("time", track.getListOfTrackRates().get(0).getTimestamp());
     }
 
-
     private JSONObject parse(TrackRate trackRate) {
         return new JSONObject()
                 .put("gpsX", trackRate.getLatitude())
@@ -630,7 +631,7 @@ public class TrackService {
         trackRateDaoJdbc.save(trackRate);
     }
 
-    private void setDistanceBetweenTrackRates(List<TrackRate> listOfTrackRates) {
+    private void setBetweenTrackRates(List<TrackRate> listOfTrackRates) {
         for (int i = 1; i < listOfTrackRates.size(); i++) {
             TrackRate prevTrackRate = listOfTrackRates.get(i - 1);
             TrackRate currentTrackRate = listOfTrackRates.get(i);
@@ -657,6 +658,7 @@ public class TrackService {
     }
 
     private void addOBDToTrackRateBuilder(TrackRateBuilder trackRateBuilder, JSONObject obd) {
+
         if (obd.has(RPM_PID)) trackRateBuilder.setRpm((short) obd.getInt(RPM_PID));
         if (obd.has(SPEED_PID)) trackRateBuilder.setSpeed((short) obd.getInt(SPEED_PID));
         if (obd.has(THROTTLE_POS_PID)) trackRateBuilder.setThrottle((byte) obd.getInt(THROTTLE_POS_PID));

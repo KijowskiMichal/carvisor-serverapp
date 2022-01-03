@@ -105,6 +105,13 @@ public class UsersREST {
 
     @RequestMapping(value = "/removeUser/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.DELETE)
     public ResponseEntity<String> removeUser(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID) {
+        User loggedUser = (User) request.getSession().getAttribute(AttributeKey.CommonKey.USER);
+        if (loggedUser == null) return DefaultResponse.UNAUTHORIZED;
+        if (loggedUser.getId() == userID) return DefaultResponse.NOT_ACCEPTABLE;
+        Optional<User> user = userService.getUser(userID);
+        if (user.isEmpty()) return DefaultResponse.BAD_REQUEST;
+        if (user.get().getUserPrivileges().equals(UserPrivileges.ADMINISTRATOR)) return DefaultResponse.NOT_ACCEPTABLE;
+
         Optional<User> deletedUser;
         if (securityService.securityProtocolPassed(UserPrivileges.ADMINISTRATOR, request)) {
             deletedUser = userService.removeUser(userID);
