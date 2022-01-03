@@ -99,4 +99,17 @@ public class CalendarController {
             return DefaultResponse.BAD_REQUEST;
         }
     }
+
+    @RequestMapping(value = "/updateEvent/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    public ResponseEntity<String> updateEvent(HttpServletRequest request, HttpEntity<String> httpEntity,
+                                         @PathVariable("id") long id) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
+            return DefaultResponse.UNAUTHORIZED;
+        }
+
+        JSONObject jsonObject = new JSONObject(httpEntity.getBody());
+        Optional<Event> updatedEvent = calendarService.update(id, jsonObject);
+        if (updatedEvent.isEmpty()) return DefaultResponse.BAD_REQUEST;
+        return DefaultResponse.OK;
+    }
 }

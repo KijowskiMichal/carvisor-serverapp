@@ -29,3 +29,18 @@ public class SecurityService {
         return user == null;
     }
 }
+
+/*
+
+{
+  "start": 0,
+  "end": 0,
+  "title": "string",
+  "description": "string",
+  "type": "string",
+  "device": 0,
+  "draggable": true,
+  "remind": true
+}
+
+ */

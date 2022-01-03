@@ -1,9 +1,11 @@
 package com.inz.carvisor.service;
 
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.dao.CalendarDaoJdbc;
 import com.inz.carvisor.entities.model.Event;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Logger;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -38,5 +40,20 @@ public class CalendarService {
 
     public Optional<Event> remove(long id) {
         return calendarDaoJdbc.delete(id);
+    }
+
+    public Optional<Event> update(long id, JSONObject jsonObject) {
+        Optional<Event> eventOptional = calendarDaoJdbc.get(id);
+        if (eventOptional.isEmpty()) return Optional.empty();
+        Event event = eventOptional.get();
+        event.setStartTimestamp(jsonObject.getLong(AttributeKey.Calendar.START_TIMESTAMP));
+        event.setEndTimestamp(jsonObject.getLong(AttributeKey.Calendar.END_TIMESTAMP));
+        event.setTitle(jsonObject.getString(AttributeKey.Calendar.TITLE));
+        event.setDescription(jsonObject.getString(AttributeKey.Calendar.DESCRIPTION));
+        event.setType(jsonObject.getString(AttributeKey.Calendar.TYPE));
+        event.setDeviceId(jsonObject.getInt(AttributeKey.Calendar.DEVICE_ID));
+        event.setDraggable(jsonObject.getBoolean(AttributeKey.Calendar.DRAGGABLE));
+        event.setRemind(jsonObject.getBoolean(AttributeKey.Calendar.REMIND));
+        return calendarDaoJdbc.update(event);
     }
 }

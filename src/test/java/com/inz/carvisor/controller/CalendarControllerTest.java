@@ -8,6 +8,7 @@ import com.inz.carvisor.entities.model.*;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.util.RequestBuilder;
+import com.inz.carvisor.util.jsonparser.EventJsonParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -22,13 +23,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(CarAuthorizationController.class)
 @ContextConfiguration(classes = {Initializer.class})
-class CalendarControllerTest { //todo verify this segment
+class CalendarControllerTest {
 
     @Autowired
     private UserDaoJdbc userDaoJdbc;
@@ -100,6 +103,43 @@ class CalendarControllerTest { //todo verify this segment
         long id = calendarDaoJdbc.getAll().get(0).getId();
         calendarController.remove(RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),null,id);
         assertEquals(2,calendarDaoJdbc.getAll().size());
+    }
+
+    @Test
+    void updateEvent() {
+        Event event = new EventBuilder()
+                .setStartTimestamp(10)
+                .setEndTimestamp(20)
+                .setTitle("AAA")
+                .setDescription("AAA")
+                .setType("TECH")
+                .setDeviceId(1)
+                .setDraggable(true)
+                .setRemind(true)
+                .build();
+        calendarDaoJdbc.save(event);
+        long id = event.getId();
+        JSONObject jsonObject = new JSONObject()
+                .put(AttributeKey.Calendar.REMIND,true)
+                .put(AttributeKey.Calendar.DEVICE_ID,2L)
+                .put(AttributeKey.Calendar.START_TIMESTAMP,50L)
+                .put(AttributeKey.Calendar.END_TIMESTAMP,80L)
+                .put(AttributeKey.Calendar.TITLE,"GGG")
+                .put(AttributeKey.Calendar.TYPE,"OIL")
+                .put(AttributeKey.Calendar.DRAGGABLE,true)
+                .put(AttributeKey.Calendar.DESCRIPTION,"GGG");
+        ResponseEntity<String> stringResponseEntity = calendarController.updateEvent(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                new HttpEntity<>(jsonObject.toString()),
+                id
+        );
+        Optional<Event> eventOptional = calendarDaoJdbc.get(id);
+        if (eventOptional.isEmpty()) fail();
+        Event newEvent = eventOptional.get();
+        JSONObject newEventJson = EventJsonParser.parse(newEvent);
+        for (String key: jsonObject.keySet()) {
+            assertEquals(newEventJson.get(key),jsonObject.get(key));
+        }
     }
 
     private JSONObject mockJSONObject() {
