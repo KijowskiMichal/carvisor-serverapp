@@ -526,4 +526,9 @@ public class UserService {
                 .map(User::getNick)
                 .noneMatch(nick::equals);
     }
+
+    public Optional<User> changeUserNfcTag(User user, String nfcTag) {
+        user.setNfcTag(nfcTag);
+        return userDaoJdbc.update(user);
+    }
 }

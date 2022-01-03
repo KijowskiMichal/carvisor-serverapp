@@ -9,6 +9,7 @@ import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.service.SecurityService;
 import com.inz.carvisor.service.UserService;
 import com.inz.carvisor.util.PasswordManipulatior;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
@@ -115,5 +116,30 @@ public class UsersREST {
 
         if (deletedUser.isPresent()) return DefaultResponse.OK;
         else return DefaultResponse.BAD_REQUEST;
+    }
+
+    @RequestMapping(value = "/changeUserNfcTag/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    public ResponseEntity<String> changeUserNfcTag(HttpServletRequest request, HttpEntity<String> httpEntity, @PathVariable("id") int userID) {
+        if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
+            return DefaultResponse.UNAUTHORIZED;
+        }
+        String nfcTag = new JSONObject(httpEntity.getBody()).getString(AttributeKey.User.TAG);
+        Optional<User> user = userService.getUser(userID);
+        if (user.isEmpty()) return DefaultResponse.BAD_REQUEST;
+        Optional<User> changedUser = userService.changeUserNfcTag(user.get(), nfcTag);
+        if (changedUser.isEmpty()) return DefaultResponse.BAD_REQUEST;
+        return DefaultResponse.OK;
+    }
+
+    @RequestMapping(value = "/changeUserNfcTag", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    public ResponseEntity<String> changeUserNfcTag(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        if (securityService.isUserNotLogged(request)) {
+            return DefaultResponse.UNAUTHORIZED;
+        }
+        String nfcTag = new JSONObject(httpEntity.getBody()).getString(AttributeKey.User.TAG);
+        User user = (User) request.getSession().getAttribute(AttributeKey.CommonKey.USER);
+        Optional<User> changedUser = userService.changeUserNfcTag(user, nfcTag);
+        if (changedUser.isEmpty()) return DefaultResponse.BAD_REQUEST;
+        return DefaultResponse.OK;
     }
 }

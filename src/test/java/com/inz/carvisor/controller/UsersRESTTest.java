@@ -275,4 +275,43 @@ class UsersRESTTest {
         ResponseEntity<String> stringResponseEntity = usersREST.removeUser(mockHttpServletRequest, null, user.getId());
         assertEquals(0, userDaoJdbc.getAll().size());
     }
+    
+    @Test
+    void userNfcShouldBeChangedWithGivenId() {
+        String oldNfc = "AAB";
+        String newNfc = "ACC";
+        User user = new UserBuilder().setNfcTag(oldNfc).build();
+        JSONObject jsonObject = new JSONObject()
+                .put(AttributeKey.User.TAG,newNfc);
+        userDaoJdbc.save(user);
+        int userId = user.getId();
+        ResponseEntity<String> stringResponseEntity = usersREST.changeUserNfcTag(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                new HttpEntity<>(jsonObject.toString()),
+                userId
+        );
+        assertEquals(200,stringResponseEntity.getStatusCodeValue());
+        Optional<User> user1 = userDaoJdbc.get(userId);
+        if (user1.isEmpty()) fail();
+        assertEquals(newNfc, user1.get().getNfcTag());
+    }
+
+    @Test
+    void userNfcShouldBeChangedWithLoggedUser() {
+        String oldNfc = "AAB";
+        String newNfc = "ACC";
+        User user = new UserBuilder().setNfcTag(oldNfc).build();
+        JSONObject jsonObject = new JSONObject()
+                .put(AttributeKey.User.TAG,newNfc);
+        userDaoJdbc.save(user);
+        int userId = user.getId();
+        ResponseEntity<String> stringResponseEntity = usersREST.changeUserNfcTag(
+                RequestBuilder.mockHttpServletRequest(user),
+                new HttpEntity<>(jsonObject.toString())
+        );
+        assertEquals(200,stringResponseEntity.getStatusCodeValue());
+        Optional<User> user1 = userDaoJdbc.get(userId);
+        if (user1.isEmpty()) fail();
+        assertEquals(newNfc, user1.get().getNfcTag());
+    }
 }
