@@ -571,7 +571,7 @@ public class TrackService {
                 .put("speed", firstTrackRate.getSpeed())
                 .put("throttle", firstTrackRate.getThrottle())
                 .put("time", firstTrackRate.getTimestamp())
-                .put("private", track.getPrivateTrack());
+                .put("privateTrack", track.getPrivateTrack());
     }
 
     private JSONObject getOutputJson(JSONArray points, JSONArray startPoints, JSONArray endPoints) {
