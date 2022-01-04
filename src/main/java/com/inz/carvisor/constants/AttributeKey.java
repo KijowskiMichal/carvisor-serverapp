@@ -66,7 +66,7 @@ public class AttributeKey {
 
         public static final String LIST_OF_TRACKS = "listOfTracks";
         public static final String TIME = "time";
-        public static final String PRIVATE = "private";
+        public static final String PRIVATE = "privateTrack";
         public static final String GPS_LONGITUDE = "gps_longitude";
         public static final String GPS_LATITUDE = "gps_latitude";
         public static final String LATITUDE = "latitude";
