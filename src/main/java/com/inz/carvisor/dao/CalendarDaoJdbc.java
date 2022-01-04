@@ -26,8 +26,8 @@ public class CalendarDaoJdbc extends HibernateDaoJdbc<Event> {
 
     private String buildQuery(int month, int year) {
         return "SELECT x FROM " + getTableName() + " x " +
-                "WHERE x.startTimestamp > " + TimeStampCalculator.getFirstDayTimeStamp(month, year) +
-                "AND x.endTimestamp < " + TimeStampCalculator.getLastDayTimestamp(month, year);
+                "WHERE x.startTimestamp >= " + TimeStampCalculator.getFirstDayTimeStamp(month, year) +
+                " AND x.startTimestamp <= " + TimeStampCalculator.getLastDayTimestamp(month, year);
     }
 
 }

@@ -61,7 +61,7 @@ class CalendarControllerTest {
 
     @Test
     void add() {
-        JSONObject jsonObject = mockJSONObject();
+        JSONObject jsonObject = mockFirstJanuaryEvent();
         HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
         assertEquals(0L, calendarDaoJdbc.getAll().size());
         ResponseEntity<String> responseEntity = calendarController.add(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), httpEntity);
@@ -71,7 +71,7 @@ class CalendarControllerTest {
 
     @Test
     void getEvent() {
-        JSONObject jsonObject = mockJSONObject();
+        JSONObject jsonObject = mockFirstJanuaryEvent();
         HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
         assertEquals(0L, calendarDaoJdbc.getAll().size());
         ResponseEntity<String> addResponseEntity = calendarController.add(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), httpEntity);
@@ -142,10 +142,66 @@ class CalendarControllerTest {
         }
     }
 
-    private JSONObject mockJSONObject() {
+    @Test
+    void addJanuaryEvent() {
+        JSONObject jsonObject = mockFirstJanuaryEvent();
+        HttpEntity<String> httpEntity = new HttpEntity<>(jsonObject.toString());
+        calendarController.add(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), httpEntity);
+
+        jsonObject = mockLastJanuaryEvent();
+        httpEntity = new HttpEntity<>(jsonObject.toString());
+        calendarController.add(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), httpEntity);
+
+        jsonObject = mockLastDecemberEvent();
+        httpEntity = new HttpEntity<>(jsonObject.toString());
+        calendarController.add(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), httpEntity);
+
+
+        ResponseEntity<String> january = calendarController.get(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                null,
+                "1",
+                "2022");
+        ResponseEntity<String> december = calendarController.get(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                null,
+                "12",
+                "2021");
+        JSONArray responseJanuary = new JSONArray(january.getBody());
+        JSONArray responseDecember = new JSONArray(december.getBody());
+        assertEquals(2,responseJanuary.length());
+        assertEquals(1,responseDecember.length());
+        System.out.println(january.getBody());
+    }
+
+    private JSONObject mockFirstJanuaryEvent() { //01.01.2022 - 1641034800 (middle of the day)
         return new JSONObject()
-                .put(AttributeKey.Calendar.START_TIMESTAMP, 10)
-                .put(AttributeKey.Calendar.END_TIMESTAMP, 10)
+                .put(AttributeKey.Calendar.START_TIMESTAMP, 1641034800)
+                .put(AttributeKey.Calendar.END_TIMESTAMP, 1641034801)
+                .put(AttributeKey.Calendar.TITLE, "string")
+                .put(AttributeKey.Calendar.DESCRIPTION, "string")
+                .put(AttributeKey.Calendar.TYPE, "TECH")
+                .put(AttributeKey.Calendar.DEVICE_ID, 1)
+                .put(AttributeKey.Calendar.DRAGGABLE, true)
+                .put(AttributeKey.Calendar.REMIND, false);
+    }
+
+    private JSONObject mockLastJanuaryEvent() { //31.01.2022 - 1643626800 (middle of the day)
+        return new JSONObject()
+                .put(AttributeKey.Calendar.START_TIMESTAMP, 1643626800)
+                .put(AttributeKey.Calendar.END_TIMESTAMP, 1643626801)
+                .put(AttributeKey.Calendar.TITLE, "string")
+                .put(AttributeKey.Calendar.DESCRIPTION, "string")
+                .put(AttributeKey.Calendar.TYPE, "TECH")
+                .put(AttributeKey.Calendar.DEVICE_ID, 1)
+                .put(AttributeKey.Calendar.DRAGGABLE, true)
+                .put(AttributeKey.Calendar.REMIND, false);
+    }
+
+    private JSONObject mockLastDecemberEvent() { //31.12.2021 - 1672484400 (middle of the day)
+        return new JSONObject()
+                .put(AttributeKey.Calendar.START_TIMESTAMP, 1640948400)
+                .put(AttributeKey.Calendar.END_TIMESTAMP, 1640948401)
                 .put(AttributeKey.Calendar.TITLE, "string")
                 .put(AttributeKey.Calendar.DESCRIPTION, "string")
                 .put(AttributeKey.Calendar.TYPE, "TECH")

@@ -6,8 +6,11 @@ import java.sql.Timestamp;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.time.*;
+import java.time.temporal.TemporalAmount;
 
 public class TimeStampCalculator {
+
+    public static final int SECONDS_IN_ONE_HOUR = 3600;
 
     public static long getEndOfDayTimeStamp(long timestamp) {
         Timestamp zxc = new Timestamp(timestamp * 1000);
@@ -28,13 +31,13 @@ public class TimeStampCalculator {
     public static long getFirstDayTimeStamp(int month, int year) {
         return LocalDate
                 .of(year, month, 1)
-                .toEpochSecond(LocalTime.MIN, ZoneOffset.UTC);
+                .toEpochSecond(LocalTime.MIN, ZoneOffset.UTC) - SECONDS_IN_ONE_HOUR;
     }
 
     public static long getLastDayTimestamp(int month, int year) {
         return LocalDate
                 .of(year, month, getLastDayOfMonth(month, year))
-                .toEpochSecond(LocalTime.MIN, ZoneOffset.UTC);
+                .toEpochSecond(LocalTime.MAX, ZoneOffset.UTC) - SECONDS_IN_ONE_HOUR;
     }
 
     public static int getLastDayOfMonth(int month, int year) {
