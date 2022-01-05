@@ -1,5 +1,6 @@
 package com.inz.carvisor.util.jsonparser;
 
+import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.entities.model.Car;
 import org.json.JSONObject;
 
@@ -25,6 +26,7 @@ public class CarJsonParser {
                 .put("tank", car.getTank())
                 .put("norm", car.getFuelNorm())
                 .put("timeFrom",car.getWorkingHoursStart())
-                .put("timeTo",car.getWorkingHoursEnd());
+                .put("timeTo",car.getWorkingHoursEnd())
+                .put(AttributeKey.Car.YEAR_OF_PRODUCTION,car.getProductionYear());
     }
 }

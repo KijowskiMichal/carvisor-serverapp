@@ -32,6 +32,11 @@ public class AttributeKey {
         public static final String TAG = "tag";
     }
 
+    public static class Car {
+
+        public static final String YEAR_OF_PRODUCTION = "yearOfProduction";
+    }
+
     public static class Offence {
 
         public static final String LIST_OF_OFFENCES = "listOfOffencess";
