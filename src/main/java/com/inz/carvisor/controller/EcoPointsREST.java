@@ -44,7 +44,7 @@ public class EcoPointsREST {
     }
 
     @RequestMapping(value = "/getUserDetails/{id}/{dateFrom}/{dateTo}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
-    public ResponseEntity<String> listUser(HttpServletRequest request, @PathVariable("id") int userId, @PathVariable("dateFrom") long dateFrom, @PathVariable("dateTo") long dateTo) {
+    public ResponseEntity<String> getUserDetails(HttpServletRequest request, @PathVariable("id") int userId, @PathVariable("dateFrom") long dateFrom, @PathVariable("dateTo") long dateTo) {
         if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             List<Track> tracks = ecoPointsService.listUser(userId, dateFrom, dateTo);
             Optional<User> userOptional = userService.getUser(userId);

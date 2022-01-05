@@ -157,9 +157,9 @@ public class EcoPointsService {
     public List<Track> listUser(int userId, long dateFrom, long dateTo) {
         String selectQuery = "SELECT t from Track t " +
                 "WHERE " +
-                "t.user = " + userId + " AND " +
-                "t.startTrackTimeStamp < " + dateFrom + " AND " +
-                "t.endTrackTimeStamp > " + dateTo + " ";
+                "t.user.id = " + userId + " AND " +
+                "t.startTrackTimeStamp > " + dateFrom + " AND " +
+                "t.startTrackTimeStamp < " + dateTo + " ";
         return trackDaoJdbc.getList(selectQuery);
     }
 }

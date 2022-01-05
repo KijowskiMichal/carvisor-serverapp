@@ -74,7 +74,7 @@ class EcoPointsRESTTest {
                 new TrackBuilder().setStartTrackTimeStamp(1680446261).setUser(driver).build()
         ).forEach(trackDaoJdbc::save);
 
-        ResponseEntity<String> stringResponseEntity = ecoPointsREST.listUser(mockHttpServletRequest, driver.getId(),
+        ResponseEntity<String> stringResponseEntity = ecoPointsREST.getUserDetails(mockHttpServletRequest, driver.getId(),
                 670003061, 1598382610);
         assertEquals(200, stringResponseEntity.getStatusCodeValue());
         System.out.println(stringResponseEntity.getBody());

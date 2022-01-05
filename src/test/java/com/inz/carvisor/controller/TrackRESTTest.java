@@ -128,7 +128,7 @@ class TrackRESTTest {
             Track track = new TrackBuilder()
                     .setCar(car)
                     .setPrivateTrack(true)
-                    .setTimeStamp(43675465)
+                    .setTimeStamp(43675465L)
                     .setStartPosiotion("gsdfggfd")
                     .build();
             session.save(track);
@@ -199,7 +199,7 @@ class TrackRESTTest {
             Track track = new TrackBuilder()
                     .setCar(car)
                     .setPrivateTrack(true)
-                    .setTimeStamp(43675465)
+                    .setTimeStamp(43675465L)
                     .setStartPosiotion("gsdfggfd")
                     .build();
             session.save(track);
