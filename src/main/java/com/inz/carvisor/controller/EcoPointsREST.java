@@ -8,6 +8,7 @@ import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.service.EcoPointsService;
 import com.inz.carvisor.service.SecurityService;
 import com.inz.carvisor.service.UserService;
+import com.inz.carvisor.util.jsonparser.TrackJsonParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,27 +50,9 @@ public class EcoPointsREST {
             List<Track> tracks = ecoPointsService.listUser(userId, dateFrom, dateTo);
             Optional<User> userOptional = userService.getUser(userId);
             if (userOptional.isEmpty()) return DefaultResponse.badRequestCantFindUer(userId);
-            return DefaultResponse.ok(parseToJson(userOptional.get(), tracks));
+            return DefaultResponse.ok(TrackJsonParser.parseToTracksSummary(userOptional.get(), tracks));
         } else {
             return DefaultResponse.UNAUTHORIZED;
         }
-    }
-
-    private String parseToJson(User user, List<Track> trackList) {
-        JSONObject mainJson = new JSONObject().put("name", user.getName() + " " + user.getSurname());
-        JSONArray listOfDays = new JSONArray();
-        trackList.stream().map(this::trackToJson).forEach(listOfDays::put);
-        return mainJson.put("listOfDays", listOfDays).toString();
-    }
-
-    private JSONObject trackToJson(Track track) {
-        return new JSONObject()
-                .put(AttributeKey.Track.DATE, track.getStartTrackTimeStamp())
-                .put(AttributeKey.Track.AMOUNT_OF_TRACK, track.getAmountOfSamples())
-                .put(AttributeKey.Track.ECO_POINTS, track.getEcoPointsScore())
-                .put(AttributeKey.Track.COMBUSTION, track.getCombustion())
-                .put(AttributeKey.Track.SPEED, track.getAverageSpeed())
-                .put(AttributeKey.Track.REVOLUTION, track.getAverageRevolutionsPerMinute())
-                .put(AttributeKey.Track.DISTANCE, track.getDistanceFromStart());
     }
 }

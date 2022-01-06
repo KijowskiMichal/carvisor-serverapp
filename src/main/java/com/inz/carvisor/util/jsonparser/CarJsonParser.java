@@ -25,8 +25,8 @@ public class CarJsonParser {
                 .put("fuel", car.getFuelType())
                 .put("tank", car.getTank())
                 .put("norm", car.getFuelNorm())
-                .put("timeFrom",car.getWorkingHoursStart())
-                .put("timeTo",car.getWorkingHoursEnd())
-                .put(AttributeKey.Car.YEAR_OF_PRODUCTION,car.getProductionYear());
+                .put("timeFrom", car.getWorkingHoursStart())
+                .put("timeTo", car.getWorkingHoursEnd())
+                .put(AttributeKey.Car.YEAR_OF_PRODUCTION, car.getProductionYear());
     }
 }

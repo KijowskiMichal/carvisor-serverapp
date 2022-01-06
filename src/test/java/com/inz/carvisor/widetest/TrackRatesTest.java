@@ -18,7 +18,6 @@ import com.inz.carvisor.service.TrackService;
 import com.inz.carvisor.util.FileDataGetter;
 import com.inz.carvisor.util.RequestBuilder;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.json.JSONObject;
 import org.junit.Ignore;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -27,7 +26,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 

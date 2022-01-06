@@ -111,6 +111,14 @@ class TrackRESTTest {
         trackREST.endOfTrack(httpServletRequestSecond,null);
         ResponseEntity trackDataForDevice = trackREST.getTrackDataForDevice(RequestBuilder.mockHttpServletRequest(user),
                 null, car.getId(), 1623879238);
+        ResponseEntity list = trackREST.list(RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                null,
+                user.getId(),
+                1,
+                6,
+                1623879237L,
+                1623879239L);
+        System.out.println();
     }
 
     @Test

@@ -7,6 +7,7 @@ import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.TrackRateDaoJdbc;
 import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.builders.CarBuilder;
+import com.inz.carvisor.entities.builders.TrackBuilder;
 import com.inz.carvisor.entities.builders.UserBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Car;
@@ -30,6 +31,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -97,6 +101,20 @@ class TrackServiceTest {
 
         User user = userDaoJdbc.get(userSecond.getId()).get();
         System.out.println(user.getDistanceTravelled());
+    }
+
+    @Test
+    void shouldCreateFourGroupOfTracksByTimestamp() {
+        List<Track> build = List.of(
+                new TrackBuilder().setStartTrackTimeStamp(1641490077).build(),
+                new TrackBuilder().setStartTrackTimeStamp(1641576477).build(),
+                new TrackBuilder().setStartTrackTimeStamp(1641580077).build(),
+                new TrackBuilder().setStartTrackTimeStamp(1641666477).build(),
+                new TrackBuilder().setStartTrackTimeStamp(1641677277).build(),
+                new TrackBuilder().setStartTrackTimeStamp(1644355677).build()
+        );
+        Map<Long, List<Track>> longListMap = TrackService.groupTracksByDay(build);
+        assertEquals(4,longListMap.size());
     }
 
     private User mockSecondUserFromDatabase() {

@@ -1,6 +1,5 @@
 package com.inz.carvisor.service;
 
-import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.controller.CalendarController;
 import com.inz.carvisor.controller.CarAuthorizationController;
 import com.inz.carvisor.controller.EcoPointsREST;
@@ -17,7 +16,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

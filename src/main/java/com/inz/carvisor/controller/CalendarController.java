@@ -102,7 +102,7 @@ public class CalendarController {
 
     @RequestMapping(value = "/updateEvent/{id}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
     public ResponseEntity<String> updateEvent(HttpServletRequest request, HttpEntity<String> httpEntity,
-                                         @PathVariable("id") long id) {
+                                              @PathVariable("id") long id) {
         if (!securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
             return DefaultResponse.UNAUTHORIZED;
         }

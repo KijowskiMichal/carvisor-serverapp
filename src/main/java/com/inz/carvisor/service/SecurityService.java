@@ -3,7 +3,6 @@ package com.inz.carvisor.service;
 import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.User;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,27 +19,10 @@ public class SecurityService {
     }
 
     public boolean isUserLogged(HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute(userAttribute);
-        return user != null;
+        return request.getSession().getAttribute(userAttribute) != null;
     }
 
     public boolean isUserNotLogged(HttpServletRequest request) {
-        User user = (User) request.getSession().getAttribute(userAttribute);
-        return user == null;
+        return request.getSession().getAttribute(userAttribute) == null;
     }
 }
-
-/*
-
-{
-  "start": 0,
-  "end": 0,
-  "title": "string",
-  "description": "string",
-  "type": "string",
-  "device": 0,
-  "draggable": true,
-  "remind": true
-}
-
- */

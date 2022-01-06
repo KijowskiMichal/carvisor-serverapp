@@ -3,14 +3,13 @@ package com.inz.carvisor.util;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.time.*;
-import java.time.temporal.TemporalAmount;
 
 public class TimeStampCalculator {
 
     public static final int SECONDS_IN_ONE_HOUR = 3600;
+    public static final long SECONDS_IN_ONE_DAY = 86_400;
 
     public static long getEndOfDayTimeStamp(long timestamp) {
         Timestamp zxc = new Timestamp(timestamp * 1000);

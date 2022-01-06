@@ -38,7 +38,7 @@ public class TrackDaoJdbc extends HibernateDaoJdbc<Track> {
         return "SELECT x from " + getTableName() + " x " +
                 "WHERE " +
                 "x.startTrackTimeStamp > " + fromTimeStampEpochSeconds + " AND " +
-                "x.endTrackTimeStamp < " + toTimeStampEpochSeconds + " ";
+                "x.startTrackTimeStamp < " + toTimeStampEpochSeconds + " ";
     }
 
     public List<Track> getUserTracks(long userId) {
@@ -63,7 +63,7 @@ public class TrackDaoJdbc extends HibernateDaoJdbc<Track> {
     public List<Track> getUserTracks(long userId, long startTimeStamp, long endTimeStamp) {
         return this.getList("SELECT t FROM Track t WHERE t.user.id=" + userId + " " +
                 "AND t.startTrackTimeStamp > " + startTimeStamp +
-                " AND t.endTrackTimeStamp < " + endTimeStamp);
+                " AND t.startTrackTimeStamp < " + endTimeStamp);
     }
 
     public List<Track> getCarTracks(long carId) {

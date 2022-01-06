@@ -42,6 +42,6 @@ public class EcoPointsCalculator {
             eco -= 1;
         }
 
-        return Math.max(eco, 0F) / 2.0F;
+        return Math.max(Math.max(eco, 0F) / 2.0F,1);
     }
 }

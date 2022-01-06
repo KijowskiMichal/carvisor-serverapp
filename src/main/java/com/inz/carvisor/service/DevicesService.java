@@ -12,7 +12,6 @@ import com.inz.carvisor.entities.model.Setting;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
-import com.inz.carvisor.util.TimeStampCalculator;
 import com.inz.carvisor.util.jsonparser.CarJsonParser;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Level;
@@ -309,7 +308,8 @@ public class DevicesService {
             try {
                 car.setWorkingHoursStart(Time.valueOf(inJSON.getString(AttributeKey.User.TIME_FROM) + ":00"));
                 car.setWorkingHoursEnd(Time.valueOf(inJSON.getString(AttributeKey.User.TIME_TO) + ":00"));
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
         } catch (JSONException jsonException) {
             return DefaultResponse.BAD_REQUEST;
         }

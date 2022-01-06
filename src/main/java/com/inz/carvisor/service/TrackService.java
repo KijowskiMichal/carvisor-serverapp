@@ -37,6 +37,8 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
+
 @Service
 public class TrackService {
 
@@ -94,7 +96,7 @@ public class TrackService {
         try {
             jsonObject = new JSONObject(Objects.requireNonNull(httpEntity.getBody()));
             startTime = jsonObject.getLong("time");
-            isPrivateTrack = jsonObject.getBoolean("private");
+            isPrivateTrack = jsonObject.getBoolean("private"); //nietykalna linika
             gpsLongitude = jsonObject.getFloat("gps_longitude");
             gpsLatitude = jsonObject.getFloat("gps_latitude");
             userNfcTag = jsonObject.getString("nfc_tag");
@@ -472,6 +474,12 @@ public class TrackService {
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 
+    public static Map<Long,List<Track>> groupTracksByDay(List<Track> trackList) {
+        return trackList
+                .stream()
+                .collect(groupingBy(track -> track.getStartTrackTimeStamp() / TimeStampCalculator.SECONDS_IN_ONE_DAY));
+    }
+
     private List<TrackRate> extractTrackRatesFromJson(JSONObject jsonObject, Track track) {
         return jsonObject
                 .keySet()
@@ -516,7 +524,7 @@ public class TrackService {
     }
 
     private String getUserTracksQuery(int userID, long timeStampBeforeSeconds, long timeStampAfterSeconds) {
-        return "SELECT t from Track t WHERE t.user.id=" + userID + " AND t.startTrackTimeStamp > " + timeStampBeforeSeconds + " AND t.endTrackTimeStamp < " + timeStampAfterSeconds;
+        return "SELECT t from Track t WHERE t.user.id=" + userID + " AND t.startTrackTimeStamp > " + timeStampBeforeSeconds + " AND t.startTrackTimeStamp < " + timeStampAfterSeconds;
     }
 
     public ResponseEntity<String> reverseGeocoding(String lon, String lat) {
@@ -613,7 +621,7 @@ public class TrackService {
 
     private void checkForSpeeding(Track track, TrackRate trackRate) {
         SpeedOffence
-                .createOffenceIfExists(track,trackRate)
+                .createOffenceIfExists(track, trackRate)
                 .ifPresent(offenceDaoJdbc::save);
     }
 

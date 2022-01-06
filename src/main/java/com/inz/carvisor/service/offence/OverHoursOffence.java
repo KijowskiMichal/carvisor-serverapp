@@ -19,7 +19,7 @@ public class OverHoursOffence {
         Time workingHoursEnd = car.getWorkingHoursEnd();
 
         Time trackRateTime = TimeStampCalculator.parseToTime(trackRate.getTimestamp());
-        if (timeIsBetween(trackRateTime,workingHoursStart,workingHoursEnd)) return Optional.empty();
+        if (timeIsBetween(trackRateTime, workingHoursStart, workingHoursEnd)) return Optional.empty();
         Offence build = new OffenceBuilder()
                 .setOffenceType(OffenceType.OVER_HOURS)
                 .setLocalDateTime(trackRate.getTimestamp())
