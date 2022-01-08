@@ -69,7 +69,7 @@ public class NotificationREST {
             @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
             @PathVariable("page") int page, @PathVariable("pagesize") int pageSize) {
 
-        if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
+        if (securityService.securityProtocolPassed(UserPrivileges.STANDARD_USER, request)) {
             List<Notification> notifications = notificationService
                     .getNotificationsOfCurrentUser(dateFromTimestamp, dateToTimestamp, page, pageSize, (User) request.getSession().getAttribute("user"));
 
