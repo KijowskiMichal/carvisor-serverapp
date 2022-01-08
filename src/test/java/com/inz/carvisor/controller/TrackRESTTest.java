@@ -202,10 +202,12 @@ class TrackRESTTest {
             //initialization
 
             Car car = new CarBuilder().setLicensePlate("abc").setPassword(DigestUtils.sha256Hex("abc")).build();
-            session.save(car);
-
+            User user = new UserBuilder().build();
+            userDaoJdbc.save(user);
+            carDaoJdbc.save(car);
             Track track = new TrackBuilder()
                     .setCar(car)
+                    .setUser(user)
                     .setPrivateTrack(true)
                     .setTimeStamp(43675465L)
                     .setStartPosiotion("gsdfggfd")

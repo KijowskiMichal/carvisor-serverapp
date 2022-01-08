@@ -1,6 +1,5 @@
 package com.inz.carvisor.controller;
 
-import com.inz.carvisor.constants.AttributeKey;
 import com.inz.carvisor.constants.DefaultResponse;
 import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.Track;
@@ -9,8 +8,6 @@ import com.inz.carvisor.service.EcoPointsService;
 import com.inz.carvisor.service.SecurityService;
 import com.inz.carvisor.service.UserService;
 import com.inz.carvisor.util.jsonparser.TrackJsonParser;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

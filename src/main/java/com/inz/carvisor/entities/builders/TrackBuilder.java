@@ -85,6 +85,7 @@ public class TrackBuilder {
         track.setEndTrackTimeStamp(this.endTrackTimeStamp);
         track.setListOfTrackRates(new ArrayList<>());
 
+        track.setEndPosition("");
         return track;
     }
 }

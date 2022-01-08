@@ -8,6 +8,7 @@ import com.inz.carvisor.dao.UserDaoJdbc;
 import com.inz.carvisor.entities.model.Offence;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.service.SecurityService;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +31,14 @@ public class RankingController {
     private final TrackDaoJdbc trackDaoJdbc;
     private final UserDaoJdbc userDaoJdbc;
     private final OffenceDaoJdbc offenceDaoJdbc;
+    private final SecurityService securityService;
 
     @Autowired
-    public RankingController(TrackDaoJdbc trackDaoJdbc, UserDaoJdbc userDaoJdbc, OffenceDaoJdbc offenceDaoJdbc) {
+    public RankingController(TrackDaoJdbc trackDaoJdbc, UserDaoJdbc userDaoJdbc, OffenceDaoJdbc offenceDaoJdbc, SecurityService securityService) {
         this.trackDaoJdbc = trackDaoJdbc;
         this.userDaoJdbc = userDaoJdbc;
         this.offenceDaoJdbc = offenceDaoJdbc;
+        this.securityService = securityService;
     }
 
     //todo refactoring - code is not optimal
@@ -44,6 +47,8 @@ public class RankingController {
             HttpServletRequest request, HttpEntity<String> httpEntity,
             @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
             @PathVariable("page") int page, @PathVariable("pagesize") int pagesize) {
+        if (securityService.isUserNotLogged(request)) return DefaultResponse.UNAUTHORIZED;
+
         User userToCheck = (User) request.getSession().getAttribute(AttributeKey.CommonKey.USER);
         List<User> allUsers = userDaoJdbc.getAll();
 
@@ -59,9 +64,9 @@ public class RankingController {
 
         int from = Math.max(0, page * maxPage);
         int to = Math.min(getUserTracks.size(), (page + 1) * maxPage);
-        JSONObject jsonObject = toJson(userToCheck, safetyPointsRankingPosition, ecoPointsRankingPosition, getUserTracks.subList(to, from - 1));
-        jsonObject.put(AttributeKey.CommonKey.PAGE, page);
-        jsonObject.put(AttributeKey.CommonKey.PAGE_MAX, maxPage);
+        JSONObject jsonObject = toJson(userToCheck, safetyPointsRankingPosition, ecoPointsRankingPosition, getUserTracks.subList(to, from - 1))
+                .put(AttributeKey.CommonKey.PAGE, page)
+                .put(AttributeKey.CommonKey.PAGE_MAX, maxPage);
         return DefaultResponse.ok(jsonObject.toString());
     }
 
@@ -76,7 +81,10 @@ public class RankingController {
     private int getSafetyPointsRankingPosition(User userToCheck, List<User> allUsers) {
         allUsers.sort((a, b) -> Float.compare(a.getSafetyPointsAvg(), b.getSafetyPointsAvg()));
         for (int i = 0; i < allUsers.size(); i++) {
-            if (allUsers.get(0).getId() == userToCheck.getId()) return i + 1;
+            if (allUsers.get(0) != null) {
+                if (allUsers.get(0).getId() == userToCheck.getId())
+                    return i + 1;
+            }
         }
         return allUsers.size();
     }
