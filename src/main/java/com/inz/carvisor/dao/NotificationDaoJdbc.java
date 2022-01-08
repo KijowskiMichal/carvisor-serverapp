@@ -38,7 +38,7 @@ public class NotificationDaoJdbc extends HibernateDaoJdbc<Notification> {
                 "WHERE " +
                 "o.timeStamp > " + fromTimeStampEpochSeconds + " AND " +
                 "o.timeStamp < " + toTimeStampEpochSeconds + " AND " +
-                "o.user = " + user + " ";
+                "o.user = " + user.getId() + " ";
         return this.getList(selectQuery, page, pageSize);
     }
 }
