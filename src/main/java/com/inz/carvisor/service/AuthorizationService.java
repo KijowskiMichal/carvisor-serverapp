@@ -81,6 +81,7 @@ public class AuthorizationService {
             outJSON
                     .put("logged", true)
                     .put("nickname", ((User) request.getSession().getAttribute("user")).getNick())
+                    .put("id", ((User) request.getSession().getAttribute("user")).getId())
                     .put("rbac", ((User) request.getSession().getAttribute("user")).getUserPrivileges());
         }
         return ResponseEntity.status(HttpStatus.OK).body(outJSON.toString());
