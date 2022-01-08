@@ -127,6 +127,23 @@ public class DemoREST {
         return DefaultResponse.OK;
     }
 
+    @RequestMapping(value = "/newNotificationForOtherUser", method = RequestMethod.GET)
+    public ResponseEntity<String> newNotificationForOtherUser(HttpServletRequest request, HttpEntity<String> httpEntity) {
+        Car car = carDaoJdbc.getAll().get(1);
+        User user = userDaoJdbc.getAll().get(1);
+        Notification build = new NotificationBuilder()
+                .setNotificationType(NotificationType.LEAVING_THE_ZONE)
+                .setDisplayed(false)
+                .setCar(car)
+                .setValue(50)
+                .setTimeStamp(System.currentTimeMillis() / 1000)
+                .setLocation("52.4026280;16.889948")
+                .setUser(user)
+                .build();
+        notificationDaoJdbc.save(build);
+        return DefaultResponse.OK;
+    }
+
     @RequestMapping(value = "/getPdf", method = RequestMethod.GET)
     public ResponseEntity getPdf() {
         try {
