@@ -63,6 +63,27 @@ public class NotificationREST {
         }
     }
 
+    @RequestMapping(value = "/getNotificationOfCurrentUser/{dateFrom}/{dateTo}/{page}/{pagesize}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    public ResponseEntity<String> getNotificationOfCurrentUser(
+            HttpServletRequest request, HttpEntity<String> httpEntity,
+            @PathVariable("dateFrom") long dateFromTimestamp, @PathVariable("dateTo") long dateToTimestamp,
+            @PathVariable("page") int page, @PathVariable("pagesize") int pageSize) {
+
+        if (securityService.securityProtocolPassed(UserPrivileges.MODERATOR, request)) {
+            List<Notification> notifications = notificationService
+                    .getNotificationsOfCurrentUser(dateFromTimestamp, dateToTimestamp, page, pageSize, (User) request.getSession().getAttribute("user"));
+
+            JSONObject jsonObject = new JSONObject()
+                    .put(AttributeKey.CommonKey.PAGE, page)
+                    .put(AttributeKey.CommonKey.PAGE_MAX, notificationService.getMaxPage(dateFromTimestamp, dateToTimestamp, pageSize))
+                    .put(AttributeKey.Notification.LIST_OF_NOTIFICATIONS, toAdvancedJsonArray(notifications));
+
+            return DefaultResponse.ok(jsonObject.toString());
+        } else {
+            return DefaultResponse.UNAUTHORIZED;
+        }
+    }
+
     public JSONArray toSimpleJsonArray(List<Notification> notificationList) {
         JSONArray jsonArray = new JSONArray();
         notificationList.stream().map(this::toSimpleJsonObject).forEach(jsonArray::put);

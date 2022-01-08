@@ -1,6 +1,7 @@
 package com.inz.carvisor.dao;
 
 import com.inz.carvisor.entities.model.Notification;
+import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -29,6 +30,15 @@ public class NotificationDaoJdbc extends HibernateDaoJdbc<Notification> {
                 "WHERE " +
                 "o.timeStamp > " + fromTimeStampEpochSeconds + " AND " +
                 "o.timeStamp < " + toTimeStampEpochSeconds + " ";
+        return this.getList(selectQuery, page, pageSize);
+    }
+
+    public List<Notification> getNotificationsOfCurrentUser(long fromTimeStampEpochSeconds, long toTimeStampEpochSeconds, int page, int pageSize, User user) {
+        String selectQuery = "SELECT o from Notification o " +
+                "WHERE " +
+                "o.timeStamp > " + fromTimeStampEpochSeconds + " AND " +
+                "o.timeStamp < " + toTimeStampEpochSeconds + " AND " +
+                "o.user = " + user + " ";
         return this.getList(selectQuery, page, pageSize);
     }
 }
