@@ -51,4 +51,13 @@ public class NotificationDaoJdbc extends HibernateDaoJdbc<Notification> {
             }
         });
     }
+
+    public void removeCarNotifiaction(Number id) {
+        List<Notification> all = this.getAll();
+        all.forEach(x -> {
+            if (x.getCar().getId() == id.intValue()) {
+                this.delete(x.getId());
+            }
+        });
+    }
 }

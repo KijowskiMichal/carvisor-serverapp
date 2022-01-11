@@ -102,4 +102,13 @@ public class TrackDaoJdbc extends HibernateDaoJdbc<Track> {
             }
         });
     }
+
+    public void removeCarNotifiaction(Number id) {
+        List<Track> all = this.getAll();
+        all.forEach(x -> {
+            if (x.getCar().getId() == id.intValue()) {
+                this.delete(x.getId());
+            }
+        });
+    }
 }

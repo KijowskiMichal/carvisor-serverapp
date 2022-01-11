@@ -34,4 +34,12 @@ public class ErrorDaoJdbc extends HibernateDaoJdbc<Error> {
         });
     }
 
+    public void removeCarNotifiaction(Number id) {
+        List<Error> all = this.getAll();
+        all.forEach(x -> {
+            if (x.getCar().getId() == id.intValue()) {
+                this.delete(x.getId());
+            }
+        });
+    }
 }

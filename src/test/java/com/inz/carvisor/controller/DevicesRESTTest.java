@@ -1,17 +1,11 @@
 package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.AttributeKey;
-import com.inz.carvisor.dao.CarDaoJdbc;
-import com.inz.carvisor.dao.SettingDaoJdbc;
-import com.inz.carvisor.dao.TrackDaoJdbc;
-import com.inz.carvisor.dao.UserDaoJdbc;
-import com.inz.carvisor.entities.builders.CarBuilder;
-import com.inz.carvisor.entities.builders.UserBuilder;
+import com.inz.carvisor.dao.*;
+import com.inz.carvisor.entities.builders.*;
 import com.inz.carvisor.entities.enums.UserPrivileges;
-import com.inz.carvisor.entities.model.Car;
-import com.inz.carvisor.entities.model.Setting;
-import com.inz.carvisor.entities.model.Track;
-import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.entities.model.*;
+import com.inz.carvisor.entities.model.Error;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.util.RequestBuilder;
@@ -37,6 +31,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -58,6 +53,12 @@ class DevicesRESTTest {
     SettingDaoJdbc settingDaoJdbc;
     @Autowired
     TrackDaoJdbc trackDaoJdbc;
+    @Autowired
+    NotificationDaoJdbc notificationDaoJdbc;
+    @Autowired
+    ZoneDaoJdbc zoneDaoJdbc;
+    @Autowired
+    ErrorDaoJdbc errorDaoJdbc;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -256,6 +257,15 @@ class DevicesRESTTest {
         Car secondCar = new CarBuilder().build();
         carDaoJdbc.save(firstCar);
         carDaoJdbc.save(secondCar);
+
+        Notification notification = new NotificationBuilder().setCar(firstCar).build();
+        Track track = new TrackBuilder().setCar(firstCar).build();
+        Error error = new ErrorBuilder().setCar(firstCar).build();
+
+        notificationDaoJdbc.save(notification);
+        trackDaoJdbc.save(track);
+        errorDaoJdbc.save(error);
+
         assertEquals(2, carDaoJdbc.getAll().size());
         MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR);
         devicesREST.removeDevice(mockHttpServletRequest, firstCar.getId());
