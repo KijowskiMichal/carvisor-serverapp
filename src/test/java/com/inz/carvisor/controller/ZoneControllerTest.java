@@ -182,7 +182,23 @@ class ZoneControllerTest {
         int idToDelete = allZones.get(0).getId();
         zoneController.remove(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR),idToDelete);
         Assertions.assertEquals(5,zoneDaoJdbc.getAll().size());
+    }
 
+    @Test
+    void listUserZones() {
+        saveMockedUsersToDatabase();
+        saveMockedZonesToDatabase();
+        User user = userDaoJdbc.get(1).get();
+
+        List<Zone> all = zoneDaoJdbc.getAll();
+        all.stream().limit(3).forEach(zone -> zone.assignUser(user));
+        all.forEach(zoneDaoJdbc::update);
+
+        ResponseEntity<String> stringResponseEntity = zoneController
+                .listUserZones(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), user.getId());
+        String body = stringResponseEntity.getBody();
+        JSONArray jsonArray = new JSONArray(body);
+        assertEquals(3,jsonArray.length());
     }
 
     private HttpEntity<String> mockHttpEntityWithZone() {
