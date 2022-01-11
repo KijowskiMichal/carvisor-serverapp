@@ -1,6 +1,6 @@
 package com.inz.carvisor.widetest;
 
-import com.inz.carvisor.controller.TrackREST;
+import com.inz.carvisor.controller.*;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.TrackRateDaoJdbc;
@@ -26,9 +26,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.persistence.EnumType;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -54,9 +56,18 @@ public class TrackRatesTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
+    private UsersREST usersREST;
+    @Autowired
     private HibernateRequests hibernateRequests;
     @Autowired
+    private DevicesREST devicesREST;
+
+    @Autowired
     private TrackREST trackREST;
+    @Autowired
+    private EcoPointsREST ecoPointsREST;
+    @Autowired
+    private SafetyPointsREST safetyPointsREST;
 
     @BeforeAll
     static void prepareTrackRates() {
@@ -75,9 +86,9 @@ public class TrackRatesTest {
     @Ignore
     @Test
     void allTrackRatesShouldBeSaved() {
-        User userSecond = mockSecondUserFromDatabase();
-        Car carSecond = mockCarFromDatabase();
-        HttpServletRequest httpServletRequestSecond = RequestBuilder.mockHttpServletRequest(userSecond, carSecond);
+        User user = mockSecondUserFromDatabase();
+        Car car = mockCarFromDatabase();
+        HttpServletRequest httpServletRequestSecond = RequestBuilder.mockHttpServletRequest(user, car);
         long start = System.currentTimeMillis();
         System.out.println("startTrack() = " + (System.currentTimeMillis() - start));
         trackREST.startTrack(httpServletRequestSecond, new HttpEntity<>(startTrackString));
@@ -86,7 +97,41 @@ public class TrackRatesTest {
         System.out.println("endOfTrack() =" + (System.currentTimeMillis() - start));
         trackREST.endOfTrack(httpServletRequestSecond,null);
 
-        System.out.println("");
+        ResponseEntity<String> ecoDetails = ecoPointsREST.getUserDetails(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                user.getId(),
+                1623879231, //one second before start
+                1623879239//one second after start
+        );
+
+        ResponseEntity<String> safetyDetails = safetyPointsREST.listUser(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                user.getId(),
+                1,
+                1000000000000L
+        );
+
+        ResponseEntity<String> userDetails = usersREST.getUserData(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                null,
+                user.getId()
+        );
+
+        ResponseEntity<String> listOfAllUsers = usersREST.list(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                1,
+                10,
+                ""
+        );
+
+        ResponseEntity<String> carDetails = devicesREST.list(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                1,
+                10,
+                ""
+        );
+
+        System.out.println();
     }
 
     private void compareTracksFromDatabase(Track one, Track two) {

@@ -141,23 +141,13 @@ public class UserService {
                 LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochSecond(now.getTime() / 1000), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
                 Timestamp timestampAfter = Timestamp.valueOf(after);
 
-                long sum = 0;
-                List<Long> collect = trackDaoJdbc.getUserTracks(((User) tmp).getId())
+                long sum = trackDaoJdbc.getUserTracks(((User) tmp).getId())
                         .stream()
                         .flatMap(track -> track.getListOfTrackRates().stream())
-                        .filter(trackRate -> trackRate.getTimestamp() > timestampBefore.getTime())
-                        .filter(trackRate -> trackRate.getTimestamp() < timestampAfter.getTime())
-                        .map(TrackRate::getDistance)
-                        .collect(Collectors.toList());
-
-                for (Long l : collect) {
-                    sum += l;
-                }
-
-//                Query countQ = session.createQuery("Select sum (t.distance) from TrackRate t WHERE t.timestamp > " +
-//                        timestampBefore.getTime() + " AND  t.timestamp < " + timestampAfter.getTime() +
-//                        " AND t.track.user.id = " + ((User) tmp).getId());
-//                Long lonk = (Long) countQ.getSingleResult();
+                        .filter(trackRate -> trackRate.getTimestamp() > timestampBefore.getTime() / 1000)
+                        .filter(trackRate -> trackRate.getTimestamp() < timestampAfter.getTime() / 1000)
+                        .mapToLong(TrackRate::getDistance)
+                        .sum();
 
                 jsonObject.put("distance", String.valueOf(sum));
                 tx.commit();

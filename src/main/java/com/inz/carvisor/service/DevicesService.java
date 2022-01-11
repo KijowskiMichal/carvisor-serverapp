@@ -7,10 +7,7 @@ import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.TrackRateDaoJdbc;
 import com.inz.carvisor.entities.builders.CarBuilder;
 import com.inz.carvisor.entities.enums.UserPrivileges;
-import com.inz.carvisor.entities.model.Car;
-import com.inz.carvisor.entities.model.Setting;
-import com.inz.carvisor.entities.model.Track;
-import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.entities.model.*;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.util.jsonparser.CarJsonParser;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -117,12 +114,15 @@ public class DevicesService {
                 LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochSecond(now.getTime() / 1000), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
                 Timestamp timestampAfter = Timestamp.valueOf(after);
 
-                Query countQ = session.createQuery("Select sum (t.distanceFromStart) from Track t WHERE t.timestamp > " +
-                        timestampBefore.getTime() / 1_000 + " AND  t.timestamp < " +
-                        timestampAfter.getTime() / 1_000 + " AND t.car.id = " + ((Car) tmp).getId());
-                Long lonk = (Long) countQ.getSingleResult();
+                long sum = trackDaoJdbc.getUserTracks(((User) tmp).getId())
+                        .stream()
+                        .flatMap(track -> track.getListOfTrackRates().stream())
+                        .filter(trackRate -> trackRate.getTimestamp() > timestampBefore.getTime() / 1000)
+                        .filter(trackRate -> trackRate.getTimestamp() < timestampAfter.getTime() / 1000)
+                        .mapToLong(TrackRate::getDistance)
+                        .sum();
 
-                jsonObject.put("distance", String.valueOf(lonk == null ? 0 : lonk));
+                jsonObject.put("distance", String.valueOf(sum));
                 Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.isActive = true AND t.car.id = " + ((Car) tmp).getId());
                 List<Track> tracks = selectQuery.list();
                 if (tracks.size() > 0) {

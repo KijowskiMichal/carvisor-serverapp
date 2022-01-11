@@ -100,10 +100,9 @@ public class SafetyPointsService {
             jsonArray.put(jsonObject);
         }
 
-        jsonOut.put("page", page);
-        jsonOut.put("pageMax", lastPageNumber);
-        jsonOut.put("listOfUsers", jsonArray);
-        logger.info("SafetyPointsService.list returns list of users (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+        jsonOut.put("page", page)
+                .put("pageMax", lastPageNumber)
+                .put("listOfUsers", jsonArray);
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 
