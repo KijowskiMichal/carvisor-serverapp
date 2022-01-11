@@ -63,8 +63,8 @@ public class RankingController {
         int maxPage = getUserTracks.size() / pagesize + 1;
 
         int from = ( page - 1 ) * pagesize;
-        int to = Math.min(getUserTracks.size(), page * maxPage - 1);
-        JSONObject jsonObject = toJson(userToCheck, safetyPointsRankingPosition, ecoPointsRankingPosition, getUserTracks)
+        int to = Math.min(getUserTracks.size(), page * pagesize);
+        JSONObject jsonObject = toJson(userToCheck, safetyPointsRankingPosition, ecoPointsRankingPosition, getUserTracks.subList(from, to))
                 .put(AttributeKey.CommonKey.PAGE, page)
                 .put(AttributeKey.CommonKey.PAGE_MAX, maxPage);
         return DefaultResponse.ok(jsonObject.toString());
