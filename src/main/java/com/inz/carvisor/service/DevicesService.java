@@ -114,7 +114,7 @@ public class DevicesService {
                 LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochSecond(now.getTime() / 1000), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
                 Timestamp timestampAfter = Timestamp.valueOf(after);
 
-                long sum = trackDaoJdbc.getUserTracks(((User) tmp).getId())
+                long sum = trackDaoJdbc.getUserTracks(((Car) tmp).getId())
                         .stream()
                         .flatMap(track -> track.getListOfTrackRates().stream())
                         .filter(trackRate -> trackRate.getTimestamp() > timestampBefore.getTime() / 1000)
