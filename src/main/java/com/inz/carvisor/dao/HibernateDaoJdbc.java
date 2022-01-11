@@ -232,7 +232,7 @@ public abstract class HibernateDaoJdbc<T> {
                 "x.timeStamp < " + toTimeStampEpochSeconds + " ";
     }
 
-    private HibernateException createThereIsNoSuchElementException(String tableName, Number givenId) {
+    HibernateException createThereIsNoSuchElementException(String tableName, Number givenId) {
         return new HibernateException("There is no " + tableName + " with given id=" + givenId.toString());
     }
 }

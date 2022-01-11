@@ -1,5 +1,6 @@
 package com.inz.carvisor.dao;
 
+import com.inz.carvisor.entities.model.Offence;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import org.hibernate.HibernateException;
@@ -91,5 +92,14 @@ public class TrackDaoJdbc extends HibernateDaoJdbc<Track> {
 
     public Optional<Track> getActiveTrack(long carId) {
         return getObject("SELECT t FROM Track t WHERE t.isActive = true AND t.car.id=" + carId);
+    }
+
+    public void removeUserTracks(Number id) {
+        List<Track> all = this.getAll();
+        all.forEach(x -> {
+            if (x.getUser().getId() == id.intValue()) {
+                this.delete(x.getId());
+            }
+        });
     }
 }

@@ -1,16 +1,11 @@
 package com.inz.carvisor.controller;
 
 import com.inz.carvisor.constants.AttributeKey;
-import com.inz.carvisor.dao.CarDaoJdbc;
-import com.inz.carvisor.dao.SettingDaoJdbc;
-import com.inz.carvisor.dao.TrackDaoJdbc;
-import com.inz.carvisor.dao.UserDaoJdbc;
-import com.inz.carvisor.entities.builders.UserBuilder;
+import com.inz.carvisor.dao.*;
+import com.inz.carvisor.entities.builders.*;
 import com.inz.carvisor.entities.enums.UserPrivileges;
-import com.inz.carvisor.entities.model.Car;
-import com.inz.carvisor.entities.model.Setting;
-import com.inz.carvisor.entities.model.Track;
-import com.inz.carvisor.entities.model.User;
+import com.inz.carvisor.entities.model.*;
+import com.inz.carvisor.entities.model.Error;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.util.PasswordManipulatior;
@@ -53,6 +48,12 @@ class UsersRESTTest {
     SettingDaoJdbc settingDaoJdbc;
     @Autowired
     TrackDaoJdbc trackDaoJdbc;
+    @Autowired
+    NotificationDaoJdbc notificationDaoJdbc;
+    @Autowired
+    ZoneDaoJdbc zoneDaoJdbc;
+    @Autowired
+    ErrorDaoJdbc errorDaoJdbc;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -268,10 +269,17 @@ class UsersRESTTest {
                 .setSurname("Kowalski")
                 .setUserPrivileges(UserPrivileges.STANDARD_USER)
                 .build();
-
+        Notification notification = new NotificationBuilder().setUser(user).build();
+        Zone zone = new ZoneBuilder().setUserList(Collections.singletonList(user)).build();
+        Track track = new TrackBuilder().setUser(user).build();
+        Error error = new ErrorBuilder().setUser(user).build();
         userDaoJdbc.save(user);
-        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);
+        notificationDaoJdbc.save(notification);
+        zoneDaoJdbc.save(zone);
+        trackDaoJdbc.save(track);
+        errorDaoJdbc.save(error);
 
+        MockHttpServletRequest mockHttpServletRequest = RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR);
         ResponseEntity<String> stringResponseEntity = usersREST.removeUser(mockHttpServletRequest, null, user.getId());
         assertEquals(0, userDaoJdbc.getAll().size());
     }

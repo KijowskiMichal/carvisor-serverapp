@@ -1,5 +1,6 @@
 package com.inz.carvisor.dao;
 
+import com.inz.carvisor.entities.model.Error;
 import com.inz.carvisor.entities.model.Offence;
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
@@ -48,5 +49,14 @@ public class OffenceDaoJdbc extends HibernateDaoJdbc<Offence> {
 
     public String createQuery(int trackId) {
         return "SELECT x FROM Offence x WHERE x.assignedTrackId = " + trackId;
+    }
+
+    public void removeUserOffences(Number id) {
+        List<Offence> all = this.getAll();
+        all.forEach(x -> {
+            if (x.getUser().getId() == id.intValue()) {
+                this.delete(x.getId());
+            }
+        });
     }
 }

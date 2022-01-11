@@ -50,4 +50,10 @@ public class ZoneDaoJdbc extends HibernateDaoJdbc<Zone> {
                 .stream()
                 .anyMatch(user -> user.getId() == userId);
     }
+
+    public void removeUserFromAll(Number id) {
+        List<Zone> all = getAll();
+        all.forEach(zone -> zone.getUserList().removeIf(user -> user.getId() == id.intValue()));
+        all.forEach(this::update);
+    }
 }

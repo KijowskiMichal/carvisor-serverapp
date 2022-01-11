@@ -1,7 +1,11 @@
 package com.inz.carvisor.dao;
 
+import com.inz.carvisor.entities.model.Offence;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -12,6 +16,21 @@ import java.util.stream.IntStream;
 
 @Repository
 public class UserDaoJdbc extends HibernateDaoJdbc<User> {
+
+    @Autowired
+    NotificationDaoJdbc notificationDaoJdbc;
+
+    @Autowired
+    ErrorDaoJdbc errorDaoJdbc;
+
+    @Autowired
+    OffenceDaoJdbc offenceDaoJdbc;
+
+    @Autowired
+    TrackDaoJdbc trackDaoJdbc;
+
+    @Autowired
+    ZoneDaoJdbc zoneDaoJdbc;
 
     @Autowired
     public UserDaoJdbc(HibernateRequests hibernateRequests, com.inz.carvisor.otherclasses.Logger logger) {
@@ -38,5 +57,35 @@ public class UserDaoJdbc extends HibernateDaoJdbc<User> {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<User> delete(Number userId) {
+        notificationDaoJdbc.removeUserNotification(userId);
+        errorDaoJdbc.removeUserErrors(userId);
+        offenceDaoJdbc.removeUserOffences(userId);
+        trackDaoJdbc.removeUserTracks(userId);
+        zoneDaoJdbc.removeUserFromAll(userId);
+        return deleteSecond(userId);
+    }
+
+    private Optional<User> deleteSecond(Number id) {
+        Session session = null;
+        Transaction transaction = null;
+        Optional<User> object = Optional.empty();
+        try {
+            session = hibernateRequests.getSession();
+            transaction = session.beginTransaction();
+            object = get(id);
+            if (object.isEmpty()) throw createThereIsNoSuchElementException(getTableName(), id);
+            session.delete(object.get());
+            transaction.commit();
+        } catch (HibernateException hibernateException) {
+            if (transaction != null) transaction.rollback();
+            hibernateException.printStackTrace();
+        } finally {
+            if (session != null) session.close();
+        }
+        return object;
     }
 }
