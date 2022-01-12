@@ -71,7 +71,7 @@ public class SafetyPointsService {
             Long countResults = (Long) countQuery.uniqueResult();
             lastPageNumber = (int) (Math.ceil(countResults / (double) pageSize));
 
-            Query selectQuery = session.createQuery("SELECT u FROM User u WHERE u.name  like '%" + regex + "%' OR u.surname  like '%" + regex + "%'");
+            Query selectQuery = session.createQuery("SELECT u FROM User u WHERE u.name  like '%" + regex + "%' OR u.surname  like '%" + regex + "%' ORDER BY u.safetyPointsAvg DESC");
             selectQuery.setFirstResult((page - 1) * pageSize);
             selectQuery.setMaxResults(pageSize);
             users = selectQuery.list();

@@ -127,7 +127,7 @@ public class EcoPointsService {
         try {
             if (regex.equals("$")) regex = "";
             tx = session.beginTransaction();
-            String countQ = "Select count (u.id) from User u WHERE u.name  like '%" + regex + "%' OR u.surname  like '%" + regex + "%'";
+            String countQ = "Select count (u.id) from User u WHERE u.name  like '%" + regex + "%' OR u.surname  like '%" + regex + "%' ORDER BY u.ecoPointsAvg DESC";
             Query countQuery = session.createQuery(countQ);
             Long countResults = (Long) countQuery.uniqueResult();
             lastPageNumber = (int) (Math.ceil(countResults / (double) pageSize));
