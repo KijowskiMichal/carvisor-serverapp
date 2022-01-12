@@ -142,7 +142,7 @@ public class TrackService {
 
         List<TrackRate> listOfTrackRates = extractTrackRatesFromJson(jsonObject, track);
 
-        setBetweenTrackRates(listOfTrackRates);
+        setBetweenTrackRates(track,listOfTrackRates);
         List<Zone> zonesAssignedToUser = zoneDaoJdbc.get(track.getUser());
         for (TrackRate trackRate : listOfTrackRates) {
             saveTrackRateToDatabase(trackRate);
@@ -639,17 +639,34 @@ public class TrackService {
         trackRateDaoJdbc.save(trackRate);
     }
 
-    private void setBetweenTrackRates(List<TrackRate> listOfTrackRates) {
+    private void setBetweenTrackRates(Track track, List<TrackRate> listOfTrackRates) {
+        if (listOfTrackRates.isEmpty()) return;
+        TrackRate firstTrackRate = listOfTrackRates.get(0);
+
+        if (track.getLastTrackRate().isEmpty()) {
+            firstTrackRate.setDistance(0);
+        } else {
+            float distanceBetweenPoints = calculateDistanceBetweenPoints(
+                    track.getLastTrackRate().get(),
+                    firstTrackRate
+            );
+            firstTrackRate.setDistance((long) distanceBetweenPoints);
+        }
+
         for (int i = 1; i < listOfTrackRates.size(); i++) {
             TrackRate prevTrackRate = listOfTrackRates.get(i - 1);
             TrackRate currentTrackRate = listOfTrackRates.get(i);
-            float distanceBetweenPoints = calculateDistanceBetweenPoints(
-                    prevTrackRate.getLatitude(),
-                    prevTrackRate.getLongitude(),
-                    currentTrackRate.getLatitude(),
-                    currentTrackRate.getLongitude());
+            float distanceBetweenPoints = calculateDistanceBetweenPoints(prevTrackRate, currentTrackRate);
             currentTrackRate.setDistance((long) distanceBetweenPoints);
         }
+    }
+
+    private float calculateDistanceBetweenPoints(TrackRate prevTrackRate, TrackRate currentTrackRate) {
+        return calculateDistanceBetweenPoints(
+                prevTrackRate.getLatitude(),
+                prevTrackRate.getLongitude(),
+                currentTrackRate.getLatitude(),
+                currentTrackRate.getLongitude());
     }
 
     private TrackRate parseJSONObjectTOTrackRate(String timeStamp, JSONObject currentTrackRate, Track track) {

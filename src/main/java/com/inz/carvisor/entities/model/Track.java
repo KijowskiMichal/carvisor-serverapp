@@ -1,9 +1,11 @@
 package com.inz.carvisor.entities.model;
 
+import com.inz.carvisor.constants.AttributeKey;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Optional;
 
 
 @Entity
@@ -202,6 +204,11 @@ public class Track {
 
     public void addMetersToDistance(long meters) {
         distanceFromStart += meters;
+    }
+
+    public Optional<TrackRate> getLastTrackRate() {
+        if (listOfTrackRates.isEmpty()) return Optional.empty();
+        return Optional.of(listOfTrackRates.get(listOfTrackRates.size()-1));
     }
 
     @Override

@@ -43,6 +43,9 @@ public class TrackRatesTest {
     private static String trackRatesString;
     private static String startTrackString;
 
+    private static String startFragmentedTrackString;
+    private static List<String> fragmentedTrackRates;
+
     @Autowired
     private UserDaoJdbc userDaoJdbc;
     @Autowired
@@ -73,6 +76,9 @@ public class TrackRatesTest {
     static void prepareTrackRates() {
         trackRatesString = FileDataGetter.getTrackJson();
         startTrackString = FileDataGetter.getStartTrackJson();
+
+        startFragmentedTrackString = FileDataGetter.getFragmentedStartTrack();
+        fragmentedTrackRates = FileDataGetter.getFragmentedTrackJson();
     }
 
     @AfterEach
@@ -95,6 +101,61 @@ public class TrackRatesTest {
         System.out.println("updateTrackData() =" + (System.currentTimeMillis() - start));
         trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
         System.out.println("endOfTrack() =" + (System.currentTimeMillis() - start));
+        trackREST.endOfTrack(httpServletRequestSecond,null);
+
+        ResponseEntity<String> ecoDetails = ecoPointsREST.getUserDetails(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                user.getId(),
+                1623879231, //one second before start
+                1623879239//one second after start
+        );
+
+        ResponseEntity<String> safetyDetails = safetyPointsREST.listUser(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                user.getId(),
+                1,
+                1000000000000L
+        );
+
+        ResponseEntity<String> userDetails = usersREST.getUserData(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                null,
+                user.getId()
+        );
+
+        ResponseEntity<String> listOfAllUsers = usersREST.list(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                1,
+                10,
+                ""
+        );
+
+        ResponseEntity<String> carDetails = devicesREST.list(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                1,
+                10,
+                ""
+        );
+
+        System.out.println();
+    }
+
+    @Ignore
+    @Test
+    void fragmentedTrackRates() {
+        User user = mockSecondUserFromDatabase();
+        Car car = mockCarFromDatabase();
+        HttpServletRequest httpServletRequestSecond = RequestBuilder.mockHttpServletRequest(user, car);
+        long start = System.currentTimeMillis();
+        trackREST.startTrack(httpServletRequestSecond, new HttpEntity<>(startFragmentedTrackString));
+
+        fragmentedTrackRates.forEach(
+                trackRatesString -> {
+                    trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
+                }
+        );
+
+
         trackREST.endOfTrack(httpServletRequestSecond,null);
 
         ResponseEntity<String> ecoDetails = ecoPointsREST.getUserDetails(
