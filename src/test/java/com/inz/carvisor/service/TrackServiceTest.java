@@ -1,7 +1,7 @@
 package com.inz.carvisor.service;
 
 import com.inz.carvisor.constants.AttributeKey;
-import com.inz.carvisor.controller.TrackREST;
+import com.inz.carvisor.controller.*;
 import com.inz.carvisor.dao.CarDaoJdbc;
 import com.inz.carvisor.dao.TrackDaoJdbc;
 import com.inz.carvisor.dao.TrackRateDaoJdbc;
@@ -61,6 +61,15 @@ class TrackServiceTest {
     @Autowired
     private TrackREST trackREST;
 
+    @Autowired
+    private EcoPointsREST ecoPointsREST;
+    @Autowired
+    private SafetyPointsREST safetyPointsREST;
+    @Autowired
+    private UsersREST usersREST;
+    @Autowired
+    private DevicesREST devicesREST;
+
     @BeforeAll
     static void prepareTrackRates() {
         trackRatesString = FileDataGetter.getSmallTrackRatesJson();
@@ -77,9 +86,9 @@ class TrackServiceTest {
 
     @Test
     void tracksShouldBeListedCorrectly() {
-        User userSecond = mockSecondUserFromDatabase();
+        User user = mockSecondUserFromDatabase();
         Car carSecond = mockCarFromDatabase();
-        HttpServletRequest httpServletRequestSecond = RequestBuilder.mockHttpServletRequest(userSecond, carSecond);
+        HttpServletRequest httpServletRequestSecond = RequestBuilder.mockHttpServletRequest(user, carSecond);
         long start = System.currentTimeMillis();
         trackREST.startTrack(httpServletRequestSecond, new HttpEntity<>(startTrackString));
         trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
@@ -87,11 +96,45 @@ class TrackServiceTest {
 
         ResponseEntity<String> list = trackREST.list(RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
                 null,
-                userSecond.getId(),
+                user.getId(),
                 1,
                 6,
                 1623871248,
                 System.currentTimeMillis()/1000 + 10
+        );
+
+        ResponseEntity<String> ecoDetails = ecoPointsREST.getUserDetails(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                user.getId(),
+                1623879231, //one second before start
+                1623879239//one second after start
+        );
+
+        ResponseEntity<String> safetyDetails = safetyPointsREST.listUser(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                user.getId(),
+                1,
+                1000000000000L
+        );
+
+        ResponseEntity<String> userDetails = usersREST.getUserData(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                null,
+                user.getId()
+        );
+
+        ResponseEntity<String> listOfAllUsers = usersREST.list(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                1,
+                10,
+                ""
+        );
+
+        ResponseEntity<String> carDetails = devicesREST.list(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
+                1,
+                10,
+                ""
         );
 
 
@@ -99,8 +142,8 @@ class TrackServiceTest {
         int length = jsonObject.getJSONArray(AttributeKey.Track.LIST_OF_TRACKS).length();
         assertEquals(1,length);
 
-        User user = userDaoJdbc.get(userSecond.getId()).get();
-        System.out.println(user.getDistanceTravelled());
+        User userx = userDaoJdbc.get(user.getId()).get();
+        System.out.println(userx.getDistanceTravelled());
     }
 
     @Test

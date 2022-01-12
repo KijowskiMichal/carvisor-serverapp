@@ -144,12 +144,14 @@ public class UserService {
                 long sum = trackDaoJdbc.getUserTracks(((User) tmp).getId())
                         .stream()
                         .flatMap(track -> track.getListOfTrackRates().stream())
-                        .filter(trackRate -> trackRate.getTimestamp() > timestampBefore.getTime() / 1000)
-                        .filter(trackRate -> trackRate.getTimestamp() < timestampAfter.getTime() / 1000)
+                        .filter(trackRate -> trackRate.getTimestamp() > (timestampBefore.getTime() / 1000))
+                        .filter(trackRate -> trackRate.getTimestamp() < (timestampAfter.getTime() / 1000))
                         .mapToLong(TrackRate::getDistance)
                         .sum();
 
                 jsonObject.put("distance", String.valueOf(sum));
+                jsonObject.put("timestampBefore", String.valueOf(timestampBefore.getTime() / 1000));
+                jsonObject.put("timestampAfter", String.valueOf(timestampAfter.getTime() / 1000));
                 tx.commit();
                 session.close();
             } catch (HibernateException e) {
