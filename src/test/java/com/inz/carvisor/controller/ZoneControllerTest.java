@@ -201,6 +201,54 @@ class ZoneControllerTest {
         assertEquals(3,jsonArray.length());
     }
 
+    @Test
+    void assigningZoneShouldResetPrevious() {
+        saveMockedUsersToDatabase();
+        saveMockedZonesToDatabase();
+        User user = userDaoJdbc.get(1).get();
+
+        List<Zone> all = zoneDaoJdbc.getAll();
+        JSONArray zonesIDs = new JSONArray();
+        all
+                .stream()
+                .limit(3)
+                .mapToInt(Zone::getId)
+                .forEach(zonesIDs::put);
+        JSONObject jsonObject = new JSONObject()
+                .put(AttributeKey.Zone.ZONES_IDS,zonesIDs);
+
+        zoneController.assignZones(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR),
+                new HttpEntity<>(jsonObject.toString()), user.getId()
+        );
+
+        ResponseEntity<String> stringResponseEntity = zoneController
+                .listUserZones(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), user.getId());
+        String body = stringResponseEntity.getBody();
+        JSONArray jsonArray = new JSONArray(body);
+        assertEquals(3,jsonArray.length());
+
+        zonesIDs = new JSONArray();
+        all
+                .stream()
+                .limit(1)
+                .mapToInt(Zone::getId)
+                .forEach(zonesIDs::put);
+        jsonObject = new JSONObject()
+                .put(AttributeKey.Zone.ZONES_IDS,zonesIDs);
+
+        zoneController.assignZones(
+                RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR),
+                new HttpEntity<>(jsonObject.toString()), user.getId()
+        );
+
+        stringResponseEntity = zoneController
+                .listUserZones(RequestBuilder.mockHttpServletRequest(UserPrivileges.MODERATOR), user.getId());
+        body = stringResponseEntity.getBody();
+        jsonArray = new JSONArray(body);
+        assertEquals(1,jsonArray.length());
+    }
+
     private HttpEntity<String> mockHttpEntityWithZone() {
         JSONObject jsonObject = new JSONObject()
                 .put(AttributeKey.Zone.NAME,"Moja Strefa")

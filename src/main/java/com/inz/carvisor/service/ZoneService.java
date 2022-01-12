@@ -36,14 +36,14 @@ public class ZoneService {
     }
 
     public void assignZonesToUser(Collection<Integer> zonesIds, User user) {
-        List<Zone> collect = zonesIds
-                .stream()
-                .map(zoneDaoJdbc::get)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
-        collect.forEach(zone -> zone.assignUser(user));
-        collect.forEach(zoneDaoJdbc::update);
+        for (Zone zone:zoneDaoJdbc.getAll()) {
+            if (zonesIds.contains(zone.getId())) {
+                zone.assignUser(user);
+            } else {
+                zone.removeUser(user);
+            }
+            zoneDaoJdbc.update(zone);
+        }
     }
 
     public List<Zone> list(String regex) {

@@ -80,4 +80,8 @@ public class Zone {
     public void assignUser(User user) {
         if (!userList.contains(user)) userList.add(user);
     }
+
+    public void removeUser(User userToRemove) {
+        userList.removeIf(user -> user.getId() == userToRemove.getId());
+    }
 }
