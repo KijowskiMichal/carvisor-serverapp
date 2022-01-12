@@ -134,6 +134,12 @@ public class TrackRatesTest {
         System.out.println();
     }
 
+    @Test
+    void x(){
+        long x = 123;
+        System.out.println(String.valueOf(x));
+    }
+
     private void compareTracksFromDatabase(Track one, Track two) {
         Assertions.assertEquals(one.getTimestamp(),two.getTimestamp());
         //Assertions.assertEquals(one.getDistanceFromStart(),two.getDistanceFromStart());

@@ -12,6 +12,7 @@ import com.inz.carvisor.entities.model.TrackRate;
 import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.util.PasswordManipulatior;
+import com.inz.carvisor.util.TimeStampCalculator;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +35,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -102,71 +104,68 @@ public class UserService {
         } catch (HibernateException e) {
             if (tx != null) tx.rollback();
             session.close();
-            e.printStackTrace();
             return DefaultResponse.BAD_REQUEST;
         }
         JSONObject jsonOut = new JSONObject();
         JSONArray jsonArray = new JSONArray();
         for (Object tmp : users) {
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("id", ((User) tmp).getId());
-            jsonObject.put("nick", ((User) tmp).getNick());
-            jsonObject.put("name", ((User) tmp).getName());
-            jsonObject.put("surname", ((User) tmp).getSurname());
-            jsonObject.put("image", ((User) tmp).getImage());
+            JSONObject jsonObject = new JSONObject()
+                    .put("id", ((User) tmp).getId())
+                    .put("nick", ((User) tmp).getNick())
+                    .put("name", ((User) tmp).getName())
+                    .put("surname", ((User) tmp).getSurname())
+                    .put("image", ((User) tmp).getImage());
             try {
                 session = hibernateRequests.getSession();
                 tx = session.beginTransaction();
                 Query selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.isActive = true AND t.user.id = " + ((User) tmp).getId());
                 List<Track> tracks = selectQuery.list();
                 if (tracks.size() > 0) {
-                    jsonObject.put("status", "Aktywny");
-                    jsonObject.put("startTime", tracks.get(0).getStartTrackTimeStamp());
-                    jsonObject.put("finishTime", -1);
-                    jsonObject.put("licensePlate", tracks.get(0).getCar().getLicensePlate());
+                    jsonObject
+                            .put("status", "Aktywny")
+                            .put("startTime", tracks.get(0).getStartTrackTimeStamp())
+                            .put("finishTime", -1)
+                            .put("licensePlate", tracks.get(0).getCar().getLicensePlate());
                 } else {
                     selectQuery = session.createQuery("SELECT t FROM Track t WHERE t.isActive = false AND t.user.id = " + ((User) tmp).getId() + " ORDER BY t.id DESC");
                     selectQuery.setMaxResults(1);
                     tracks = selectQuery.list();
-                    if (tracks.size() > 0) {
-                        jsonObject.put("finishTime", tracks.get(0).getEndTrackTimeStamp());
-                    } else jsonObject.put("finishTime", -1);
-                    jsonObject.put("status", "Nieaktywny");
-                    jsonObject.put("startTime", -1);
-                    jsonObject.put("licensePlate", "");
+                    jsonObject
+                            .put("finishTime", tracks.size() > 0 ? tracks.get(0).getEndTrackTimeStamp() : -1)
+                            .put("status", "Nieaktywny")
+                            .put("startTime", -1)
+                            .put("licensePlate", "");
                 }
-                Date now = new Date();
-                LocalDateTime before = LocalDateTime.ofInstant(Instant.ofEpochSecond(now.getTime() / 1000), TimeZone.getDefault().toZoneId()).with(LocalTime.MIN);
-                Timestamp timestampBefore = Timestamp.valueOf(before);
-                LocalDateTime after = LocalDateTime.ofInstant(Instant.ofEpochSecond(now.getTime() / 1000), TimeZone.getDefault().toZoneId()).with(LocalTime.MAX);
-                Timestamp timestampAfter = Timestamp.valueOf(after);
 
+                long nowEpochSeconds = System.currentTimeMillis() / 1000;
+                long startOfTheDayTimestamp = TimeStampCalculator.getStartOfDayTimeStamp(nowEpochSeconds);
+                long endOfTheDayTimestamp = TimeStampCalculator.getEndOfDayTimeStamp(nowEpochSeconds);
                 long sum = trackDaoJdbc.getUserTracks(((User) tmp).getId())
                         .stream()
                         .flatMap(track -> track.getListOfTrackRates().stream())
-                        .filter(trackRate -> trackRate.getTimestamp() > (timestampBefore.getTime() / 1000))
-                        .filter(trackRate -> trackRate.getTimestamp() < (timestampAfter.getTime() / 1000))
+                        .filter(trackRate -> trackRate.getTimestamp() > startOfTheDayTimestamp)
+                        .filter(trackRate -> trackRate.getTimestamp() < endOfTheDayTimestamp)
                         .mapToLong(TrackRate::getDistance)
                         .sum();
 
-                jsonObject.put("distance", String.valueOf(sum));
-                jsonObject.put("timestampBefore", String.valueOf(timestampBefore.getTime() / 1000));
-                jsonObject.put("timestampAfter", String.valueOf(timestampAfter.getTime() / 1000));
+                jsonObject
+                        .put("distance", String.valueOf(sum))
+                        .put("startOfTheDayTimestamp", String.valueOf(startOfTheDayTimestamp))
+                        .put("endOfTheDayTimestamp", String.valueOf(endOfTheDayTimestamp));
                 tx.commit();
                 session.close();
             } catch (HibernateException e) {
                 if (tx != null) tx.rollback();
                 session.close();
-                e.printStackTrace();
                 return DefaultResponse.BAD_REQUEST;
             }
             jsonArray.put(jsonObject);
         }
 
-        jsonOut.put("page", page);
-        jsonOut.put("pageMax", lastPageNumber);
-        jsonOut.put("listOfUsers", jsonArray);
-        logger.info("UsersREST.list returns list of users (user: " + ((User) request.getSession().getAttribute("user")).getNick() + ")");
+        jsonOut
+                .put("page", page)
+                .put("pageMax", lastPageNumber)
+                .put("listOfUsers", jsonArray);
         return ResponseEntity.status(HttpStatus.OK).body(jsonOut.toString());
     }
 

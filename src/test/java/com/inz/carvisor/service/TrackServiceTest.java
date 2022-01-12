@@ -92,6 +92,7 @@ class TrackServiceTest {
         long start = System.currentTimeMillis();
         trackREST.startTrack(httpServletRequestSecond, new HttpEntity<>(startTrackString));
         trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
+        trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
         trackREST.endOfTrack(httpServletRequestSecond,null);
 
         ResponseEntity<String> list = trackREST.list(RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR),
