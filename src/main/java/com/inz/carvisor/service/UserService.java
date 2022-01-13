@@ -282,6 +282,7 @@ public class UserService {
                 .put(AttributeKey.User.PHONE_NUMBER, user.getPhoneNumber())
                 .put(AttributeKey.User.USER_PRIVILEGES, user.getUserPrivileges())
                 .put(AttributeKey.User.TIME_TO, cutSeconds(user.getWorkingHoursEnd()))
+                .put(AttributeKey.User.USER_PRIVILEGES, user.getUserPrivileges().name())
                 .put(AttributeKey.User.TIME_FROM, cutSeconds(user.getWorkingHoursStart()));
         return DefaultResponse.ok(jsonObject.toString());
     }
@@ -333,6 +334,7 @@ public class UserService {
             user.setName(names[0]);
             user.setSurname(names[1]);
             user.setPhoneNumber(telephone);
+            user.setUserPrivileges(UserPrivileges.valueOf(inJSON.getString(AttributeKey.User.USER_PRIVILEGES)));
             session.update(user);
             tx.commit();
             responseEntity = DefaultResponse.OK;
