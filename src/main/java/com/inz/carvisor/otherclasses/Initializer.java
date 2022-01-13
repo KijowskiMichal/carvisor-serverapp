@@ -2,6 +2,7 @@ package com.inz.carvisor.otherclasses;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -9,6 +10,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
  * Initializer of SpringMVC
  */
 @Configuration
+@EnableScheduling
 @EnableWebMvc
 @ComponentScan("com/inz/carvisor/controller")
 @ComponentScan("com/inz/carvisor/hibernatepackage")
