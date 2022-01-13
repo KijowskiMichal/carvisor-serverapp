@@ -10,7 +10,7 @@ public class UserJsonParser {
                 .put("id", user.getId())
                 .put("name", user.getName())
                 .put("surname", user.getSurname())
-                .put("rate", user.getEcoPointsAvg() / 2.0)
+                .put("rate", user.getEcoPointsAvg())
                 .put("tracks", user.getTracksNumber())
                 .put("combustion", user.getCombustionAVG())
                 .put("revolutions", user.getRevolutionsAVG())

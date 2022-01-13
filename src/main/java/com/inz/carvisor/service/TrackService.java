@@ -228,12 +228,17 @@ public class TrackService {
                     currentUser.setTracksNumber(currentUser.getTracksNumber() + 1);
                     currentUser.setDistanceTravelled(currentUser.getDistanceTravelled() + track.getDistanceFromStart());
                     currentUser.setSamples(currentUser.getSamples() + track.getAmountOfSamples());
-                    currentUser.setSafetyPointsAvg(currentUser.getSafetyPointsAvg() + track.getSafetyPointsScore());
                     track.setActive(false);
                     track.setEndTrackTimeStamp(time - 8);
-                    currentUser.addTrackToEcoPointScore(track);
+
+
                     track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track, offenceDaoJdbc.getTrackOffences(track.getId())));
                     SafetyPointsCalculator.validateSafetyPointsScore(currentUser, track);
+
+                    track.setEcoPointsScore(EcoPointsCalculator.calculateEcoPoints(track));
+                    currentUser.addTrackToEcoPointScore(track);
+
+
                     session.update(track);
                 }
             }
@@ -267,12 +272,13 @@ public class TrackService {
         currentUser.setTracksNumber(currentUser.getTracksNumber() + 1);
         currentUser.setDistanceTravelled(currentUser.getDistanceTravelled() + track.getDistanceFromStart());
         currentUser.setSamples(currentUser.getSamples() + track.getAmountOfSamples());
-        currentUser.setSafetyPointsAvg(currentUser.getSafetyPointsAvg() + track.getSafetyPointsScore());
         track.setActive(false);
         track.setEndTrackTimeStamp(time - 8);
         currentUser.addTrackToEcoPointScore(track);
-        track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track, offenceDaoJdbc.getTrackOffences(track.getId())));
-        SafetyPointsCalculator.validateSafetyPointsScore(currentUser, track);
+
+        //currentUser.setSafetyPointsAvg(currentUser.getSafetyPointsAvg() + track.getSafetyPointsScore());
+        //track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track, offenceDaoJdbc.getTrackOffences(track.getId())));
+        //SafetyPointsCalculator.validateSafetyPointsScore(currentUser, track);
     }
 
     /**
@@ -496,8 +502,8 @@ public class TrackService {
         track.setTimestamp(lastTrackRate.getTimestamp());
         track.addMetersToDistance(getTotalDistance(listOfTrackRates));
         track.setEndPosition(lastTrackRate.getLocation());
-        track.setEcoPointsScore(EcoPointsCalculator.calculateEcoPoints(track));
-        track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track, offenceDaoJdbc.getTrackOffences(track.getId())));
+        //track.setEcoPointsScore(EcoPointsCalculator.calculateEcoPoints(track));
+        //track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track, offenceDaoJdbc.getTrackOffences(track.getId())));
         trackDaoJdbc.update(track);
     }
 

@@ -146,16 +146,12 @@ public class TrackRatesTest {
         User user = mockSecondUserFromDatabase();
         Car car = mockCarFromDatabase();
         HttpServletRequest httpServletRequestSecond = RequestBuilder.mockHttpServletRequest(user, car);
-        long start = System.currentTimeMillis();
         trackREST.startTrack(httpServletRequestSecond, new HttpEntity<>(startFragmentedTrackString));
-
         fragmentedTrackRates.forEach(
                 trackRatesString -> {
                     trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
                 }
         );
-
-
         trackREST.endOfTrack(httpServletRequestSecond,null);
 
         ResponseEntity<String> ecoDetails = ecoPointsREST.getUserDetails(

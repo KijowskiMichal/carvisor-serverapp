@@ -8,6 +8,8 @@ import com.inz.carvisor.entities.enums.UserPrivileges;
 import com.inz.carvisor.entities.model.*;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
+import com.inz.carvisor.util.DataMocker;
+import com.inz.carvisor.util.FileDataGetter;
 import com.inz.carvisor.util.RequestBuilder;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -16,12 +18,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -110,5 +115,31 @@ class SafetyPointsRESTTest {
         String body = response.getBody();
         JSONObject notifications = new JSONObject(body);
         System.out.println(notifications);
+    }
+
+    @Test
+    void checkRate() {
+        DataMocker.getUsers().forEach(userDaoJdbc::save);
+        DataMocker.getCars().forEach(carDaoJdbc::save);
+
+        User user = userDaoJdbc.getAll().get(0);
+        Car car = carDaoJdbc.getAll().get(0);
+
+        String startFragmentedTrackString = FileDataGetter.getFragmentedStartTrack();
+        List<String> fragmentedTrackRates = FileDataGetter.getFragmentedTrackJson();
+
+        HttpServletRequest httpServletRequestSecond = RequestBuilder.mockHttpServletRequest(user, car);
+        trackREST.startTrack(httpServletRequestSecond, new HttpEntity<>(startFragmentedTrackString));
+        fragmentedTrackRates.forEach(
+                trackRatesString -> {
+                    trackREST.updateTrackData(httpServletRequestSecond, new HttpEntity<>(trackRatesString));
+                }
+        );
+        trackREST.endOfTrack(httpServletRequestSecond,null);
+
+
+
+        ResponseEntity<String> x = safetyPointsREST.list(RequestBuilder.mockHttpServletRequest(UserPrivileges.ADMINISTRATOR), 1, 6, "$");
+        System.out.println(x);
     }
 }
