@@ -13,7 +13,9 @@ public class CrossingTheZoneOffence {
 
     public static Optional<Offence> createOffenceIfExists(Track track, TrackRate trackRate, Zone zone) {
         float distanceFromMiddle = calculateDistanceBetweenTrackRateAndMiddleOfTheZone(trackRate, zone);
-        if (distanceFromMiddle > zone.getRadius()) return Optional.empty();
+        if (distanceFromMiddle < zone.getRadius()) {
+            return Optional.empty();
+        }
         Offence offence = new OffenceBuilder()
                 .setOffenceType(OffenceType.LEAVING_THE_ZONE)
                 .setUser(track.getUser())
