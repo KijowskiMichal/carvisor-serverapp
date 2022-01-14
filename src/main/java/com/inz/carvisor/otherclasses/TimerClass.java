@@ -6,12 +6,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class EndOfTrackRequestEveryEightSecondsOfWorkingCarvisor {
+public class TimerClass {
     @Autowired
     private TrackService trackService;
 
-    @Scheduled(fixedRate = 8000)
-    public void endOfTrackRequestEveryEightSecondsOfWorkingCarvisor() throws InterruptedException {
+    @Scheduled(fixedRate = 60000)
+    public void endOfTrackRequestEvery60SecondsOfWorkingCarvisor() throws InterruptedException {
         trackService.endOfTrack(null, null);
     }
 }
