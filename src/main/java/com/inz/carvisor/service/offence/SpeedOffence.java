@@ -35,6 +35,8 @@ public class SpeedOffence {
     private static int getSpeedLimit(TrackRate trackRate) {
         return getData(trackRate.getLocation())
                 .map(SpeedOffence::extractSpeedLimit)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .map(SpeedOffence::convertToKPH)
                 .orElse(140);
     }
@@ -43,16 +45,20 @@ public class SpeedOffence {
         return (int) Math.round(mps * 3.6);
     }
 
-    private static double extractSpeedLimit(JSONObject jsonObject) {
-        return jsonObject
-                .getJSONObject("response")
-                .getJSONArray("route")
-                .getJSONObject(0)
-                .getJSONArray("leg")
-                .getJSONObject(0)
-                .getJSONArray("link")
-                .getJSONObject(0)
-                .getDouble("speedLimit");
+    private static Optional<Double> extractSpeedLimit(JSONObject jsonObject) {
+        try {
+            return Optional.of(jsonObject
+                    .getJSONObject("response")
+                    .getJSONArray("route")
+                    .getJSONObject(0)
+                    .getJSONArray("leg")
+                    .getJSONObject(0)
+                    .getJSONArray("link")
+                    .getJSONObject(0)
+                    .getDouble("speedLimit"));
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     private static Optional<JSONObject> getData(String wayPoint) {
