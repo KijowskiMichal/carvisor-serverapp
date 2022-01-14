@@ -8,36 +8,20 @@ import java.util.List;
 
 public class EcoPointsCalculator {
 
+    private static final float c = 0.33333333F;
+
     public static float calculateEcoPoints(Track track) {
-        int eco = 10;
+
         int averageSpeed = track.getAverageSpeed();
-        if (averageSpeed > 60) {
-            eco -= 4;
-        } else if (averageSpeed > 40) {
-            eco -= 2;
-        } else if (averageSpeed > 30) {
-            eco -= 1;
-        }
+        float suppSpeed = calculateSuppResult(20, 80, averageSpeed);
 
         long averageRevolutions = track.getAverageRevolutionsPerMinute();
-        if (averageRevolutions > 1700) {
-            eco -= 4;
-        } else if (averageRevolutions > 1600) {
-            eco -= 2;
-        } else if (averageRevolutions > 1500) {
-            eco -= 1;
-        }
+        float suppRevolutions = calculateSuppResult(1000, 2000, averageRevolutions);
 
         long averageThrottle = track.getAverageThrottle();
-        if (averageThrottle > 30) {
-            eco -= 4;
-        } else if (averageThrottle > 20) {
-            eco -= 2;
-        } else if (averageThrottle > 10) {
-            eco -= 1;
-        }
+        float suppThrottle = calculateSuppResult(5, 30, averageThrottle);
 
-        return Math.max(Math.max(eco, 0F) / 2.0F,1);
+        return suppSpeed * c + suppRevolutions * c + suppThrottle * c;
     }
 
     public static void validateEcoPointsScore(User user, Track track) {
@@ -51,5 +35,16 @@ public class EcoPointsCalculator {
 
         float total = trackSPS * (trackSamples / userSamples) + userSPS * (userSamplesWithoutTrack / userSamples);
         user.setEcoPointsAvg(total);
+    }
+
+    public static float calculateSuppResult(int downWorst, int upWorst, long actual) {
+        long medium = upWorst - downWorst;
+        long band = upWorst - medium;
+        long deviationFromIdeal = Math.abs(actual - medium);
+        long valueOverrun = band - deviationFromIdeal;
+        float percentageOverrun = (float) valueOverrun / (float) band;
+
+        float answer = percentageOverrun * 5;
+        return Math.min(5,Math.max(1,answer));
     }
 }
