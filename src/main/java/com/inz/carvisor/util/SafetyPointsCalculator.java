@@ -6,13 +6,16 @@ import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.User;
 
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 public class SafetyPointsCalculator {
 
     public static float calculateSafetyPoints(Track track, List<Offence> trackOffences) {
-        return calculateSafetyPoints(trackOffences);
+        try {
+            return calculateSafetyPoints(trackOffences);
+        } catch (Exception e) {
+            return 0F;
+        }
     }
 
     public static void validateSafetyPointsScore(User user, Track track) {
@@ -28,7 +31,7 @@ public class SafetyPointsCalculator {
         user.setSafetyPointsAvg(total);
     }
 
-    public static int calculateSafetyPoints(List<Offence> trackOffences) {
+    public static float calculateSafetyPoints(List<Offence> trackOffences) {
         List<Offence> speedingOffences = trackOffences
                 .stream()
                 .filter(offence -> offence.getOffenceType().equals(OffenceType.SPEEDING))
@@ -44,7 +47,7 @@ public class SafetyPointsCalculator {
         return worstCaseScenario(50, (long) avg);
     }
 
-    public static int worstCaseScenario(long upperLimitOfTragedy, long actual) {
+    public static float worstCaseScenario(long upperLimitOfTragedy, long actual) {
         if (actual > upperLimitOfTragedy) {
             return 1;
         }
@@ -57,6 +60,6 @@ public class SafetyPointsCalculator {
         float percentageOverrun = (float) l / (float) actual;
 
         float answer = percentageOverrun * 5;
-        return (int) Math.min(5,Math.max(1,answer));
+        return Math.min(5,Math.max(1,answer));
     }
 }
