@@ -2,6 +2,7 @@ package com.inz.carvisor.service.offence;
 
 import com.inz.carvisor.controller.TrackREST;
 import com.inz.carvisor.entities.model.Offence;
+import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.TrackRate;
 import com.inz.carvisor.entities.model.TrackRateBuilder;
 import com.inz.carvisor.otherclasses.Initializer;
@@ -39,9 +40,10 @@ class SpeedOffenceTest {
                 .setLatitude(-42.833856)
                 .setLongitude(33.353536)
                 .build();
-
-        Assertions.assertTrue(SpeedOffence.createOffenceIfExists(null,trackRateWithOffence).isPresent());
-        Assertions.assertFalse(SpeedOffence.createOffenceIfExists(null,trackRateWithoutOffence).isPresent());
-        Assertions.assertFalse(SpeedOffence.createOffenceIfExists(null,impossibleToResolveTrackRate).isPresent());
+        Track track = new Track();
+        track.setId(1);
+        Assertions.assertTrue(SpeedOffence.createOffenceIfExists(track,trackRateWithOffence).isPresent());
+        Assertions.assertFalse(SpeedOffence.createOffenceIfExists(track,trackRateWithoutOffence).isPresent());
+        Assertions.assertFalse(SpeedOffence.createOffenceIfExists(track,impossibleToResolveTrackRate).isPresent());
     }
 }

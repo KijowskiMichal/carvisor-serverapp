@@ -89,7 +89,7 @@ class TrackRESTTest {
         Objects.requireNonNull(mockHttpServletRequest.getSession()).setAttribute(AttributeKey.CommonKey.CAR, car);
         JSONObject jsonObject = new JSONObject()
                 .put(AttributeKey.Track.TIME, 165000)
-                .put(AttributeKey.Track.PRIVATE, false)
+                .put("private", false)
                 .put(AttributeKey.Track.GPS_LONGITUDE, 15.50F)
                 .put(AttributeKey.Track.GPS_LATITUDE, 26.35F)
                 .put(AttributeKey.Track.NFC_TAG, "ABB");

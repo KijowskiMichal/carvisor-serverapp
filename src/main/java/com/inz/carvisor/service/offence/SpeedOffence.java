@@ -36,7 +36,7 @@ public class SpeedOffence {
         return getData(trackRate.getLocation())
                 .map(SpeedOffence::extractSpeedLimit)
                 .map(SpeedOffence::convertToKPH)
-                .orElse(Integer.MAX_VALUE);
+                .orElse(140);
     }
 
     private static int convertToKPH(double mps) {

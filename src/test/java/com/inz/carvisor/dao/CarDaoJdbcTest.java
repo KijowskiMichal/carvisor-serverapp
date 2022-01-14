@@ -1,7 +1,11 @@
 package com.inz.carvisor.dao;
 
+import com.inz.carvisor.controller.DevicesREST;
 import com.inz.carvisor.entities.builders.CarBuilder;
 import com.inz.carvisor.entities.model.Car;
+import com.inz.carvisor.entities.model.Setting;
+import com.inz.carvisor.entities.model.Track;
+import com.inz.carvisor.entities.model.User;
 import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.otherclasses.Initializer;
 import com.inz.carvisor.otherclasses.Logger;
@@ -9,26 +13,51 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+@RunWith(SpringRunner.class)
 @WebMvcTest(CarDaoJdbc.class)
 @ContextConfiguration(classes = {Initializer.class})
 public class CarDaoJdbcTest {
 
     private final Logger logger = new Logger();
+
+    @Autowired
+    DevicesREST devicesREST;
+    @Autowired
+    UserDaoJdbc userDaoJdbc;
+    @Autowired
+    CarDaoJdbc carDaoJdbc;
+    @Autowired
+    SettingDaoJdbc settingDaoJdbc;
+    @Autowired
+    TrackDaoJdbc trackDaoJdbc;
+    @Autowired
+    NotificationDaoJdbc notificationDaoJdbc;
+    @Autowired
+    ZoneDaoJdbc zoneDaoJdbc;
+    @Autowired
+    ErrorDaoJdbc errorDaoJdbc;
+    @Autowired
+    private MockMvc mockMvc;
     @Autowired
     private HibernateRequests hibernateRequests;
 
     @AfterEach
-    void clearDatabase() {
-        CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
-        carDaoJdbc.getAll().stream().mapToInt(Car::getId).forEach(carDaoJdbc::delete);
+    void cleanupDatabase() {
+        userDaoJdbc.getAll().stream().map(User::getId).forEach(userDaoJdbc::delete);
+        carDaoJdbc.getAll().stream().map(Car::getId).forEach(carDaoJdbc::delete);
+        settingDaoJdbc.getAll().stream().map(Setting::getId).forEach(settingDaoJdbc::delete);
+        trackDaoJdbc.getAll().stream().map(Track::getId).forEach(trackDaoJdbc::delete);
     }
 
     @Test
@@ -66,27 +95,5 @@ public class CarDaoJdbcTest {
         cars.forEach(carDaoJdbc::save);
         int actualSize = carDaoJdbc.getAll().size();
         Assertions.assertEquals(expectedCarsAmount, actualSize);
-    }
-
-    @Test
-    void delete() {
-        CarDaoJdbc carDaoJdbc = new CarDaoJdbc(hibernateRequests, logger);
-        Car car1 = new CarBuilder()
-                .setLicensePlate("ABCD")
-                .setBrand("Skoda")
-                .setModel("Fabia")
-                .setPassword(DigestUtils.sha256Hex("ABCD"))
-                .build();
-
-        carDaoJdbc.save(car1);
-
-        Optional<Car> wrappedCar2 = carDaoJdbc.get(car1.getId());
-        if (wrappedCar2.isEmpty())
-            Assertions.fail();
-
-        carDaoJdbc.delete(car1.getId());
-        wrappedCar2 = carDaoJdbc.get(car1.getId());
-        if (wrappedCar2.isPresent())
-            Assertions.fail();
     }
 }

@@ -202,7 +202,8 @@ class UsersRESTTest {
                 .put(AttributeKey.User.NAME, "Zbigniew Wodecki")
                 .put(AttributeKey.User.PHONE_NUMBER, "112")
                 .put(AttributeKey.User.TIME_FROM,"09:00")
-                .put(AttributeKey.User.TIME_TO,"17:00");
+                .put(AttributeKey.User.TIME_TO,"17:00")
+                .put(AttributeKey.User.USER_PRIVILEGES,"ADMINISTRATOR");
 
         HttpEntity<String> httpEntity = new HttpEntity<>(inputUserJson.toString());
 

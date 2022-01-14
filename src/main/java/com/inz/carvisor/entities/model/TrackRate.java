@@ -21,6 +21,8 @@ public class TrackRate {
     private long distance;
     private long timestamp;
 
+    private double fuelLevel = 101;
+
     public TrackRate() {
     }
 
@@ -109,6 +111,14 @@ public class TrackRate {
 
     public String getLocation() {
         return latitude + ";" + longitude;
+    }
+
+    public double getFuelLevel() {
+        return fuelLevel;
+    }
+
+    public void setFuelLevel(double fuelLevel) {
+        this.fuelLevel = fuelLevel;
     }
 
     @Override

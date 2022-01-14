@@ -96,7 +96,11 @@ public class TrackService {
         try {
             jsonObject = new JSONObject(Objects.requireNonNull(httpEntity.getBody()));
             startTime = jsonObject.getLong("time");
-            isPrivateTrack = jsonObject.getBoolean("private"); //nietykalna linika
+            if (jsonObject.has("private")) {
+                isPrivateTrack = jsonObject.getBoolean("private"); //nietykalna linika
+            } else {
+                isPrivateTrack = false;
+            }
             gpsLongitude = jsonObject.getFloat("gps_longitude");
             gpsLatitude = jsonObject.getFloat("gps_latitude");
             userNfcTag = jsonObject.getString("nfc_tag");
@@ -224,7 +228,6 @@ public class TrackService {
             for (Track track : tracks) {
                 User currentUser = track.getUser();
                 if (track.getTimestamp() < (time - 15)) {
-                    currentUser.addTrackToEcoPointScore(track);
                     currentUser.setTracksNumber(currentUser.getTracksNumber() + 1);
                     currentUser.setDistanceTravelled(currentUser.getDistanceTravelled() + track.getDistanceFromStart());
                     currentUser.setSamples(currentUser.getSamples() + track.getAmountOfSamples());
@@ -236,8 +239,7 @@ public class TrackService {
                     SafetyPointsCalculator.validateSafetyPointsScore(currentUser, track);
 
                     track.setEcoPointsScore(EcoPointsCalculator.calculateEcoPoints(track));
-                    currentUser.addTrackToEcoPointScore(track);
-
+                    EcoPointsCalculator.validateEcoPointsScore(currentUser, track);
 
                     session.update(track);
                 }
@@ -693,6 +695,7 @@ public class TrackService {
         if (obd.has(RPM_PID)) trackRateBuilder.setRpm((short) obd.getInt(RPM_PID));
         if (obd.has(SPEED_PID)) trackRateBuilder.setSpeed((short) obd.getInt(SPEED_PID));
         if (obd.has(THROTTLE_POS_PID)) trackRateBuilder.setThrottle((byte) obd.getInt(THROTTLE_POS_PID));
+        if (obd.has(FUEL_LEVEL_PID)) trackRateBuilder.setFuelLevel( obd.getDouble(THROTTLE_POS_PID));
     }
 
     private void addGpsPosTOTrackRateBuilder(TrackRateBuilder trackRateBuilder, JSONObject gps) {
@@ -719,5 +722,25 @@ public class TrackService {
         double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(Math.toRadians(y1)) * Math.cos(Math.toRadians(y2)) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return (float) (earthRadiusInMeters * c);
+    }
+
+    private void calculateAndSetCombustion(Track track) {
+        List<TrackRate> trackRates = track.getListOfTrackRates();
+        if (trackRates.size() < 2) {
+            track.setCombustion(0);
+            return;
+        }
+        TrackRate firstTrackRate = trackRates.get(0);
+        TrackRate lastTrackRate = trackRates.get(trackRates.size()-1);
+        if (firstTrackRate.getFuelLevel() == 101) {
+            track.setCombustion(0);
+            return;
+        }
+        double fuelLevelFirst = firstTrackRate.getFuelLevel();
+        double fuelLevelLast = lastTrackRate.getFuelLevel();
+        double usedFuelPercentage = fuelLevelFirst - fuelLevelLast;
+        int tank = track.getCar().getTank();
+        double usedFuelInLiters = usedFuelPercentage * tank;
+        track.setCombustion(usedFuelInLiters);
     }
 }

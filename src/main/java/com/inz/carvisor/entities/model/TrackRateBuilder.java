@@ -9,6 +9,7 @@ public class TrackRateBuilder {
     private Short rpm;
     private long distance;
     private long timestamp;
+    private double fuelLevel = 101;
 
     public TrackRateBuilder setTrackId(long trackId) {
         this.trackId = trackId;
@@ -50,6 +51,10 @@ public class TrackRateBuilder {
         return this;
     }
 
+    public void setFuelLevel(double fuelLevel) {
+        this.fuelLevel = fuelLevel;
+    }
+
     public TrackRate build() {
         TrackRate trackRate = new TrackRate();
         trackRate.setTrack(this.trackId);
@@ -60,6 +65,7 @@ public class TrackRateBuilder {
         trackRate.setRpm(this.rpm);
         trackRate.setDistance(this.distance);
         trackRate.setTimestamp(this.timestamp);
+        trackRate.setFuelLevel(this.fuelLevel);
         return trackRate;
     }
 }

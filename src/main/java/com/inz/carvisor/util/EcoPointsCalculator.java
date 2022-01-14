@@ -2,6 +2,7 @@ package com.inz.carvisor.util;
 
 import com.inz.carvisor.entities.model.Track;
 import com.inz.carvisor.entities.model.TrackRate;
+import com.inz.carvisor.entities.model.User;
 
 import java.util.List;
 
@@ -43,5 +44,18 @@ public class EcoPointsCalculator {
         }
 
         return Math.max(Math.max(eco, 0F) / 2.0F,1);
+    }
+
+    public static void validateEcoPointsScore(User user, Track track) {
+        float userSamples = user.getSamples();
+        float trackSamples = track.getAmountOfSamples();
+
+        float userSamplesWithoutTrack = userSamples - trackSamples;
+
+        float trackSPS = track.getEcoPointsScore();
+        float userSPS = user.getEcoPointsAvg();
+
+        float total = trackSPS * (trackSamples / userSamples) + userSPS * (userSamplesWithoutTrack / userSamples);
+        user.setEcoPointsAvg(total);
     }
 }

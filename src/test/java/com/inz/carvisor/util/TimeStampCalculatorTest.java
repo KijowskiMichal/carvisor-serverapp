@@ -16,16 +16,6 @@ class TimeStampCalculatorTest {
     }
 
     @Test
-    void getFirstDay() {
-        assertEquals(644198400,TimeStampCalculator.getFirstDayTimeStamp(6,1990));
-    }
-
-    @Test
-    void getLastDay() {
-        assertEquals(646704000,TimeStampCalculator.getLastDayTimestamp(6,1990));
-    }
-
-    @Test
     void getTimeFromTimestamp() {
         assertEquals(Time.valueOf("15:45:00"),TimeStampCalculator.parseToTime(1641134700));
 

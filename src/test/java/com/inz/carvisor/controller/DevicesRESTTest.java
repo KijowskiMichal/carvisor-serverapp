@@ -47,8 +47,7 @@ class DevicesRESTTest {
     DevicesREST devicesREST;
     @Autowired
     UserDaoJdbc userDaoJdbc;
-    @Autowired
-    CarDaoJdbc carDaoJdbc;
+
     @Autowired
     SettingDaoJdbc settingDaoJdbc;
     @Autowired
@@ -63,6 +62,8 @@ class DevicesRESTTest {
     private MockMvc mockMvc;
     @Autowired
     private HibernateRequests hibernateRequests;
+    @Autowired
+    CarDaoJdbc carDaoJdbc;
 
     @AfterEach
     void cleanupDatabase() {
