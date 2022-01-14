@@ -13,13 +13,13 @@ public class EcoPointsCalculator {
     public static float calculateEcoPoints(Track track) {
 
         int averageSpeed = track.getAverageSpeed();
-        float suppSpeed = calculateSuppResult(20, 80, averageSpeed);
+        float suppSpeed = calculateSuppResult(20, 60, averageSpeed);
 
         long averageRevolutions = track.getAverageRevolutionsPerMinute();
-        float suppRevolutions = calculateSuppResult(1000, 2000, averageRevolutions);
+        float suppRevolutions = calculateSuppResult(1200, 2000, averageRevolutions);
 
         long averageThrottle = track.getAverageThrottle();
-        float suppThrottle = calculateSuppResult(5, 30, averageThrottle);
+        float suppThrottle = calculateSuppResult(0, 20, averageThrottle);
 
         return suppSpeed * c + suppRevolutions * c + suppThrottle * c;
     }
@@ -38,11 +38,12 @@ public class EcoPointsCalculator {
     }
 
     public static float calculateSuppResult(int downWorst, int upWorst, long actual) {
-        long medium = upWorst - downWorst;
-        long band = upWorst - medium;
-        long deviationFromIdeal = Math.abs(actual - medium);
-        long valueOverrun = band - deviationFromIdeal;
-        float percentageOverrun = (float) valueOverrun / (float) band;
+        int range = upWorst - downWorst;
+        int bandLen = range/2;
+        int midPoint = downWorst + bandLen;
+        long deviationFromIdeal = Math.abs(actual - midPoint);
+        long valueOverrun = bandLen - deviationFromIdeal;
+        float percentageOverrun = (float) valueOverrun / (float) bandLen;
 
         float answer = percentageOverrun * 5;
         return Math.min(5,Math.max(1,answer));
