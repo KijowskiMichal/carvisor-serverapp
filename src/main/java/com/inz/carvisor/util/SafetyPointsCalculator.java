@@ -29,10 +29,34 @@ public class SafetyPointsCalculator {
     }
 
     public static int calculateSafetyPoints(List<Offence> trackOffences) {
-        int x = 5 - (int) trackOffences
+        List<Offence> speedingOffences = trackOffences
                 .stream()
-                .filter(track -> track.getOffenceType().equals(OffenceType.SPEEDING))
-                .count();
-        return Math.max(x, 1);
+                .filter(offence -> offence.getOffenceType().equals(OffenceType.SPEEDING))
+                .collect(Collectors.toList());
+
+        int sum = speedingOffences
+                .stream()
+                .mapToInt(Offence::getValue)
+                .sum();
+
+        float avg = (float) sum / (float) speedingOffences.size();
+
+        return worstCaseScenario(50, (long) avg);
+    }
+
+    public static int worstCaseScenario(long upperLimitOfTragedy, long actual) {
+        if (actual > upperLimitOfTragedy) {
+            return 1;
+        }
+
+        if (actual == 0) {
+            return 1;
+        }
+
+        long l = upperLimitOfTragedy - actual;
+        float percentageOverrun = (float) l / (float) actual;
+
+        float answer = percentageOverrun * 5;
+        return (int) Math.min(5,Math.max(1,answer));
     }
 }

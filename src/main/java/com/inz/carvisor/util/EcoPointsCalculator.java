@@ -13,13 +13,13 @@ public class EcoPointsCalculator {
     public static float calculateEcoPoints(Track track) {
 
         int averageSpeed = track.getAverageSpeed();
-        float suppSpeed = calculateSuppResult(20, 60, averageSpeed);
+        float suppSpeed = calculateSuppResult(30, 50, averageSpeed);
 
         long averageRevolutions = track.getAverageRevolutionsPerMinute();
-        float suppRevolutions = calculateSuppResult(1200, 2000, averageRevolutions);
+        float suppRevolutions = calculateSuppResult(1350, 1850, averageRevolutions);
 
         long averageThrottle = track.getAverageThrottle();
-        float suppThrottle = calculateSuppResult(0, 20, averageThrottle);
+        float suppThrottle = calculateSuppResult(2, 18, averageThrottle);
 
         return suppSpeed * c + suppRevolutions * c + suppThrottle * c;
     }
