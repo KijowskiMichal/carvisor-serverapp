@@ -155,7 +155,6 @@ public class TrackService {
         }
 
         updateTrackValues(track, listOfTrackRates);
-        //todo ErrorsREST.addError - from json
         return DefaultResponse.OK;
     }
 
@@ -688,7 +687,7 @@ public class TrackService {
         if (obd.has(RPM_PID)) trackRateBuilder.setRpm((short) obd.getInt(RPM_PID));
         if (obd.has(SPEED_PID)) trackRateBuilder.setSpeed((short) obd.getInt(SPEED_PID));
         if (obd.has(THROTTLE_POS_PID)) trackRateBuilder.setThrottle((byte) obd.getInt(THROTTLE_POS_PID));
-        if (obd.has(FUEL_LEVEL_PID)) trackRateBuilder.setFuelLevel( obd.getDouble(THROTTLE_POS_PID));
+        //if (obd.has(FUEL_LEVEL_PID)) trackRateBuilder.setFuelLevel( obd.getDouble(THROTTLE_POS_PID));
     }
 
     private void addGpsPosTOTrackRateBuilder(TrackRateBuilder trackRateBuilder, JSONObject gps) {
