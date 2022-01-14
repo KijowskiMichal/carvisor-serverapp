@@ -10,36 +10,30 @@ public class EcoPointsCalculator {
 
     public static float calculateEcoPoints(Track track) {
         int eco = 10;
-        List<TrackRate> listOfTrackRates = track.getListOfTrackRates();
-        int size = listOfTrackRates.size();
-        track.setAverageRevolutionsPerMinute(listOfTrackRates.stream().mapToInt(TrackRate::getRpm).sum() / size);
-        track.setAverageSpeed(listOfTrackRates.stream().mapToInt(TrackRate::getSpeed).sum() / size);
-        track.setAverageThrottle(listOfTrackRates.stream().mapToInt(TrackRate::getThrottle).sum() / size);
-
         int averageSpeed = track.getAverageSpeed();
-        if (averageSpeed > 140) {
+        if (averageSpeed > 60) {
             eco -= 4;
-        } else if (averageSpeed > 120) {
+        } else if (averageSpeed > 40) {
             eco -= 2;
-        } else if (averageSpeed > 100) {
+        } else if (averageSpeed > 30) {
             eco -= 1;
         }
 
         long averageRevolutions = track.getAverageRevolutionsPerMinute();
-        if (averageRevolutions > 2600) {
+        if (averageRevolutions > 1700) {
             eco -= 4;
-        } else if (averageRevolutions > 2400) {
+        } else if (averageRevolutions > 1600) {
             eco -= 2;
-        } else if (averageRevolutions > 2300) {
+        } else if (averageRevolutions > 1500) {
             eco -= 1;
         }
 
         long averageThrottle = track.getAverageThrottle();
-        if (averageThrottle > 80) {
+        if (averageThrottle > 30) {
             eco -= 4;
-        } else if (averageThrottle > 70) {
+        } else if (averageThrottle > 20) {
             eco -= 2;
-        } else if (averageThrottle > 60) {
+        } else if (averageThrottle > 10) {
             eco -= 1;
         }
 

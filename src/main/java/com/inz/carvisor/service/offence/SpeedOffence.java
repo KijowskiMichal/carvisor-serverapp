@@ -73,11 +73,16 @@ public class SpeedOffence {
                         "mode=fastest%3Bcar%3Btraffic%3Aenabled&" +
                         "apiKey=EV06iVKQPJMrzRh1CIplbrUc00D-WxwoMDJM2wmZf5M&" +
                         "waypoint0=" +
-                        wayPoint +
+                        parseWaypoint(wayPoint) +
                         "&" +
                         "waypoint1=" +
-                        wayPoint;
+                        parseWaypoint(wayPoint);
         return new URL(z);
+    }
+
+    private static String parseWaypoint(String wayPoint) {
+        String[] split = wayPoint.split(";");
+        return split[0] + "," + split[1];
     }
 
     private static Optional<String> askUrl(URL url) {

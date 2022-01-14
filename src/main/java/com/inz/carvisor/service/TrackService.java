@@ -276,33 +276,6 @@ public class TrackService {
         return responseEntity;
     }
 
-    public ResponseEntity<String> endOfTrackNew(HttpServletRequest request, HttpEntity<String> httpEntity) {
-        long time = System.currentTimeMillis() / 1000;
-        List<Track> activeTrack = trackDaoJdbc.getActiveTracks();
-        activeTrack
-                .stream()
-                .filter(track -> track.getTimestamp() < (time - 15))
-                .forEach(track -> processTrack(time, track, track.getUser()));
-        long updatedTracks = activeTrack.stream().map(trackDaoJdbc::update).filter(Optional::isPresent).count();
-        if (updatedTracks == activeTrack.size()) return DefaultResponse.OK;
-        else return DefaultResponse.BAD_REQUEST;
-
-    }
-
-    private void processTrack(long time, Track track, User currentUser) {
-        currentUser.addTrackToEcoPointScore(track);
-        currentUser.setTracksNumber(currentUser.getTracksNumber() + 1);
-        currentUser.setDistanceTravelled(currentUser.getDistanceTravelled() + track.getDistanceFromStart());
-        currentUser.setSamples(currentUser.getSamples() + track.getAmountOfSamples());
-        track.setActive(false);
-        track.setEndTrackTimeStamp(time - 8);
-        currentUser.addTrackToEcoPointScore(track);
-
-        //currentUser.setSafetyPointsAvg(currentUser.getSafetyPointsAvg() + track.getSafetyPointsScore());
-        //track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track, offenceDaoJdbc.getTrackOffences(track.getId())));
-        //SafetyPointsCalculator.validateSafetyPointsScore(currentUser, track);
-    }
-
     /**
      * WebMethod that return tracks data with given Id.
      * <p>
