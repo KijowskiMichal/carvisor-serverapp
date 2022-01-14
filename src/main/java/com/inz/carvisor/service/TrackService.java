@@ -12,9 +12,7 @@ import com.inz.carvisor.hibernatepackage.HibernateRequests;
 import com.inz.carvisor.service.offence.CrossingTheZoneOffence;
 import com.inz.carvisor.service.offence.OverHoursOffence;
 import com.inz.carvisor.service.offence.SpeedOffence;
-import com.inz.carvisor.util.EcoPointsCalculator;
-import com.inz.carvisor.util.SafetyPointsCalculator;
-import com.inz.carvisor.util.TimeStampCalculator;
+import com.inz.carvisor.util.*;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -228,12 +226,32 @@ public class TrackService {
             for (Track track : tracks) {
                 User currentUser = track.getUser();
                 if (track.getTimestamp() < (time - 60)) {
+                    track.setAverageSpeed(TrackCalculator.getAvgSpeed(track));
+                    track.setAverageThrottle(TrackCalculator.getAvgThrottle(track));
+                    track.setAverageRevolutionsPerMinute(TrackCalculator.getAvgRevolutions(track));
+
                     currentUser.setTracksNumber(currentUser.getTracksNumber() + 1);
                     currentUser.setDistanceTravelled(currentUser.getDistanceTravelled() + track.getDistanceFromStart());
                     currentUser.setSamples(currentUser.getSamples() + track.getAmountOfSamples());
-                    track.setActive(false);
-                    track.setEndTrackTimeStamp(time - 30);
 
+                    currentUser.setRevolutionsAVG((int) DataAvgValueCalculator.calculateAvgValue(
+                            currentUser.getRevolutionsAVG(),
+                            currentUser.getSamples(),
+                            track.getAverageRevolutionsPerMinute(),
+                            track.getAmountOfSamples()
+                    ));
+                    currentUser.setSpeedAVG((int) DataAvgValueCalculator.calculateAvgValue(
+                            currentUser.getSpeedAVG(),
+                            currentUser.getSamples(),
+                            track.getAverageSpeed(),
+                            track.getAmountOfSamples()
+                    ));
+                    currentUser.setThrottle((int) DataAvgValueCalculator.calculateAvgValue(
+                            currentUser.getThrottle(),
+                            currentUser.getSamples(),
+                            track.getAverageThrottle(),
+                            track.getAmountOfSamples()
+                    ));
 
                     track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track, offenceDaoJdbc.getTrackOffences(track.getId())));
                     SafetyPointsCalculator.validateSafetyPointsScore(currentUser, track);
@@ -241,6 +259,8 @@ public class TrackService {
                     track.setEcoPointsScore(EcoPointsCalculator.calculateEcoPoints(track));
                     EcoPointsCalculator.validateEcoPointsScore(currentUser, track);
 
+                    track.setActive(false);
+                    track.setEndTrackTimeStamp(time - 30);
                     session.update(track);
                 }
             }

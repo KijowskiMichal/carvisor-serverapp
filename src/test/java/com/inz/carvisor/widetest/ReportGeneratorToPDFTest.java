@@ -88,29 +88,29 @@ public class ReportGeneratorToPDFTest {
     void runCleanup() {}
 
 
-    @Test
-    void generateAllReports() {
-        List<User> mockedUsers = DataMocker.getUsers();
-        List<Car> mockedCars = DataMocker.getCars();
-        mockedUsers.forEach(userDaoJdbc::save);
-        mockedCars.forEach(carDaoJdbc::save);
-
-        Random rand = new Random();
-        mockedUsers.forEach(user -> mockTrackRates(user,mockedCars.get(rand.nextInt(mockedCars.size()))));
-
-        int[] userId = mockedUsers.stream().mapToInt(User::getId).toArray();
-        List<Report> reports = List.of(
-                new ReportBuilder().setStart(Integer.MIN_VALUE).setEnd(Integer.MAX_VALUE).setUserIdList(userId).setType(ReportType.ECO.getType()).build(),
-                new ReportBuilder().setStart(Integer.MIN_VALUE).setEnd(Integer.MAX_VALUE).setUserIdList(userId).setType(ReportType.SAFETY.getType()).build(),
-                new ReportBuilder().setStart(Integer.MIN_VALUE).setEnd(Integer.MAX_VALUE).setUserIdList(userId).setType(ReportType.TRACK.getType()).build()
-        );
-
-        for (Report report:reports) {
-            byte[] reportBody = reportService.generateReportBody(report);
-            report.setBody(reportBody);
-            saveToFile(reportBody,report.getType());
-        }
-    }
+//    @Test
+//    void generateAllReports() {
+//        List<User> mockedUsers = DataMocker.getUsers();
+//        List<Car> mockedCars = DataMocker.getCars();
+//        mockedUsers.forEach(userDaoJdbc::save);
+//        mockedCars.forEach(carDaoJdbc::save);
+//
+//        Random rand = new Random();
+//        mockedUsers.forEach(user -> mockTrackRates(user,mockedCars.get(rand.nextInt(mockedCars.size()))));
+//
+//        int[] userId = mockedUsers.stream().mapToInt(User::getId).toArray();
+//        List<Report> reports = List.of(
+//                new ReportBuilder().setStart(Integer.MIN_VALUE).setEnd(Integer.MAX_VALUE).setUserIdList(userId).setType(ReportType.ECO.getType()).build(),
+//                new ReportBuilder().setStart(Integer.MIN_VALUE).setEnd(Integer.MAX_VALUE).setUserIdList(userId).setType(ReportType.SAFETY.getType()).build(),
+//                new ReportBuilder().setStart(Integer.MIN_VALUE).setEnd(Integer.MAX_VALUE).setUserIdList(userId).setType(ReportType.TRACK.getType()).build()
+//        );
+//
+//        for (Report report:reports) {
+//            byte[] reportBody = reportService.generateReportBody(report);
+//            report.setBody(reportBody);
+//            saveToFile(reportBody,report.getType());
+//        }
+//    }
 
     private void saveToFile(byte[] bytes, String fileName) {
         try {
