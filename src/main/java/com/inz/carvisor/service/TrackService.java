@@ -227,12 +227,12 @@ public class TrackService {
             long time = System.currentTimeMillis() / 1000;
             for (Track track : tracks) {
                 User currentUser = track.getUser();
-                if (track.getTimestamp() < (time - 15)) {
+                if (track.getTimestamp() < (time - 60)) {
                     currentUser.setTracksNumber(currentUser.getTracksNumber() + 1);
                     currentUser.setDistanceTravelled(currentUser.getDistanceTravelled() + track.getDistanceFromStart());
                     currentUser.setSamples(currentUser.getSamples() + track.getAmountOfSamples());
                     track.setActive(false);
-                    track.setEndTrackTimeStamp(time - 8);
+                    track.setEndTrackTimeStamp(time - 30);
 
 
                     track.setSafetyPointsScore(SafetyPointsCalculator.calculateSafetyPoints(track, offenceDaoJdbc.getTrackOffences(track.getId())));
